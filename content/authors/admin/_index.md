@@ -114,10 +114,9 @@ social:
   - icon: envelope
     icon_pack: fas
     link: 'mailto:sd23426@tti-j.net'
-  - icon: x-twitter
+  - icon: twitter
     icon_pack: fab
     link: https://twitter.com/ImlntheMiddle
-    label: Follow me on X (Twitter)!
   - icon: graduation-cap # Alternatively, use `google-scholar` icon from `ai` icon pack
     icon_pack: fas
     link: https://scholar.google.co.jp/citations?user=HkFAVbcAAAAJ
