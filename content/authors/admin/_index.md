@@ -37,9 +37,13 @@ interests:
 # Education to show in About widget
 education:
   courses:
-    - course: BSc in Engineering
+    - course: M.Eng.
       institution: Toyota Technological Institute
-      year: 2023
+      year: 2023-
+  courses:
+    - course: B.Eng.
+      institution: Toyota Technological Institute
+      year: 2019-2023
 
 # Skills
 # For available icons, see: https://docs.hugoblox.com/getting-started/page-builder/#icons
