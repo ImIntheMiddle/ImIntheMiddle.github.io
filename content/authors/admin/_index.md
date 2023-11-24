@@ -54,7 +54,7 @@ skills:
       - name: Machine Learning
         description: 'I was a TA for a year in a well-known machine learning course attended by more than 1,000 people each semester.'
         percent: 80
-        icon: chart-line
+        icon: magnifying-glass-chart
         icon_pack: fas
       - name: Python
         description: 'I like to devise ways to increase my productivity and I actively try out new tools.'
@@ -80,7 +80,7 @@ skills:
         percent: 100
         icon: cat
         icon_pack: fas
-      - name: Community
+      - name: Social Community
         description: 'Set up vista, a community for mutual progress management, with my best friend in 2020 and still running it.'
         percent: 90
         icon: discord
@@ -91,12 +91,12 @@ skills:
         icon: book
         icon_pack: fas
       - name: Language
-        description: 'I love learning languages, travelling to new places and connecting with people. I am learning English, Chinese and Vietnamese (my wife is Vietnamese).'
+        description: 'I love learning languages, travelling to new places and connecting with new people. I am learning English, Chinese and Vietnamese (my wife is Vietnamese).'
         percent: 70
         icon: language
         icon_pack: fas
       - name: Training
-        description: 'Exercise is a good companion that energises me and boosts my thinking. I was captain of the Spartan Race Club in my university.'
+        description: 'Exercise is a good companion that energises me and boosts my productivity. I was captain of the Spartan Race Club in my university.'
         percent: 60
         icon: fire
         icon_pack: fas
@@ -109,32 +109,32 @@ skills:
 social:
   - icon: envelope
     icon_pack: fas
-    link: '/#contact'
-  - icon: twitter
+    link: 'mailto:sd23426@tti-j.net'
+  - icon: x-twitter
     icon_pack: fab
-    link: https://twitter.com/GeorgeCushen
-    label: Follow me on Twitter
+    link: https://twitter.com/ImlntheMiddle
+    label: Follow me on X (Twitter)!
     display:
       header: true
   - icon: graduation-cap # Alternatively, use `google-scholar` icon from `ai` icon pack
     icon_pack: fas
-    link: https://scholar.google.co.uk/citations?user=sIwtMXoAAAAJ
+    link: https://scholar.google.co.jp/citations?user=HkFAVbcAAAAJ
   - icon: github
     icon_pack: fab
-    link: https://github.com/gcushen
+    link: https://github.com/ImIntheMiddle
   - icon: linkedin
     icon_pack: fab
-    link: https://www.linkedin.com/
+    link: https://www.linkedin.com/in/ImIntheMiddle/
   # Link to a PDF of your resume/CV.
   # To use: copy your resume to `static/uploads/resume.pdf`, enable `ai` icons in `params.yaml`,
   # and uncomment the lines below.
-  - icon: cv
-    icon_pack: ai
-    link: uploads/resume.pdf
+  # - icon: cv
+  #   icon_pack: ai
+  #   link: uploads/resume.pdf
 
 # Highlight the author in author lists? (true/false)
 highlight_name: true
 ---
 
-Chien Shiung Wu is a professor of artificial intelligence at the Stanford AI Lab. Her research interests include distributed robotics, mobile computing and programmable matter. She leads the Robotic Neurobiology group, which develops self-reconfiguring robots, systems of self-organizing robots, and mobile sensor networks.
+Hiromu Taketsugu is a Ph.D. student of computer vision at the Intelligent Information Media Lab. of the Toyota Technological Institute. His research interests include artificial intelligence, computer vision, social robotics, and human-robot interaction. He is a member of the Interactive Dynamics (InDy) group, which develops human/scene-interactive and dynamics-aware systems/robots.
 {style="text-align: justify;"}
