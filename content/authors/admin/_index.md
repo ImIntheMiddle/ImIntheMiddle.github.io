@@ -40,7 +40,6 @@ education:
     - course: M.Eng.
       institution: Toyota Technological Institute
       year: 2023-
-  courses:
     - course: B.Eng.
       institution: Toyota Technological Institute
       year: 2019-2023
