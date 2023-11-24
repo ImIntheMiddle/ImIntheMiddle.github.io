@@ -118,8 +118,6 @@ social:
     icon_pack: fab
     link: https://twitter.com/ImlntheMiddle
     label: Follow me on X (Twitter)!
-    display:
-      header: true
   - icon: graduation-cap # Alternatively, use `google-scholar` icon from `ai` icon pack
     icon_pack: fas
     link: https://scholar.google.co.jp/citations?user=HkFAVbcAAAAJ
@@ -140,5 +138,5 @@ social:
 highlight_name: true
 ---
 
-Hiromu Taketsugu is a Ph.D. student of computer vision at the Intelligent Information Media Lab. of the Toyota Technological Institute. His research interests include artificial intelligence, computer vision, social robotics, and human-robot interaction. He is a member of the Interactive Dynamics (InDy) group, which develops human/scene-interactive and dynamics-aware systems/robots.
+Hiromu Taketsugu is a Ph.D. student at Toyota Technological Institue, under the supervision of Dr.Norimichi Ukita in Intelligent Information Media Lab. His research interests include artificial intelligence, computer vision, social robotics, and human-robot interaction. He is a member of the Interactive Dynamics (InDy) group, which develops human/scene-interactive and dynamics-aware systems/robots.
 {style="text-align: justify;"}
