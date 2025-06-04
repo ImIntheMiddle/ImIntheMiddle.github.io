@@ -17,7 +17,7 @@ status:
 superuser: true
 
 # Role/position/tagline
-role: Ph.D. student (M1) at Toyota Technological Institute
+role: Ph.D. student (D1) at Toyota Technological Institute
 
 # Organizations/Affiliations to show in About widget
 organizations:
@@ -25,23 +25,26 @@ organizations:
     url: https://www.toyota-ti.ac.jp/Lab/Denshi/iim/index.html
 
 # Short bio (displayed in user profile at end of posts)
-bio: My research interests include artificial intelligence, computer vision, social robotics, and human-robot interaction.
+bio: My research interests include Artificial Intelligence, Computer Vision, Embodied AI, and Social Robotics.
 
 # Interests to show in About widget
 interests:
   - Artificial Intelligence
   - Computer Vision
+  - Embodied AI
   - Social Robotics
-  - Human-Robot Interaction
 
 # Education to show in About widget
 education:
   courses:
+    - course: Ph.D.
+      institution: Toyota Technological Institute (Ukita Lab.)
+      year: 2025-present
     - course: M.Eng.
-      institution: Toyota Technological Institute
-      year: 2023-
+      institution: Toyota Technological Institute (Ukita Lab.)
+      year: 2023-2025
     - course: B.Eng.
-      institution: Toyota Technological Institute
+      institution: Toyota Technological Institute (Ukita Lab.)
       year: 2019-2023
 
 # Skills
@@ -49,24 +52,24 @@ education:
 skills:
   - name: Technical
     items:
+      - name: Machine Learning
+        description: 'I was a TA for over 3 years in a well-known machine learning course, GCI by UTokyo, which is attended by more than 30,000 people each semester.'
+        percent: 90
+        icon: magnifying-glass-chart
+        icon_pack: fas
       - name: Computer Vision
         description: 'I am addicted to creating cutting-edge applications, thinking about future societies and technologies, and understanding how human intelligence works through computer vision.'
         percent: 85
         icon: camera
         icon_pack: fas
-      - name: Machine Learning
-        description: 'I was a TA for a year in a well-known machine learning course attended by more than 1,000 people each semester.'
-        percent: 80
-        icon: magnifying-glass-chart
-        icon_pack: fas
       - name: Python
-        description: 'I like to devise ways to increase my productivity and I actively try out new tools.'
-        percent: 70
+        description: 'I actively try out new tools and devise ways to increase my productivity turough programming.'
+        percent: 80
         icon: python
         icon_pack: fab
       - name: Linux
-        description: 'I develop mainly on Linux, e.g. Ubuntu.'
-        percent: 60
+        description: 'I develop mainly on Linux, e.g., Ubuntu.'
+        percent: 65
         icon: linux
         icon_pack: fab
       - name: Robotics
@@ -79,27 +82,27 @@ skills:
     color_border: '#f0bf23'
     items:
       - name: Dogs and cats
-        description: 'I have one friendly Maltese and one lovely Ragdoll-Siamese mix.'
+        description: 'I have a friendly Maltese and a lovely Ragdoll-Siamese mix.'
         percent: 100
         icon: cat
         icon_pack: fas
-      - name: Social Community
-        description: 'Set up vista, a community for mutual progress management, with my best friend in 2020 and still running it.'
+      - name: Social community
+        description: 'I set up vista, a community for mutual progress management, with my best friend in 2020 and still organizing it.'
         percent: 90
         icon: discord
         icon_pack: fab
       - name: Reading
-        description: 'Books that rethink everyday life in a scientific way or give me time for philosophical speculation.'
+        description: 'I love books that let me rethink daily life in a scientific way or give me time for philosophical reflection.'
         percent: 80
         icon: book
         icon_pack: fas
       - name: Language
-        description: 'I love learning languages, travelling to new places and connecting with new people. I am learning English, Chinese and Vietnamese (my wife is Vietnamese).'
-        percent: 70
+        description: 'I love learning languages (duolingo streak is over 500), travelling to new places and connecting with new people. I mainly practice English and Vietnamese (my wife is Vietnamese).'
+        percent: 75
         icon: language
         icon_pack: fas
-      - name: Training
-        description: 'Exercise is a good companion that energises me and boosts my productivity. I was captain of the Spartan Race Club in my university.'
+      - name: Work out
+        description: 'Exercise is an awesome partner that energises me and boosts my productivity. I was captain of the Spartan Race Club in my university.'
         percent: 60
         icon: fire
         icon_pack: fas
@@ -112,7 +115,7 @@ skills:
 social:
   - icon: envelope
     icon_pack: fas
-    link: 'mailto:sd23426@tti-j.net'
+    link: 'mailto:sd25502@tti-j.net'
   - icon: twitter
     icon_pack: fab
     link: https://twitter.com/ImlntheMiddle
@@ -136,5 +139,5 @@ social:
 highlight_name: true
 ---
 
-Hiromu Taketsugu is a Ph.D. student at Toyota Technological Institue, under the supervision of Dr.Norimichi Ukita in Intelligent Information Media Lab. His research interests include artificial intelligence, computer vision, social robotics, and human-robot interaction. He is a member of the Interactive Dynamics (InDy) group, which develops human/scene-interactive and dynamics-aware systems/robots.
+Hiromu Taketsugu is a Ph.D. student at Toyota Technological Institute. He is currently adviced by Prof.Norimichi Ukita in Intelligent Information Media Lab. His research interests include Artificial Intelligence, Computer Vision, Embodied AI, and Social Robotics. He develops human/scene-interactive and physics-aware systems/robots. He is a JSPS Research Fellow (DC1, 14% acceptance rate). He has served as the first author on papers accepted to top-tier international conferences such as CVPR and WACV. He is also a father of one daughter.
 {style="text-align: justify;"}
