@@ -4,13 +4,10 @@ title: Uncertainty Criteria in Active Transfer Learning for Efficient Video-Spec
 authors:
 - Hiromu Taketsugu
 - Norimichi Ukita
-date: '2023-07-01'
-publishDate: '2023-11-24T21:29:26.986148Z'
 publication_types:
 - paper-conference
 publication: '*2023 18th International Conference on Machine Vision and Applications
   (MVA)*'
-doi: 10.23919/MVA57639.2023.10215565
 abstract: This paper presents a combination of Active Learning (AL) and Transfer Learning
   (TL) for efficiently adapting Human Pose (HP) estimators to individual videos. The
   proposed approach quantifies estimation uncertainty through the temporal changes
