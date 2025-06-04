@@ -5,7 +5,7 @@ authors:
 - ' 浮田宗伯'
 publication_types:
 - article-journal
-publication: '*情報処理学会研究報告(Web)*'
+publication: '*情報処理学会研究報告(CVIM)*'
 links:
 - name: URL
   url: https://jglobal.jst.go.jp/detail?JGLOBAL_ID=202302214664049283
