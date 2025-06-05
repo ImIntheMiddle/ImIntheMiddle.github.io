@@ -3,7 +3,7 @@ title: Active Transfer Learning for Efficient Video-Specific Human Pose Estimati
 authors:
 - Hiromu Taketsugu
 - Norimichi Ukita
-publication: 'IEEE/CVF WACV 2024'
+publication: '**IEEE/CVF Winter Conference on Applications of Computer Vision (WACV), Poster (Acceptance rate = 41%)**'
 publication_types:
 - paper-conference
 abstract: 'Human Pose (HP) estimation is actively researched because of its wide range

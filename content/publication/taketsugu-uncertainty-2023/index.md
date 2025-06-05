@@ -6,8 +6,8 @@ authors:
 - Norimichi Ukita
 publication_types:
 - paper-conference
-publication: '*2023 18th International Conference on Machine Vision and Applications
-  (MVA)*'
+publication: '**2023 18th International Conference on Machine Vision and Applications
+  (MVA), Oral (Acceptance rate = 17%)**'
 abstract: This paper presents a combination of Active Learning (AL) and Transfer Learning
   (TL) for efficiently adapting Human Pose (HP) estimators to individual videos. The
   proposed approach quantifies estimation uncertainty through the temporal changes
