@@ -115,7 +115,7 @@ skills:
 social:
   - icon: envelope
     icon_pack: fas
-    link: 'mailto:sd25502@tti-j.net'
+    link: 'mailto:sd25502@toyota-ti.ac.jp'
   - icon: twitter
     icon_pack: fab
     link: https://twitter.com/ImlntheMiddle
