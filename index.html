@@ -13,8 +13,11 @@
      Studio Minimal × Depth Sim — design tokens
      ==================================================================== */
   :root, [data-theme="light"] {
-    --paper: #fbfbfa;
-    --paper-2: #f4f2ec;
+    --stage: #efe8d8;              /* canvas world — warm cream */
+    --stage-rgb: 239, 232, 216;
+    --paper: #fdfcf9;              /* content card — crisp warm-white */
+    --paper-rgb: 253, 252, 249;
+    --paper-2: #f5f1e6;            /* image slots */
     --ink: #16150f;
     --ink-rgb: 22, 21, 15;
     --ink-dim: #6b6a63;
@@ -22,31 +25,34 @@
     --ink-soft-rgb: 122, 120, 112;
     --accent: #e8500a;
     --accent-rgb: 232, 80, 10;
-    --hairline: #e3e2dc;
-    --hairline-soft: #eeece5;
-    --paper-rgb: 251, 251, 250;
+    --hairline: #e3ddce;
+    --hairline-soft: #efe9dc;
+    --card-shadow: 0 6px 44px rgba(52, 40, 15, 0.10), 0 1px 3px rgba(52, 40, 15, 0.04);
     --shadow-a: 0.10;
   }
   [data-theme="dark"] {
-    --paper: #121110;
-    --paper-2: #1a1815;
+    --stage: #14100b;              /* canvas world — deep warm-dark */
+    --stage-rgb: 20, 16, 11;
+    --paper: #211c15;              /* content card — slightly lifted warm-dark */
+    --paper-rgb: 33, 28, 21;
+    --paper-2: #2a241c;
     --ink: #ece9e2;
     --ink-rgb: 236, 233, 226;
     --ink-dim: #a5a29a;
     --ink-faint: #6f6c66;
     --ink-soft-rgb: 165, 162, 154;
-    --accent: #ff6a2b;
-    --accent-rgb: 255, 106, 43;
-    --hairline: rgba(255,255,255,0.12);
-    --hairline-soft: rgba(255,255,255,0.07);
-    --paper-rgb: 18, 17, 16;
+    --accent: #ff8144;
+    --accent-rgb: 255, 129, 68;
+    --hairline: rgba(255, 230, 190, 0.14);
+    --hairline-soft: rgba(255, 230, 190, 0.07);
+    --card-shadow: 0 6px 44px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 235, 200, 0.05);
     --shadow-a: 0.30;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
   body {
-    background: var(--paper);
+    background: var(--stage);
     color: var(--ink);
     font-family: "Inter", "Noto Sans JP", system-ui, sans-serif;
     font-weight: 400;
@@ -70,7 +76,7 @@
     position: fixed; inset: 0;
     width: 100%; height: 100%;
     z-index: 0;
-    background: var(--paper);
+    background: var(--stage);
     transition: background 0.4s ease;
   }
 
@@ -83,8 +89,10 @@
     margin: 0 auto;
     padding-left: clamp(56px, 6vw, 80px);
     padding-right: clamp(56px, 6vw, 80px);
-    background: var(--paper);
-    box-shadow: 0 2px 30px rgba(0, 0, 0, 0.06);
+    background: rgba(var(--paper-rgb), 0.72);
+    -webkit-backdrop-filter: blur(16px) saturate(1.15);
+            backdrop-filter: blur(16px) saturate(1.15);
+    box-shadow: var(--card-shadow);
     -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 48px, #000 calc(100% - 48px), transparent 100%);
             mask-image: linear-gradient(90deg, transparent 0, #000 48px, #000 calc(100% - 48px), transparent 100%);
     transition: background 0.4s ease;
