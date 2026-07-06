@@ -89,17 +89,24 @@
     margin: 0 auto;
     padding-left: clamp(56px, 6vw, 80px);
     padding-right: clamp(56px, 6vw, 80px);
-    background: rgba(var(--paper-rgb), 0.72);
-    -webkit-backdrop-filter: blur(16px) saturate(1.15);
-            backdrop-filter: blur(16px) saturate(1.15);
+    /* default (info sections): mostly solid — text is the priority here,
+       the canvas is barely visible under the card, only obvious in gaps */
+    background: rgba(var(--paper-rgb), 0.94);
+    -webkit-backdrop-filter: blur(6px) saturate(1.05);
+            backdrop-filter: blur(6px) saturate(1.05);
     box-shadow: var(--card-shadow);
     -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 48px, #000 calc(100% - 48px), transparent 100%);
             mask-image: linear-gradient(90deg, transparent 0, #000 48px, #000 calc(100% - 48px), transparent 100%);
     transition: background 0.4s ease;
   }
 
-  /* Hero paper is wider — more prominence for the opening */
-  .hero-block .wrap { max-width: 1080px; }
+  /* Hero: dramatic frosted glass — the canvas world is the show */
+  .hero-block .wrap {
+    max-width: 1080px;
+    background: rgba(var(--paper-rgb), 0.52);
+    -webkit-backdrop-filter: blur(22px) saturate(1.2);
+            backdrop-filter: blur(22px) saturate(1.2);
+  }
 
   /* sections themselves are transparent — the paper card lives on .wrap only */
   .block, .hero-block, footer.contact {
