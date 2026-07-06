@@ -39,7 +39,7 @@ Content (bilingual text, links, placeholders pending the `_questionnaire.md` ans
   - Publications: rows with venue mono label / title / authors / links; thumbnail frame kept (thin hairline box) for future teaser images; text placeholder inside until images provided.
   - Awards / Media / News: hairline-divided rows, mono dates.
   - Talks / Life photos: hairline-framed boxes, no filled panels.
-- **Canvas placement**: `#field` canvas stays `position: fixed`, full viewport, behind everything. Content sections are **opaque paper blocks**; between sections there are ~120px fully transparent gaps where the simulation shows through. No blur anywhere. The SFM footer credit stays.
+- **Canvas placement**: `#field` canvas stays `position: fixed`, full viewport, behind everything, rendered at CSS `opacity: 0.7` so figures stay restrained relative to text. Content sections are **translucent paper blocks** at `rgba(paper, 0.88)`, so text remains crisp on paper while the simulation ghosts through as a subtle backdrop. The section gaps (~60–120px) still let the sim show at full CSS opacity. No blur anywhere. The SFM footer credit stays.
 
 ## Responsive Behavior (mobile + tablet)
 
