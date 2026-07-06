@@ -1,0 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" data-lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hiromu Taketsugu — Trajectory Forecasting & Embodied AI</title>
+<meta name="description" content="Hiromu Taketsugu (武次 広夢) is a Ph.D. student at Toyota Technological Institute, working on physically plausible pedestrian trajectory prediction, embodied AI, and social robot navigation.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Noto+Sans+JP:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root, [data-theme="light"] {
+    --bg: #f7f3ec; --bg-2: #f1ebe0;
+    --panel: rgba(255, 252, 246, 0.78); --panel-solid: #fffcf6;
+    --ink: #2a2520; --ink-dim: #6b6258; --ink-faint: #9a9085;
+    --accent: #c2603a; --accent-2: #d99404; --accent-3: #7a8a5f;
+    --line: rgba(70, 60, 50, 0.16); --line-soft: rgba(70, 60, 50, 0.09);
+    --ped-r: 194; --ped-g: 96; --ped-b: 58;
+    --ped2-r: 217; --ped2-g: 148; --ped2-b: 4;
+    --ped3-r: 122; --ped3-g: 138; --ped3-b: 95;
+    --trail-r: 120; --trail-g: 100; --trail-b: 80;
+    --shadow-a: 0.10;
+    --wrap-tint: rgba(247, 243, 236, 0.42);
+    --bg-glow-1: rgba(217,148,4,0.10); --bg-glow-2: rgba(194,96,58,0.08);
+    --canvas-base: #f7f3ec; --canvas-base-2: #f1ebe0;
+  }
+  [data-theme="dark"] {
+    --bg: #14110d; --bg-2: #1a160f;
+    --panel: rgba(30, 26, 20, 0.62); --panel-solid: #1e1a14;
+    --ink: #f0eae0; --ink-dim: #b8ac9c; --ink-faint: #7d7164;
+    --accent: #e8845a; --accent-2: #f0b53e; --accent-3: #a3b585;
+    --line: rgba(220, 205, 185, 0.16); --line-soft: rgba(220, 205, 185, 0.09);
+    --ped-r: 232; --ped-g: 132; --ped-b: 90;
+    --ped2-r: 240; --ped2-g: 181; --ped2-b: 62;
+    --ped3-r: 163; --ped3-g: 181; --ped3-b: 133;
+    --trail-r: 230; --trail-g: 215; --trail-b: 195;
+    --shadow-a: 0.28;
+    --wrap-tint: rgba(20, 17, 13, 0.40);
+    --bg-glow-1: rgba(240,181,62,0.07); --bg-glow-2: rgba(232,132,90,0.06);
+    --canvas-base: #14110d; --canvas-base-2: #1a160f;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  :root { --sans: "Sora", "Noto Sans JP", system-ui, sans-serif; --serif: "Newsreader", "Noto Sans JP", Georgia, serif; --mono: "IBM Plex Mono", monospace; }
+  [data-lang="ja"] { --sans: "Noto Sans JP", "Sora", system-ui, sans-serif; --serif: "Noto Sans JP", "Newsreader", Georgia, serif; }
+  body { background: var(--bg); color: var(--ink); font-family: var(--sans); font-weight: 300; font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; overflow-x: hidden; transition: background 0.5s ease, color 0.5s ease; }
+  a { color: inherit; }
+
+  /* lang visibility */
+  [data-lang="en"] .ja { display: none !important; }
+  [data-lang="ja"] .en { display: none !important; }
+
+  #field { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0;
+    background: radial-gradient(1200px 800px at 78% 8%, var(--bg-glow-1), transparent 60%), radial-gradient(900px 700px at 12% 88%, var(--bg-glow-2), transparent 60%), linear-gradient(180deg, var(--canvas-base) 0%, var(--canvas-base-2) 100%);
+    transition: background 0.5s ease; }
+  body::after { content: ""; position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0.04;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+
+  .wrap { position: relative; z-index: 2; max-width: 1080px; margin: 0 auto; padding: 0 clamp(20px, 5vw, 56px); }
+  /* glass: applied only to text-bearing clusters, with padding as margin around the text */
+  .glass { backdrop-filter: blur(7px); -webkit-backdrop-filter: blur(7px); background: var(--wrap-tint); border-radius: 14px; padding: clamp(20px, 3vw, 34px); }
+  section.block > .glass { margin-top: 0; }
+  .hero .glass + .glass { margin-top: clamp(22px, 3.5vh, 40px); }
+
+  header { position: sticky; top: 0; z-index: 20; backdrop-filter: blur(12px); background: var(--panel); border-bottom: 1px solid var(--line-soft); transition: background 0.5s ease; }
+  .nav-inner { max-width: 1080px; margin: 0 auto; padding: 14px clamp(20px, 5vw, 56px); display: flex; justify-content: space-between; align-items: center; gap: 14px; }
+  .nav-inner .mark { font-size: 14px; font-weight: 500; }
+  .nav-inner .mark b { color: var(--accent); font-weight: 600; }
+  nav.links { display: flex; gap: 18px; font-family: var(--mono); font-size: 12.5px; margin-left: auto; }
+  nav.links a { color: var(--ink-dim); text-decoration: none; transition: color 0.2s; }
+  nav.links a:hover { color: var(--accent); }
+  .toggles { display: flex; gap: 8px; }
+  .pill { font-family: var(--mono); font-size: 12px; color: var(--ink-dim); background: transparent; border: 1px solid var(--line); border-radius: 20px; padding: 6px 13px; cursor: pointer; display: flex; align-items: center; gap: 7px; transition: all 0.25s; white-space: nowrap; }
+  .pill:hover { border-color: var(--accent); color: var(--accent); }
+  .pill .ico { width: 13px; height: 13px; }
+  @media (max-width: 900px) { nav.links { display: none; } }
+
+  .hero { padding: clamp(54px, 11vh, 116px) 0 clamp(36px, 6vh, 70px); }
+  .eyebrow { font-family: var(--mono); font-size: 12.5px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 22px; display: flex; align-items: center; gap: 13px; }
+  .eyebrow::before { content: ""; width: 32px; height: 1px; background: var(--accent); opacity: 0.6; }
+  h1 { font-family: var(--sans); font-weight: 600; font-size: clamp(40px, 8vw, 88px); line-height: 1.0; letter-spacing: -0.03em; }
+  h1 .jp-name { display: block; font-size: clamp(16px, 2.4vw, 23px); font-weight: 400; letter-spacing: 0.05em; color: var(--ink-dim); margin-top: 16px; }
+  .lede { font-family: var(--serif); font-weight: 400; font-size: clamp(18px, 2.5vw, 26px); line-height: 1.5; color: var(--ink); max-width: 36ch; margin: 30px 0 0; }
+  .lede em { font-style: italic; color: var(--accent); }
+  [data-lang="ja"] .lede { font-style: normal; }
+  .meta-row { display: flex; flex-wrap: wrap; gap: 8px 26px; margin-top: 34px; font-family: var(--mono); font-size: 12.5px; color: var(--ink-dim); }
+  .meta-row span b { color: var(--ink); font-weight: 400; }
+  .links-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+  .links-row a { font-family: var(--mono); font-size: 12.5px; color: var(--ink-dim); text-decoration: none; border: 1px solid var(--line); padding: 9px 15px; border-radius: 3px; transition: all 0.25s; }
+  .links-row a:hover { color: var(--bg); background: var(--accent); border-color: var(--accent); }
+
+  /* mission banner */
+  .mission { margin-top: clamp(38px, 6vh, 60px); border-left: 2px solid var(--accent); padding: 6px 0 6px 22px; }
+  .mission .label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
+  .mission .stmt { font-family: var(--serif); font-style: italic; font-size: clamp(19px, 3vw, 28px); line-height: 1.4; color: var(--ink); max-width: 30ch; }
+  [data-lang="ja"] .mission .stmt { font-style: normal; }
+  .mission .stmt b { color: var(--accent); font-style: normal; font-weight: 600; }
+
+  .bio { display: grid; grid-template-columns: 130px 1fr; gap: 32px; align-items: start; }
+  @media (max-width: 640px) { .bio { grid-template-columns: 1fr; gap: 20px; } }
+  .bio .portrait { width: 130px; height: 130px; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); background: var(--panel); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 10px; color: var(--ink-faint); text-align: center; }
+  .bio .portrait img { width: 100%; height: 100%; object-fit: cover; }
+  .bio .bio-text p { font-size: 15.5px; color: var(--ink-dim); line-height: 1.72; }
+  .bio .bio-text p + p { margin-top: 14px; }
+  .bio .bio-text strong { color: var(--ink); font-weight: 500; }
+
+  .news { }
+  .news h2 { font-family: var(--mono); font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin-bottom: 18px; }
+  .news ul { list-style: none; }
+  .news li { display: grid; grid-template-columns: 104px 1fr; gap: 18px; padding: 11px 0; border-top: 1px solid var(--line-soft); font-size: 14.5px; }
+  .news li:first-child { border-top: none; }
+  .news li .d { font-family: var(--mono); font-size: 12.5px; color: var(--ink-faint); padding-top: 2px; }
+  .news li .t { color: var(--ink-dim); }
+  .news li .t a { color: var(--accent); text-decoration: none; }
+  .news li .tag { display: inline-block; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.04em; color: var(--accent); border: 1px solid var(--accent); border-radius: 3px; padding: 1px 7px; margin-right: 9px; vertical-align: 1px; opacity: 0.85; }
+  @media (max-width: 600px) { .news li { grid-template-columns: 1fr; gap: 4px; } }
+
+  section.block { padding: clamp(56px, 9vh, 100px) 0 0; }
+  .sec-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 38px; }
+  .sec-head .idx { font-family: var(--mono); font-size: 12px; color: var(--accent); letter-spacing: 0.1em; }
+  .sec-head h2 { font-family: var(--sans); font-weight: 600; font-size: clamp(22px, 4vw, 32px); letter-spacing: -0.02em; }
+  .sec-head .note { margin-left: auto; font-family: var(--mono); font-size: 11.5px; color: var(--ink-faint); }
+  .sec-head .note a { color: var(--accent); text-decoration: none; }
+
+  .focus { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+  @media (max-width: 760px) { .focus { grid-template-columns: 1fr; } }
+  .focus .cell { background: var(--panel); padding: 30px 26px; }
+  .focus .cell .k { font-family: var(--mono); font-size: 11.5px; color: var(--accent); letter-spacing: 0.07em; margin-bottom: 15px; }
+  .focus .cell h4 { font-family: var(--serif); font-weight: 500; font-size: 20px; margin-bottom: 10px; }
+  .focus .cell p { font-size: 14px; color: var(--ink-dim); line-height: 1.6; }
+
+  .pub { display: grid; grid-template-columns: 168px 1fr; gap: 26px; padding: 26px 0; border-top: 1px solid var(--line); align-items: start; }
+  .pub:last-child { border-bottom: 1px solid var(--line); }
+  .pub .thumb { width: 168px; aspect-ratio: 16 / 10; border-radius: 6px; overflow: hidden; background: var(--panel); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; }
+  .pub .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .pub .thumb .ph { font-family: var(--mono); font-size: 10px; color: var(--ink-faint); text-align: center; padding: 8px; line-height: 1.5; }
+  .pub .venue { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; display: inline-block; }
+  .pub .venue .rate { color: var(--ink-faint); }
+  .pub h3 { font-family: var(--serif); font-weight: 500; font-size: clamp(17px, 2.2vw, 21px); line-height: 1.34; color: var(--ink); }
+  .pub .auth { font-size: 13.5px; color: var(--ink-dim); margin-top: 9px; }
+  .pub .auth .me { color: var(--ink); font-weight: 500; }
+  .pub .pub-links { margin-top: 12px; display: flex; gap: 14px; flex-wrap: wrap; }
+  .pub .pub-links a { font-family: var(--mono); font-size: 12px; color: var(--ink-dim); text-decoration: none; transition: color 0.2s; }
+  .pub .pub-links a:hover { color: var(--accent); }
+  .pub .pub-links a::after { content: " ↗"; opacity: 0.6; }
+  @media (max-width: 640px) { .pub { grid-template-columns: 1fr; } .pub .thumb { width: 100%; max-width: 280px; } }
+
+  .awards { border-top: 1px solid var(--line); }
+  .award { display: grid; grid-template-columns: 84px 1fr; gap: 22px; padding: 18px 0; border-bottom: 1px solid var(--line-soft); align-items: baseline; }
+  .award .yr { font-family: var(--mono); font-size: 13px; color: var(--accent); }
+  .award .name { font-size: 15px; color: var(--ink); }
+  .award .name .org { display: block; font-size: 13px; color: var(--ink-faint); margin-top: 3px; }
+
+  .talks-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  @media (max-width: 760px) { .talks-grid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 480px) { .talks-grid { grid-template-columns: 1fr; } }
+  .talk { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; transition: transform 0.3s, border-color 0.3s; }
+  .talk:hover { transform: translateY(-3px); border-color: var(--accent); }
+  .talk .pic { aspect-ratio: 4 / 3; background: var(--bg-2); display: flex; align-items: center; justify-content: center; border-bottom: 1px solid var(--line); }
+  .talk .pic img { width: 100%; height: 100%; object-fit: cover; }
+  .talk .pic .ph { font-family: var(--mono); font-size: 10px; color: var(--ink-faint); text-align: center; padding: 10px; }
+  .talk .cap { padding: 15px 16px 17px; }
+  .talk .cap .v { font-family: var(--mono); font-size: 11px; color: var(--accent); letter-spacing: 0.04em; }
+  .talk .cap h4 { font-family: var(--serif); font-weight: 500; font-size: 16px; line-height: 1.35; margin-top: 7px; }
+  .talk .cap p { font-size: 12.5px; color: var(--ink-faint); margin-top: 6px; }
+
+  .media-list { border-top: 1px solid var(--line); }
+  .media-item { display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: baseline; padding: 16px 0; border-bottom: 1px solid var(--line-soft); }
+  .media-item .m-title { font-size: 15px; color: var(--ink); }
+  .media-item .m-title a { color: var(--accent); text-decoration: none; }
+  .media-item .m-title .src { display: block; font-family: var(--mono); font-size: 11.5px; color: var(--ink-faint); margin-top: 4px; }
+  .media-item .m-date { font-family: var(--mono); font-size: 12px; color: var(--ink-faint); white-space: nowrap; }
+
+  .blog-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  @media (max-width: 640px) { .blog-grid { grid-template-columns: 1fr; } }
+  .blog-empty { border: 1px dashed var(--line); border-radius: 8px; padding: 28px; font-family: var(--mono); font-size: 12.5px; color: var(--ink-faint); text-align: center; grid-column: 1 / -1; line-height: 1.7; }
+
+  .life-intro { font-family: var(--serif); font-size: clamp(17px, 2.3vw, 22px); color: var(--ink-dim); max-width: 56ch; line-height: 1.6; margin-bottom: 40px; }
+  .life-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px 40px; }
+  @media (max-width: 640px) { .life-grid { grid-template-columns: 1fr; } }
+  .life-item h4 { font-family: var(--sans); font-weight: 600; font-size: 16px; color: var(--ink); margin-bottom: 7px; display: flex; align-items: center; gap: 10px; }
+  .life-item h4 .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex: none; }
+  .life-item p { font-size: 14.5px; color: var(--ink-dim); line-height: 1.62; }
+  .life-item p strong { color: var(--ink); font-weight: 500; }
+  .life-photos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 40px; }
+  @media (max-width: 640px) { .life-photos { grid-template-columns: repeat(2, 1fr); } }
+  .life-photos .ph-box { aspect-ratio: 1; border-radius: 8px; border: 1px solid var(--line); background: var(--bg-2); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 10px; color: var(--ink-faint); }
+  .life-photos .ph-box img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; }
+
+  footer { border-top: 1px solid var(--line); padding: clamp(48px, 8vh, 84px) 0 56px; margin-top: clamp(56px, 9vh, 100px); }
+  .contact-head { font-family: var(--sans); font-weight: 600; font-size: clamp(26px, 5vw, 44px); letter-spacing: -0.02em; margin-bottom: 18px; }
+  .contact-sub { font-family: var(--serif); font-size: 18px; color: var(--ink-dim); max-width: 48ch; line-height: 1.55; }
+  .contact-links { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
+  .contact-links a { font-family: var(--mono); font-size: 13px; color: var(--ink-dim); border: 1px solid var(--line); padding: 10px 17px; border-radius: 3px; text-decoration: none; transition: all 0.25s; }
+  .contact-links a:hover { color: var(--bg); background: var(--accent); border-color: var(--accent); }
+  .foot-row { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-top: 54px; padding-top: 24px; border-top: 1px solid var(--line-soft); font-family: var(--mono); font-size: 12px; color: var(--ink-faint); }
+  .sfm-credit { margin-top: 40px; font-size: 12.5px; line-height: 1.65; color: var(--ink-faint); max-width: 62ch; font-family: var(--mono); }
+  .sfm-credit strong { color: var(--accent); font-weight: 500; }
+
+  .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.85s cubic-bezier(0.2,0.7,0.2,1), transform 0.85s cubic-bezier(0.2,0.7,0.2,1); }
+  .reveal.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } html { scroll-behavior: auto; } }
+</style>
+</head>
+<body>
+
+<canvas id="field"></canvas>
+
+<header>
+  <div class="nav-inner">
+    <div class="mark">H. Taketsugu <b>·</b> 武次 広夢</div>
+    <nav class="links">
+      <a href="#news"><span class="en">News</span><span class="ja">最新情報</span></a>
+      <a href="#research"><span class="en">Research</span><span class="ja">研究</span></a>
+      <a href="#work"><span class="en">Publications</span><span class="ja">論文</span></a>
+      <a href="#awards"><span class="en">Awards</span><span class="ja">受賞</span></a>
+      <a href="#talks"><span class="en">Talks</span><span class="ja">発表</span></a>
+      <a href="#media"><span class="en">Media</span><span class="ja">メディア</span></a>
+      <a href="#blog"><span class="en">Blog</span><span class="ja">ブログ</span></a>
+      <a href="#life"><span class="en">Life</span><span class="ja">日常</span></a>
+    </nav>
+    <div class="toggles">
+      <button class="pill" id="langBtn" aria-label="Switch language"><span id="langLabel">日本語</span></button>
+      <button class="pill" id="themeBtn" aria-label="Toggle color theme">
+        <svg class="ico" id="themeIco" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg>
+        <span id="themeLabel">Dark</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- ========== HERO ========== -->
+  <section class="hero">
+   <div class="glass hero-id">
+    <div class="eyebrow reveal"><span class="en">Ph.D. Researcher — Trajectory Forecasting</span><span class="ja">博士課程 — 軌道予測の研究者</span></div>
+    <h1 class="reveal" style="transition-delay:.05s">
+      <span class="en">Hiromu Taketsugu</span><span class="ja">武次 広夢</span>
+      <span class="jp-name en">武次 広夢</span><span class="jp-name ja">Hiromu Taketsugu</span>
+    </h1>
+    <p class="lede reveal" style="transition-delay:.12s">
+      <span class="en">Teaching machines to anticipate how people move, with <em>physical plausibility</em>, embodiment, and a sense of the social.</span>
+      <span class="ja">人の動きを、<em>物理的にもっともらしく</em>、身体性と社会性をふまえて予測する。そんな機械の知能をつくっています。</span>
+    </p>
+    <div class="meta-row reveal" style="transition-delay:.18s">
+      <span class="en"><b>Toyota Technological Institute</b> · Ukita Lab</span><span class="ja"><b>豊田工業大学</b> · 浮田研究室</span>
+      <span class="en">JSPS Research Fellow <b>(DC1)</b></span><span class="ja">日本学術振興会 特別研究員 <b>(DC1)</b></span>
+      <span class="en">Nagoya, Japan</span><span class="ja">愛知県・名古屋</span>
+    </div>
+    <div class="links-row reveal" style="transition-delay:.24s">
+      <a href="mailto:sd25502@toyota-ti.ac.jp">Email</a>
+      <a href="https://scholar.google.co.jp/citations?user=HkFAVbcAAAAJ" target="_blank" rel="noopener">Scholar</a>
+      <a href="https://github.com/ImIntheMiddle" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://www.linkedin.com/in/ImIntheMiddle/" target="_blank" rel="noopener">LinkedIn</a>
+      <a href="https://twitter.com/ImlntheMiddle" target="_blank" rel="noopener">X</a>
+    </div>
+
+    <!-- MISSION -->
+    <div class="mission reveal" style="transition-delay:.28s">
+      <div class="label"><span class="en">Mission</span><span class="ja">ミッション</span></div>
+      <div class="stmt">
+        <span class="en">Through technology, to eliminate <b>preventable deaths</b>.</span>
+        <span class="ja">テクノロジーを通じて、<b>非業の死</b>をなくす。</span>
+      </div>
+    </div>
+   </div>
+
+    <!-- BIO -->
+    <div class="glass"><div class="bio reveal" id="about" style="transition-delay:.3s">
+      <div class="portrait"><div>portrait<br>(avatar.jpg)</div></div>
+      <div class="bio-text">
+        <p class="en">I am a Ph.D. student (D1) at <strong>Toyota Technological Institute</strong>, advised by Prof. Norimichi Ukita in the Intelligent Information Media Lab. My research builds human- and scene-interactive, physics-aware systems for predicting how people move.</p>
+        <p class="en">I am a <strong>JSPS Research Fellow (DC1)</strong> and have published as first author at top-tier venues including <strong>CVPR</strong> and <strong>WACV</strong>. I completed a research internship at <strong>Woven by Toyota</strong>, and I serve the community as Technical Chair for ACCV 2026. <span style="color:var(--ink-faint)">[confirm wording before publishing]</span></p>
+        <p class="ja">豊田工業大学 博士後期課程（D1）に在籍し、知能情報メディア研究室にて<strong>浮田宗伯</strong>教授の指導のもと研究を行っています。人やシーンと相互作用する、物理を考慮した「人の動きの予測」システムを開発しています。</p>
+        <p class="ja"><strong>日本学術振興会 特別研究員（DC1）</strong>であり、<strong>CVPR</strong> や <strong>WACV</strong> などのトップ国際会議に筆頭著者として論文を発表してきました。<strong>Woven by Toyota</strong> での研究インターンを経験し、ACCV 2026 では Technical Chair を務めています。<span style="color:var(--ink-faint)">[公開前に表記要確認]</span></p>
+      </div>
+    </div></div>
+
+    <!-- NEWS -->
+    <div class="glass news-glass"><div class="news reveal" id="news" style="transition-delay:.34s">
+      <h2><span class="en">What's New</span><span class="ja">最新情報</span></h2>
+      <ul>
+        <li><span class="d">2026 / XX</span><span class="t"><span class="tag">SERVICE</span><span class="en">Serving as Technical Chair for ACCV 2026 <span style="color:var(--ink-faint)">[verify]</span></span><span class="ja">ACCV 2026 の Technical Chair を担当 <span style="color:var(--ink-faint)">[要確認]</span></span></span></li>
+        <li><span class="d">2026 / 08</span><span class="t"><span class="tag">INTERN</span><span class="en">Completed a research internship at Woven by Toyota</span><span class="ja">Woven by Toyota での研究インターンを修了</span></span></li>
+        <li><span class="d">2026 / XX</span><span class="t"><span class="tag">AWARD</span><span class="en">Received the 2026 IEEE Nagoya Section International Conference Research Presentation Award for EmLoco</span><span class="ja">EmLoco にて 2026年 IEEE名古屋支部 国際会議研究発表賞を受賞</span></span></li>
+        <li><span class="d">2025 / 02</span><span class="t"><span class="tag">CVPR'25</span><span class="en">EmLoco accepted to CVPR 2025 — <a href="https://arxiv.org/abs/2503.17267" target="_blank" rel="noopener">arXiv</a></span><span class="ja">EmLoco が CVPR 2025 に採択 — <a href="https://arxiv.org/abs/2503.17267" target="_blank" rel="noopener">arXiv</a></span></span></li>
+        <li><span class="d">placeholder</span><span class="t" style="color:var(--ink-faint)"><span class="en">Add your latest updates here. Newest first keeps the page feeling alive.</span><span class="ja">最新の更新をここに。新しい順に並べると活きのいいページになります。</span></span></li>
+      </ul>
+    </div></div>
+  </section>
+
+  <!-- ========== RESEARCH FOCUS ========== -->
+  <section class="block" id="research">
+    <div class="glass">
+    <div class="sec-head reveal"><span class="idx">01</span><h2><span class="en">Research Focus</span><span class="ja">研究の柱</span></h2></div>
+    <div class="focus reveal">
+      <div class="cell"><div class="k">/ 01</div><h4><span class="en">Trajectory Forecasting</span><span class="ja">軌道予測</span></h4><p><span class="en">Predicting pedestrian and human motion that stays physically plausible, not merely statistically likely.</span><span class="ja">統計的にありそうなだけでなく、物理的にもっともらしい歩行者・人の動きを予測します。</span></p></div>
+      <div class="cell"><div class="k">/ 02</div><h4><span class="en">Embodied AI</span><span class="ja">身体性のあるAI</span></h4><p><span class="en">Grounding prediction in locomotion and physics, so models reason about bodies rather than only pixels.</span><span class="ja">予測を移動運動と物理に根ざすことで、ピクセルだけでなく「身体」を捉えるモデルを目指します。</span></p></div>
+      <div class="cell"><div class="k">/ 03</div><h4><span class="en">Social Robotics</span><span class="ja">社会的ロボティクス</span></h4><p><span class="en">Navigation in shared human spaces, aimed at systems that help prevent avoidable harm.</span><span class="ja">人と共有する空間での移動・行動を扱い、防げる被害をなくすシステムを目指します。</span></p></div>
+    </div>
+    </div>
+  </section>
+
+  <!-- ========== PUBLICATIONS ========== -->
+  <section class="block" id="work">
+    <div class="glass">
+    <div class="sec-head reveal"><span class="idx">02</span><h2><span class="en">Selected Publications</span><span class="ja">主要論文</span></h2><span class="note"><a href="https://scholar.google.co.jp/citations?user=HkFAVbcAAAAJ" target="_blank" rel="noopener"><span class="en">Full list on Scholar →</span><span class="ja">全業績は Scholar へ →</span></a></span></div>
+
+    <div class="pub reveal"><div class="thumb"><div class="ph">teaser<br>(emloco.png)</div></div><div>
+      <span class="venue">CVPR 2025 <span class="rate">· poster · 22% accept</span></span>
+      <h3>Physical Plausibility-aware Trajectory Prediction via Locomotion Embodiment</h3>
+      <div class="auth"><span class="me">H. Taketsugu</span>, T. Oba, T. Maeda, S. Nobuhara, N. Ukita</div>
+      <div class="pub-links"><a href="https://arxiv.org/abs/2503.17267" target="_blank" rel="noopener">arXiv</a><a href="#">Project</a><a href="#">Code</a></div></div></div>
+
+    <div class="pub reveal"><div class="thumb"><div class="ph">teaser<br>(mmcm.png)</div></div><div>
+      <span class="venue">WACV 2026 <span class="rate">· co-author</span></span>
+      <h3>MMCM <span style="color:var(--ink-faint);font-weight:400">— confirm full title</span></h3>
+      <div class="auth">K. Shimbo, <span class="me">H. Taketsugu</span>, N. Ukita</div>
+      <div class="pub-links"><a href="#" target="_blank" rel="noopener">arXiv</a></div></div></div>
+
+    <div class="pub reveal"><div class="thumb"><div class="ph">teaser image</div></div><div>
+      <span class="venue">arXiv preprint</span>
+      <h3>Human Motion Prediction via Test-domain-aware Adaptation with Easily-available Human Motions Estimated from Videos</h3>
+      <div class="auth">K. Shimbo, <span class="me">H. Taketsugu</span>, N. Ukita</div>
+      <div class="pub-links"><a href="https://arxiv.org/abs/2505.07301" target="_blank" rel="noopener">arXiv</a></div></div></div>
+
+    <div class="pub reveal"><div class="thumb"><div class="ph">teaser image</div></div><div>
+      <span class="venue">MVA 2023 <span class="rate">· oral · 17% accept</span></span>
+      <h3>Uncertainty Criteria in Active Transfer Learning for Efficient Video-Specific Human Pose Estimation</h3>
+      <div class="auth"><span class="me">H. Taketsugu</span>, N. Ukita</div>
+      <div class="pub-links"><a href="https://ieeexplore.ieee.org/abstract/document/10215565" target="_blank" rel="noopener">IEEE</a></div></div></div>
+
+    <div class="pub reveal"><div class="thumb"><div class="ph">teaser image</div></div><div>
+      <span class="venue">WACV 2024 <span class="rate">· poster · 41% accept</span></span>
+      <h3>Active Transfer Learning for Efficient Video-Specific Human Pose Estimation</h3>
+      <div class="auth"><span class="me">H. Taketsugu</span>, N. Ukita</div>
+      <div class="pub-links"><a href="https://arxiv.org/abs/2311.05041" target="_blank" rel="noopener">arXiv</a></div></div></div>
+    </div>
+  </section>
+
+  <!-- ========== AWARDS ========== -->
+  <section class="block" id="awards">
+    <div class="glass">
+    <div class="sec-head reveal"><span class="idx">03</span><h2><span class="en">Awards & Honors</span><span class="ja">受賞・助成</span></h2></div>
+    <div class="awards reveal">
+      <div class="award"><span class="yr">2026</span><span class="name"><span class="en">IEEE Nagoya Section International Conference Research Presentation Award<span class="org">For EmLoco (CVPR 2025) · confirm exact award name</span></span><span class="ja">IEEE名古屋支部 国際会議研究発表賞<span class="org">EmLoco (CVPR 2025) に対して · 正式名称要確認</span></span></span></div>
+      <div class="award"><span class="yr">2025</span><span class="name"><span class="en">JSPS Research Fellowship for Young Scientists (DC1)<span class="org">Japan Society for the Promotion of Science · ~14% acceptance</span></span><span class="ja">日本学術振興会 特別研究員 (DC1)<span class="org">採用率 約14%</span></span></span></div>
+      <div class="award"><span class="yr">20XX</span><span class="name" style="color:var(--ink-faint)"><span class="en">Add scholarships, travel grants, or student awards here<span class="org">Year · issuing organization</span></span><span class="ja">奨学金・渡航助成・学生表彰などをここに<span class="org">年 · 団体名</span></span></span></div>
+    </div>
+    </div>
+  </section>
+
+  <!-- ========== TALKS ========== -->
+  <section class="block" id="talks">
+    <div class="glass">
+    <div class="sec-head reveal"><span class="idx">04</span><h2><span class="en">Talks & Presentations</span><span class="ja">講演・発表</span></h2></div>
+    <div class="talks-grid reveal">
+      <div class="talk"><div class="pic"><div class="ph">photo</div></div><div class="cap"><span class="v">CVPR 2025</span><h4><span class="en">EmLoco poster session</span><span class="ja">EmLoco ポスター発表</span></h4><p><span class="en">Add city / date / a note</span><span class="ja">場所・日付・一言を追加</span></p></div></div>
+      <div class="talk"><div class="pic"><div class="ph">photo</div></div><div class="cap"><span class="v"><span class="en">Invited / Lab talk</span><span class="ja">招待・研究室講演</span></span><h4><span class="en">Add an invited talk</span><span class="ja">招待講演を追加</span></h4><p><span class="en">Confirm details</span><span class="ja">詳細を確認</span></p></div></div>
+      <div class="talk"><div class="pic"><div class="ph">photo</div></div><div class="cap"><span class="v"><span class="en">Workshop</span><span class="ja">ワークショップ</span></span><h4><span class="en">Add a workshop talk</span><span class="ja">ワークショップ発表を追加</span></h4><p><span class="en">Venue · date</span><span class="ja">会場 · 日付</span></p></div></div>
+    </div>
+    </div>
+  </section>
+
+  <!-- ========== MEDIA ========== -->
+  <section class="block" id="media">
+    <div class="glass">
+    <div class="sec-head reveal"><span class="idx">05</span><h2><span class="en">Media & Coverage</span><span class="ja">メディア掲載</span></h2></div>
+    <div class="media-list reveal">
+      <div class="media-item"><span class="m-title"><a href="#" target="_blank" rel="noopener"><span class="en">University feature on the award / research</span><span class="ja">受賞・研究に関する大学の紹介ページ</span></a><span class="src">Toyota Technological Institute · add URL</span></span><span class="m-date">2026 / XX</span></div>
+      <div class="media-item"><span class="m-title" style="color:var(--ink-faint)"><span class="en">Add press, university news, podcasts, or interviews</span><span class="ja">プレス・大学ニュース・ポッドキャスト・取材などを追加</span><span class="src">source · add URL</span></span><span class="m-date">20XX</span></div>
+    </div>
+    </div>
+  </section>
+
+  <!-- ========== BLOG ========== -->
+  <section class="block" id="blog">
+    <div class="glass">
+    <div class="sec-head reveal"><span class="idx">06</span><h2><span class="en">Blog</span><span class="ja">ブログ</span></h2><span class="note"><span class="en">research notes · life updates</span><span class="ja">研究メモ · 日常の記録</span></span></div>
+    <div class="blog-grid reveal"><div class="blog-empty"><span class="en">No posts yet. When you publish, each entry becomes a card here: date, title, and a one-line summary.</span><span class="ja">まだ投稿はありません。公開すると、日付・タイトル・一行要約のカードがここに並びます。</span></div></div>
+    </div>
+  </section>
+
+  <!-- ========== LIFE ========== -->
+  <section class="block" id="life">
+    <div class="glass">
+    <div class="sec-head reveal"><span class="idx">07</span><h2><span class="en">Outside the Lab</span><span class="ja">研究室の外で</span></h2></div>
+    <p class="life-intro reveal"><span class="en">Research is most of the picture, but not all of it. A husband and a father of one, raising a small family between two languages, and a firm believer that the body and the mind train together.</span><span class="ja">研究は人生の大半ですが、すべてではありません。二つの言語のあいだで小さな家族を育てる、一児の父であり夫。心と体は一緒に鍛えるもの、と信じています。</span></p>
+    <div class="life-grid reveal">
+      <div class="life-item"><h4><span class="dot"></span><span class="en">Family & Home</span><span class="ja">家族と暮らし</span></h4><p><span class="en">Father of one daughter and partner to a wonderful Vietnamese wife. Home runs across Japanese and Vietnamese, kept warm by a friendly Maltese and a lovely Ragdoll-Siamese mix who also keep the schedule honest.</span><span class="ja">一児（娘）の父であり、素敵なベトナム人の妻のパートナー。家庭は日本語とベトナム語が行き交います。人懐っこいマルチーズと、ラグドール×シャム猫のミックスが、暮らしを温かく、そして規則正しくしてくれます。</span></p></div>
+      <div class="life-item"><h4><span class="dot"></span><span class="en">Community — Vista</span><span class="ja">コミュニティ — Vista</span></h4><p><span class="en">I run <strong>Vista</strong>, a Discord community for mutual progress and goal management, founded with a close friend in 2020 and still going strong.</span><span class="ja"><strong>Vista</strong> という、互いの進捗・目標管理のための Discord コミュニティを運営しています。2020年に親友と立ち上げ、今も続いています。</span></p></div>
+      <div class="life-item"><h4><span class="dot"></span><span class="en">Languages</span><span class="ja">語学</span></h4><p><span class="en">A long-running language habit, with a Duolingo streak past 500 days. Mainly English and Vietnamese, picking up new places and new people along the way.</span><span class="ja">長く続く語学の習慣。Duolingo の連続記録は500日超え。主に英語とベトナム語を学びながら、新しい場所や人とのつながりを楽しんでいます。</span></p></div>
+      <div class="life-item"><h4><span class="dot"></span><span class="en">Training</span><span class="ja">トレーニング</span></h4><p><span class="en">Former captain of the university Spartan Race club. Exercise is a reliable partner that resets the mind and feeds back into research focus.</span><span class="ja">大学のスパルタンレース部の元キャプテン。運動は頭をリセットし、研究の集中力に還ってくる、頼れる相棒です。</span></p></div>
+      <div class="life-item"><h4><span class="dot"></span><span class="en">Reading</span><span class="ja">読書</span></h4><p><span class="en">Drawn to books that re-examine ordinary life through a scientific lens, or leave room for quiet reflection. A personal compass I call "Root": chase the underlying principle, not the surface noise.</span><span class="ja">日常を科学の視点で捉え直す本や、静かに思索できる本が好きです。「Root」と呼ぶ自分の指針があります。表面のノイズではなく、根本の原理を追うこと。</span></p></div>
+      <div class="life-item"><h4><span class="dot"></span><span class="en">Tools & Gadgets</span><span class="ja">ツールとガジェット</span></h4><p><span class="en">Always trying out new tools and gadgets, hunting for small ways to work and live a little better.</span><span class="ja">新しいツールや新興ガジェットを次々と試すのが好きです。仕事や暮らしを少し良くする工夫を探しています。</span></p></div>
+    </div>
+    <div class="life-photos reveal"><div class="ph-box">photo</div><div class="ph-box">photo</div><div class="ph-box">photo</div><div class="ph-box">photo</div></div>
+    </div>
+  </section>
+
+  <!-- ========== CONTACT ========== -->
+  <footer id="contact">
+    <div class="glass">
+    <div class="reveal">
+      <div class="contact-head"><span class="en">Let's talk.</span><span class="ja">お気軽にご連絡を。</span></div>
+      <p class="contact-sub"><span class="en">For research collaborations, social-navigation problems, academic or industry roles, or a language exchange.</span><span class="ja">研究の共同・社会的ナビゲーションの課題・アカデミアや産業界のポジション・言語交換など、何でも。</span></p>
+      <div class="contact-links">
+        <a href="mailto:sd25502@toyota-ti.ac.jp">sd25502@toyota-ti.ac.jp</a>
+        <a href="https://scholar.google.co.jp/citations?user=HkFAVbcAAAAJ" target="_blank" rel="noopener">Google Scholar</a>
+        <a href="https://github.com/ImIntheMiddle" target="_blank" rel="noopener">GitHub</a>
+        <a href="https://www.linkedin.com/in/ImIntheMiddle/" target="_blank" rel="noopener">LinkedIn</a>
+        <a href="https://twitter.com/ImlntheMiddle" target="_blank" rel="noopener">X</a>
+      </div>
+    </div>
+    <p class="sfm-credit reveal">
+      <span class="en">↑ The crowd above is a live <strong>Social Force Model</strong> simulation. People, cars, and a robot pursue goals while avoiding one another and the scattered objects, and each one fans out a few plausible futures, much like the trajectory forecasting I study.</span>
+      <span class="ja">↑ 上を歩く群衆は、リアルタイムの <strong>Social Force Model</strong> シミュレーションです。人・車・ロボットがゴールを目指しつつ、互いと点在する物体を避け、それぞれが「ありえる未来」を扇状に予測します。私が研究している軌道予測そのものを、背景にしれっと忍ばせています。</span>
+    </p>
+    <div class="foot-row reveal">
+      <span>© 2026 Hiromu Taketsugu · 武次 広夢</span>
+      <span class="en">Built around pedestrian trajectory forecasting</span><span class="ja">歩行者の軌道予測をモチーフに</span>
+    </div>
+    </div>
+  </footer>
+
+</main>
+
+<script>
+/* ===================== LANG TOGGLE ===================== */
+(function () {
+  const root = document.documentElement;
+  const btn = document.getElementById('langBtn');
+  const label = document.getElementById('langLabel');
+  function sync() {
+    const ja = root.getAttribute('data-lang') === 'ja';
+    label.textContent = ja ? 'EN' : '日本語';
+    root.setAttribute('lang', ja ? 'ja' : 'en');
+  }
+  sync();
+  btn.addEventListener('click', () => {
+    const ja = root.getAttribute('data-lang') === 'ja';
+    root.setAttribute('data-lang', ja ? 'en' : 'ja');
+    sync();
+  });
+})();
+
+/* ===================== THEME TOGGLE ===================== */
+(function () {
+  const root = document.documentElement;
+  const btn = document.getElementById('themeBtn');
+  const label = document.getElementById('themeLabel');
+  const ico = document.getElementById('themeIco');
+  const sun = '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/>';
+  const moon = '<path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/>';
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) root.setAttribute('data-theme', 'dark');
+  function sync() {
+    const dark = root.getAttribute('data-theme') === 'dark';
+    label.textContent = dark ? 'Light' : 'Dark';
+    ico.innerHTML = dark ? sun : moon;
+  }
+  sync();
+  btn.addEventListener('click', () => {
+    const dark = root.getAttribute('data-theme') === 'dark';
+    root.setAttribute('data-theme', dark ? 'light' : 'dark');
+    sync();
+  });
+})();
+
+/* ============================================================
+   Social-force crowd: fleshed-out human silhouettes that walk,
+   avoid each other AND avoid scattered scene objects.
+   Pseudo-3D ground via depth scaling + cast shadows.
+   Heavier than stick figures but still pure canvas.
+   ============================================================ */
+(function () {
+  const canvas = document.getElementById('field');
+  const ctx = canvas.getContext('2d');
+  const root = document.documentElement;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let W, H, DPR;
+  function resize() {
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    W = canvas.clientWidth; H = canvas.clientHeight;
+    canvas.width = W * DPR; canvas.height = H * DPR;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  function css(v) { return getComputedStyle(root).getPropertyValue(v).trim(); }
+  let PALETTE, TRAIL, SHADOW_A;
+  function loadColors() {
+    PALETTE = [
+      [+css('--ped-r'),  +css('--ped-g'),  +css('--ped-b')],
+      [+css('--ped2-r'), +css('--ped2-g'), +css('--ped2-b')],
+      [+css('--ped3-r'), +css('--ped3-g'), +css('--ped3-b')]
+    ];
+    TRAIL = [+css('--trail-r'), +css('--trail-g'), +css('--trail-b')];
+    SHADOW_A = +css('--shadow-a') || 0.12;
+  }
+  loadColors();
+  new MutationObserver(() => setTimeout(loadColors, 60)).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+
+  const rand = (a, b) => a + Math.random() * (b - a);
+  function depthScale(y) { return 0.62 + (y / H) * 0.9; }
+
+  /* -------- static scene objects (obstacles) -------- */
+  // kinds: 'planter' (round), 'bench' (rect), 'pole' (thin round), 'kiosk' (tall rect)
+  // each object also picks an accent color from this set for variety
+  const OBJ_TINTS = [
+    [122, 138, 95],   // sage
+    [194, 96, 58],    // terracotta
+    [217, 148, 4],    // amber
+    [96, 130, 140],   // teal-grey
+    [150, 110, 140],  // muted plum
+  ];
+  let OBJECTS = [];
+  function makeObjects() {
+    const out = [];
+    const n = Math.max(5, Math.min(12, Math.round((W * H) / 145000)));
+    const kinds = ['planter', 'bench', 'pole', 'planter', 'bench', 'kiosk', 'planter'];
+    let tries = 0;
+    while (out.length < n && tries < 300) {
+      tries++;
+      const k = kinds[(Math.random() * kinds.length) | 0];
+      const x = rand(W * 0.06, W * 0.94), y = rand(H * 0.16, H * 0.92);
+      let r;
+      if (k === 'planter') r = rand(30, 52);
+      else if (k === 'bench') r = rand(38, 60);
+      else if (k === 'kiosk') r = rand(34, 50);
+      else r = rand(10, 16); // pole
+      // keep them from overlapping too much
+      if (out.some(o => Math.hypot(o.x - x, o.y - y) < (o.r + r + 26))) continue;
+      const tint = OBJ_TINTS[(Math.random() * OBJ_TINTS.length) | 0];
+      out.push({ k, x, y, r, tint });
+    }
+    return out;
+  }
+
+  function drawObject(o) {
+    const ds = depthScale(o.y);
+    const t = o.tint;
+    const dark = root.getAttribute('data-theme') === 'dark';
+    const fill = 'rgba(' + t[0] + ',' + t[1] + ',' + t[2] + ',' + (dark ? 0.12 : 0.10) + ')';
+    const line = 'rgba(' + t[0] + ',' + t[1] + ',' + t[2] + ',' + (dark ? 0.5 : 0.45) + ')';
+    ctx.save();
+    ctx.translate(o.x, o.y);
+    // shadow
+    ctx.beginPath();
+    ctx.ellipse(0, o.r * 0.16 + 2, o.r * 0.95, o.r * 0.28, 0, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(20,15,10,' + (SHADOW_A * 0.5) + ')';
+    ctx.fill();
+    ctx.fillStyle = fill; ctx.strokeStyle = line; ctx.lineWidth = 1.4;
+    if (o.k === 'planter') {
+      ctx.beginPath(); ctx.arc(0, 0, o.r * 0.8, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      // little sprigs in the same tint
+      ctx.strokeStyle = 'rgba(' + t[0] + ',' + t[1] + ',' + t[2] + ',0.5)';
+      ctx.lineWidth = 1.6;
+      for (let i = 0; i < 6; i++) {
+        const a = (i / 6) * Math.PI * 2 + 0.3;
+        ctx.beginPath(); ctx.moveTo(0, 0);
+        ctx.lineTo(Math.cos(a) * o.r * 0.6, Math.sin(a) * o.r * 0.6 - o.r * 0.32);
+        ctx.stroke();
+      }
+    } else if (o.k === 'bench') {
+      const w = o.r * 1.7, h = o.r * 0.7;
+      ctx.beginPath(); ctx.rect(-w / 2, -h / 2, w, h); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(-w / 2, 0); ctx.lineTo(w / 2, 0); ctx.stroke();
+      // legs
+      ctx.beginPath(); ctx.moveTo(-w / 2 + 4, h / 2); ctx.lineTo(-w / 2 + 4, h / 2 + h * 0.4); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(w / 2 - 4, h / 2); ctx.lineTo(w / 2 - 4, h / 2 + h * 0.4); ctx.stroke();
+    } else if (o.k === 'kiosk') {
+      const w = o.r * 1.1, h = o.r * 1.4;
+      ctx.beginPath(); ctx.rect(-w / 2, -h, w, h); ctx.fill(); ctx.stroke();
+      // roof line
+      ctx.beginPath(); ctx.moveTo(-w / 2 - 4, -h); ctx.lineTo(w / 2 + 4, -h); ctx.stroke();
+    } else { // pole
+      ctx.beginPath(); ctx.arc(0, 0, o.r * 0.5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, -o.r * 1.6); ctx.stroke();
+    }
+    ctx.restore();
+  }
+
+  /* -------- pedestrians -------- */
+  class Pedestrian {
+    constructor() {
+      this.x = rand(0, W); this.y = rand(0, H);
+      this.vx = 0; this.vy = 0;
+      this.maxSpeed = rand(0.24, 0.62);
+      this.radius = rand(30, 50);
+      this.ci = (Math.random() * 3) | 0;
+      this.tail = [];
+      this.maxTail = 22 + ((Math.random() * 12) | 0);
+      this.phase = Math.random() * Math.PI * 2;
+      this.baseH = rand(20, 27);
+      this.face = Math.random() < 0.5 ? 1 : -1;
+      this.newGoal();
+    }
+    newGoal() {
+      // aim toward the opposite half so journeys are long and legible
+      this.gx = this.x < W / 2 ? rand(W * 0.55, W - 30) : rand(30, W * 0.45);
+      this.gy = rand(40, H - 40);
+    }
+    step(others) {
+      let dx = this.gx - this.x, dy = this.gy - this.y;
+      let dist = Math.hypot(dx, dy) || 1;
+      if (dist < 36) { this.newGoal(); dx = this.gx - this.x; dy = this.gy - this.y; dist = Math.hypot(dx, dy) || 1; }
+      let ax = (dx / dist) * 0.055, ay = (dy / dist) * 0.055;
+      // avoid other pedestrians
+      for (let o of others) {
+        if (o === this) continue;
+        const rx = this.x - o.x, ry = this.y - o.y;
+        const d = Math.hypot(rx, ry);
+        const inf = this.radius + o.radius;
+        if (d > 0 && d < inf) { const f = (1 - d / inf) * 0.15; ax += (rx / d) * f; ay += (ry / d) * f; }
+      }
+      // avoid scene objects (stronger, closer-range)
+      for (let ob of OBJECTS) {
+        const rx = this.x - ob.x, ry = this.y - ob.y;
+        const d = Math.hypot(rx, ry);
+        const inf = ob.r + 34;
+        if (d > 0 && d < inf) { const f = (1 - d / inf) * 0.26; ax += (rx / d) * f; ay += (ry / d) * f; }
+      }
+      const m = 60;
+      if (this.x < m) ax += 0.013; if (this.x > W - m) ax -= 0.013;
+      if (this.y < m) ay += 0.013; if (this.y > H - m) ay -= 0.013;
+      this.vx += ax; this.vy += ay;
+      this.vx *= 0.95; this.vy *= 0.95;
+      const sp = Math.hypot(this.vx, this.vy);
+      if (sp > this.maxSpeed) { this.vx = this.vx / sp * this.maxSpeed; this.vy = this.vy / sp * this.maxSpeed; }
+      this.x += this.vx; this.y += this.vy;
+      const mm = 90;
+      if (this.x < -mm) this.x = W + mm; if (this.x > W + mm) this.x = -mm;
+      if (this.y < -mm) this.y = H + mm; if (this.y > H + mm) this.y = -mm;
+      if (this.vx > 0.04) this.face = 1; else if (this.vx < -0.04) this.face = -1;
+      this.phase += sp * 0.26;
+      this.tail.push([this.x, this.y]);
+      if (this.tail.length > this.maxTail) this.tail.shift();
+    }
+    drawTrail() {
+      if (this.tail.length < 2) return;
+      for (let i = 1; i < this.tail.length; i++) {
+        const t = i / this.tail.length;
+        ctx.beginPath();
+        ctx.moveTo(this.tail[i - 1][0], this.tail[i - 1][1]);
+        ctx.lineTo(this.tail[i][0], this.tail[i][1]);
+        ctx.strokeStyle = 'rgba(' + TRAIL[0] + ',' + TRAIL[1] + ',' + TRAIL[2] + ',' + (t * 0.16) + ')';
+        ctx.lineWidth = 1.0; ctx.stroke();
+      }
+    }
+    drawFutures() {
+      const sp = Math.hypot(this.vx, this.vy);
+      if (sp < 0.05) return;
+      const baseA = Math.atan2(this.vy, this.vx);
+      const c = PALETTE[this.ci];
+      const steps = 30, offs = [-0.28, 0, 0.28];
+      for (let k = 0; k < 3; k++) {
+        let px = this.x, py = this.y, ang = baseA + offs[k];
+        const drift = -offs[k] * 0.5 / steps;
+        ctx.beginPath(); ctx.moveTo(px, py);
+        for (let i = 1; i <= steps; i++) { ang += drift; px += Math.cos(ang) * (sp * 3.4 + 1.0); py += Math.sin(ang) * (sp * 3.4 + 1.0); ctx.lineTo(px, py); }
+        ctx.strokeStyle = 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + (k === 1 ? 0.5 : 0.32) + ')';
+        ctx.lineWidth = k === 1 ? 1.7 : 1.1;
+        ctx.setLineDash([2, 5]); ctx.stroke(); ctx.setLineDash([]);
+        // predicted endpoint
+        ctx.beginPath(); ctx.arc(px, py, k === 1 ? 2.6 : 1.8, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + (k === 1 ? 0.6 : 0.4) + ')';
+        ctx.fill();
+      }
+    }
+    // a tapered limb: two segments (thigh/shin or upper/fore-arm) with a joint
+    limb(x0, y0, ang1, len1, ang2, len2, w0, w1) {
+      const jx = x0 + Math.cos(ang1) * len1, jy = y0 + Math.sin(ang1) * len1;
+      const ex = jx + Math.cos(ang2) * len2, ey = jy + Math.sin(ang2) * len2;
+      // segment 1
+      ctx.lineWidth = w0; ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(jx, jy); ctx.stroke();
+      // segment 2 (thinner)
+      ctx.lineWidth = w1; ctx.beginPath(); ctx.moveTo(jx, jy); ctx.lineTo(ex, ey); ctx.stroke();
+      return [ex, ey];
+    }
+    drawFigure() {
+      const sp = Math.hypot(this.vx, this.vy);
+      const c = PALETTE[this.ci];
+      const col = 'rgb(' + c[0] + ',' + c[1] + ',' + c[2] + ')';
+      const colSoft = 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',0.92)';
+      const ds = depthScale(this.y);
+      const h = this.baseH * ds;
+      const f = this.face;
+      const footY = this.y, footX = this.x;
+      const hipY = footY - h * 0.46;
+      const neckY = footY - h * 0.84;
+      const headR = h * 0.13;
+      const lean = Math.min(sp / this.maxSpeed, 1) * 0.12; // forward lean radians
+
+      const stride = (0.35 + Math.min(sp / this.maxSpeed, 1) * 0.7);
+      const p = this.phase;
+      const bob = Math.abs(Math.cos(p)) * h * 0.035;
+
+      // ground shadow
+      ctx.beginPath();
+      ctx.ellipse(footX, footY + 1, h * 0.32, h * 0.095, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(20,15,10,' + (SHADOW_A * (0.5 + ds * 0.4)) + ')';
+      ctx.fill();
+
+      ctx.save();
+      ctx.translate(0, -bob);
+      ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      ctx.strokeStyle = col; ctx.fillStyle = col;
+
+      const down = Math.PI / 2;            // pointing down on screen
+      const hipX = footX;
+      const neckX = footX + f * Math.sin(lean) * h * 0.5;
+
+      const thigh = h * 0.26, shin = h * 0.26;
+      const uparm = h * 0.2, forearm = h * 0.2;
+
+      // BACK leg + BACK arm first (behind body), slightly faded
+      ctx.globalAlpha = 0.55;
+      // back leg
+      let swB = Math.sin(p + Math.PI) * 0.5 * stride;
+      this.limb(hipX, hipY, down + f * swB, thigh, down + f * (swB + 0.25 * stride), shin, h * 0.12, h * 0.09);
+      // back arm
+      let aB = Math.sin(p) * 0.45 * stride;
+      this.limb(neckX, neckY + h * 0.04, down + f * aB, uparm, down + f * (aB + 0.3 * stride), forearm, h * 0.09, h * 0.07);
+      ctx.globalAlpha = 1;
+
+      // TORSO as tapered capsule (filled)
+      const shoulderW = h * 0.15, hipW = h * 0.11;
+      const tx = neckX, ty = neckY, bx = hipX, by = hipY;
+      const ang = Math.atan2(by - ty, bx - tx);
+      const px = Math.cos(ang + Math.PI / 2), py = Math.sin(ang + Math.PI / 2);
+      ctx.beginPath();
+      ctx.moveTo(tx + px * shoulderW, ty + py * shoulderW);
+      ctx.lineTo(bx + px * hipW, by + py * hipW);
+      ctx.lineTo(bx - px * hipW, by - py * hipW);
+      ctx.lineTo(tx - px * shoulderW, ty - py * shoulderW);
+      ctx.closePath();
+      ctx.fillStyle = col; ctx.fill();
+
+      // FRONT leg + FRONT arm (over body)
+      ctx.strokeStyle = col;
+      let swF = Math.sin(p) * 0.5 * stride;
+      this.limb(hipX, hipY, down + f * swF, thigh, down + f * (swF + 0.25 * stride), shin, h * 0.13, h * 0.1);
+      let aF = Math.sin(p + Math.PI) * 0.45 * stride;
+      this.limb(neckX, neckY + h * 0.04, down + f * aF, uparm, down + f * (aF + 0.3 * stride), forearm, h * 0.1, h * 0.08);
+
+      // HEAD (slightly ahead in facing direction)
+      ctx.beginPath();
+      ctx.arc(neckX + f * h * 0.05, neckY - headR * 0.9, headR, 0, Math.PI * 2);
+      ctx.fillStyle = col; ctx.fill();
+
+      ctx.restore();
+    }
+  }
+
+  /* -------- moving vehicles: car & robot -------- */
+  // car body colors (varied) and robot accent-light colors (grey body stays constant)
+  const CAR_TINTS = [
+    [96, 130, 160],   // steel blue
+    [180, 92, 80],    // brick red
+    [120, 150, 120],  // muted green
+    [200, 170, 90],   // sandy gold
+    [110, 110, 130],  // slate
+  ];
+  const ROBOT_LIGHTS = [
+    [120, 230, 210],  // teal
+    [240, 150, 90],   // amber-orange
+    [150, 200, 250],  // sky blue
+    [200, 150, 230],  // violet
+    [250, 200, 110],  // warm yellow
+  ];
+  class Vehicle {
+    constructor(kind) {
+      this.kind = kind; // 'car' | 'robot'
+      this.x = rand(0, W); this.y = rand(0, H);
+      this.vx = 0; this.vy = 0;
+      // car keeps its speed; robot moves at a calmer, people-like pace
+      this.maxSpeed = kind === 'car' ? rand(0.55, 0.85) : rand(0.26, 0.5);
+      this.radius = kind === 'car' ? 58 : 34;     // robot now human-scale
+      this.tail = [];
+      this.maxTail = 26;
+      this.heading = rand(0, Math.PI * 2);
+      // car: varied body color. robot: constant grey body, varied light color
+      this.tint = kind === 'car'
+        ? CAR_TINTS[(Math.random() * CAR_TINTS.length) | 0]
+        : [148, 150, 158];
+      this.light = ROBOT_LIGHTS[(Math.random() * ROBOT_LIGHTS.length) | 0];
+      this.spin = 0;
+      this.face = Math.random() < 0.5 ? 1 : -1;
+      this.wheel = 0;
+      this.newGoal();
+    }
+    newGoal() {
+      this.gx = this.x < W / 2 ? rand(W * 0.55, W - 30) : rand(30, W * 0.45);
+      this.gy = rand(40, H - 40);
+    }
+    step(others) {
+      let dx = this.gx - this.x, dy = this.gy - this.y;
+      let dist = Math.hypot(dx, dy) || 1;
+      if (dist < 40) { this.newGoal(); dx = this.gx - this.x; dy = this.gy - this.y; dist = Math.hypot(dx, dy) || 1; }
+      let ax = (dx / dist) * 0.05, ay = (dy / dist) * 0.05;
+      for (let o of others) {
+        if (o === this) continue;
+        const rx = this.x - o.x, ry = this.y - o.y;
+        const d = Math.hypot(rx, ry);
+        const inf = this.radius + (o.radius || 30);
+        if (d > 0 && d < inf) { const fr = (1 - d / inf) * 0.18; ax += (rx / d) * fr; ay += (ry / d) * fr; }
+      }
+      for (let ob of OBJECTS) {
+        const rx = this.x - ob.x, ry = this.y - ob.y;
+        const d = Math.hypot(rx, ry);
+        const inf = ob.r + 42;
+        if (d > 0 && d < inf) { const fr = (1 - d / inf) * 0.3; ax += (rx / d) * fr; ay += (ry / d) * fr; }
+      }
+      const m = 70;
+      if (this.x < m) ax += 0.014; if (this.x > W - m) ax -= 0.014;
+      if (this.y < m) ay += 0.014; if (this.y > H - m) ay -= 0.014;
+      this.vx += ax; this.vy += ay;
+      this.vx *= 0.95; this.vy *= 0.95;
+      const sp = Math.hypot(this.vx, this.vy);
+      if (sp > this.maxSpeed) { this.vx = this.vx / sp * this.maxSpeed; this.vy = this.vy / sp * this.maxSpeed; }
+      this.x += this.vx; this.y += this.vy;
+      const mm = 110;
+      if (this.x < -mm) this.x = W + mm; if (this.x > W + mm) this.x = -mm;
+      if (this.y < -mm) this.y = H + mm; if (this.y > H + mm) this.y = -mm;
+      if (sp > 0.05) this.heading = Math.atan2(this.vy, this.vx);
+      if (this.vx > 0.04) this.face = 1; else if (this.vx < -0.04) this.face = -1;
+      this.spin += sp * 0.5;
+      this.wheel = (this.wheel || 0) + sp * 0.6;
+      this.tail.push([this.x, this.y]);
+      if (this.tail.length > this.maxTail) this.tail.shift();
+    }
+    drawTrail() {
+      if (this.tail.length < 2) return;
+      const t0 = this.tint;
+      for (let i = 1; i < this.tail.length; i++) {
+        const t = i / this.tail.length;
+        ctx.beginPath();
+        ctx.moveTo(this.tail[i - 1][0], this.tail[i - 1][1]);
+        ctx.lineTo(this.tail[i][0], this.tail[i][1]);
+        ctx.strokeStyle = 'rgba(' + t0[0] + ',' + t0[1] + ',' + t0[2] + ',' + (t * 0.2) + ')';
+        ctx.lineWidth = 1.2; ctx.stroke();
+      }
+    }
+    drawFutures() {
+      const sp = Math.hypot(this.vx, this.vy);
+      if (sp < 0.05) return;
+      const c = this.tint, steps = 30;
+      let px = this.x, py = this.y, ang = this.heading;
+      ctx.beginPath(); ctx.moveTo(px, py);
+      for (let i = 1; i <= steps; i++) { px += Math.cos(ang) * (sp * 3.4 + 1.0); py += Math.sin(ang) * (sp * 3.4 + 1.0); ctx.lineTo(px, py); }
+      ctx.strokeStyle = 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',0.45)';
+      ctx.lineWidth = 1.6; ctx.setLineDash([2, 5]); ctx.stroke(); ctx.setLineDash([]);
+      ctx.beginPath(); ctx.arc(px, py, 2.6, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',0.55)'; ctx.fill();
+    }
+    drawFigure() {
+      const ds = depthScale(this.y);
+      const c = this.tint;
+      const col = 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',0.9)';
+      const line = 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',1)';
+      ctx.save();
+      ctx.translate(this.x, this.y);
+      // shadow (under, before rotation)
+      ctx.beginPath();
+      const sw = (this.kind === 'car' ? 26 : 13) * ds;
+      ctx.ellipse(0, 3, sw, sw * 0.42, 0, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(20,15,10,' + (SHADOW_A * 0.6) + ')'; ctx.fill();
+      ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+      if (this.kind === 'car') {
+        ctx.rotate(this.heading);
+        const L = 40 * ds, Wd = 19 * ds;
+        // body (rounded rect, pointing +x = forward)
+        const r = 6 * ds;
+        ctx.beginPath();
+        ctx.moveTo(-L/2 + r, -Wd/2);
+        ctx.lineTo(L/2 - r, -Wd/2); ctx.quadraticCurveTo(L/2, -Wd/2, L/2, -Wd/2 + r);
+        ctx.lineTo(L/2, Wd/2 - r); ctx.quadraticCurveTo(L/2, Wd/2, L/2 - r, Wd/2);
+        ctx.lineTo(-L/2 + r, Wd/2); ctx.quadraticCurveTo(-L/2, Wd/2, -L/2, Wd/2 - r);
+        ctx.lineTo(-L/2, -Wd/2 + r); ctx.quadraticCurveTo(-L/2, -Wd/2, -L/2 + r, -Wd/2);
+        ctx.closePath();
+        ctx.fillStyle = col; ctx.fill(); ctx.strokeStyle = line; ctx.lineWidth = 1.4; ctx.stroke();
+        // windshield
+        ctx.fillStyle = 'rgba(255,255,255,0.18)';
+        ctx.fillRect(L*0.05, -Wd/2 + 3*ds, L*0.22, Wd - 6*ds);
+        // headlights
+        ctx.fillStyle = 'rgba(255,240,200,0.85)';
+        ctx.beginPath(); ctx.arc(L/2 - 2*ds, -Wd/2 + 4*ds, 1.6*ds, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(L/2 - 2*ds, Wd/2 - 4*ds, 1.6*ds, 0, Math.PI*2); ctx.fill();
+      } else {
+        // ROBOT: upright side-view, human-scale, with wheels + an articulated arm.
+        // this.x/this.y is the GROUND contact point (between wheels).
+        const lg = this.light;
+        const lightCol = 'rgba(' + lg[0] + ',' + lg[1] + ',' + lg[2] + ',0.95)';
+        const f = this.face;
+        const H0 = 26 * ds;                 // overall robot height ~ person scale
+        const wheelR = H0 * 0.16;
+        const bodyW = H0 * 0.46, bodyH = H0 * 0.5;
+        const bodyBottom = -wheelR * 1.1;   // body sits above wheels
+        const bodyTop = bodyBottom - bodyH;
+        const cx = 0;
+        ctx.lineWidth = Math.max(1.2, H0 * 0.05);
+        ctx.strokeStyle = line; ctx.fillStyle = col;
+
+        // --- two wheels (side by side, slightly offset for depth) ---
+        const wheelDark = 'rgba(45,45,52,0.92)';
+        for (const wx of [-bodyW * 0.42, bodyW * 0.42]) {
+          ctx.beginPath(); ctx.arc(cx + wx, -wheelR, wheelR, 0, Math.PI * 2);
+          ctx.fillStyle = wheelDark; ctx.fill(); ctx.strokeStyle = line; ctx.stroke();
+          // spinning hub spoke
+          ctx.save(); ctx.translate(cx + wx, -wheelR); ctx.rotate(this.wheel);
+          ctx.strokeStyle = 'rgba(200,200,210,0.7)'; ctx.lineWidth = 1.2;
+          ctx.beginPath(); ctx.moveTo(-wheelR * 0.6, 0); ctx.lineTo(wheelR * 0.6, 0); ctx.stroke();
+          ctx.restore();
+        }
+
+        // --- chassis / body ---
+        ctx.fillStyle = col; ctx.strokeStyle = line; ctx.lineWidth = Math.max(1.2, H0 * 0.05);
+        const r2 = H0 * 0.07;
+        ctx.beginPath();
+        ctx.moveTo(cx - bodyW/2 + r2, bodyTop);
+        ctx.lineTo(cx + bodyW/2 - r2, bodyTop); ctx.quadraticCurveTo(cx + bodyW/2, bodyTop, cx + bodyW/2, bodyTop + r2);
+        ctx.lineTo(cx + bodyW/2, bodyBottom - r2); ctx.quadraticCurveTo(cx + bodyW/2, bodyBottom, cx + bodyW/2 - r2, bodyBottom);
+        ctx.lineTo(cx - bodyW/2 + r2, bodyBottom); ctx.quadraticCurveTo(cx - bodyW/2, bodyBottom, cx - bodyW/2, bodyBottom - r2);
+        ctx.lineTo(cx - bodyW/2, bodyTop + r2); ctx.quadraticCurveTo(cx - bodyW/2, bodyTop, cx - bodyW/2 + r2, bodyTop);
+        ctx.closePath(); ctx.fill(); ctx.stroke();
+
+        // --- head (smaller block on top) with a colored sensor band ---
+        const headH = H0 * 0.22, headW = bodyW * 0.74;
+        const headBottom = bodyTop, headTop = bodyTop - headH;
+        ctx.beginPath(); ctx.rect(cx - headW/2, headTop, headW, headH); ctx.fill(); ctx.stroke();
+        // sensor "eye" band (light color), facing forward
+        ctx.fillStyle = lightCol;
+        ctx.fillRect(cx - headW/2 + headW*0.12, headTop + headH*0.32, headW*0.76, headH*0.34);
+
+        // --- articulated arm from the body, swinging gently ---
+        const sw = Math.sin(this.spin * 0.8) * 0.4;
+        const shoulderX = cx + f * bodyW * 0.36, shoulderY = bodyTop + bodyH * 0.32;
+        const upperLen = H0 * 0.26, foreLen = H0 * 0.24;
+        const a1 = (f > 0 ? 0.2 : Math.PI - 0.2) + sw * f;
+        const ex1 = shoulderX + Math.cos(a1) * upperLen, ey1 = shoulderY + Math.sin(a1) * upperLen;
+        const a2 = a1 + f * (0.7 + sw);
+        const ex2 = ex1 + Math.cos(a2) * foreLen, ey2 = ey1 + Math.sin(a2) * foreLen;
+        ctx.strokeStyle = line; ctx.lineWidth = Math.max(1.4, H0 * 0.06);
+        ctx.beginPath(); ctx.moveTo(shoulderX, shoulderY); ctx.lineTo(ex1, ey1); ctx.lineTo(ex2, ey2); ctx.stroke();
+        // gripper dot
+        ctx.fillStyle = lightCol; ctx.beginPath(); ctx.arc(ex2, ey2, H0 * 0.06, 0, Math.PI * 2); ctx.fill();
+
+        // --- antenna with blinking tip (light color) ---
+        ctx.strokeStyle = line; ctx.lineWidth = Math.max(1, H0 * 0.04);
+        ctx.beginPath(); ctx.moveTo(cx + headW * 0.28, headTop); ctx.lineTo(cx + headW * 0.28, headTop - H0 * 0.18); ctx.stroke();
+        const blink = 0.45 + 0.55 * Math.sin(this.spin * 2);
+        ctx.fillStyle = 'rgba(' + lg[0] + ',' + lg[1] + ',' + lg[2] + ',' + (0.35 + blink * 0.6) + ')';
+        ctx.beginPath(); ctx.arc(cx + headW * 0.28, headTop - H0 * 0.18, H0 * 0.06, 0, Math.PI * 2); ctx.fill();
+      }
+      ctx.restore();
+    }
+  }
+
+  function makeAgents() {
+    const n = Math.max(6, Math.min(13, Math.round((W * H) / 135000)));
+    return Array.from({ length: n }, () => new Pedestrian());
+  }
+  function makeVehicles() {
+    const out = [];
+    const carCount = Math.max(1, Math.min(3, Math.round((W * H) / 520000)));
+    const robotCount = Math.max(1, Math.min(2, Math.round((W * H) / 700000)));
+    for (let i = 0; i < carCount; i++) out.push(new Vehicle('car'));
+    for (let i = 0; i < robotCount; i++) out.push(new Vehicle('robot'));
+    return out;
+  }
+  OBJECTS = makeObjects();
+  let agents = makeAgents();
+  let vehicles = makeVehicles();
+
+  function frame() {
+    ctx.clearRect(0, 0, W, H);
+    for (let ob of OBJECTS) drawObject(ob);
+    const movers = agents.concat(vehicles);
+    for (let a of agents) a.step(movers);
+    for (let v of vehicles) v.step(movers);
+    for (let a of agents) a.drawFutures();
+    for (let v of vehicles) v.drawFutures();
+    for (let a of agents) a.drawTrail();
+    for (let v of vehicles) v.drawTrail();
+    // depth sort everything together
+    movers.slice().sort((a, b) => a.y - b.y).forEach(a => a.drawFigure());
+    requestAnimationFrame(frame);
+  }
+
+  if (reduce) {
+    const movers = agents.concat(vehicles);
+    for (let i = 0; i < 60; i++) { for (let a of agents) a.step(movers); for (let v of vehicles) v.step(movers); }
+    for (let ob of OBJECTS) drawObject(ob);
+    for (let a of agents) { a.drawFutures(); a.drawTrail(); }
+    for (let v of vehicles) { v.drawFutures(); v.drawTrail(); }
+    movers.slice().sort((a, b) => a.y - b.y).forEach(a => a.drawFigure());
+  } else { frame(); }
+
+  let rt;
+  window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { OBJECTS = makeObjects(); agents = makeAgents(); vehicles = makeVehicles(); }, 350); });
+})();
+
+/* ===================== scroll reveals ===================== */
+(function () {
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }
+  }, { threshold: 0.1 });
+  document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+})();
+</script>
+</body>
+</html>
