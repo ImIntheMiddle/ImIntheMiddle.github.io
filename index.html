@@ -79,17 +79,21 @@
      ==================================================================== */
   .wrap {
     position: relative; z-index: 2;
-    max-width: 1200px;
+    max-width: 900px;
     margin: 0 auto;
-    padding-left: clamp(20px, 5vw, 56px);
-    padding-right: clamp(20px, 5vw, 56px);
+    padding-left: clamp(56px, 6vw, 80px);
+    padding-right: clamp(56px, 6vw, 80px);
     background: var(--paper);
+    box-shadow: 0 2px 30px rgba(0, 0, 0, 0.06);
+    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 48px, #000 calc(100% - 48px), transparent 100%);
+            mask-image: linear-gradient(90deg, transparent 0, #000 48px, #000 calc(100% - 48px), transparent 100%);
     transition: background 0.4s ease;
   }
 
-  /* sections are transparent — the paper only covers the 1200px content column,
-     so the canvas is visible in the side margins (and between sections) but
-     never sits behind text */
+  /* Hero paper is wider — more prominence for the opening */
+  .hero-block .wrap { max-width: 1080px; }
+
+  /* sections themselves are transparent — the paper card lives on .wrap only */
   .block, .hero-block, footer.contact {
     background: transparent;
   }
@@ -705,7 +709,13 @@
     .life-grid { gap: 24px 32px; }
   }
   @media (max-width: 640px) {
-    .wrap { padding-left: clamp(18px, 5vw, 28px); padding-right: clamp(18px, 5vw, 28px); }
+    .wrap {
+      padding-left: clamp(18px, 5vw, 28px);
+      padding-right: clamp(18px, 5vw, 28px);
+      -webkit-mask-image: none;
+              mask-image: none;
+      box-shadow: none;
+    }
     .hero-grid { grid-template-columns: 1fr; row-gap: 22px; }
     h1.name { grid-column: 1; font-size: clamp(40px, 12vw, 66px); }
     h1.name .lower { display: inline; margin-left: 0.2em; }
