@@ -100,12 +100,32 @@
     transition: background 0.4s ease;
   }
 
-  /* Hero: dramatic frosted glass — the canvas world is the show */
+  /* Hero: no paper card — content sits directly over the canvas world.
+     Text gets a paper-colored glow (text-shadow) for legibility. */
   .hero-block .wrap {
-    max-width: 1080px;
-    background: rgba(var(--paper-rgb), 0.52);
-    -webkit-backdrop-filter: blur(22px) saturate(1.2);
-            backdrop-filter: blur(22px) saturate(1.2);
+    max-width: 1200px;
+    background: transparent;
+    -webkit-backdrop-filter: none;
+            backdrop-filter: none;
+    box-shadow: none;
+    -webkit-mask-image: none;
+            mask-image: none;
+  }
+  .hero-block .eyebrow,
+  .hero-block h1.name,
+  .hero-block h1.name small,
+  .hero-block .side-rail,
+  .hero-block .lede,
+  .hero-block .mission .label,
+  .hero-block .mission .stmt {
+    text-shadow:
+      0 0 22px rgba(var(--paper-rgb), 0.9),
+      0 0 8px rgba(var(--paper-rgb), 0.95),
+      0 0 2px rgba(var(--paper-rgb), 1);
+  }
+  .hero-block .mission {
+    border-top-color: rgba(var(--paper-rgb), 0.6);
+    border-bottom-color: rgba(var(--paper-rgb), 0.6);
   }
 
   /* sections themselves are transparent — the paper card lives on .wrap only */
