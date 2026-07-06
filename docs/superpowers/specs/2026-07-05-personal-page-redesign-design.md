@@ -41,6 +41,54 @@ Content (bilingual text, links, placeholders pending the `_questionnaire.md` ans
   - Talks / Life photos: hairline-framed boxes, no filled panels.
 - **Canvas placement**: `#field` canvas stays `position: fixed`, full viewport, behind everything. Content sections are **opaque paper blocks**; between sections there are ~120px fully transparent gaps where the simulation shows through. No blur anywhere. The SFM footer credit stays.
 
+## Responsive Behavior (mobile + tablet)
+
+The reference mockup is desktop-only. The final `index.html` must scale down cleanly. Two breakpoints:
+
+- **`≤ 900px`** — tablet compression: nav link row hidden (only theme + language toggles remain in header), section-gap heights reduced from ~120px to ~60px, section indent tightened.
+- **`≤ 640px`** — phone layout: single-column, canvas throttled, walk mode disabled.
+
+### Layout adaptations at `≤ 640px`
+
+- `.wrap` padding drops to `clamp(18px, 5vw, 28px)`.
+- **Hero** collapses to one column: eyebrow → name (`<br>` between "Hiromu" and "Taketsugu" removed) → lede → meta rail rendered as three horizontal mono-label rows below lede (no `border-left`, hairline `border-top` instead) → chip row wraps.
+- `h1` clamp minimum drops to `40px` (upper bound unchanged).
+- **Research Focus**: 3 columns → 1 column, hairline `border-top` between cells replaces the vertical rules.
+- **Publications**: 168px thumb + 1fr → stacked, thumb becomes full-width (max 240px), text below.
+- **Awards / Media / News**: keep the date/label + body two-line stack (current-style single-column rows).
+- **Talks**: 3-col grid → 1-col.
+- **Life photos**: 4-col grid → 2-col.
+
+### Header on mobile
+
+- Section-anchor nav links (`Research / Publications / …`) are hidden below 900px — this is a single-scroll LP so anchor jumping loses value. The `EN/JA` + `Light/Dark` pill toggles remain visible in the header at all widths.
+- No hamburger menu (kept out of scope; avoids the complexity for a page whose entire content is one scroll).
+
+### Canvas adaptations at `≤ 640px`
+
+- Cap `DPR` at `1.5` (down from 2) — high-DPI phones save GPU work while keeping figures crisp.
+- Agent counts scale down: `nPed` uses `Math.round(W * H / 200000)` (was `/150000`); at most one robot, and the car is dropped entirely at very narrow widths (< 480px).
+- Object count uses `/ 260000` (was `/ 200000`).
+- Trail sample cap `maxTail` reduced to `20` (was `30`).
+- Prediction fan step count reduced to `22` (was `32`).
+
+### Canvas power management (all widths)
+
+- Add a `visibilitychange` listener: pause `requestAnimationFrame` scheduling when `document.hidden === true`; resume on visible. Prevents background-tab drain.
+- `IntersectionObserver` on the canvas element pauses rendering when the canvas is entirely scrolled out of view (rare in practice but cheap safety).
+
+### Walk mode on mobile
+
+- The 🎮 button is hidden at `≤ 640px` (arrow keys / WASD unavailable on touch devices). No touch-drag controls implemented (out of scope for this redesign).
+- Also hidden when `prefers-reduced-motion` is set.
+
+### Verification (mobile-specific)
+
+- Chrome DevTools "iPhone 12 Pro" (390×844) and "iPad Mini" (768×1024) presets: full page renders without horizontal scroll, hero collapses, canvas figures visible and animating without jank.
+- With DevTools throttling to "Mid-tier mobile": frame rate stays reasonable; no > 8 ms scripting stall per frame during typical scroll.
+- Toggle `document.hidden` (open a new tab and return): confirm rAF pauses/resumes.
+- 🎮 button absent below 640px width and under `prefers-reduced-motion`.
+
 ## Crowd Simulation (Depth style v2, fixed)
 
 Reference implementation: `_design_mockup_A.html` (approved by user; port its sim code, adapting colors to CSS-variable theming).
