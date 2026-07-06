@@ -4,207 +4,754 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Hiromu Taketsugu — Trajectory Forecasting & Embodied AI</title>
-<meta name="description" content="Hiromu Taketsugu (武次 広夢) is a Ph.D. student at Toyota Technological Institute, working on physically plausible pedestrian trajectory prediction, embodied AI, and social robot navigation.">
+<meta name="description" content="Hiromu Taketsugu (武次 広夢) — Ph.D. student at Toyota Technological Institute, working on physically plausible pedestrian trajectory prediction, embodied AI, and social robot navigation.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&family=Noto+Sans+JP:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
+  /* ====================================================================
+     Studio Minimal × Depth Sim — design tokens
+     ==================================================================== */
   :root, [data-theme="light"] {
-    --bg: #f7f3ec; --bg-2: #f1ebe0;
-    --panel: rgba(255, 252, 246, 0.78); --panel-solid: #fffcf6;
-    --ink: #2a2520; --ink-dim: #6b6258; --ink-faint: #9a9085;
-    --accent: #c2603a; --accent-2: #d99404; --accent-3: #7a8a5f;
-    --line: rgba(70, 60, 50, 0.16); --line-soft: rgba(70, 60, 50, 0.09);
-    --ped-r: 194; --ped-g: 96; --ped-b: 58;
-    --ped2-r: 217; --ped2-g: 148; --ped2-b: 4;
-    --ped3-r: 122; --ped3-g: 138; --ped3-b: 95;
-    --trail-r: 120; --trail-g: 100; --trail-b: 80;
+    --paper: #fbfbfa;
+    --paper-2: #f4f2ec;
+    --ink: #16150f;
+    --ink-rgb: 22, 21, 15;
+    --ink-dim: #6b6a63;
+    --ink-faint: #a3a29a;
+    --ink-soft-rgb: 122, 120, 112;
+    --accent: #e8500a;
+    --accent-rgb: 232, 80, 10;
+    --hairline: #e3e2dc;
+    --hairline-soft: #eeece5;
+    --paper-rgb: 251, 251, 250;
     --shadow-a: 0.10;
-    --wrap-tint: rgba(247, 243, 236, 0.42);
-    --bg-glow-1: rgba(217,148,4,0.10); --bg-glow-2: rgba(194,96,58,0.08);
-    --canvas-base: #f7f3ec; --canvas-base-2: #f1ebe0;
   }
   [data-theme="dark"] {
-    --bg: #14110d; --bg-2: #1a160f;
-    --panel: rgba(30, 26, 20, 0.62); --panel-solid: #1e1a14;
-    --ink: #f0eae0; --ink-dim: #b8ac9c; --ink-faint: #7d7164;
-    --accent: #e8845a; --accent-2: #f0b53e; --accent-3: #a3b585;
-    --line: rgba(220, 205, 185, 0.16); --line-soft: rgba(220, 205, 185, 0.09);
-    --ped-r: 232; --ped-g: 132; --ped-b: 90;
-    --ped2-r: 240; --ped2-g: 181; --ped2-b: 62;
-    --ped3-r: 163; --ped3-g: 181; --ped3-b: 133;
-    --trail-r: 230; --trail-g: 215; --trail-b: 195;
-    --shadow-a: 0.28;
-    --wrap-tint: rgba(20, 17, 13, 0.40);
-    --bg-glow-1: rgba(240,181,62,0.07); --bg-glow-2: rgba(232,132,90,0.06);
-    --canvas-base: #14110d; --canvas-base-2: #1a160f;
+    --paper: #121110;
+    --paper-2: #1a1815;
+    --ink: #ece9e2;
+    --ink-rgb: 236, 233, 226;
+    --ink-dim: #a5a29a;
+    --ink-faint: #6f6c66;
+    --ink-soft-rgb: 165, 162, 154;
+    --accent: #ff6a2b;
+    --accent-rgb: 255, 106, 43;
+    --hairline: rgba(255,255,255,0.12);
+    --hairline-soft: rgba(255,255,255,0.07);
+    --paper-rgb: 18, 17, 16;
+    --shadow-a: 0.30;
   }
+
   * { margin: 0; padding: 0; box-sizing: border-box; }
   html { scroll-behavior: smooth; }
-  :root { --sans: "Sora", "Noto Sans JP", system-ui, sans-serif; --serif: "Newsreader", "Noto Sans JP", Georgia, serif; --mono: "IBM Plex Mono", monospace; }
-  [data-lang="ja"] { --sans: "Noto Sans JP", "Sora", system-ui, sans-serif; --serif: "Noto Sans JP", "Newsreader", Georgia, serif; }
-  body { background: var(--bg); color: var(--ink); font-family: var(--sans); font-weight: 300; font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; overflow-x: hidden; transition: background 0.5s ease, color 0.5s ease; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Inter", "Noto Sans JP", system-ui, sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+    transition: background 0.4s ease, color 0.4s ease;
+  }
   a { color: inherit; }
 
-  /* lang visibility */
+  /* language visibility */
   [data-lang="en"] .ja { display: none !important; }
   [data-lang="ja"] .en { display: none !important; }
+  [data-lang="ja"] body { font-family: "Noto Sans JP", "Inter", sans-serif; }
 
-  #field { position: fixed; inset: 0; width: 100%; height: 100%; z-index: 0;
-    background: radial-gradient(1200px 800px at 78% 8%, var(--bg-glow-1), transparent 60%), radial-gradient(900px 700px at 12% 88%, var(--bg-glow-2), transparent 60%), linear-gradient(180deg, var(--canvas-base) 0%, var(--canvas-base-2) 100%);
-    transition: background 0.5s ease; }
-  body::after { content: ""; position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0.04;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  /* ====================================================================
+     Canvas background — fixed behind everything
+     ==================================================================== */
+  #field {
+    position: fixed; inset: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+    background: var(--paper);
+    transition: background 0.4s ease;
+  }
 
-  .wrap { position: relative; z-index: 2; max-width: 1080px; margin: 0 auto; padding: 0 clamp(20px, 5vw, 56px); }
-  /* glass: applied only to text-bearing clusters, with padding as margin around the text */
-  .glass { backdrop-filter: blur(7px); -webkit-backdrop-filter: blur(7px); background: var(--wrap-tint); border-radius: 14px; padding: clamp(20px, 3vw, 34px); }
-  section.block > .glass { margin-top: 0; }
-  .hero .glass + .glass { margin-top: clamp(22px, 3.5vh, 40px); }
+  /* ====================================================================
+     Wrap — page container
+     ==================================================================== */
+  .wrap {
+    position: relative; z-index: 2;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 clamp(20px, 5vw, 56px);
+  }
 
-  header { position: sticky; top: 0; z-index: 20; backdrop-filter: blur(12px); background: var(--panel); border-bottom: 1px solid var(--line-soft); transition: background 0.5s ease; }
-  .nav-inner { max-width: 1080px; margin: 0 auto; padding: 14px clamp(20px, 5vw, 56px); display: flex; justify-content: space-between; align-items: center; gap: 14px; }
-  .nav-inner .mark { font-size: 14px; font-weight: 500; }
+  /* opaque paper blocks — the sim shows through the margins between them */
+  .block, .hero-block, .footer-block {
+    background: var(--paper);
+    transition: background 0.4s ease;
+  }
+
+  /* ====================================================================
+     Header
+     ==================================================================== */
+  header {
+    position: sticky; top: 0; z-index: 30;
+    background: rgba(var(--paper-rgb), 0.96);
+    border-bottom: 1px solid var(--hairline);
+  }
+  .nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 14px clamp(20px, 5vw, 56px);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .nav-inner .mark {
+    font-family: "Inter", "Noto Sans JP", sans-serif;
+    font-size: 14.5px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
   .nav-inner .mark b { color: var(--accent); font-weight: 600; }
-  nav.links { display: flex; gap: 18px; font-family: var(--mono); font-size: 12.5px; margin-left: auto; }
-  nav.links a { color: var(--ink-dim); text-decoration: none; transition: color 0.2s; }
+  nav.links {
+    display: flex; gap: 22px; margin-left: auto;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+  }
+  nav.links a {
+    color: var(--ink-dim);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
   nav.links a:hover { color: var(--accent); }
-  .toggles { display: flex; gap: 8px; }
-  .pill { font-family: var(--mono); font-size: 12px; color: var(--ink-dim); background: transparent; border: 1px solid var(--line); border-radius: 20px; padding: 6px 13px; cursor: pointer; display: flex; align-items: center; gap: 7px; transition: all 0.25s; white-space: nowrap; }
+  .toggles { display: flex; gap: 8px; margin-left: 8px; }
+  .pill {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11.5px;
+    color: var(--ink-dim);
+    background: transparent;
+    border: 1px solid var(--hairline);
+    border-radius: 999px;
+    padding: 6px 12px;
+    cursor: pointer;
+    display: inline-flex; align-items: center; gap: 6px;
+    transition: all 0.2s;
+  }
   .pill:hover { border-color: var(--accent); color: var(--accent); }
-  .pill .ico { width: 13px; height: 13px; }
-  @media (max-width: 900px) { nav.links { display: none; } }
+  .pill .ico { width: 12px; height: 12px; }
 
-  .hero { padding: clamp(54px, 11vh, 116px) 0 clamp(36px, 6vh, 70px); }
-  .eyebrow { font-family: var(--mono); font-size: 12.5px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 22px; display: flex; align-items: center; gap: 13px; }
-  .eyebrow::before { content: ""; width: 32px; height: 1px; background: var(--accent); opacity: 0.6; }
-  h1 { font-family: var(--sans); font-weight: 600; font-size: clamp(40px, 8vw, 88px); line-height: 1.0; letter-spacing: -0.03em; }
-  h1 .jp-name { display: block; font-size: clamp(16px, 2.4vw, 23px); font-weight: 400; letter-spacing: 0.05em; color: var(--ink-dim); margin-top: 16px; }
-  .lede { font-family: var(--serif); font-weight: 400; font-size: clamp(18px, 2.5vw, 26px); line-height: 1.5; color: var(--ink); max-width: 36ch; margin: 30px 0 0; }
-  .lede em { font-style: italic; color: var(--accent); }
-  [data-lang="ja"] .lede { font-style: normal; }
-  .meta-row { display: flex; flex-wrap: wrap; gap: 8px 26px; margin-top: 34px; font-family: var(--mono); font-size: 12.5px; color: var(--ink-dim); }
-  .meta-row span b { color: var(--ink); font-weight: 400; }
-  .links-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
-  .links-row a { font-family: var(--mono); font-size: 12.5px; color: var(--ink-dim); text-decoration: none; border: 1px solid var(--line); padding: 9px 15px; border-radius: 3px; transition: all 0.25s; }
-  .links-row a:hover { color: var(--bg); background: var(--accent); border-color: var(--accent); }
+  /* ====================================================================
+     Hero — 12-col grid, asymmetric
+     ==================================================================== */
+  .hero { padding: clamp(70px, 12vh, 140px) 0 clamp(50px, 8vh, 90px); }
+  .hero-grid {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    gap: clamp(16px, 2.4vw, 28px);
+    row-gap: clamp(18px, 3vh, 32px);
+  }
+  .eyebrow {
+    grid-column: 1 / -1;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    display: flex; align-items: center; gap: 12px;
+  }
+  .eyebrow::before {
+    content: ""; width: 40px; height: 1px; background: var(--accent);
+  }
+  h1.name {
+    grid-column: 1 / 9;
+    font-family: "Inter", "Noto Sans JP", sans-serif;
+    font-size: clamp(48px, 7.4vw, 108px);
+    font-weight: 700;
+    letter-spacing: -0.045em;
+    line-height: 0.96;
+    margin-top: 8px;
+  }
+  h1.name .lower {
+    display: block;
+  }
+  h1.name small {
+    display: block;
+    font-family: "Inter", "Noto Sans JP", sans-serif;
+    font-size: clamp(15px, 1.4vw, 19px);
+    font-weight: 500;
+    letter-spacing: 0.01em;
+    color: var(--ink-dim);
+    margin-top: 22px;
+  }
+  .side-rail {
+    grid-column: 9 / -1;
+    padding-top: 14px;
+    border-left: 1px solid var(--hairline);
+    padding-left: 22px;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .side-rail .k {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--ink-faint);
+  }
+  .side-rail .v {
+    font-size: 14.5px;
+    font-weight: 500;
+    margin-top: 4px;
+  }
+  .side-rail .v b { color: var(--accent); font-weight: 600; }
+  .lede {
+    grid-column: 1 / 9;
+    font-size: clamp(17px, 1.7vw, 22px);
+    line-height: 1.5;
+    color: var(--ink);
+    margin-top: 20px;
+    max-width: 42ch;
+  }
+  .lede em {
+    font-style: normal;
+    color: var(--accent);
+    font-weight: 600;
+  }
+  .chips {
+    grid-column: 1 / -1;
+    display: flex; gap: 10px; flex-wrap: wrap;
+    margin-top: 20px;
+  }
+  .chips a {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12.5px;
+    color: var(--ink);
+    text-decoration: none;
+    border: 1px solid var(--hairline);
+    border-radius: 999px;
+    padding: 9px 18px;
+    background: var(--paper);
+    transition: all 0.2s;
+  }
+  .chips a:hover { border-color: var(--accent); color: var(--accent); }
+  .chips a.primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+  .chips a.primary:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
 
-  /* mission banner */
-  .mission { margin-top: clamp(38px, 6vh, 60px); border-left: 2px solid var(--accent); padding: 6px 0 6px 22px; }
-  .mission .label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; }
-  .mission .stmt { font-family: var(--serif); font-style: italic; font-size: clamp(19px, 3vw, 28px); line-height: 1.4; color: var(--ink); max-width: 30ch; }
-  [data-lang="ja"] .mission .stmt { font-style: normal; }
-  .mission .stmt b { color: var(--accent); font-style: normal; font-weight: 600; }
+  /* Mission band */
+  .mission {
+    grid-column: 1 / -1;
+    margin-top: clamp(38px, 6vh, 62px);
+    padding: clamp(24px, 4vh, 34px) 0;
+    border-top: 1px solid var(--hairline);
+    border-bottom: 1px solid var(--hairline);
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 28px;
+    align-items: baseline;
+  }
+  .mission .label {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .mission .stmt {
+    font-family: "Inter", "Noto Sans JP", sans-serif;
+    font-size: clamp(20px, 2.5vw, 30px);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+    max-width: 32ch;
+  }
+  .mission .stmt b { color: var(--accent); font-weight: 600; }
 
-  .bio { display: grid; grid-template-columns: 130px 1fr; gap: 32px; align-items: start; }
-  @media (max-width: 640px) { .bio { grid-template-columns: 1fr; gap: 20px; } }
-  .bio .portrait { width: 130px; height: 130px; border-radius: 10px; overflow: hidden; border: 1px solid var(--line); background: var(--panel); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 10px; color: var(--ink-faint); text-align: center; }
-  .bio .portrait img { width: 100%; height: 100%; object-fit: cover; }
-  .bio .bio-text p { font-size: 15.5px; color: var(--ink-dim); line-height: 1.72; }
-  .bio .bio-text p + p { margin-top: 14px; }
-  .bio .bio-text strong { color: var(--ink); font-weight: 500; }
-
-  .news { }
-  .news h2 { font-family: var(--mono); font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent); margin-bottom: 18px; }
-  .news ul { list-style: none; }
-  .news li { display: grid; grid-template-columns: 104px 1fr; gap: 18px; padding: 11px 0; border-top: 1px solid var(--line-soft); font-size: 14.5px; }
-  .news li:first-child { border-top: none; }
-  .news li .d { font-family: var(--mono); font-size: 12.5px; color: var(--ink-faint); padding-top: 2px; }
-  .news li .t { color: var(--ink-dim); }
-  .news li .t a { color: var(--accent); text-decoration: none; }
-  .news li .tag { display: inline-block; font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.04em; color: var(--accent); border: 1px solid var(--accent); border-radius: 3px; padding: 1px 7px; margin-right: 9px; vertical-align: 1px; opacity: 0.85; }
-  @media (max-width: 600px) { .news li { grid-template-columns: 1fr; gap: 4px; } }
-
-  section.block { padding: clamp(56px, 9vh, 100px) 0 0; }
-  .sec-head { display: flex; align-items: baseline; gap: 16px; margin-bottom: 38px; }
-  .sec-head .idx { font-family: var(--mono); font-size: 12px; color: var(--accent); letter-spacing: 0.1em; }
-  .sec-head h2 { font-family: var(--sans); font-weight: 600; font-size: clamp(22px, 4vw, 32px); letter-spacing: -0.02em; }
-  .sec-head .note { margin-left: auto; font-family: var(--mono); font-size: 11.5px; color: var(--ink-faint); }
+  /* ====================================================================
+     Common section styles — no cards, hairline rules
+     ==================================================================== */
+  .block { padding: clamp(56px, 9vh, 96px) 0; margin-top: clamp(60px, 10vh, 120px); }
+  .sec-head {
+    display: grid;
+    grid-template-columns: 60px 1fr auto;
+    gap: 22px;
+    align-items: baseline;
+    padding-bottom: 22px;
+    border-bottom: 1px solid var(--hairline);
+    margin-bottom: 34px;
+  }
+  .sec-head .idx {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+  }
+  .sec-head h2 {
+    font-family: "Inter", "Noto Sans JP", sans-serif;
+    font-weight: 600;
+    font-size: clamp(22px, 3vw, 30px);
+    letter-spacing: -0.025em;
+    line-height: 1.15;
+  }
+  .sec-head .note {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11.5px;
+    color: var(--ink-faint);
+  }
   .sec-head .note a { color: var(--accent); text-decoration: none; }
+  .sec-head .note a:hover { text-decoration: underline; }
 
-  .focus { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
-  @media (max-width: 760px) { .focus { grid-template-columns: 1fr; } }
-  .focus .cell { background: var(--panel); padding: 30px 26px; }
-  .focus .cell .k { font-family: var(--mono); font-size: 11.5px; color: var(--accent); letter-spacing: 0.07em; margin-bottom: 15px; }
-  .focus .cell h4 { font-family: var(--serif); font-weight: 500; font-size: 20px; margin-bottom: 10px; }
-  .focus .cell p { font-size: 14px; color: var(--ink-dim); line-height: 1.6; }
+  .verify { color: var(--ink-faint); font-weight: 400; }
 
-  .pub { display: grid; grid-template-columns: 168px 1fr; gap: 26px; padding: 26px 0; border-top: 1px solid var(--line); align-items: start; }
-  .pub:last-child { border-bottom: 1px solid var(--line); }
-  .pub .thumb { width: 168px; aspect-ratio: 16 / 10; border-radius: 6px; overflow: hidden; background: var(--panel); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; }
+  /* ====================================================================
+     Bio
+     ==================================================================== */
+  .bio {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 36px;
+    align-items: start;
+  }
+  .bio .portrait {
+    width: 140px; height: 140px;
+    border: 1px solid var(--hairline);
+    background: var(--paper-2);
+    display: flex; align-items: center; justify-content: center;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10.5px;
+    color: var(--ink-faint);
+    text-align: center;
+  }
+  .bio .portrait img { width: 100%; height: 100%; object-fit: cover; }
+  .bio .bio-text p {
+    font-size: 15.5px;
+    color: var(--ink-dim);
+    line-height: 1.72;
+    max-width: 62ch;
+  }
+  .bio .bio-text p + p { margin-top: 14px; }
+  .bio .bio-text strong { color: var(--ink); font-weight: 600; }
+
+  /* ====================================================================
+     News
+     ==================================================================== */
+  .news ul { list-style: none; }
+  .news li {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 22px;
+    padding: 14px 0;
+    border-top: 1px solid var(--hairline-soft);
+    font-size: 14.5px;
+    align-items: baseline;
+  }
+  .news li:first-child { border-top: none; padding-top: 4px; }
+  .news li .d {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    color: var(--ink-faint);
+    letter-spacing: 0.04em;
+  }
+  .news li .t { color: var(--ink-dim); line-height: 1.55; }
+  .news li .t a { color: var(--accent); text-decoration: none; }
+  .news li .t a:hover { text-decoration: underline; }
+  .news li .tag {
+    display: inline-block;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10.5px;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 3px;
+    padding: 1px 7px;
+    margin-right: 10px;
+    vertical-align: 1px;
+    opacity: 0.9;
+  }
+
+  /* ====================================================================
+     Research Focus — 3 hairline columns
+     ==================================================================== */
+  .focus { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
+  .focus .cell {
+    padding: 4px 26px 4px 0;
+    border-right: 1px solid var(--hairline);
+  }
+  .focus .cell + .cell { padding-left: 26px; }
+  .focus .cell:last-child { border-right: none; padding-right: 0; }
+  .focus .cell .k {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11.5px;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    margin-bottom: 14px;
+  }
+  .focus .cell h4 {
+    font-family: "Inter", "Noto Sans JP", sans-serif;
+    font-weight: 600;
+    font-size: 19px;
+    letter-spacing: -0.015em;
+    margin-bottom: 10px;
+  }
+  .focus .cell p {
+    font-size: 14px;
+    color: var(--ink-dim);
+    line-height: 1.6;
+    max-width: 34ch;
+  }
+
+  /* ====================================================================
+     Publications
+     ==================================================================== */
+  .pub {
+    display: grid;
+    grid-template-columns: 168px 1fr;
+    gap: 28px;
+    padding: 26px 0;
+    border-top: 1px solid var(--hairline);
+    align-items: start;
+  }
+  .pub:last-child { border-bottom: 1px solid var(--hairline); }
+  .pub .thumb {
+    width: 168px;
+    aspect-ratio: 16 / 10;
+    border: 1px solid var(--hairline);
+    background: var(--paper-2);
+    display: flex; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
   .pub .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .pub .thumb .ph { font-family: var(--mono); font-size: 10px; color: var(--ink-faint); text-align: center; padding: 8px; line-height: 1.5; }
-  .pub .venue { font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; display: inline-block; }
-  .pub .venue .rate { color: var(--ink-faint); }
-  .pub h3 { font-family: var(--serif); font-weight: 500; font-size: clamp(17px, 2.2vw, 21px); line-height: 1.34; color: var(--ink); }
-  .pub .auth { font-size: 13.5px; color: var(--ink-dim); margin-top: 9px; }
-  .pub .auth .me { color: var(--ink); font-weight: 500; }
-  .pub .pub-links { margin-top: 12px; display: flex; gap: 14px; flex-wrap: wrap; }
-  .pub .pub-links a { font-family: var(--mono); font-size: 12px; color: var(--ink-dim); text-decoration: none; transition: color 0.2s; }
+  .pub .thumb .ph {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10.5px;
+    color: var(--ink-faint);
+    text-align: center;
+    padding: 8px;
+    line-height: 1.5;
+  }
+  .pub .venue {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11.5px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: inline-block;
+    margin-bottom: 8px;
+  }
+  .pub .venue .rate { color: var(--ink-faint); text-transform: none; letter-spacing: 0.04em; }
+  .pub h3 {
+    font-family: "Inter", "Noto Sans JP", sans-serif;
+    font-weight: 600;
+    font-size: clamp(17px, 1.7vw, 20px);
+    letter-spacing: -0.015em;
+    line-height: 1.32;
+    color: var(--ink);
+  }
+  .pub .auth {
+    font-size: 13.5px;
+    color: var(--ink-dim);
+    margin-top: 8px;
+  }
+  .pub .auth .me { color: var(--ink); font-weight: 600; }
+  .pub .pub-links {
+    margin-top: 14px;
+    display: flex; gap: 16px; flex-wrap: wrap;
+  }
+  .pub .pub-links a {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    color: var(--ink-dim);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
   .pub .pub-links a:hover { color: var(--accent); }
-  .pub .pub-links a::after { content: " ↗"; opacity: 0.6; }
-  @media (max-width: 640px) { .pub { grid-template-columns: 1fr; } .pub .thumb { width: 100%; max-width: 280px; } }
+  .pub .pub-links a::after { content: " ↗"; opacity: 0.55; }
 
-  .awards { border-top: 1px solid var(--line); }
-  .award { display: grid; grid-template-columns: 84px 1fr; gap: 22px; padding: 18px 0; border-bottom: 1px solid var(--line-soft); align-items: baseline; }
-  .award .yr { font-family: var(--mono); font-size: 13px; color: var(--accent); }
-  .award .name { font-size: 15px; color: var(--ink); }
-  .award .name .org { display: block; font-size: 13px; color: var(--ink-faint); margin-top: 3px; }
+  /* ====================================================================
+     Awards
+     ==================================================================== */
+  .awards {}
+  .award {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 22px;
+    padding: 18px 0;
+    border-top: 1px solid var(--hairline-soft);
+    align-items: baseline;
+  }
+  .award:first-child { border-top: 1px solid var(--hairline); }
+  .award:last-child { border-bottom: 1px solid var(--hairline); }
+  .award .yr {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 13px;
+    color: var(--accent);
+    letter-spacing: 0.02em;
+  }
+  .award .name { font-size: 15px; color: var(--ink); line-height: 1.4; }
+  .award .name .org {
+    display: block;
+    font-size: 12.5px;
+    color: var(--ink-faint);
+    margin-top: 4px;
+  }
+  .award.placeholder .name { color: var(--ink-faint); }
 
-  .talks-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-  @media (max-width: 760px) { .talks-grid { grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 480px) { .talks-grid { grid-template-columns: 1fr; } }
-  .talk { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; transition: transform 0.3s, border-color 0.3s; }
-  .talk:hover { transform: translateY(-3px); border-color: var(--accent); }
-  .talk .pic { aspect-ratio: 4 / 3; background: var(--bg-2); display: flex; align-items: center; justify-content: center; border-bottom: 1px solid var(--line); }
+  /* ====================================================================
+     Talks
+     ==================================================================== */
+  .talks-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  .talk { border: 1px solid var(--hairline); overflow: hidden; transition: border-color 0.2s; }
+  .talk:hover { border-color: var(--accent); }
+  .talk .pic {
+    aspect-ratio: 4 / 3;
+    background: var(--paper-2);
+    display: flex; align-items: center; justify-content: center;
+    border-bottom: 1px solid var(--hairline);
+  }
   .talk .pic img { width: 100%; height: 100%; object-fit: cover; }
-  .talk .pic .ph { font-family: var(--mono); font-size: 10px; color: var(--ink-faint); text-align: center; padding: 10px; }
-  .talk .cap { padding: 15px 16px 17px; }
-  .talk .cap .v { font-family: var(--mono); font-size: 11px; color: var(--accent); letter-spacing: 0.04em; }
-  .talk .cap h4 { font-family: var(--serif); font-weight: 500; font-size: 16px; line-height: 1.35; margin-top: 7px; }
-  .talk .cap p { font-size: 12.5px; color: var(--ink-faint); margin-top: 6px; }
+  .talk .pic .ph {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10.5px;
+    color: var(--ink-faint);
+  }
+  .talk .cap { padding: 15px 18px 18px; }
+  .talk .cap .v {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .talk .cap h4 {
+    font-family: "Inter", "Noto Sans JP", sans-serif;
+    font-weight: 600;
+    font-size: 15.5px;
+    letter-spacing: -0.01em;
+    line-height: 1.35;
+    margin-top: 8px;
+  }
+  .talk .cap p { font-size: 12.5px; color: var(--ink-faint); margin-top: 8px; line-height: 1.5; }
 
-  .media-list { border-top: 1px solid var(--line); }
-  .media-item { display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: baseline; padding: 16px 0; border-bottom: 1px solid var(--line-soft); }
-  .media-item .m-title { font-size: 15px; color: var(--ink); }
+  /* ====================================================================
+     Media
+     ==================================================================== */
+  .media-list {}
+  .media-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 20px;
+    align-items: baseline;
+    padding: 16px 0;
+    border-top: 1px solid var(--hairline-soft);
+  }
+  .media-item:first-child { border-top: 1px solid var(--hairline); }
+  .media-item:last-child { border-bottom: 1px solid var(--hairline); }
+  .media-item .m-title { font-size: 15px; color: var(--ink); line-height: 1.4; }
   .media-item .m-title a { color: var(--accent); text-decoration: none; }
-  .media-item .m-title .src { display: block; font-family: var(--mono); font-size: 11.5px; color: var(--ink-faint); margin-top: 4px; }
-  .media-item .m-date { font-family: var(--mono); font-size: 12px; color: var(--ink-faint); white-space: nowrap; }
+  .media-item .m-title a:hover { text-decoration: underline; }
+  .media-item .m-title .src {
+    display: block;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11.5px;
+    color: var(--ink-faint);
+    margin-top: 5px;
+  }
+  .media-item.placeholder .m-title { color: var(--ink-faint); }
+  .media-item .m-date {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    color: var(--ink-faint);
+    white-space: nowrap;
+  }
 
-  .blog-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-  @media (max-width: 640px) { .blog-grid { grid-template-columns: 1fr; } }
-  .blog-empty { border: 1px dashed var(--line); border-radius: 8px; padding: 28px; font-family: var(--mono); font-size: 12.5px; color: var(--ink-faint); text-align: center; grid-column: 1 / -1; line-height: 1.7; }
+  /* ====================================================================
+     Blog — kept in markup, hidden per design decision
+     ==================================================================== */
+  #blog, nav.links a[href="#blog"] { display: none !important; }
 
-  .life-intro { font-family: var(--serif); font-size: clamp(17px, 2.3vw, 22px); color: var(--ink-dim); max-width: 56ch; line-height: 1.6; margin-bottom: 40px; }
-  .life-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px 40px; }
-  @media (max-width: 640px) { .life-grid { grid-template-columns: 1fr; } }
-  .life-item h4 { font-family: var(--sans); font-weight: 600; font-size: 16px; color: var(--ink); margin-bottom: 7px; display: flex; align-items: center; gap: 10px; }
-  .life-item h4 .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); flex: none; }
-  .life-item p { font-size: 14.5px; color: var(--ink-dim); line-height: 1.62; }
-  .life-item p strong { color: var(--ink); font-weight: 500; }
-  .life-photos { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-top: 40px; }
-  @media (max-width: 640px) { .life-photos { grid-template-columns: repeat(2, 1fr); } }
-  .life-photos .ph-box { aspect-ratio: 1; border-radius: 8px; border: 1px solid var(--line); background: var(--bg-2); display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 10px; color: var(--ink-faint); }
-  .life-photos .ph-box img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; }
+  /* ====================================================================
+     Life
+     ==================================================================== */
+  .life-intro {
+    font-family: "Inter", "Noto Sans JP", sans-serif;
+    font-size: clamp(17px, 1.8vw, 20px);
+    color: var(--ink-dim);
+    line-height: 1.6;
+    max-width: 58ch;
+    margin-bottom: 40px;
+  }
+  .life-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px 44px; }
+  .life-item h4 {
+    font-family: "Inter", "Noto Sans JP", sans-serif;
+    font-weight: 600;
+    font-size: 15.5px;
+    letter-spacing: -0.005em;
+    color: var(--ink);
+    margin-bottom: 8px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .life-item h4 .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--accent); flex: none;
+  }
+  .life-item p {
+    font-size: 14.5px;
+    color: var(--ink-dim);
+    line-height: 1.65;
+    max-width: 44ch;
+  }
+  .life-item p strong { color: var(--ink); font-weight: 600; }
+  .life-photos {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    margin-top: 44px;
+  }
+  .life-photos .ph-box {
+    aspect-ratio: 1;
+    border: 1px solid var(--hairline);
+    background: var(--paper-2);
+    display: flex; align-items: center; justify-content: center;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 10.5px;
+    color: var(--ink-faint);
+  }
+  .life-photos .ph-box img { width: 100%; height: 100%; object-fit: cover; }
 
-  footer { border-top: 1px solid var(--line); padding: clamp(48px, 8vh, 84px) 0 56px; margin-top: clamp(56px, 9vh, 100px); }
-  .contact-head { font-family: var(--sans); font-weight: 600; font-size: clamp(26px, 5vw, 44px); letter-spacing: -0.02em; margin-bottom: 18px; }
-  .contact-sub { font-family: var(--serif); font-size: 18px; color: var(--ink-dim); max-width: 48ch; line-height: 1.55; }
-  .contact-links { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
-  .contact-links a { font-family: var(--mono); font-size: 13px; color: var(--ink-dim); border: 1px solid var(--line); padding: 10px 17px; border-radius: 3px; text-decoration: none; transition: all 0.25s; }
-  .contact-links a:hover { color: var(--bg); background: var(--accent); border-color: var(--accent); }
-  .foot-row { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 14px; margin-top: 54px; padding-top: 24px; border-top: 1px solid var(--line-soft); font-family: var(--mono); font-size: 12px; color: var(--ink-faint); }
-  .sfm-credit { margin-top: 40px; font-size: 12.5px; line-height: 1.65; color: var(--ink-faint); max-width: 62ch; font-family: var(--mono); }
+  /* ====================================================================
+     Contact (footer)
+     ==================================================================== */
+  footer.contact {
+    border-top: 1px solid var(--hairline);
+    padding: clamp(56px, 9vh, 96px) 0 56px;
+    margin-top: clamp(60px, 10vh, 120px);
+  }
+  .contact-head {
+    font-family: "Inter", "Noto Sans JP", sans-serif;
+    font-weight: 700;
+    font-size: clamp(30px, 5vw, 52px);
+    letter-spacing: -0.035em;
+    line-height: 1.02;
+    margin-bottom: 18px;
+  }
+  .contact-sub {
+    font-size: 17px;
+    color: var(--ink-dim);
+    max-width: 48ch;
+    line-height: 1.55;
+  }
+  .contact-links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
+  .contact-links a {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12.5px;
+    color: var(--ink);
+    text-decoration: none;
+    border: 1px solid var(--hairline);
+    padding: 10px 18px;
+    border-radius: 999px;
+    background: var(--paper);
+    transition: all 0.2s;
+  }
+  .contact-links a:hover { color: var(--paper); background: var(--accent); border-color: var(--accent); }
+  .foot-row {
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 14px;
+    margin-top: 56px; padding-top: 22px;
+    border-top: 1px solid var(--hairline-soft);
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 11.5px;
+    color: var(--ink-faint);
+  }
+  .sfm-credit {
+    margin-top: 38px;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    line-height: 1.7;
+    color: var(--ink-faint);
+    max-width: 66ch;
+  }
   .sfm-credit strong { color: var(--accent); font-weight: 500; }
 
-  .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.85s cubic-bezier(0.2,0.7,0.2,1), transform 0.85s cubic-bezier(0.2,0.7,0.2,1); }
+  /* ====================================================================
+     Game button
+     ==================================================================== */
+  .gamebtn {
+    position: fixed; right: 20px; bottom: 20px; z-index: 40;
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 12px;
+    color: var(--ink-dim);
+    background: var(--paper);
+    border: 1px solid var(--hairline);
+    border-radius: 999px;
+    padding: 10px 18px;
+    cursor: pointer;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    transition: all 0.2s;
+  }
+  .gamebtn:hover { border-color: var(--accent); color: var(--accent); }
+  .gamebtn.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+  /* ====================================================================
+     Reveal animation
+     ==================================================================== */
+  .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.7s cubic-bezier(0.2,0.7,0.2,1), transform 0.7s cubic-bezier(0.2,0.7,0.2,1); }
   .reveal.in { opacity: 1; transform: none; }
-  @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } html { scroll-behavior: auto; } }
+
+  /* ====================================================================
+     Responsive — ≤900px (tablet) and ≤640px (phone)
+     ==================================================================== */
+  @media (max-width: 900px) {
+    nav.links { display: none; }
+    .block { margin-top: clamp(40px, 6vh, 60px); padding: clamp(40px, 6vh, 60px) 0; }
+    .life-grid { gap: 24px 32px; }
+  }
+  @media (max-width: 640px) {
+    .wrap { padding: 0 clamp(18px, 5vw, 28px); }
+    .hero-grid { grid-template-columns: 1fr; row-gap: 22px; }
+    h1.name { grid-column: 1; font-size: clamp(40px, 12vw, 66px); }
+    h1.name .lower { display: inline; margin-left: 0.2em; }
+    h1.name small { font-size: 15px; margin-top: 16px; }
+    .side-rail {
+      grid-column: 1;
+      border-left: none;
+      border-top: 1px solid var(--hairline);
+      padding-left: 0; padding-top: 20px;
+      flex-direction: row; flex-wrap: wrap; gap: 22px 32px;
+    }
+    .side-rail > div { flex: 1 1 auto; }
+    .lede { grid-column: 1; font-size: 17px; }
+    .mission { grid-template-columns: 1fr; gap: 12px; }
+    .sec-head { grid-template-columns: 44px 1fr; gap: 14px; }
+    .sec-head .note { grid-column: 2; margin-top: -8px; }
+    .bio { grid-template-columns: 1fr; gap: 22px; }
+    .bio .portrait { width: 120px; height: 120px; }
+    .news li { grid-template-columns: 1fr; gap: 6px; padding: 12px 0; }
+    .news li .d { font-size: 11.5px; }
+    .focus { grid-template-columns: 1fr; }
+    .focus .cell {
+      padding: 20px 0; border-right: none; border-top: 1px solid var(--hairline);
+    }
+    .focus .cell:first-child { border-top: none; padding-top: 0; }
+    .focus .cell + .cell { padding-left: 0; }
+    .pub { grid-template-columns: 1fr; gap: 16px; }
+    .pub .thumb { width: 100%; max-width: 280px; }
+    .talks-grid { grid-template-columns: 1fr; }
+    .award { grid-template-columns: 70px 1fr; gap: 16px; }
+    .life-grid { grid-template-columns: 1fr; gap: 22px; }
+    .life-photos { grid-template-columns: repeat(2, 1fr); }
+    .foot-row { flex-direction: column; }
+    .gamebtn { display: none; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+    html { scroll-behavior: auto; }
+    .gamebtn { display: none; }
+  }
 </style>
 </head>
 <body>
 
 <canvas id="field"></canvas>
+<button class="gamebtn" id="gameBtn" aria-label="Toggle walk mode">
+  <span class="en">🎮 Control the orange pedestrian</span><span class="ja">🎮 オレンジの歩行者を操作</span>
+</button>
 
 <header>
   <div class="nav-inner">
@@ -222,212 +769,304 @@
     <div class="toggles">
       <button class="pill" id="langBtn" aria-label="Switch language"><span id="langLabel">日本語</span></button>
       <button class="pill" id="themeBtn" aria-label="Toggle color theme">
-        <svg class="ico" id="themeIco" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg>
+        <svg class="ico" id="themeIco" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg>
         <span id="themeLabel">Dark</span>
       </button>
     </div>
   </div>
 </header>
 
-<main class="wrap">
+<main>
 
   <!-- ========== HERO ========== -->
-  <section class="hero">
-   <div class="glass hero-id">
-    <div class="eyebrow reveal"><span class="en">Ph.D. Researcher — Trajectory Forecasting</span><span class="ja">博士課程 — 軌道予測の研究者</span></div>
-    <h1 class="reveal" style="transition-delay:.05s">
-      <span class="en">Hiromu Taketsugu</span><span class="ja">武次 広夢</span>
-      <span class="jp-name en">武次 広夢</span><span class="jp-name ja">Hiromu Taketsugu</span>
-    </h1>
-    <p class="lede reveal" style="transition-delay:.12s">
-      <span class="en">Teaching machines to anticipate how people move, with <em>physical plausibility</em>, embodiment, and a sense of the social.</span>
-      <span class="ja">人の動きを、<em>物理的にもっともらしく</em>、身体性と社会性をふまえて予測する。そんな機械の知能をつくっています。</span>
-    </p>
-    <div class="meta-row reveal" style="transition-delay:.18s">
-      <span class="en"><b>Toyota Technological Institute</b> · Ukita Lab</span><span class="ja"><b>豊田工業大学</b> · 浮田研究室</span>
-      <span class="en">JSPS Research Fellow <b>(DC1)</b></span><span class="ja">日本学術振興会 特別研究員 <b>(DC1)</b></span>
-      <span class="en">Nagoya, Japan</span><span class="ja">愛知県・名古屋</span>
-    </div>
-    <div class="links-row reveal" style="transition-delay:.24s">
-      <a href="mailto:sd25502@toyota-ti.ac.jp">Email</a>
-      <a href="https://scholar.google.co.jp/citations?user=HkFAVbcAAAAJ" target="_blank" rel="noopener">Scholar</a>
-      <a href="https://github.com/ImIntheMiddle" target="_blank" rel="noopener">GitHub</a>
-      <a href="https://www.linkedin.com/in/ImIntheMiddle/" target="_blank" rel="noopener">LinkedIn</a>
-      <a href="https://twitter.com/ImlntheMiddle" target="_blank" rel="noopener">X</a>
-    </div>
-
-    <!-- MISSION -->
-    <div class="mission reveal" style="transition-delay:.28s">
-      <div class="label"><span class="en">Mission</span><span class="ja">ミッション</span></div>
-      <div class="stmt">
-        <span class="en">Through technology, to eliminate <b>preventable deaths</b>.</span>
-        <span class="ja">テクノロジーを通じて、<b>非業の死</b>をなくす。</span>
+  <section class="hero-block">
+    <div class="wrap">
+      <div class="hero hero-grid">
+        <div class="eyebrow reveal">
+          <span class="en">Ph.D. Researcher — Trajectory Forecasting</span>
+          <span class="ja">博士課程 — 軌道予測の研究者</span>
+        </div>
+        <h1 class="name reveal" style="transition-delay:.05s">
+          <span class="en">Hiromu <span class="lower">Taketsugu</span></span>
+          <span class="ja">武次 広夢</span>
+          <small>
+            <span class="en">武次 広夢 — Ph.D. Student, Toyota Technological Institute</span>
+            <span class="ja">Hiromu Taketsugu — 豊田工業大学 博士後期課程</span>
+          </small>
+        </h1>
+        <div class="side-rail reveal" style="transition-delay:.10s">
+          <div>
+            <div class="k"><span class="en">Affiliation</span><span class="ja">所属</span></div>
+            <div class="v"><span class="en"><b>TTI</b> · Ukita Lab</span><span class="ja"><b>豊田工業大学</b> · 浮田研究室</span></div>
+          </div>
+          <div>
+            <div class="k"><span class="en">Fellowship</span><span class="ja">研究員</span></div>
+            <div class="v"><span class="en">JSPS Research Fellow <b>(DC1)</b></span><span class="ja">日本学術振興会 特別研究員 <b>(DC1)</b></span></div>
+          </div>
+          <div>
+            <div class="k"><span class="en">Base</span><span class="ja">拠点</span></div>
+            <div class="v"><span class="en">Nagoya, Japan</span><span class="ja">愛知県・名古屋</span></div>
+          </div>
+        </div>
+        <p class="lede reveal" style="transition-delay:.14s">
+          <span class="en">Teaching machines to anticipate how people move — with <em>physical plausibility</em>, embodiment, and a sense of the social.</span>
+          <span class="ja">人の動きを、<em>物理的にもっともらしく</em>、身体性と社会性をふまえて予測する。そんな機械の知能をつくっています。</span>
+        </p>
+        <div class="chips reveal" style="transition-delay:.18s">
+          <a class="primary" href="mailto:sd25502@toyota-ti.ac.jp">Email</a>
+          <a href="https://scholar.google.co.jp/citations?user=HkFAVbcAAAAJ" target="_blank" rel="noopener">Scholar</a>
+          <a href="https://github.com/ImIntheMiddle" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://www.linkedin.com/in/ImIntheMiddle/" target="_blank" rel="noopener">LinkedIn</a>
+          <a href="https://twitter.com/ImlntheMiddle" target="_blank" rel="noopener">X</a>
+          <a href="static/uploads/resume.pdf" target="_blank" rel="noopener">CV</a>
+        </div>
+        <div class="mission reveal" style="transition-delay:.22s">
+          <div class="label"><span class="en">Mission</span><span class="ja">ミッション</span></div>
+          <div class="stmt">
+            <span class="en">Through technology, to eliminate <b>preventable deaths</b>.</span>
+            <span class="ja">テクノロジーを通じて、<b>非業の死</b>をなくす。</span>
+          </div>
+        </div>
       </div>
     </div>
-   </div>
+  </section>
 
-    <!-- BIO -->
-    <div class="glass"><div class="bio reveal" id="about" style="transition-delay:.3s">
-      <div class="portrait"><div>portrait<br>(avatar.jpg)</div></div>
-      <div class="bio-text">
-        <p class="en">I am a Ph.D. student (D1) at <strong>Toyota Technological Institute</strong>, advised by Prof. Norimichi Ukita in the Intelligent Information Media Lab. My research builds human- and scene-interactive, physics-aware systems for predicting how people move.</p>
-        <p class="en">I am a <strong>JSPS Research Fellow (DC1)</strong> and have published as first author at top-tier venues including <strong>CVPR</strong> and <strong>WACV</strong>. I completed a research internship at <strong>Woven by Toyota</strong>, and I serve the community as Technical Chair for ACCV 2026. <span style="color:var(--ink-faint)">[confirm wording before publishing]</span></p>
-        <p class="ja">豊田工業大学 博士後期課程（D1）に在籍し、知能情報メディア研究室にて<strong>浮田宗伯</strong>教授の指導のもと研究を行っています。人やシーンと相互作用する、物理を考慮した「人の動きの予測」システムを開発しています。</p>
-        <p class="ja"><strong>日本学術振興会 特別研究員（DC1）</strong>であり、<strong>CVPR</strong> や <strong>WACV</strong> などのトップ国際会議に筆頭著者として論文を発表してきました。<strong>Woven by Toyota</strong> での研究インターンを経験し、ACCV 2026 では Technical Chair を務めています。<span style="color:var(--ink-faint)">[公開前に表記要確認]</span></p>
+  <!-- ========== BIO ========== -->
+  <section class="block" id="about">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="idx">00</span>
+        <h2><span class="en">About</span><span class="ja">自己紹介</span></h2>
       </div>
-    </div></div>
+      <div class="bio reveal">
+        <div class="portrait"><div>portrait<br>(avatar.jpg)</div></div>
+        <div class="bio-text">
+          <p class="en">I am a Ph.D. student (D1) at <strong>Toyota Technological Institute</strong>, advised by Prof. Norimichi Ukita in the Intelligent Information Media Lab. My research builds human- and scene-interactive, physics-aware systems for predicting how people move.</p>
+          <p class="en">I am a <strong>JSPS Research Fellow (DC1)</strong> and have published as first author at top-tier venues including <strong>CVPR</strong> and <strong>WACV</strong>. I completed a research internship at <strong>Woven by Toyota</strong>, and I serve the community as Technical Chair for ACCV 2026. <span class="verify">[confirm wording before publishing]</span></p>
+          <p class="ja">豊田工業大学 博士後期課程（D1）に在籍し、知能情報メディア研究室にて<strong>浮田宗伯</strong>教授の指導のもと研究を行っています。人やシーンと相互作用する、物理を考慮した「人の動きの予測」システムを開発しています。</p>
+          <p class="ja"><strong>日本学術振興会 特別研究員（DC1）</strong>であり、<strong>CVPR</strong> や <strong>WACV</strong> などのトップ国際会議に筆頭著者として論文を発表してきました。<strong>Woven by Toyota</strong> での研究インターンを経験し、ACCV 2026 では Technical Chair を務めています。<span class="verify">[公開前に表記要確認]</span></p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    <!-- NEWS -->
-    <div class="glass news-glass"><div class="news reveal" id="news" style="transition-delay:.34s">
-      <h2><span class="en">What's New</span><span class="ja">最新情報</span></h2>
-      <ul>
-        <li><span class="d">2026 / XX</span><span class="t"><span class="tag">SERVICE</span><span class="en">Serving as Technical Chair for ACCV 2026 <span style="color:var(--ink-faint)">[verify]</span></span><span class="ja">ACCV 2026 の Technical Chair を担当 <span style="color:var(--ink-faint)">[要確認]</span></span></span></li>
-        <li><span class="d">2026 / 08</span><span class="t"><span class="tag">INTERN</span><span class="en">Completed a research internship at Woven by Toyota</span><span class="ja">Woven by Toyota での研究インターンを修了</span></span></li>
-        <li><span class="d">2026 / XX</span><span class="t"><span class="tag">AWARD</span><span class="en">Received the 2026 IEEE Nagoya Section International Conference Research Presentation Award for EmLoco</span><span class="ja">EmLoco にて 2026年 IEEE名古屋支部 国際会議研究発表賞を受賞</span></span></li>
-        <li><span class="d">2025 / 02</span><span class="t"><span class="tag">CVPR'25</span><span class="en">EmLoco accepted to CVPR 2025 — <a href="https://arxiv.org/abs/2503.17267" target="_blank" rel="noopener">arXiv</a></span><span class="ja">EmLoco が CVPR 2025 に採択 — <a href="https://arxiv.org/abs/2503.17267" target="_blank" rel="noopener">arXiv</a></span></span></li>
-        <li><span class="d">placeholder</span><span class="t" style="color:var(--ink-faint)"><span class="en">Add your latest updates here. Newest first keeps the page feeling alive.</span><span class="ja">最新の更新をここに。新しい順に並べると活きのいいページになります。</span></span></li>
-      </ul>
-    </div></div>
+  <!-- ========== NEWS ========== -->
+  <section class="block" id="news">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="idx">01</span>
+        <h2><span class="en">What's New</span><span class="ja">最新情報</span></h2>
+      </div>
+      <div class="news reveal">
+        <ul>
+          <li><span class="d">2026 / XX</span><span class="t"><span class="tag">SERVICE</span><span class="en">Serving as Technical Chair for ACCV 2026 <span class="verify">[verify]</span></span><span class="ja">ACCV 2026 の Technical Chair を担当 <span class="verify">[要確認]</span></span></span></li>
+          <li><span class="d">2026 / 08</span><span class="t"><span class="tag">INTERN</span><span class="en">Completed a research internship at Woven by Toyota</span><span class="ja">Woven by Toyota での研究インターンを修了</span></span></li>
+          <li><span class="d">2026 / XX</span><span class="t"><span class="tag">AWARD</span><span class="en">Received the 2026 IEEE Nagoya Section International Conference Research Presentation Award for EmLoco</span><span class="ja">EmLoco にて 2026年 IEEE名古屋支部 国際会議研究発表賞を受賞</span></span></li>
+          <li><span class="d">2025 / 02</span><span class="t"><span class="tag">CVPR'25</span><span class="en">EmLoco accepted to CVPR 2025 — <a href="https://arxiv.org/abs/2503.17267" target="_blank" rel="noopener">arXiv</a></span><span class="ja">EmLoco が CVPR 2025 に採択 — <a href="https://arxiv.org/abs/2503.17267" target="_blank" rel="noopener">arXiv</a></span></span></li>
+          <li><span class="d">placeholder</span><span class="t verify"><span class="en">Add your latest updates here. Newest first keeps the page feeling alive.</span><span class="ja">最新の更新をここに。新しい順に並べると活きのいいページになります。</span></span></li>
+        </ul>
+      </div>
+    </div>
   </section>
 
   <!-- ========== RESEARCH FOCUS ========== -->
   <section class="block" id="research">
-    <div class="glass">
-    <div class="sec-head reveal"><span class="idx">01</span><h2><span class="en">Research Focus</span><span class="ja">研究の柱</span></h2></div>
-    <div class="focus reveal">
-      <div class="cell"><div class="k">/ 01</div><h4><span class="en">Trajectory Forecasting</span><span class="ja">軌道予測</span></h4><p><span class="en">Predicting pedestrian and human motion that stays physically plausible, not merely statistically likely.</span><span class="ja">統計的にありそうなだけでなく、物理的にもっともらしい歩行者・人の動きを予測します。</span></p></div>
-      <div class="cell"><div class="k">/ 02</div><h4><span class="en">Embodied AI</span><span class="ja">身体性のあるAI</span></h4><p><span class="en">Grounding prediction in locomotion and physics, so models reason about bodies rather than only pixels.</span><span class="ja">予測を移動運動と物理に根ざすことで、ピクセルだけでなく「身体」を捉えるモデルを目指します。</span></p></div>
-      <div class="cell"><div class="k">/ 03</div><h4><span class="en">Social Robotics</span><span class="ja">社会的ロボティクス</span></h4><p><span class="en">Navigation in shared human spaces, aimed at systems that help prevent avoidable harm.</span><span class="ja">人と共有する空間での移動・行動を扱い、防げる被害をなくすシステムを目指します。</span></p></div>
-    </div>
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="idx">02</span>
+        <h2><span class="en">Research Focus</span><span class="ja">研究の柱</span></h2>
+      </div>
+      <div class="focus reveal">
+        <div class="cell">
+          <div class="k">/ 01</div>
+          <h4><span class="en">Trajectory Forecasting</span><span class="ja">軌道予測</span></h4>
+          <p><span class="en">Predicting pedestrian and human motion that stays physically plausible, not merely statistically likely.</span><span class="ja">統計的にありそうなだけでなく、物理的にもっともらしい歩行者・人の動きを予測します。</span></p>
+        </div>
+        <div class="cell">
+          <div class="k">/ 02</div>
+          <h4><span class="en">Embodied AI</span><span class="ja">身体性のあるAI</span></h4>
+          <p><span class="en">Grounding prediction in locomotion and physics, so models reason about bodies rather than only pixels.</span><span class="ja">予測を移動運動と物理に根ざすことで、ピクセルだけでなく「身体」を捉えるモデルを目指します。</span></p>
+        </div>
+        <div class="cell">
+          <div class="k">/ 03</div>
+          <h4><span class="en">Social Robotics</span><span class="ja">社会的ロボティクス</span></h4>
+          <p><span class="en">Navigation in shared human spaces, aimed at systems that help prevent avoidable harm.</span><span class="ja">人と共有する空間での移動・行動を扱い、防げる被害をなくすシステムを目指します。</span></p>
+        </div>
+      </div>
     </div>
   </section>
 
   <!-- ========== PUBLICATIONS ========== -->
   <section class="block" id="work">
-    <div class="glass">
-    <div class="sec-head reveal"><span class="idx">02</span><h2><span class="en">Selected Publications</span><span class="ja">主要論文</span></h2><span class="note"><a href="https://scholar.google.co.jp/citations?user=HkFAVbcAAAAJ" target="_blank" rel="noopener"><span class="en">Full list on Scholar →</span><span class="ja">全業績は Scholar へ →</span></a></span></div>
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="idx">03</span>
+        <h2><span class="en">Selected Publications</span><span class="ja">主要論文</span></h2>
+        <span class="note"><a href="https://scholar.google.co.jp/citations?user=HkFAVbcAAAAJ" target="_blank" rel="noopener"><span class="en">Full list on Scholar →</span><span class="ja">全業績は Scholar へ →</span></a></span>
+      </div>
 
-    <div class="pub reveal"><div class="thumb"><div class="ph">teaser<br>(emloco.png)</div></div><div>
-      <span class="venue">CVPR 2025 <span class="rate">· poster · 22% accept</span></span>
-      <h3>Physical Plausibility-aware Trajectory Prediction via Locomotion Embodiment</h3>
-      <div class="auth"><span class="me">H. Taketsugu</span>, T. Oba, T. Maeda, S. Nobuhara, N. Ukita</div>
-      <div class="pub-links"><a href="https://arxiv.org/abs/2503.17267" target="_blank" rel="noopener">arXiv</a><a href="#">Project</a><a href="#">Code</a></div></div></div>
+      <div class="pub reveal"><div class="thumb"><div class="ph">teaser<br>(emloco.png)</div></div><div>
+        <span class="venue">CVPR 2025 <span class="rate">· poster · 22% accept</span></span>
+        <h3>Physical Plausibility-aware Trajectory Prediction via Locomotion Embodiment</h3>
+        <div class="auth"><span class="me">H. Taketsugu</span>, T. Oba, T. Maeda, S. Nobuhara, N. Ukita</div>
+        <div class="pub-links"><a href="https://arxiv.org/abs/2503.17267" target="_blank" rel="noopener">arXiv</a><a href="#">Project</a><a href="#">Code</a></div>
+      </div></div>
 
-    <div class="pub reveal"><div class="thumb"><div class="ph">teaser<br>(mmcm.png)</div></div><div>
-      <span class="venue">WACV 2026 <span class="rate">· co-author</span></span>
-      <h3>MMCM <span style="color:var(--ink-faint);font-weight:400">— confirm full title</span></h3>
-      <div class="auth">K. Shimbo, <span class="me">H. Taketsugu</span>, N. Ukita</div>
-      <div class="pub-links"><a href="#" target="_blank" rel="noopener">arXiv</a></div></div></div>
+      <div class="pub reveal"><div class="thumb"><div class="ph">teaser<br>(mmcm.png)</div></div><div>
+        <span class="venue">WACV 2026 <span class="rate">· co-author</span></span>
+        <h3>MMCM <span class="verify">— confirm full title</span></h3>
+        <div class="auth">K. Shimbo, <span class="me">H. Taketsugu</span>, N. Ukita</div>
+        <div class="pub-links"><a href="#" target="_blank" rel="noopener">arXiv</a></div>
+      </div></div>
 
-    <div class="pub reveal"><div class="thumb"><div class="ph">teaser image</div></div><div>
-      <span class="venue">arXiv preprint</span>
-      <h3>Human Motion Prediction via Test-domain-aware Adaptation with Easily-available Human Motions Estimated from Videos</h3>
-      <div class="auth">K. Shimbo, <span class="me">H. Taketsugu</span>, N. Ukita</div>
-      <div class="pub-links"><a href="https://arxiv.org/abs/2505.07301" target="_blank" rel="noopener">arXiv</a></div></div></div>
+      <div class="pub reveal"><div class="thumb"><div class="ph">teaser image</div></div><div>
+        <span class="venue">arXiv preprint</span>
+        <h3>Human Motion Prediction via Test-domain-aware Adaptation with Easily-available Human Motions Estimated from Videos</h3>
+        <div class="auth">K. Shimbo, <span class="me">H. Taketsugu</span>, N. Ukita</div>
+        <div class="pub-links"><a href="https://arxiv.org/abs/2505.07301" target="_blank" rel="noopener">arXiv</a></div>
+      </div></div>
 
-    <div class="pub reveal"><div class="thumb"><div class="ph">teaser image</div></div><div>
-      <span class="venue">MVA 2023 <span class="rate">· oral · 17% accept</span></span>
-      <h3>Uncertainty Criteria in Active Transfer Learning for Efficient Video-Specific Human Pose Estimation</h3>
-      <div class="auth"><span class="me">H. Taketsugu</span>, N. Ukita</div>
-      <div class="pub-links"><a href="https://ieeexplore.ieee.org/abstract/document/10215565" target="_blank" rel="noopener">IEEE</a></div></div></div>
+      <div class="pub reveal"><div class="thumb"><div class="ph">teaser image</div></div><div>
+        <span class="venue">MVA 2023 <span class="rate">· oral · 17% accept</span></span>
+        <h3>Uncertainty Criteria in Active Transfer Learning for Efficient Video-Specific Human Pose Estimation</h3>
+        <div class="auth"><span class="me">H. Taketsugu</span>, N. Ukita</div>
+        <div class="pub-links"><a href="https://ieeexplore.ieee.org/abstract/document/10215565" target="_blank" rel="noopener">IEEE</a></div>
+      </div></div>
 
-    <div class="pub reveal"><div class="thumb"><div class="ph">teaser image</div></div><div>
-      <span class="venue">WACV 2024 <span class="rate">· poster · 41% accept</span></span>
-      <h3>Active Transfer Learning for Efficient Video-Specific Human Pose Estimation</h3>
-      <div class="auth"><span class="me">H. Taketsugu</span>, N. Ukita</div>
-      <div class="pub-links"><a href="https://arxiv.org/abs/2311.05041" target="_blank" rel="noopener">arXiv</a></div></div></div>
+      <div class="pub reveal"><div class="thumb"><div class="ph">teaser image</div></div><div>
+        <span class="venue">WACV 2024 <span class="rate">· poster · 41% accept</span></span>
+        <h3>Active Transfer Learning for Efficient Video-Specific Human Pose Estimation</h3>
+        <div class="auth"><span class="me">H. Taketsugu</span>, N. Ukita</div>
+        <div class="pub-links"><a href="https://arxiv.org/abs/2311.05041" target="_blank" rel="noopener">arXiv</a></div>
+      </div></div>
     </div>
   </section>
 
   <!-- ========== AWARDS ========== -->
   <section class="block" id="awards">
-    <div class="glass">
-    <div class="sec-head reveal"><span class="idx">03</span><h2><span class="en">Awards & Honors</span><span class="ja">受賞・助成</span></h2></div>
-    <div class="awards reveal">
-      <div class="award"><span class="yr">2026</span><span class="name"><span class="en">IEEE Nagoya Section International Conference Research Presentation Award<span class="org">For EmLoco (CVPR 2025) · confirm exact award name</span></span><span class="ja">IEEE名古屋支部 国際会議研究発表賞<span class="org">EmLoco (CVPR 2025) に対して · 正式名称要確認</span></span></span></div>
-      <div class="award"><span class="yr">2025</span><span class="name"><span class="en">JSPS Research Fellowship for Young Scientists (DC1)<span class="org">Japan Society for the Promotion of Science · ~14% acceptance</span></span><span class="ja">日本学術振興会 特別研究員 (DC1)<span class="org">採用率 約14%</span></span></span></div>
-      <div class="award"><span class="yr">20XX</span><span class="name" style="color:var(--ink-faint)"><span class="en">Add scholarships, travel grants, or student awards here<span class="org">Year · issuing organization</span></span><span class="ja">奨学金・渡航助成・学生表彰などをここに<span class="org">年 · 団体名</span></span></span></div>
-    </div>
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="idx">04</span>
+        <h2><span class="en">Awards & Honors</span><span class="ja">受賞・助成</span></h2>
+      </div>
+      <div class="awards reveal">
+        <div class="award">
+          <span class="yr">2026</span>
+          <span class="name">
+            <span class="en">IEEE Nagoya Section International Conference Research Presentation Award<span class="org">For EmLoco (CVPR 2025) · confirm exact award name</span></span>
+            <span class="ja">IEEE名古屋支部 国際会議研究発表賞<span class="org">EmLoco (CVPR 2025) に対して · 正式名称要確認</span></span>
+          </span>
+        </div>
+        <div class="award">
+          <span class="yr">2025</span>
+          <span class="name">
+            <span class="en">JSPS Research Fellowship for Young Scientists (DC1)<span class="org">Japan Society for the Promotion of Science · ~14% acceptance</span></span>
+            <span class="ja">日本学術振興会 特別研究員 (DC1)<span class="org">採用率 約14%</span></span>
+          </span>
+        </div>
+        <div class="award placeholder">
+          <span class="yr">20XX</span>
+          <span class="name">
+            <span class="en">Add scholarships, travel grants, or student awards here<span class="org">Year · issuing organization</span></span>
+            <span class="ja">奨学金・渡航助成・学生表彰などをここに<span class="org">年 · 団体名</span></span>
+          </span>
+        </div>
+      </div>
     </div>
   </section>
 
   <!-- ========== TALKS ========== -->
   <section class="block" id="talks">
-    <div class="glass">
-    <div class="sec-head reveal"><span class="idx">04</span><h2><span class="en">Talks & Presentations</span><span class="ja">講演・発表</span></h2></div>
-    <div class="talks-grid reveal">
-      <div class="talk"><div class="pic"><div class="ph">photo</div></div><div class="cap"><span class="v">CVPR 2025</span><h4><span class="en">EmLoco poster session</span><span class="ja">EmLoco ポスター発表</span></h4><p><span class="en">Add city / date / a note</span><span class="ja">場所・日付・一言を追加</span></p></div></div>
-      <div class="talk"><div class="pic"><div class="ph">photo</div></div><div class="cap"><span class="v"><span class="en">Invited / Lab talk</span><span class="ja">招待・研究室講演</span></span><h4><span class="en">Add an invited talk</span><span class="ja">招待講演を追加</span></h4><p><span class="en">Confirm details</span><span class="ja">詳細を確認</span></p></div></div>
-      <div class="talk"><div class="pic"><div class="ph">photo</div></div><div class="cap"><span class="v"><span class="en">Workshop</span><span class="ja">ワークショップ</span></span><h4><span class="en">Add a workshop talk</span><span class="ja">ワークショップ発表を追加</span></h4><p><span class="en">Venue · date</span><span class="ja">会場 · 日付</span></p></div></div>
-    </div>
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="idx">05</span>
+        <h2><span class="en">Talks & Presentations</span><span class="ja">講演・発表</span></h2>
+      </div>
+      <div class="talks-grid reveal">
+        <div class="talk"><div class="pic"><div class="ph">photo</div></div><div class="cap"><span class="v">CVPR 2025</span><h4><span class="en">EmLoco poster session</span><span class="ja">EmLoco ポスター発表</span></h4><p><span class="en">Add city / date / a note</span><span class="ja">場所・日付・一言を追加</span></p></div></div>
+        <div class="talk"><div class="pic"><div class="ph">photo</div></div><div class="cap"><span class="v"><span class="en">Invited / Lab talk</span><span class="ja">招待・研究室講演</span></span><h4><span class="en">Add an invited talk</span><span class="ja">招待講演を追加</span></h4><p><span class="en">Confirm details</span><span class="ja">詳細を確認</span></p></div></div>
+        <div class="talk"><div class="pic"><div class="ph">photo</div></div><div class="cap"><span class="v"><span class="en">Workshop</span><span class="ja">ワークショップ</span></span><h4><span class="en">Add a workshop talk</span><span class="ja">ワークショップ発表を追加</span></h4><p><span class="en">Venue · date</span><span class="ja">会場 · 日付</span></p></div></div>
+      </div>
     </div>
   </section>
 
   <!-- ========== MEDIA ========== -->
   <section class="block" id="media">
-    <div class="glass">
-    <div class="sec-head reveal"><span class="idx">05</span><h2><span class="en">Media & Coverage</span><span class="ja">メディア掲載</span></h2></div>
-    <div class="media-list reveal">
-      <div class="media-item"><span class="m-title"><a href="#" target="_blank" rel="noopener"><span class="en">University feature on the award / research</span><span class="ja">受賞・研究に関する大学の紹介ページ</span></a><span class="src">Toyota Technological Institute · add URL</span></span><span class="m-date">2026 / XX</span></div>
-      <div class="media-item"><span class="m-title" style="color:var(--ink-faint)"><span class="en">Add press, university news, podcasts, or interviews</span><span class="ja">プレス・大学ニュース・ポッドキャスト・取材などを追加</span><span class="src">source · add URL</span></span><span class="m-date">20XX</span></div>
-    </div>
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="idx">06</span>
+        <h2><span class="en">Media & Coverage</span><span class="ja">メディア掲載</span></h2>
+      </div>
+      <div class="media-list reveal">
+        <div class="media-item"><span class="m-title"><a href="#" target="_blank" rel="noopener"><span class="en">University feature on the award / research</span><span class="ja">受賞・研究に関する大学の紹介ページ</span></a><span class="src">Toyota Technological Institute · add URL</span></span><span class="m-date">2026 / XX</span></div>
+        <div class="media-item placeholder"><span class="m-title"><span class="en">Add press, university news, podcasts, or interviews</span><span class="ja">プレス・大学ニュース・ポッドキャスト・取材などを追加</span><span class="src">source · add URL</span></span><span class="m-date">20XX</span></div>
+      </div>
     </div>
   </section>
 
-  <!-- ========== BLOG ========== -->
+  <!-- ========== BLOG (hidden) ========== -->
   <section class="block" id="blog">
-    <div class="glass">
-    <div class="sec-head reveal"><span class="idx">06</span><h2><span class="en">Blog</span><span class="ja">ブログ</span></h2><span class="note"><span class="en">research notes · life updates</span><span class="ja">研究メモ · 日常の記録</span></span></div>
-    <div class="blog-grid reveal"><div class="blog-empty"><span class="en">No posts yet. When you publish, each entry becomes a card here: date, title, and a one-line summary.</span><span class="ja">まだ投稿はありません。公開すると、日付・タイトル・一行要約のカードがここに並びます。</span></div></div>
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="idx">07</span>
+        <h2><span class="en">Blog</span><span class="ja">ブログ</span></h2>
+      </div>
     </div>
   </section>
 
   <!-- ========== LIFE ========== -->
   <section class="block" id="life">
-    <div class="glass">
-    <div class="sec-head reveal"><span class="idx">07</span><h2><span class="en">Outside the Lab</span><span class="ja">研究室の外で</span></h2></div>
-    <p class="life-intro reveal"><span class="en">Research is most of the picture, but not all of it. A husband and a father of one, raising a small family between two languages, and a firm believer that the body and the mind train together.</span><span class="ja">研究は人生の大半ですが、すべてではありません。二つの言語のあいだで小さな家族を育てる、一児の父であり夫。心と体は一緒に鍛えるもの、と信じています。</span></p>
-    <div class="life-grid reveal">
-      <div class="life-item"><h4><span class="dot"></span><span class="en">Family & Home</span><span class="ja">家族と暮らし</span></h4><p><span class="en">Father of one daughter and partner to a wonderful Vietnamese wife. Home runs across Japanese and Vietnamese, kept warm by a friendly Maltese and a lovely Ragdoll-Siamese mix who also keep the schedule honest.</span><span class="ja">一児（娘）の父であり、素敵なベトナム人の妻のパートナー。家庭は日本語とベトナム語が行き交います。人懐っこいマルチーズと、ラグドール×シャム猫のミックスが、暮らしを温かく、そして規則正しくしてくれます。</span></p></div>
-      <div class="life-item"><h4><span class="dot"></span><span class="en">Community — Vista</span><span class="ja">コミュニティ — Vista</span></h4><p><span class="en">I run <strong>Vista</strong>, a Discord community for mutual progress and goal management, founded with a close friend in 2020 and still going strong.</span><span class="ja"><strong>Vista</strong> という、互いの進捗・目標管理のための Discord コミュニティを運営しています。2020年に親友と立ち上げ、今も続いています。</span></p></div>
-      <div class="life-item"><h4><span class="dot"></span><span class="en">Languages</span><span class="ja">語学</span></h4><p><span class="en">A long-running language habit, with a Duolingo streak past 500 days. Mainly English and Vietnamese, picking up new places and new people along the way.</span><span class="ja">長く続く語学の習慣。Duolingo の連続記録は500日超え。主に英語とベトナム語を学びながら、新しい場所や人とのつながりを楽しんでいます。</span></p></div>
-      <div class="life-item"><h4><span class="dot"></span><span class="en">Training</span><span class="ja">トレーニング</span></h4><p><span class="en">Former captain of the university Spartan Race club. Exercise is a reliable partner that resets the mind and feeds back into research focus.</span><span class="ja">大学のスパルタンレース部の元キャプテン。運動は頭をリセットし、研究の集中力に還ってくる、頼れる相棒です。</span></p></div>
-      <div class="life-item"><h4><span class="dot"></span><span class="en">Reading</span><span class="ja">読書</span></h4><p><span class="en">Drawn to books that re-examine ordinary life through a scientific lens, or leave room for quiet reflection. A personal compass I call "Root": chase the underlying principle, not the surface noise.</span><span class="ja">日常を科学の視点で捉え直す本や、静かに思索できる本が好きです。「Root」と呼ぶ自分の指針があります。表面のノイズではなく、根本の原理を追うこと。</span></p></div>
-      <div class="life-item"><h4><span class="dot"></span><span class="en">Tools & Gadgets</span><span class="ja">ツールとガジェット</span></h4><p><span class="en">Always trying out new tools and gadgets, hunting for small ways to work and live a little better.</span><span class="ja">新しいツールや新興ガジェットを次々と試すのが好きです。仕事や暮らしを少し良くする工夫を探しています。</span></p></div>
-    </div>
-    <div class="life-photos reveal"><div class="ph-box">photo</div><div class="ph-box">photo</div><div class="ph-box">photo</div><div class="ph-box">photo</div></div>
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <span class="idx">07</span>
+        <h2><span class="en">Outside the Lab</span><span class="ja">研究室の外で</span></h2>
+      </div>
+      <p class="life-intro reveal"><span class="en">Research is most of the picture, but not all of it. A husband and a father of one, raising a small family between two languages, and a firm believer that the body and the mind train together.</span><span class="ja">研究は人生の大半ですが、すべてではありません。二つの言語のあいだで小さな家族を育てる、一児の父であり夫。心と体は一緒に鍛えるもの、と信じています。</span></p>
+      <div class="life-grid reveal">
+        <div class="life-item"><h4><span class="dot"></span><span class="en">Family & Home</span><span class="ja">家族と暮らし</span></h4><p><span class="en">Father of one daughter and partner to a wonderful Vietnamese wife. Home runs across Japanese and Vietnamese, kept warm by a friendly Maltese and a lovely Ragdoll-Siamese mix who also keep the schedule honest.</span><span class="ja">一児（娘）の父であり、素敵なベトナム人の妻のパートナー。家庭は日本語とベトナム語が行き交います。人懐っこいマルチーズと、ラグドール×シャム猫のミックスが、暮らしを温かく、そして規則正しくしてくれます。</span></p></div>
+        <div class="life-item"><h4><span class="dot"></span><span class="en">Community — Vista</span><span class="ja">コミュニティ — Vista</span></h4><p><span class="en">I run <strong>Vista</strong>, a Discord community for mutual progress and goal management, founded with a close friend in 2020 and still going strong.</span><span class="ja"><strong>Vista</strong> という、互いの進捗・目標管理のための Discord コミュニティを運営しています。2020年に親友と立ち上げ、今も続いています。</span></p></div>
+        <div class="life-item"><h4><span class="dot"></span><span class="en">Languages</span><span class="ja">語学</span></h4><p><span class="en">A long-running language habit, with a Duolingo streak past 500 days. Mainly English and Vietnamese, picking up new places and new people along the way.</span><span class="ja">長く続く語学の習慣。Duolingo の連続記録は500日超え。主に英語とベトナム語を学びながら、新しい場所や人とのつながりを楽しんでいます。</span></p></div>
+        <div class="life-item"><h4><span class="dot"></span><span class="en">Training</span><span class="ja">トレーニング</span></h4><p><span class="en">Former captain of the university Spartan Race club. Exercise is a reliable partner that resets the mind and feeds back into research focus.</span><span class="ja">大学のスパルタンレース部の元キャプテン。運動は頭をリセットし、研究の集中力に還ってくる、頼れる相棒です。</span></p></div>
+        <div class="life-item"><h4><span class="dot"></span><span class="en">Reading</span><span class="ja">読書</span></h4><p><span class="en">Drawn to books that re-examine ordinary life through a scientific lens, or leave room for quiet reflection. A personal compass I call "Root": chase the underlying principle, not the surface noise.</span><span class="ja">日常を科学の視点で捉え直す本や、静かに思索できる本が好きです。「Root」と呼ぶ自分の指針があります。表面のノイズではなく、根本の原理を追うこと。</span></p></div>
+        <div class="life-item"><h4><span class="dot"></span><span class="en">Tools & Gadgets</span><span class="ja">ツールとガジェット</span></h4><p><span class="en">Always trying out new tools and gadgets, hunting for small ways to work and live a little better.</span><span class="ja">新しいツールや新興ガジェットを次々と試すのが好きです。仕事や暮らしを少し良くする工夫を探しています。</span></p></div>
+      </div>
+      <div class="life-photos reveal"><div class="ph-box">photo</div><div class="ph-box">photo</div><div class="ph-box">photo</div><div class="ph-box">photo</div></div>
     </div>
   </section>
 
   <!-- ========== CONTACT ========== -->
-  <footer id="contact">
-    <div class="glass">
-    <div class="reveal">
-      <div class="contact-head"><span class="en">Let's talk.</span><span class="ja">お気軽にご連絡を。</span></div>
-      <p class="contact-sub"><span class="en">For research collaborations, social-navigation problems, academic or industry roles, or a language exchange.</span><span class="ja">研究の共同・社会的ナビゲーションの課題・アカデミアや産業界のポジション・言語交換など、何でも。</span></p>
-      <div class="contact-links">
-        <a href="mailto:sd25502@toyota-ti.ac.jp">sd25502@toyota-ti.ac.jp</a>
-        <a href="https://scholar.google.co.jp/citations?user=HkFAVbcAAAAJ" target="_blank" rel="noopener">Google Scholar</a>
-        <a href="https://github.com/ImIntheMiddle" target="_blank" rel="noopener">GitHub</a>
-        <a href="https://www.linkedin.com/in/ImIntheMiddle/" target="_blank" rel="noopener">LinkedIn</a>
-        <a href="https://twitter.com/ImlntheMiddle" target="_blank" rel="noopener">X</a>
+  <footer class="contact" id="contact">
+    <div class="wrap">
+      <div class="reveal">
+        <div class="contact-head"><span class="en">Let's talk.</span><span class="ja">お気軽にご連絡を。</span></div>
+        <p class="contact-sub"><span class="en">For research collaborations, social-navigation problems, academic or industry roles, or a language exchange.</span><span class="ja">研究の共同・社会的ナビゲーションの課題・アカデミアや産業界のポジション・言語交換など、何でも。</span></p>
+        <div class="contact-links">
+          <a href="mailto:sd25502@toyota-ti.ac.jp">sd25502@toyota-ti.ac.jp</a>
+          <a href="https://scholar.google.co.jp/citations?user=HkFAVbcAAAAJ" target="_blank" rel="noopener">Google Scholar</a>
+          <a href="https://github.com/ImIntheMiddle" target="_blank" rel="noopener">GitHub</a>
+          <a href="https://www.linkedin.com/in/ImIntheMiddle/" target="_blank" rel="noopener">LinkedIn</a>
+          <a href="https://twitter.com/ImlntheMiddle" target="_blank" rel="noopener">X</a>
+          <a href="static/uploads/resume.pdf" target="_blank" rel="noopener">CV</a>
+        </div>
       </div>
-    </div>
-    <p class="sfm-credit reveal">
-      <span class="en">↑ The crowd above is a live <strong>Social Force Model</strong> simulation. People, cars, and a robot pursue goals while avoiding one another and the scattered objects, and each one fans out a few plausible futures, much like the trajectory forecasting I study.</span>
-      <span class="ja">↑ 上を歩く群衆は、リアルタイムの <strong>Social Force Model</strong> シミュレーションです。人・車・ロボットがゴールを目指しつつ、互いと点在する物体を避け、それぞれが「ありえる未来」を扇状に予測します。私が研究している軌道予測そのものを、背景にしれっと忍ばせています。</span>
-    </p>
-    <div class="foot-row reveal">
-      <span>© 2026 Hiromu Taketsugu · 武次 広夢</span>
-      <span class="en">Built around pedestrian trajectory forecasting</span><span class="ja">歩行者の軌道予測をモチーフに</span>
-    </div>
+      <p class="sfm-credit reveal">
+        <span class="en">↑ The scene above is a live <strong>Social Force Model</strong> simulation. People, a car, and a delivery robot pursue goals while avoiding one another and scattered street objects, and each one fans out a few plausible futures — the trajectory forecasting I study, quietly running behind everything else on the page.</span>
+        <span class="ja">↑ 上のシーンはリアルタイムの <strong>Social Force Model</strong> シミュレーションです。人・車・配送ロボットがゴールを目指しつつ、互いや点在するオブジェクトを避け、それぞれが「ありえる未来」を扇状に予測します。私が研究している軌道予測そのものを、ページの背景でしれっと動かしています。</span>
+      </p>
+      <div class="foot-row reveal">
+        <span>© 2026 Hiromu Taketsugu · 武次 広夢</span>
+        <span class="en">Built around pedestrian trajectory forecasting</span>
+        <span class="ja">歩行者の軌道予測をモチーフに</span>
+      </div>
     </div>
   </footer>
 
 </main>
 
 <script>
-/* ===================== LANG TOGGLE ===================== */
+/* ====================================================================
+   LANGUAGE toggle
+   ==================================================================== */
 (function () {
   const root = document.documentElement;
   const btn = document.getElementById('langBtn');
@@ -445,7 +1084,9 @@
   });
 })();
 
-/* ===================== THEME TOGGLE ===================== */
+/* ====================================================================
+   THEME toggle
+   ==================================================================== */
 (function () {
   const root = document.documentElement;
   const btn = document.getElementById('themeBtn');
@@ -453,7 +1094,9 @@
   const ico = document.getElementById('themeIco');
   const sun = '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/>';
   const moon = '<path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/>';
-  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) root.setAttribute('data-theme', 'dark');
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    root.setAttribute('data-theme', 'dark');
+  }
   function sync() {
     const dark = root.getAttribute('data-theme') === 'dark';
     label.textContent = dark ? 'Light' : 'Dark';
@@ -467,21 +1110,37 @@
   });
 })();
 
-/* ============================================================
-   Social-force crowd: fleshed-out human silhouettes that walk,
-   avoid each other AND avoid scattered scene objects.
-   Pseudo-3D ground via depth scaling + cast shadows.
-   Heavier than stick figures but still pure canvas.
-   ============================================================ */
+/* ====================================================================
+   Scroll reveal
+   ==================================================================== */
+(function () {
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+    }
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+})();
+
+/* ====================================================================
+   Crowd simulation — Depth v2 with tint palettes + walk mode
+   Palette reads from CSS variables and reloads on theme change.
+   ==================================================================== */
 (function () {
   const canvas = document.getElementById('field');
   const ctx = canvas.getContext('2d');
   const root = document.documentElement;
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const rand = (a, b) => a + Math.random() * (b - a);
+  const pick = (arr) => arr[(Math.random() * arr.length) | 0];
+  const mix = (a, b, t) => [Math.round(a[0] + (b[0] - a[0]) * t), Math.round(a[1] + (b[1] - a[1]) * t), Math.round(a[2] + (b[2] - a[2]) * t)];
+  const rgba = (c, a) => 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + a + ')';
 
   let W, H, DPR;
+  const MOBILE = () => window.innerWidth <= 640;
   function resize() {
-    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    const cap = MOBILE() ? 1.5 : 2;
+    DPR = Math.min(window.devicePixelRatio || 1, cap);
     W = canvas.clientWidth; H = canvas.clientHeight;
     canvas.width = W * DPR; canvas.height = H * DPR;
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
@@ -489,526 +1148,843 @@
   window.addEventListener('resize', resize);
   resize();
 
-  function css(v) { return getComputedStyle(root).getPropertyValue(v).trim(); }
-  let PALETTE, TRAIL, SHADOW_A;
-  function loadColors() {
-    PALETTE = [
-      [+css('--ped-r'),  +css('--ped-g'),  +css('--ped-b')],
-      [+css('--ped2-r'), +css('--ped2-g'), +css('--ped2-b')],
-      [+css('--ped3-r'), +css('--ped3-g'), +css('--ped3-b')]
-    ];
-    TRAIL = [+css('--trail-r'), +css('--trail-g'), +css('--trail-b')];
-    SHADOW_A = +css('--shadow-a') || 0.12;
+  /* palette read from CSS variables so themes flip cleanly */
+  let INK, INK_SOFT, ACCENT, PAPER, SHADOW_A;
+  function parseRGB(name) {
+    const s = getComputedStyle(root).getPropertyValue(name).trim();
+    return s.split(',').map(v => parseInt(v.trim(), 10));
   }
-  loadColors();
-  new MutationObserver(() => setTimeout(loadColors, 60)).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+  function loadPalette() {
+    INK = parseRGB('--ink-rgb');
+    INK_SOFT = parseRGB('--ink-soft-rgb');
+    ACCENT = parseRGB('--accent-rgb');
+    PAPER = parseRGB('--paper-rgb');
+    SHADOW_A = +getComputedStyle(root).getPropertyValue('--shadow-a') || 0.1;
+  }
+  loadPalette();
+  new MutationObserver(() => setTimeout(loadPalette, 40))
+    .observe(root, { attributes: true, attributeFilter: ['data-theme'] });
 
-  const rand = (a, b) => a + Math.random() * (b - a);
-  function depthScale(y) { return 0.62 + (y / H) * 0.9; }
-
-  /* -------- static scene objects (obstacles) -------- */
-  // kinds: 'planter' (round), 'bench' (rect), 'pole' (thin round), 'kiosk' (tall rect)
-  // each object also picks an accent color from this set for variety
-  const OBJ_TINTS = [
-    [122, 138, 95],   // sage
-    [194, 96, 58],    // terracotta
-    [217, 148, 4],    // amber
-    [96, 130, 140],   // teal-grey
-    [150, 110, 140],  // muted plum
+  /* muted tints — used as color identity per agent (mid-value, work on both themes) */
+  const PED_TINTS_MID = [
+    null, null,                       // 2 slots stay neutral (mapped to INK at draw time)
+    [176, 96, 62],                    // terracotta
+    [146, 122, 60],                   // ochre
+    [104, 124, 88],                   // sage
+    [88, 108, 134],                   // slate blue
+    [122, 96, 124]                    // plum
   ];
+  const CAR_TINTS_MID = [
+    [88, 108, 134], [146, 90, 78], [110, 128, 100], [120, 120, 128]
+  ];
+  const ROBOT_LIGHTS = [
+    [64, 160, 150], [232, 80, 10], [96, 140, 200], [180, 130, 60]
+  ];
+
+  function depthScale(y) { return 0.6 + (y / H) * 0.85; }
+
+  function groundShadow(x, y, w, alpha) {
+    const g = ctx.createRadialGradient(x, y, 0, x, y, w);
+    g.addColorStop(0, rgba([20, 15, 10], alpha));
+    g.addColorStop(1, rgba([20, 15, 10], 0));
+    ctx.save();
+    ctx.translate(x, y); ctx.scale(1, 0.3); ctx.translate(-x, -y);
+    ctx.beginPath(); ctx.arc(x, y, w, 0, Math.PI * 2);
+    ctx.fillStyle = g; ctx.fill();
+    ctx.restore();
+  }
+
+  /* tapered chain drawing for limbs */
+  function taperedChain(pts, ws, col) {
+    ctx.fillStyle = col;
+    for (let i = 0; i < pts.length - 1; i++) {
+      const x0 = pts[i][0], y0 = pts[i][1], x1 = pts[i + 1][0], y1 = pts[i + 1][1];
+      const a = Math.atan2(y1 - y0, x1 - x0) + Math.PI / 2;
+      const c = Math.cos(a), s = Math.sin(a);
+      ctx.beginPath();
+      ctx.moveTo(x0 + c * ws[i], y0 + s * ws[i]);
+      ctx.lineTo(x1 + c * ws[i + 1], y1 + s * ws[i + 1]);
+      ctx.lineTo(x1 - c * ws[i + 1], y1 - s * ws[i + 1]);
+      ctx.lineTo(x0 - c * ws[i], y0 - s * ws[i]);
+      ctx.closePath(); ctx.fill();
+    }
+    for (let i = 0; i < pts.length; i++) {
+      ctx.beginPath(); ctx.arc(pts[i][0], pts[i][1], ws[i], 0, Math.PI * 2); ctx.fill();
+    }
+  }
+
+  /* =============================================================
+     Scene objects — side-view street furniture
+     ============================================================= */
   let OBJECTS = [];
   function makeObjects() {
     const out = [];
-    const n = Math.max(5, Math.min(12, Math.round((W * H) / 145000)));
-    const kinds = ['planter', 'bench', 'pole', 'planter', 'bench', 'kiosk', 'planter'];
+    const density = MOBILE() ? 260000 : 200000;
+    const n = Math.max(4, Math.min(10, Math.round(W * H / density)));
+    const kinds = ['tree', 'bench', 'lamp', 'planter', 'tree', 'bollard', 'bench'];
     let tries = 0;
     while (out.length < n && tries < 300) {
       tries++;
       const k = kinds[(Math.random() * kinds.length) | 0];
-      const x = rand(W * 0.06, W * 0.94), y = rand(H * 0.16, H * 0.92);
-      let r;
-      if (k === 'planter') r = rand(30, 52);
-      else if (k === 'bench') r = rand(38, 60);
-      else if (k === 'kiosk') r = rand(34, 50);
-      else r = rand(10, 16); // pole
-      // keep them from overlapping too much
-      if (out.some(o => Math.hypot(o.x - x, o.y - y) < (o.r + r + 26))) continue;
-      const tint = OBJ_TINTS[(Math.random() * OBJ_TINTS.length) | 0];
-      out.push({ k, x, y, r, tint });
+      const x = rand(W * 0.05, W * 0.95), y = rand(H * 0.25, H * 0.94);
+      const r = k === 'tree' ? rand(28, 42) : k === 'lamp' ? 12 : k === 'bollard' ? 9 : rand(22, 34);
+      if (out.some(o => Math.hypot(o.x - x, o.y - y) < (o.r + r + 60))) continue;
+      out.push({ k, x, y, r, seed: Math.random() * 7 });
     }
     return out;
   }
 
   function drawObject(o) {
     const ds = depthScale(o.y);
-    const t = o.tint;
-    const dark = root.getAttribute('data-theme') === 'dark';
-    const fill = 'rgba(' + t[0] + ',' + t[1] + ',' + t[2] + ',' + (dark ? 0.12 : 0.10) + ')';
-    const line = 'rgba(' + t[0] + ',' + t[1] + ',' + t[2] + ',' + (dark ? 0.5 : 0.45) + ')';
+    const s = o.r * ds;
     ctx.save();
     ctx.translate(o.x, o.y);
-    // shadow
-    ctx.beginPath();
-    ctx.ellipse(0, o.r * 0.16 + 2, o.r * 0.95, o.r * 0.28, 0, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(20,15,10,' + (SHADOW_A * 0.5) + ')';
-    ctx.fill();
-    ctx.fillStyle = fill; ctx.strokeStyle = line; ctx.lineWidth = 1.4;
-    if (o.k === 'planter') {
-      ctx.beginPath(); ctx.arc(0, 0, o.r * 0.8, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-      // little sprigs in the same tint
-      ctx.strokeStyle = 'rgba(' + t[0] + ',' + t[1] + ',' + t[2] + ',0.5)';
-      ctx.lineWidth = 1.6;
-      for (let i = 0; i < 6; i++) {
-        const a = (i / 6) * Math.PI * 2 + 0.3;
-        ctx.beginPath(); ctx.moveTo(0, 0);
-        ctx.lineTo(Math.cos(a) * o.r * 0.6, Math.sin(a) * o.r * 0.6 - o.r * 0.32);
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.strokeStyle = rgba(INK, 0.82);
+    ctx.lineWidth = Math.max(1.0, 1.3 * ds);
+    const fillCol = rgba(INK_SOFT, 0.12);
+
+    if (o.k === 'tree') {
+      groundShadow(0, 2, s * 1.0, 0.10);
+      ctx.strokeStyle = rgba(INK_SOFT, 0.5); ctx.lineWidth = 1;
+      for (let i = -2; i <= 2; i++) {
+        ctx.beginPath(); ctx.moveTo(i * s * 0.16, 0);
+        ctx.quadraticCurveTo(i * s * 0.16 + s * 0.04, -s * 0.10, i * s * 0.16 + s * 0.09, -s * 0.16);
+        ctx.stroke();
+      }
+      ctx.fillStyle = rgba(INK, 0.72);
+      ctx.beginPath();
+      ctx.moveTo(-s * 0.10, 0);
+      ctx.quadraticCurveTo(-s * 0.05, -s * 0.5, -s * 0.045, -s * 1.05);
+      ctx.lineTo(s * 0.045, -s * 1.05);
+      ctx.quadraticCurveTo(s * 0.06, -s * 0.5, s * 0.12, 0);
+      ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = rgba(INK, 0.65); ctx.lineWidth = Math.max(1, 1.4 * ds);
+      ctx.beginPath(); ctx.moveTo(0, -s * 1.0);
+      ctx.quadraticCurveTo(s * 0.22, -s * 1.25, s * 0.38, -s * 1.42); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0, -s * 0.95);
+      ctx.quadraticCurveTo(-s * 0.2, -s * 1.2, -s * 0.34, -s * 1.38); ctx.stroke();
+      const cy = -s * 1.72;
+      const blobs = [
+        [0, -s * 0.10, s * 0.58], [-s * 0.46, s * 0.16, s * 0.42], [s * 0.46, s * 0.16, s * 0.42],
+        [-s * 0.24, -s * 0.34, s * 0.38], [s * 0.24, -s * 0.34, s * 0.38], [0, s * 0.26, s * 0.44]
+      ];
+      ctx.fillStyle = rgba(INK_SOFT, 0.13);
+      for (const b of blobs) { ctx.beginPath(); ctx.arc(b[0], cy + b[1], b[2], 0, Math.PI * 2); ctx.fill(); }
+      ctx.strokeStyle = rgba(INK, 0.52); ctx.lineWidth = Math.max(1, 1.2 * ds);
+      for (const b of blobs.slice(0, 4)) {
+        ctx.beginPath();
+        ctx.arc(b[0], cy + b[1], b[2], o.seed + 0.4, o.seed + 2.2);
         ctx.stroke();
       }
     } else if (o.k === 'bench') {
-      const w = o.r * 1.7, h = o.r * 0.7;
-      ctx.beginPath(); ctx.rect(-w / 2, -h / 2, w, h); ctx.fill(); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(-w / 2, 0); ctx.lineTo(w / 2, 0); ctx.stroke();
-      // legs
-      ctx.beginPath(); ctx.moveTo(-w / 2 + 4, h / 2); ctx.lineTo(-w / 2 + 4, h / 2 + h * 0.4); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(w / 2 - 4, h / 2); ctx.lineTo(w / 2 - 4, h / 2 + h * 0.4); ctx.stroke();
-    } else if (o.k === 'kiosk') {
-      const w = o.r * 1.1, h = o.r * 1.4;
-      ctx.beginPath(); ctx.rect(-w / 2, -h, w, h); ctx.fill(); ctx.stroke();
-      // roof line
-      ctx.beginPath(); ctx.moveTo(-w / 2 - 4, -h); ctx.lineTo(w / 2 + 4, -h); ctx.stroke();
-    } else { // pole
-      ctx.beginPath(); ctx.arc(0, 0, o.r * 0.5, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, -o.r * 1.6); ctx.stroke();
+      groundShadow(0, 2, s * 1.15, 0.08);
+      const w = s * 1.7, sh = s * 0.42;
+      ctx.strokeStyle = rgba(INK, 0.82);
+      for (const lx of [-w / 2 + s * 0.12, w / 2 - s * 0.12]) {
+        ctx.beginPath(); ctx.moveTo(lx, -sh);
+        ctx.quadraticCurveTo(lx - s * 0.05, -sh * 0.5, lx, 0); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(lx - s * 0.07, 0); ctx.lineTo(lx + s * 0.07, 0); ctx.stroke();
+      }
+      ctx.fillStyle = rgba(INK, 0.72);
+      ctx.fillRect(-w / 2, -sh - s * 0.05, w, s * 0.055);
+      ctx.fillRect(-w / 2, -sh + s * 0.045, w, s * 0.05);
+      ctx.save();
+      ctx.translate(-w / 2, -sh); ctx.rotate(-0.12);
+      ctx.fillRect(0, -sh * 1.15, w, s * 0.05);
+      ctx.fillRect(0, -sh * 0.72, w, s * 0.05);
+      ctx.strokeStyle = rgba(INK, 0.82);
+      ctx.beginPath(); ctx.moveTo(s * 0.12, 0); ctx.lineTo(s * 0.12, -sh * 1.2); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(w - s * 0.12, 0); ctx.lineTo(w - s * 0.12, -sh * 1.2); ctx.stroke();
+      ctx.restore();
+      ctx.beginPath(); ctx.moveTo(-w / 2 + s * 0.12, -sh);
+      ctx.quadraticCurveTo(-w / 2 + s * 0.02, -sh - s * 0.28, -w / 2 + s * 0.3, -sh - s * 0.3);
+      ctx.stroke();
+    } else if (o.k === 'lamp') {
+      groundShadow(0, 2, s * 0.9, 0.07);
+      const ph = s * 3.6;
+      ctx.fillStyle = rgba(INK, 0.78);
+      ctx.beginPath();
+      ctx.moveTo(-s * 0.24, 0); ctx.lineTo(-s * 0.16, -s * 0.28);
+      ctx.lineTo(s * 0.16, -s * 0.28); ctx.lineTo(s * 0.24, 0); ctx.closePath(); ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(-s * 0.07, -s * 0.28); ctx.lineTo(-s * 0.035, -ph);
+      ctx.lineTo(s * 0.035, -ph); ctx.lineTo(s * 0.07, -s * 0.28);
+      ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = rgba(INK, 0.82); ctx.lineWidth = Math.max(1.1, 1.5 * ds);
+      ctx.beginPath(); ctx.moveTo(0, -ph);
+      ctx.quadraticCurveTo(s * 0.75, -ph - s * 0.06, s * 0.8, -ph + s * 0.22); ctx.stroke();
+      ctx.fillStyle = rgba(INK, 0.82);
+      ctx.beginPath();
+      ctx.moveTo(s * 0.58, -ph + s * 0.22); ctx.lineTo(s * 1.02, -ph + s * 0.22);
+      ctx.lineTo(s * 0.94, -ph + s * 0.45); ctx.lineTo(s * 0.66, -ph + s * 0.45);
+      ctx.closePath(); ctx.fill();
+      ctx.fillStyle = rgba(ACCENT, 0.75);
+      ctx.beginPath(); ctx.arc(s * 0.8, -ph + s * 0.5, s * 0.14, 0, Math.PI * 2); ctx.fill();
+      const halo = ctx.createRadialGradient(s * 0.8, -ph + s * 0.5, 0, s * 0.8, -ph + s * 0.5, s * 1.3);
+      halo.addColorStop(0, rgba(ACCENT, 0.10)); halo.addColorStop(1, rgba(ACCENT, 0));
+      ctx.fillStyle = halo;
+      ctx.beginPath(); ctx.arc(s * 0.8, -ph + s * 0.5, s * 1.3, 0, Math.PI * 2); ctx.fill();
+    } else if (o.k === 'bollard') {
+      groundShadow(0, 2, s * 1.0, 0.08);
+      const bh = s * 2.4;
+      ctx.fillStyle = rgba(INK, 0.78);
+      ctx.beginPath();
+      ctx.moveTo(-s * 0.32, 0);
+      ctx.lineTo(-s * 0.26, -bh);
+      ctx.arc(0, -bh, s * 0.26, Math.PI, 0);
+      ctx.lineTo(s * 0.32, 0);
+      ctx.closePath(); ctx.fill();
+      ctx.fillStyle = rgba(ACCENT, 0.8);
+      ctx.fillRect(-s * 0.28, -bh * 0.72, s * 0.56, s * 0.22);
+    } else { // planter
+      groundShadow(0, 2, s * 0.85, 0.08);
+      const w = s * 1.05, h2 = s * 0.6;
+      ctx.fillStyle = rgba(INK_SOFT, 0.16);
+      ctx.beginPath();
+      ctx.moveTo(-w / 2, -h2); ctx.lineTo(-w / 2 * 0.78, 0); ctx.lineTo(w / 2 * 0.78, 0); ctx.lineTo(w / 2, -h2);
+      ctx.closePath(); ctx.fill();
+      ctx.strokeStyle = rgba(INK, 0.78); ctx.stroke();
+      ctx.strokeStyle = rgba(INK, 0.42);
+      ctx.beginPath(); ctx.moveTo(-w / 2 * 0.94, -h2 * 0.68); ctx.lineTo(w / 2 * 0.94, -h2 * 0.68); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(-w / 2 * 0.86, -h2 * 0.34); ctx.lineTo(w / 2 * 0.86, -h2 * 0.34); ctx.stroke();
+      ctx.strokeStyle = rgba(INK, 0.68); ctx.lineWidth = Math.max(1, 1.3 * ds);
+      for (let i = 0; i < 5; i++) {
+        const a = -Math.PI / 2 + (i - 2) * 0.32;
+        ctx.beginPath(); ctx.moveTo(0, -h2);
+        ctx.quadraticCurveTo(Math.cos(a) * s * 0.35, -h2 + Math.sin(a) * s * 0.55, Math.cos(a) * s * 0.62, -h2 + Math.sin(a) * s * 1.0);
+        ctx.stroke();
+      }
+      ctx.fillStyle = rgba(INK_SOFT, 0.35);
+      for (const lx of [-s * 0.22, s * 0.18]) {
+        ctx.beginPath();
+        ctx.ellipse(lx, -h2 - s * 0.34, s * 0.13, s * 0.30, lx > 0 ? 0.5 : -0.5, 0, Math.PI * 2);
+        ctx.fill();
+      }
     }
     ctx.restore();
   }
 
-  /* -------- pedestrians -------- */
-  class Pedestrian {
-    constructor() {
-      this.x = rand(0, W); this.y = rand(0, H);
+  /* =============================================================
+     Movers
+     ============================================================= */
+  const HAIRS = ['none', 'cap', 'pony', 'bun'];
+  const PROPS = ['none', 'none', 'backpack', 'bag', 'case'];
+
+  class Mover {
+    constructor(kind) {
+      this.kind = kind;
+      this.x = rand(0, W); this.y = rand(H * 0.2, H * 0.95);
       this.vx = 0; this.vy = 0;
-      this.maxSpeed = rand(0.24, 0.62);
-      this.radius = rand(30, 50);
-      this.ci = (Math.random() * 3) | 0;
+      this.maxSpeed = kind === 'car' ? rand(0.6, 0.9) : kind === 'robot' ? rand(0.25, 0.42) : rand(0.24, 0.55);
+      this.radius = kind === 'car' ? 62 : 34;
       this.tail = [];
-      this.maxTail = 22 + ((Math.random() * 12) | 0);
+      this.maxTail = MOBILE() ? 20 : 30;
       this.phase = Math.random() * Math.PI * 2;
-      this.baseH = rand(20, 27);
+      this.baseH = kind === 'ped' ? rand(30, 40) : kind === 'robot' ? rand(26, 30) : rand(32, 36);
       this.face = Math.random() < 0.5 ? 1 : -1;
+      this.wheel = 0;
+      this.accent = false;
+      const midTint = kind === 'car' ? pick(CAR_TINTS_MID)
+                    : kind === 'ped' ? pick(PED_TINTS_MID)
+                    : null;
+      this.midTint = midTint;    // null means "use ink (neutral)"
+      this.light = pick(ROBOT_LIGHTS);
+      this.build = rand(0.85, 1.18);
+      this.gaitF = rand(0.26, 0.34);
+      this.hair = pick(HAIRS);
+      this.prop = pick(PROPS);
       this.newGoal();
     }
+    tint() { return this.midTint || INK; }
     newGoal() {
-      // aim toward the opposite half so journeys are long and legible
       this.gx = this.x < W / 2 ? rand(W * 0.55, W - 30) : rand(30, W * 0.45);
-      this.gy = rand(40, H - 40);
+      this.gy = rand(H * 0.22, H * 0.95);
     }
-    step(others) {
-      let dx = this.gx - this.x, dy = this.gy - this.y;
-      let dist = Math.hypot(dx, dy) || 1;
-      if (dist < 36) { this.newGoal(); dx = this.gx - this.x; dy = this.gy - this.y; dist = Math.hypot(dx, dy) || 1; }
-      let ax = (dx / dist) * 0.055, ay = (dy / dist) * 0.055;
-      // avoid other pedestrians
-      for (let o of others) {
+    step(all) {
+      let ax, ay;
+      if (this === PLAYER && CONTROL.active) {
+        ax = CONTROL.ix * 0.06; ay = CONTROL.iy * 0.06;
+      } else {
+        let dx = this.gx - this.x, dy = this.gy - this.y;
+        let d = Math.hypot(dx, dy) || 1;
+        if (d < 38) { this.newGoal(); dx = this.gx - this.x; dy = this.gy - this.y; d = Math.hypot(dx, dy) || 1; }
+        ax = dx / d * 0.05; ay = dy / d * 0.05;
+      }
+      for (const o of all) {
         if (o === this) continue;
         const rx = this.x - o.x, ry = this.y - o.y;
-        const d = Math.hypot(rx, ry);
+        const dd = Math.hypot(rx, ry);
         const inf = this.radius + o.radius;
-        if (d > 0 && d < inf) { const f = (1 - d / inf) * 0.15; ax += (rx / d) * f; ay += (ry / d) * f; }
+        if (dd > 0 && dd < inf) { const f = (1 - dd / inf) * 0.15; ax += rx / dd * f; ay += ry / dd * f; }
       }
-      // avoid scene objects (stronger, closer-range)
-      for (let ob of OBJECTS) {
+      for (const ob of OBJECTS) {
         const rx = this.x - ob.x, ry = this.y - ob.y;
-        const d = Math.hypot(rx, ry);
-        const inf = ob.r + 34;
-        if (d > 0 && d < inf) { const f = (1 - d / inf) * 0.26; ax += (rx / d) * f; ay += (ry / d) * f; }
+        const dd = Math.hypot(rx, ry);
+        const inf = ob.r + 44;
+        if (dd > 0 && dd < inf) { const f = (1 - dd / inf) * 0.28; ax += rx / dd * f; ay += ry / dd * f; }
       }
-      const m = 60;
+      const m = 70;
       if (this.x < m) ax += 0.013; if (this.x > W - m) ax -= 0.013;
-      if (this.y < m) ay += 0.013; if (this.y > H - m) ay -= 0.013;
-      this.vx += ax; this.vy += ay;
-      this.vx *= 0.95; this.vy *= 0.95;
+      if (this.y < H * 0.18) ay += 0.013; if (this.y > H - 40) ay -= 0.013;
+      this.vx = (this.vx + ax) * 0.95; this.vy = (this.vy + ay) * 0.95;
       const sp = Math.hypot(this.vx, this.vy);
-      if (sp > this.maxSpeed) { this.vx = this.vx / sp * this.maxSpeed; this.vy = this.vy / sp * this.maxSpeed; }
+      const ms = (this === PLAYER && CONTROL.active) ? this.maxSpeed * 1.5 : this.maxSpeed;
+      if (sp > ms) { this.vx *= ms / sp; this.vy *= ms / sp; }
       this.x += this.vx; this.y += this.vy;
-      const mm = 90;
+      const mm = 100;
       if (this.x < -mm) this.x = W + mm; if (this.x > W + mm) this.x = -mm;
-      if (this.y < -mm) this.y = H + mm; if (this.y > H + mm) this.y = -mm;
-      if (this.vx > 0.04) this.face = 1; else if (this.vx < -0.04) this.face = -1;
-      this.phase += sp * 0.26;
+      if (this.vx > 0.03) this.face = 1; else if (this.vx < -0.03) this.face = -1;
+      this.phase += sp * (this.kind === 'ped' ? this.gaitF : 0.5);
+      this.wheel += sp * 0.6;
       this.tail.push([this.x, this.y]);
       if (this.tail.length > this.maxTail) this.tail.shift();
     }
+
     drawTrail() {
-      if (this.tail.length < 2) return;
-      for (let i = 1; i < this.tail.length; i++) {
+      if (this.tail.length < 3) return;
+      const col = this.accent ? ACCENT : this.tint();
+      for (let i = 2; i < this.tail.length; i++) {
         const t = i / this.tail.length;
         ctx.beginPath();
         ctx.moveTo(this.tail[i - 1][0], this.tail[i - 1][1]);
         ctx.lineTo(this.tail[i][0], this.tail[i][1]);
-        ctx.strokeStyle = 'rgba(' + TRAIL[0] + ',' + TRAIL[1] + ',' + TRAIL[2] + ',' + (t * 0.16) + ')';
-        ctx.lineWidth = 1.0; ctx.stroke();
+        ctx.strokeStyle = rgba(col, t * 0.16);
+        ctx.lineWidth = 0.9;
+        ctx.stroke();
       }
     }
+
     drawFutures() {
       const sp = Math.hypot(this.vx, this.vy);
-      if (sp < 0.05) return;
-      const baseA = Math.atan2(this.vy, this.vx);
-      const c = PALETTE[this.ci];
-      const steps = 30, offs = [-0.28, 0, 0.28];
+      if (sp < 0.06) return;
+      const base = Math.atan2(this.vy, this.vx);
+      const col = this.accent ? ACCENT : this.tint();
+      const aBase = this.accent ? 0.5 : 0.24;
+      const steps = MOBILE() ? 22 : 32;
       for (let k = 0; k < 3; k++) {
-        let px = this.x, py = this.y, ang = baseA + offs[k];
-        const drift = -offs[k] * 0.5 / steps;
+        const off = (k - 1) * 0.26;
+        let px = this.x, py = this.y, ang = base + off;
+        const drift = -off / 40;
         ctx.beginPath(); ctx.moveTo(px, py);
-        for (let i = 1; i <= steps; i++) { ang += drift; px += Math.cos(ang) * (sp * 3.4 + 1.0); py += Math.sin(ang) * (sp * 3.4 + 1.0); ctx.lineTo(px, py); }
-        ctx.strokeStyle = 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + (k === 1 ? 0.5 : 0.32) + ')';
-        ctx.lineWidth = k === 1 ? 1.7 : 1.1;
-        ctx.setLineDash([2, 5]); ctx.stroke(); ctx.setLineDash([]);
-        // predicted endpoint
-        ctx.beginPath(); ctx.arc(px, py, k === 1 ? 2.6 : 1.8, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + (k === 1 ? 0.6 : 0.4) + ')';
-        ctx.fill();
+        for (let i = 0; i < steps; i++) {
+          ang += drift;
+          px += Math.cos(ang) * (sp * 3.2 + 0.9);
+          py += Math.sin(ang) * (sp * 3.2 + 0.9);
+          ctx.lineTo(px, py);
+        }
+        ctx.strokeStyle = rgba(col, (k === 1 ? 1 : 0.5) * aBase);
+        ctx.lineWidth = k === 1 ? 1.2 : 0.8;
+        ctx.setLineDash([1.5, 4.5]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        if (k === 1) {
+          ctx.beginPath(); ctx.arc(px, py, 2.0, 0, Math.PI * 2);
+          ctx.fillStyle = rgba(col, aBase * 1.5); ctx.fill();
+        }
       }
     }
-    // a tapered limb: two segments (thigh/shin or upper/fore-arm) with a joint
-    limb(x0, y0, ang1, len1, ang2, len2, w0, w1) {
-      const jx = x0 + Math.cos(ang1) * len1, jy = y0 + Math.sin(ang1) * len1;
-      const ex = jx + Math.cos(ang2) * len2, ey = jy + Math.sin(ang2) * len2;
-      // segment 1
-      ctx.lineWidth = w0; ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(jx, jy); ctx.stroke();
-      // segment 2 (thinner)
-      ctx.lineWidth = w1; ctx.beginPath(); ctx.moveTo(jx, jy); ctx.lineTo(ex, ey); ctx.stroke();
-      return [ex, ey];
-    }
+
     drawFigure() {
+      if (this.kind === 'ped') this.drawPed();
+      else if (this.kind === 'robot') this.drawRobot();
+      else this.drawCar();
+    }
+
+    drawPed() {
+      const ds = depthScale(this.y);
+      const h = this.baseH * ds;
+      const bk = this.build;
       const sp = Math.hypot(this.vx, this.vy);
-      const c = PALETTE[this.ci];
-      const col = 'rgb(' + c[0] + ',' + c[1] + ',' + c[2] + ')';
-      const colSoft = 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',0.92)';
+      const runK = Math.min(sp / this.maxSpeed, 1);
+      const f = this.face, p = this.phase;
+      const stride = 0.28 + runK * 0.55;
+      const bob = Math.abs(Math.cos(p)) * h * 0.026 * runK;
+      const X = this.x, Y = this.y - 1;
+
+      const hipY = Y - h * 0.50 - bob;
+      const shY = Y - h * 0.78 - bob;
+      const lean = runK * 0.10;
+      const hipX = X, shX = X + f * lean * h * 0.42;
+      const headR = h * 0.088 * (0.95 + bk * 0.05);
+      const thigh = h * 0.26, shin = h * 0.24;
+      const uarm = h * 0.17, farm = h * 0.15;
+      const down = Math.PI / 2;
+
+      const wThigh = h * 0.052 * bk, wKnee = h * 0.038 * bk, wAnkle = h * 0.024 * bk;
+      const wUarm = h * 0.036 * bk, wElb = h * 0.030 * bk, wWrist = h * 0.020 * bk;
+
+      groundShadow(X, Y + 2, h * 0.36, 0.12 + 0.06 * ds);
+
+      const bodyC = this.accent ? ACCENT : this.tint();
+      const inkMain = rgba(bodyC, 0.96);
+      const inkBack = rgba(bodyC, 0.40);
+
+      const legPts = (swing, bend) => {
+        const a1 = down + f * swing;
+        const a2 = a1 + f * bend;
+        const kx = hipX + Math.cos(a1) * thigh, ky = hipY + Math.sin(a1) * thigh;
+        const ax2 = kx + Math.cos(a2) * shin, ay2 = ky + Math.sin(a2) * shin;
+        return [[hipX, hipY], [kx, ky], [ax2, ay2]];
+      };
+      const armPts = (swing) => {
+        const a1 = down + f * swing;
+        const a2 = a1 + f * 0.38;
+        const sx = shX, sy = shY + h * 0.03;
+        const ex = sx + Math.cos(a1) * uarm, ey = sy + Math.sin(a1) * uarm;
+        const wx2 = ex + Math.cos(a2) * farm, wy2 = ey + Math.sin(a2) * farm;
+        return [[sx, sy], [ex, ey], [wx2, wy2]];
+      };
+      const shoe = (ax2, ay2, pitch, col) => {
+        const L = h * 0.155, hh = h * 0.045;
+        ctx.save();
+        ctx.translate(ax2, ay2); ctx.scale(f, 1); ctx.rotate(pitch);
+        ctx.fillStyle = col;
+        ctx.beginPath();
+        ctx.moveTo(-L * 0.32, -hh);
+        ctx.lineTo(L * 0.5, -hh);
+        ctx.quadraticCurveTo(L * 0.72, -hh * 0.7, L * 0.72, hh * 0.35);
+        ctx.lineTo(-L * 0.32, hh * 0.35);
+        ctx.closePath(); ctx.fill();
+        ctx.restore();
+      };
+      const hand = (wx2, wy2, col) => {
+        ctx.fillStyle = col;
+        ctx.beginPath(); ctx.arc(wx2, wy2, h * 0.030 * bk, 0, Math.PI * 2); ctx.fill();
+      };
+
+      ctx.save();
+      ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+
+      const swingF = Math.sin(p), swingB = Math.sin(p + Math.PI);
+      const bendF = 0.10 + 0.45 * stride * Math.max(0, Math.cos(p));
+      const bendB = 0.10 + 0.45 * stride * Math.max(0, Math.cos(p + Math.PI));
+      const pitchF = 0.28 * stride * Math.sin(p - 0.7) * runK;
+      const pitchB = 0.28 * stride * Math.sin(p + Math.PI - 0.7) * runK;
+
+      /* BACK layer */
+      const lb = legPts(swingB * 0.5 * stride, bendB);
+      taperedChain(lb, [wThigh, wKnee, wAnkle], inkBack);
+      shoe(lb[2][0], lb[2][1], pitchB, inkBack);
+      const ab = armPts(Math.sin(p) * 0.42 * stride);
+      taperedChain(ab, [wUarm, wElb, wWrist], inkBack);
+      hand(ab[2][0], ab[2][1], inkBack);
+
+      /* TORSO */
+      const spA = Math.atan2(shY - hipY, shX - hipX);
+      const ux = Math.cos(spA + Math.PI / 2), uy = Math.sin(spA + Math.PI / 2);
+      const st = (t) => [hipX + (shX - hipX) * t, hipY + (shY - hipY) * t];
+      const wHip = h * 0.088 * bk, wWaist = h * 0.072 * bk, wChest = h * 0.098 * bk, wSh = h * 0.105 * bk;
+      const p0 = st(0), p1 = st(0.42), p2 = st(0.78), p3 = st(1.0);
+      p2[0] += f * h * 0.012;
+      ctx.fillStyle = inkMain;
+      ctx.beginPath();
+      ctx.moveTo(p0[0] + ux * wHip, p0[1] + uy * wHip);
+      ctx.quadraticCurveTo(p1[0] + ux * wWaist, p1[1] + uy * wWaist, p2[0] + ux * wChest, p2[1] + uy * wChest);
+      ctx.quadraticCurveTo(p3[0] + ux * wSh, p3[1] + uy * wSh, p3[0], p3[1] - h * 0.01);
+      ctx.quadraticCurveTo(p3[0] - ux * wSh, p3[1] - uy * wSh, p2[0] - ux * wChest, p2[1] - uy * wChest);
+      ctx.quadraticCurveTo(p1[0] - ux * wWaist, p1[1] - uy * wWaist, p0[0] - ux * wHip, p0[1] - uy * wHip);
+      ctx.arc(p0[0], p0[1], wHip, spA - Math.PI / 2, spA + Math.PI / 2, true);
+      ctx.closePath(); ctx.fill();
+
+      /* props */
+      if (this.prop === 'backpack') {
+        const bx = p2[0] - f * (wChest + h * 0.052), by = p2[1] + h * 0.02;
+        ctx.fillStyle = inkMain;
+        ctx.beginPath();
+        const bw = h * 0.085, bh2 = h * 0.17;
+        ctx.moveTo(bx - bw / 2, by - bh2 / 2 + 2);
+        ctx.arcTo(bx - bw / 2, by + bh2 / 2, bx + bw / 2, by + bh2 / 2, 3);
+        ctx.arcTo(bx + bw / 2, by + bh2 / 2, bx + bw / 2, by - bh2 / 2, 3);
+        ctx.arcTo(bx + bw / 2, by - bh2 / 2, bx - bw / 2, by - bh2 / 2, 3);
+        ctx.arcTo(bx - bw / 2, by - bh2 / 2, bx - bw / 2, by + bh2 / 2, 3);
+        ctx.closePath(); ctx.fill();
+      } else if (this.prop === 'bag') {
+        ctx.strokeStyle = rgba(PAPER, 0.55);
+        ctx.lineWidth = Math.max(1, h * 0.022);
+        ctx.beginPath();
+        ctx.moveTo(p3[0] + f * wSh * 0.5, p3[1] + h * 0.02);
+        ctx.lineTo(p0[0] - f * wHip * 0.8, p0[1] - h * 0.01);
+        ctx.stroke();
+        ctx.fillStyle = inkMain;
+        const gx2 = p0[0] - f * (wHip + h * 0.05), gy2 = p0[1] + h * 0.02;
+        ctx.beginPath();
+        ctx.ellipse(gx2, gy2, h * 0.062, h * 0.078, 0, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      /* neck + head + hair */
+      const nx = p3[0] + f * h * 0.008, ny = p3[1];
+      const hx = nx + f * h * 0.028, hy = ny - h * 0.052 - headR * 0.8;
+      ctx.strokeStyle = inkMain; ctx.lineWidth = h * 0.045 * bk;
+      ctx.beginPath(); ctx.moveTo(nx, ny); ctx.lineTo(hx - f * h * 0.008, hy + headR * 0.85); ctx.stroke();
+      ctx.fillStyle = inkMain;
+      ctx.beginPath(); ctx.arc(hx, hy, headR, 0, Math.PI * 2); ctx.fill();
+      if (this.hair === 'cap') {
+        ctx.beginPath();
+        ctx.moveTo(hx + f * (headR + h * 0.055), hy - headR * 0.25);
+        ctx.lineTo(hx + f * headR * 0.2, hy - headR * 0.30);
+        ctx.lineTo(hx + f * headR * 0.2, hy - headR * 0.05);
+        ctx.closePath(); ctx.fill();
+      } else if (this.hair === 'pony') {
+        const sway = Math.sin(p) * h * 0.012;
+        ctx.beginPath();
+        ctx.moveTo(hx - f * headR * 0.8, hy - headR * 0.25);
+        ctx.quadraticCurveTo(hx - f * (headR + h * 0.06), hy + headR * 0.5 + sway,
+                             hx - f * (headR + h * 0.035), hy + headR * 1.35 + sway);
+        ctx.quadraticCurveTo(hx - f * headR * 0.65, hy + headR * 0.6, hx - f * headR * 0.55, hy + headR * 0.1);
+        ctx.closePath(); ctx.fill();
+      } else if (this.hair === 'bun') {
+        ctx.beginPath();
+        ctx.arc(hx - f * headR * 0.85, hy - headR * 0.55, headR * 0.42, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      /* FRONT layer */
+      const lf = legPts(swingF * 0.5 * stride, bendF);
+      taperedChain(lf, [wThigh, wKnee, wAnkle], inkMain);
+      shoe(lf[2][0], lf[2][1], pitchF, inkMain);
+      const af = armPts(Math.sin(p + Math.PI) * 0.42 * stride);
+      taperedChain(af, [wUarm, wElb, wWrist], inkMain);
+      hand(af[2][0], af[2][1], inkMain);
+      if (this.prop === 'case') {
+        const cw = h * 0.15, ch2 = h * 0.105;
+        const cx2 = af[2][0], cy2 = af[2][1] + h * 0.035;
+        ctx.fillStyle = inkMain;
+        ctx.beginPath();
+        ctx.moveTo(cx2 - cw / 2, cy2);
+        ctx.arcTo(cx2 - cw / 2, cy2 + ch2, cx2 + cw / 2, cy2 + ch2, 2.5);
+        ctx.arcTo(cx2 + cw / 2, cy2 + ch2, cx2 + cw / 2, cy2, 2.5);
+        ctx.lineTo(cx2 + cw / 2, cy2);
+        ctx.closePath(); ctx.fill();
+        ctx.strokeStyle = inkMain; ctx.lineWidth = Math.max(1, h * 0.02);
+        ctx.beginPath();
+        ctx.moveTo(cx2 - cw * 0.16, cy2);
+        ctx.lineTo(cx2 - cw * 0.16, cy2 - h * 0.02);
+        ctx.lineTo(cx2 + cw * 0.16, cy2 - h * 0.02);
+        ctx.lineTo(cx2 + cw * 0.16, cy2);
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    drawRobot() {
       const ds = depthScale(this.y);
       const h = this.baseH * ds;
       const f = this.face;
-      const footY = this.y, footX = this.x;
-      const hipY = footY - h * 0.46;
-      const neckY = footY - h * 0.84;
-      const headR = h * 0.13;
-      const lean = Math.min(sp / this.maxSpeed, 1) * 0.12; // forward lean radians
+      const X = this.x, Y = this.y;
+      const wheelR = h * 0.16;
+      const bodyW = h * 0.60, bodyH = h * 0.44;
+      const bodyBot = -wheelR * 1.35, bodyTop = bodyBot - bodyH;
+      const headH = h * 0.15, headW = bodyW * 0.62;
 
-      const stride = (0.35 + Math.min(sp / this.maxSpeed, 1) * 0.7);
-      const p = this.phase;
-      const bob = Math.abs(Math.cos(p)) * h * 0.035;
-
-      // ground shadow
-      ctx.beginPath();
-      ctx.ellipse(footX, footY + 1, h * 0.32, h * 0.095, 0, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(20,15,10,' + (SHADOW_A * (0.5 + ds * 0.4)) + ')';
-      ctx.fill();
+      groundShadow(X, Y + 1, h * 0.42, 0.11);
 
       ctx.save();
-      ctx.translate(0, -bob);
+      ctx.translate(X, Y);
       ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-      ctx.strokeStyle = col; ctx.fillStyle = col;
+      const line = rgba(INK, 0.86);
+      const fill = rgba(INK_SOFT, 0.16);
+      const lwMain = Math.max(1.1, h * 0.045);
+      ctx.lineWidth = lwMain;
 
-      const down = Math.PI / 2;            // pointing down on screen
-      const hipX = footX;
-      const neckX = footX + f * Math.sin(lean) * h * 0.5;
-
-      const thigh = h * 0.26, shin = h * 0.26;
-      const uparm = h * 0.2, forearm = h * 0.2;
-
-      // BACK leg + BACK arm first (behind body), slightly faded
-      ctx.globalAlpha = 0.55;
-      // back leg
-      let swB = Math.sin(p + Math.PI) * 0.5 * stride;
-      this.limb(hipX, hipY, down + f * swB, thigh, down + f * (swB + 0.25 * stride), shin, h * 0.12, h * 0.09);
-      // back arm
-      let aB = Math.sin(p) * 0.45 * stride;
-      this.limb(neckX, neckY + h * 0.04, down + f * aB, uparm, down + f * (aB + 0.3 * stride), forearm, h * 0.09, h * 0.07);
-      ctx.globalAlpha = 1;
-
-      // TORSO as tapered capsule (filled)
-      const shoulderW = h * 0.15, hipW = h * 0.11;
-      const tx = neckX, ty = neckY, bx = hipX, by = hipY;
-      const ang = Math.atan2(by - ty, bx - tx);
-      const px = Math.cos(ang + Math.PI / 2), py = Math.sin(ang + Math.PI / 2);
-      ctx.beginPath();
-      ctx.moveTo(tx + px * shoulderW, ty + py * shoulderW);
-      ctx.lineTo(bx + px * hipW, by + py * hipW);
-      ctx.lineTo(bx - px * hipW, by - py * hipW);
-      ctx.lineTo(tx - px * shoulderW, ty - py * shoulderW);
-      ctx.closePath();
-      ctx.fillStyle = col; ctx.fill();
-
-      // FRONT leg + FRONT arm (over body)
-      ctx.strokeStyle = col;
-      let swF = Math.sin(p) * 0.5 * stride;
-      this.limb(hipX, hipY, down + f * swF, thigh, down + f * (swF + 0.25 * stride), shin, h * 0.13, h * 0.1);
-      let aF = Math.sin(p + Math.PI) * 0.45 * stride;
-      this.limb(neckX, neckY + h * 0.04, down + f * aF, uparm, down + f * (aF + 0.3 * stride), forearm, h * 0.1, h * 0.08);
-
-      // HEAD (slightly ahead in facing direction)
-      ctx.beginPath();
-      ctx.arc(neckX + f * h * 0.05, neckY - headR * 0.9, headR, 0, Math.PI * 2);
-      ctx.fillStyle = col; ctx.fill();
-
-      ctx.restore();
-    }
-  }
-
-  /* -------- moving vehicles: car & robot -------- */
-  // car body colors (varied) and robot accent-light colors (grey body stays constant)
-  const CAR_TINTS = [
-    [96, 130, 160],   // steel blue
-    [180, 92, 80],    // brick red
-    [120, 150, 120],  // muted green
-    [200, 170, 90],   // sandy gold
-    [110, 110, 130],  // slate
-  ];
-  const ROBOT_LIGHTS = [
-    [120, 230, 210],  // teal
-    [240, 150, 90],   // amber-orange
-    [150, 200, 250],  // sky blue
-    [200, 150, 230],  // violet
-    [250, 200, 110],  // warm yellow
-  ];
-  class Vehicle {
-    constructor(kind) {
-      this.kind = kind; // 'car' | 'robot'
-      this.x = rand(0, W); this.y = rand(0, H);
-      this.vx = 0; this.vy = 0;
-      // car keeps its speed; robot moves at a calmer, people-like pace
-      this.maxSpeed = kind === 'car' ? rand(0.55, 0.85) : rand(0.26, 0.5);
-      this.radius = kind === 'car' ? 58 : 34;     // robot now human-scale
-      this.tail = [];
-      this.maxTail = 26;
-      this.heading = rand(0, Math.PI * 2);
-      // car: varied body color. robot: constant grey body, varied light color
-      this.tint = kind === 'car'
-        ? CAR_TINTS[(Math.random() * CAR_TINTS.length) | 0]
-        : [148, 150, 158];
-      this.light = ROBOT_LIGHTS[(Math.random() * ROBOT_LIGHTS.length) | 0];
-      this.spin = 0;
-      this.face = Math.random() < 0.5 ? 1 : -1;
-      this.wheel = 0;
-      this.newGoal();
-    }
-    newGoal() {
-      this.gx = this.x < W / 2 ? rand(W * 0.55, W - 30) : rand(30, W * 0.45);
-      this.gy = rand(40, H - 40);
-    }
-    step(others) {
-      let dx = this.gx - this.x, dy = this.gy - this.y;
-      let dist = Math.hypot(dx, dy) || 1;
-      if (dist < 40) { this.newGoal(); dx = this.gx - this.x; dy = this.gy - this.y; dist = Math.hypot(dx, dy) || 1; }
-      let ax = (dx / dist) * 0.05, ay = (dy / dist) * 0.05;
-      for (let o of others) {
-        if (o === this) continue;
-        const rx = this.x - o.x, ry = this.y - o.y;
-        const d = Math.hypot(rx, ry);
-        const inf = this.radius + (o.radius || 30);
-        if (d > 0 && d < inf) { const fr = (1 - d / inf) * 0.18; ax += (rx / d) * fr; ay += (ry / d) * fr; }
-      }
-      for (let ob of OBJECTS) {
-        const rx = this.x - ob.x, ry = this.y - ob.y;
-        const d = Math.hypot(rx, ry);
-        const inf = ob.r + 42;
-        if (d > 0 && d < inf) { const fr = (1 - d / inf) * 0.3; ax += (rx / d) * fr; ay += (ry / d) * fr; }
-      }
-      const m = 70;
-      if (this.x < m) ax += 0.014; if (this.x > W - m) ax -= 0.014;
-      if (this.y < m) ay += 0.014; if (this.y > H - m) ay -= 0.014;
-      this.vx += ax; this.vy += ay;
-      this.vx *= 0.95; this.vy *= 0.95;
-      const sp = Math.hypot(this.vx, this.vy);
-      if (sp > this.maxSpeed) { this.vx = this.vx / sp * this.maxSpeed; this.vy = this.vy / sp * this.maxSpeed; }
-      this.x += this.vx; this.y += this.vy;
-      const mm = 110;
-      if (this.x < -mm) this.x = W + mm; if (this.x > W + mm) this.x = -mm;
-      if (this.y < -mm) this.y = H + mm; if (this.y > H + mm) this.y = -mm;
-      if (sp > 0.05) this.heading = Math.atan2(this.vy, this.vx);
-      if (this.vx > 0.04) this.face = 1; else if (this.vx < -0.04) this.face = -1;
-      this.spin += sp * 0.5;
-      this.wheel = (this.wheel || 0) + sp * 0.6;
-      this.tail.push([this.x, this.y]);
-      if (this.tail.length > this.maxTail) this.tail.shift();
-    }
-    drawTrail() {
-      if (this.tail.length < 2) return;
-      const t0 = this.tint;
-      for (let i = 1; i < this.tail.length; i++) {
-        const t = i / this.tail.length;
-        ctx.beginPath();
-        ctx.moveTo(this.tail[i - 1][0], this.tail[i - 1][1]);
-        ctx.lineTo(this.tail[i][0], this.tail[i][1]);
-        ctx.strokeStyle = 'rgba(' + t0[0] + ',' + t0[1] + ',' + t0[2] + ',' + (t * 0.2) + ')';
-        ctx.lineWidth = 1.2; ctx.stroke();
-      }
-    }
-    drawFutures() {
-      const sp = Math.hypot(this.vx, this.vy);
-      if (sp < 0.05) return;
-      const c = this.tint, steps = 30;
-      let px = this.x, py = this.y, ang = this.heading;
-      ctx.beginPath(); ctx.moveTo(px, py);
-      for (let i = 1; i <= steps; i++) { px += Math.cos(ang) * (sp * 3.4 + 1.0); py += Math.sin(ang) * (sp * 3.4 + 1.0); ctx.lineTo(px, py); }
-      ctx.strokeStyle = 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',0.45)';
-      ctx.lineWidth = 1.6; ctx.setLineDash([2, 5]); ctx.stroke(); ctx.setLineDash([]);
-      ctx.beginPath(); ctx.arc(px, py, 2.6, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',0.55)'; ctx.fill();
-    }
-    drawFigure() {
-      const ds = depthScale(this.y);
-      const c = this.tint;
-      const col = 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',0.9)';
-      const line = 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',1)';
-      ctx.save();
-      ctx.translate(this.x, this.y);
-      // shadow (under, before rotation)
-      ctx.beginPath();
-      const sw = (this.kind === 'car' ? 26 : 13) * ds;
-      ctx.ellipse(0, 3, sw, sw * 0.42, 0, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(20,15,10,' + (SHADOW_A * 0.6) + ')'; ctx.fill();
-      ctx.lineJoin = 'round'; ctx.lineCap = 'round';
-      if (this.kind === 'car') {
-        ctx.rotate(this.heading);
-        const L = 40 * ds, Wd = 19 * ds;
-        // body (rounded rect, pointing +x = forward)
-        const r = 6 * ds;
-        ctx.beginPath();
-        ctx.moveTo(-L/2 + r, -Wd/2);
-        ctx.lineTo(L/2 - r, -Wd/2); ctx.quadraticCurveTo(L/2, -Wd/2, L/2, -Wd/2 + r);
-        ctx.lineTo(L/2, Wd/2 - r); ctx.quadraticCurveTo(L/2, Wd/2, L/2 - r, Wd/2);
-        ctx.lineTo(-L/2 + r, Wd/2); ctx.quadraticCurveTo(-L/2, Wd/2, -L/2, Wd/2 - r);
-        ctx.lineTo(-L/2, -Wd/2 + r); ctx.quadraticCurveTo(-L/2, -Wd/2, -L/2 + r, -Wd/2);
-        ctx.closePath();
-        ctx.fillStyle = col; ctx.fill(); ctx.strokeStyle = line; ctx.lineWidth = 1.4; ctx.stroke();
-        // windshield
-        ctx.fillStyle = 'rgba(255,255,255,0.18)';
-        ctx.fillRect(L*0.05, -Wd/2 + 3*ds, L*0.22, Wd - 6*ds);
-        // headlights
-        ctx.fillStyle = 'rgba(255,240,200,0.85)';
-        ctx.beginPath(); ctx.arc(L/2 - 2*ds, -Wd/2 + 4*ds, 1.6*ds, 0, Math.PI*2); ctx.fill();
-        ctx.beginPath(); ctx.arc(L/2 - 2*ds, Wd/2 - 4*ds, 1.6*ds, 0, Math.PI*2); ctx.fill();
-      } else {
-        // ROBOT: upright side-view, human-scale, with wheels + an articulated arm.
-        // this.x/this.y is the GROUND contact point (between wheels).
-        const lg = this.light;
-        const lightCol = 'rgba(' + lg[0] + ',' + lg[1] + ',' + lg[2] + ',0.95)';
-        const f = this.face;
-        const H0 = 26 * ds;                 // overall robot height ~ person scale
-        const wheelR = H0 * 0.16;
-        const bodyW = H0 * 0.46, bodyH = H0 * 0.5;
-        const bodyBottom = -wheelR * 1.1;   // body sits above wheels
-        const bodyTop = bodyBottom - bodyH;
-        const cx = 0;
-        ctx.lineWidth = Math.max(1.2, H0 * 0.05);
-        ctx.strokeStyle = line; ctx.fillStyle = col;
-
-        // --- two wheels (side by side, slightly offset for depth) ---
-        const wheelDark = 'rgba(45,45,52,0.92)';
-        for (const wx of [-bodyW * 0.42, bodyW * 0.42]) {
-          ctx.beginPath(); ctx.arc(cx + wx, -wheelR, wheelR, 0, Math.PI * 2);
-          ctx.fillStyle = wheelDark; ctx.fill(); ctx.strokeStyle = line; ctx.stroke();
-          // spinning hub spoke
-          ctx.save(); ctx.translate(cx + wx, -wheelR); ctx.rotate(this.wheel);
-          ctx.strokeStyle = 'rgba(200,200,210,0.7)'; ctx.lineWidth = 1.2;
-          ctx.beginPath(); ctx.moveTo(-wheelR * 0.6, 0); ctx.lineTo(wheelR * 0.6, 0); ctx.stroke();
-          ctx.restore();
+      for (const wx of [-bodyW * 0.36, bodyW * 0.36]) {
+        ctx.strokeStyle = line;
+        ctx.beginPath(); ctx.moveTo(wx, bodyBot); ctx.lineTo(wx, -wheelR); ctx.stroke();
+        ctx.beginPath(); ctx.arc(wx, -wheelR, wheelR, 0, Math.PI * 2);
+        ctx.fillStyle = rgba(INK, 0.78); ctx.fill();
+        ctx.beginPath(); ctx.arc(wx, -wheelR, wheelR * 0.55, 0, Math.PI * 2);
+        ctx.fillStyle = rgba(PAPER, 0.88); ctx.fill();
+        ctx.strokeStyle = line; ctx.lineWidth = 1; ctx.stroke();
+        ctx.save(); ctx.translate(wx, -wheelR); ctx.rotate(this.wheel * f);
+        ctx.strokeStyle = rgba(INK, 0.78); ctx.lineWidth = Math.max(1, h * 0.025);
+        for (let k = 0; k < 3; k++) {
+          const a = k * Math.PI * 2 / 3;
+          ctx.beginPath(); ctx.moveTo(0, 0);
+          ctx.lineTo(Math.cos(a) * wheelR * 0.5, Math.sin(a) * wheelR * 0.5); ctx.stroke();
         }
+        ctx.fillStyle = rgba(INK, 0.88);
+        ctx.beginPath(); ctx.arc(0, 0, wheelR * 0.14, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
+        ctx.lineWidth = lwMain;
+      }
 
-        // --- chassis / body ---
-        ctx.fillStyle = col; ctx.strokeStyle = line; ctx.lineWidth = Math.max(1.2, H0 * 0.05);
-        const r2 = H0 * 0.07;
-        ctx.beginPath();
-        ctx.moveTo(cx - bodyW/2 + r2, bodyTop);
-        ctx.lineTo(cx + bodyW/2 - r2, bodyTop); ctx.quadraticCurveTo(cx + bodyW/2, bodyTop, cx + bodyW/2, bodyTop + r2);
-        ctx.lineTo(cx + bodyW/2, bodyBottom - r2); ctx.quadraticCurveTo(cx + bodyW/2, bodyBottom, cx + bodyW/2 - r2, bodyBottom);
-        ctx.lineTo(cx - bodyW/2 + r2, bodyBottom); ctx.quadraticCurveTo(cx - bodyW/2, bodyBottom, cx - bodyW/2, bodyBottom - r2);
-        ctx.lineTo(cx - bodyW/2, bodyTop + r2); ctx.quadraticCurveTo(cx - bodyW/2, bodyTop, cx - bodyW/2 + r2, bodyTop);
-        ctx.closePath(); ctx.fill(); ctx.stroke();
+      const r = h * 0.06;
+      ctx.beginPath();
+      ctx.moveTo(-bodyW / 2 + r, bodyTop);
+      ctx.arcTo(bodyW / 2, bodyTop, bodyW / 2, bodyBot, r);
+      ctx.arcTo(bodyW / 2, bodyBot, -bodyW / 2, bodyBot, r);
+      ctx.arcTo(-bodyW / 2, bodyBot, -bodyW / 2, bodyTop, r);
+      ctx.arcTo(-bodyW / 2, bodyTop, bodyW / 2, bodyTop, r);
+      ctx.closePath();
+      ctx.fillStyle = fill; ctx.fill();
+      ctx.strokeStyle = line; ctx.stroke();
+      ctx.strokeStyle = rgba(INK, 0.38); ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(-bodyW / 2 + 3, bodyTop + bodyH * 0.42); ctx.lineTo(bodyW / 2 - 3, bodyTop + bodyH * 0.42); ctx.stroke();
+      for (let k = 0; k < 3; k++) {
+        const vy = bodyTop + bodyH * (0.58 + k * 0.12);
+        ctx.beginPath(); ctx.moveTo(-f * bodyW * 0.34, vy); ctx.lineTo(-f * bodyW * 0.18, vy); ctx.stroke();
+      }
+      ctx.strokeStyle = line; ctx.lineWidth = Math.max(1.4, h * 0.055);
+      ctx.beginPath(); ctx.moveTo(f * bodyW / 2, bodyBot - bodyH * 0.16); ctx.lineTo(f * bodyW / 2, bodyBot - bodyH * 0.5); ctx.stroke();
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = rgba(INK, 0.38);
+      ctx.beginPath(); ctx.moveTo(-bodyW * 0.42, bodyTop + bodyH * 0.14); ctx.lineTo(-bodyW * 0.05, bodyTop + bodyH * 0.14); ctx.stroke();
 
-        // --- head (smaller block on top) with a colored sensor band ---
-        const headH = H0 * 0.22, headW = bodyW * 0.74;
-        const headBottom = bodyTop, headTop = bodyTop - headH;
-        ctx.beginPath(); ctx.rect(cx - headW/2, headTop, headW, headH); ctx.fill(); ctx.stroke();
-        // sensor "eye" band (light color), facing forward
-        ctx.fillStyle = lightCol;
-        ctx.fillRect(cx - headW/2 + headW*0.12, headTop + headH*0.32, headW*0.76, headH*0.34);
+      ctx.lineWidth = lwMain; ctx.strokeStyle = line;
+      ctx.beginPath();
+      ctx.moveTo(-headW / 2, bodyTop);
+      ctx.lineTo(-headW / 2 + headW * 0.08, bodyTop - headH);
+      ctx.lineTo(headW / 2 - headW * 0.08, bodyTop - headH);
+      ctx.lineTo(headW / 2, bodyTop);
+      ctx.closePath();
+      ctx.fillStyle = fill; ctx.fill(); ctx.stroke();
+      const eyeW = headW * 0.34;
+      ctx.fillStyle = rgba(this.light, 0.9);
+      ctx.fillRect(f > 0 ? headW * 0.04 : -headW * 0.04 - eyeW, bodyTop - headH * 0.68, eyeW, headH * 0.32);
+      ctx.beginPath(); ctx.arc(-f * headW * 0.3, bodyTop - headH * 0.5, headH * 0.1, 0, Math.PI * 2);
+      ctx.fillStyle = rgba(INK, 0.55); ctx.fill();
 
-        // --- articulated arm from the body, swinging gently ---
-        const sw = Math.sin(this.spin * 0.8) * 0.4;
-        const shoulderX = cx + f * bodyW * 0.36, shoulderY = bodyTop + bodyH * 0.32;
-        const upperLen = H0 * 0.26, foreLen = H0 * 0.24;
-        const a1 = (f > 0 ? 0.2 : Math.PI - 0.2) + sw * f;
-        const ex1 = shoulderX + Math.cos(a1) * upperLen, ey1 = shoulderY + Math.sin(a1) * upperLen;
-        const a2 = a1 + f * (0.7 + sw);
-        const ex2 = ex1 + Math.cos(a2) * foreLen, ey2 = ey1 + Math.sin(a2) * foreLen;
-        ctx.strokeStyle = line; ctx.lineWidth = Math.max(1.4, H0 * 0.06);
-        ctx.beginPath(); ctx.moveTo(shoulderX, shoulderY); ctx.lineTo(ex1, ey1); ctx.lineTo(ex2, ey2); ctx.stroke();
-        // gripper dot
-        ctx.fillStyle = lightCol; ctx.beginPath(); ctx.arc(ex2, ey2, H0 * 0.06, 0, Math.PI * 2); ctx.fill();
+      const ax0 = -f * bodyW * 0.4;
+      const atop = bodyTop - headH - h * 0.34;
+      ctx.strokeStyle = line; ctx.lineWidth = Math.max(1, h * 0.02);
+      ctx.beginPath(); ctx.moveTo(ax0, bodyTop);
+      ctx.quadraticCurveTo(ax0 - f * h * 0.03, bodyTop - h * 0.25, ax0 - f * h * 0.015, atop);
+      ctx.stroke();
+      ctx.fillStyle = rgba(this.light, 0.85);
+      ctx.beginPath();
+      ctx.moveTo(ax0 - f * h * 0.015, atop + h * 0.02);
+      ctx.lineTo(ax0 - f * h * 0.015 - f * h * 0.11, atop + h * 0.055);
+      ctx.lineTo(ax0 - f * h * 0.015, atop + h * 0.095);
+      ctx.closePath(); ctx.fill();
+      const blink = 0.35 + 0.65 * (0.5 + 0.5 * Math.sin(this.phase * 2));
+      ctx.beginPath(); ctx.arc(ax0 - f * h * 0.015, atop, h * 0.035, 0, Math.PI * 2);
+      ctx.fillStyle = rgba(this.light, blink); ctx.fill();
 
-        // --- antenna with blinking tip (light color) ---
-        ctx.strokeStyle = line; ctx.lineWidth = Math.max(1, H0 * 0.04);
-        ctx.beginPath(); ctx.moveTo(cx + headW * 0.28, headTop); ctx.lineTo(cx + headW * 0.28, headTop - H0 * 0.18); ctx.stroke();
-        const blink = 0.45 + 0.55 * Math.sin(this.spin * 2);
-        ctx.fillStyle = 'rgba(' + lg[0] + ',' + lg[1] + ',' + lg[2] + ',' + (0.35 + blink * 0.6) + ')';
-        ctx.beginPath(); ctx.arc(cx + headW * 0.28, headTop - H0 * 0.18, H0 * 0.06, 0, Math.PI * 2); ctx.fill();
+      ctx.restore();
+    }
+
+    drawCar() {
+      const ds = depthScale(this.y);
+      const h = this.baseH * ds;
+      const f = this.face;
+      const X = this.x, Y = this.y;
+      const L = h * 2.5;
+      const wheelR = h * 0.17;
+      const archR = wheelR * 1.32;
+      const yb = -wheelR * 0.5;
+      const belt = yb - h * 0.36;
+      const roof = belt - h * 0.30;
+      const wxF = L * 0.30, wxR = -L * 0.30;
+
+      groundShadow(X, Y + 1, L * 0.52, 0.10);
+
+      ctx.save();
+      ctx.translate(X, Y);
+      ctx.scale(f, 1);
+      ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      const bodyTint = this.midTint || INK;
+      const line = rgba(mix(bodyTint, INK, 0.5), 0.90);
+      const fill = rgba(bodyTint, 0.28);
+      ctx.lineWidth = Math.max(1.1, h * 0.045);
+
+      ctx.beginPath();
+      ctx.moveTo(wxR - archR, yb);
+      ctx.arc(wxR, yb, archR, Math.PI, Math.PI * 2, false);
+      ctx.lineTo(wxF - archR, yb);
+      ctx.arc(wxF, yb, archR, Math.PI, Math.PI * 2, false);
+      ctx.lineTo(L * 0.46, yb);
+      ctx.quadraticCurveTo(L * 0.5, yb, L * 0.5, yb - h * 0.09);
+      ctx.quadraticCurveTo(L * 0.505, belt + h * 0.05, L * 0.42, belt);
+      ctx.lineTo(L * 0.15, belt - h * 0.015);
+      ctx.quadraticCurveTo(L * 0.10, belt - h * 0.02, L * 0.05, roof + h * 0.02);
+      ctx.quadraticCurveTo(L * 0.02, roof, -L * 0.04, roof);
+      ctx.lineTo(-L * 0.24, roof);
+      ctx.quadraticCurveTo(-L * 0.36, roof + h * 0.02, -L * 0.43, belt - h * 0.01);
+      ctx.lineTo(-L * 0.48, belt);
+      ctx.quadraticCurveTo(-L * 0.505, belt + h * 0.03, -L * 0.5, belt + h * 0.12);
+      ctx.lineTo(-L * 0.5, yb - h * 0.07);
+      ctx.quadraticCurveTo(-L * 0.5, yb, -L * 0.46, yb);
+      ctx.closePath();
+      ctx.fillStyle = fill; ctx.fill();
+      ctx.strokeStyle = line; ctx.stroke();
+
+      ctx.fillStyle = rgba(PAPER, 0.65);
+      ctx.strokeStyle = rgba(INK, 0.5); ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(L * 0.115, belt - h * 0.035);
+      ctx.lineTo(L * 0.045, roof + h * 0.045);
+      ctx.lineTo(-L * 0.015, roof + h * 0.045);
+      ctx.lineTo(-L * 0.015, belt - h * 0.035);
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(-L * 0.055, belt - h * 0.035);
+      ctx.lineTo(-L * 0.055, roof + h * 0.045);
+      ctx.lineTo(-L * 0.235, roof + h * 0.045);
+      ctx.lineTo(-L * 0.345, belt - h * 0.035);
+      ctx.closePath(); ctx.fill(); ctx.stroke();
+
+      ctx.strokeStyle = rgba(INK, 0.42);
+      ctx.beginPath(); ctx.moveTo(-L * 0.035, belt - h * 0.03); ctx.lineTo(-L * 0.035, yb - h * 0.02); ctx.stroke();
+      ctx.strokeStyle = rgba(INK, 0.65); ctx.lineWidth = Math.max(1, h * 0.025);
+      ctx.beginPath(); ctx.moveTo(-L * 0.02, belt + h * 0.045); ctx.lineTo(L * 0.03, belt + h * 0.045); ctx.stroke();
+      ctx.fillStyle = rgba(INK, 0.82);
+      ctx.beginPath();
+      ctx.moveTo(L * 0.115, belt - h * 0.03);
+      ctx.lineTo(L * 0.15, belt - h * 0.065);
+      ctx.lineTo(L * 0.155, belt - h * 0.02);
+      ctx.closePath(); ctx.fill();
+      ctx.fillStyle = 'rgba(255,238,190,0.95)';
+      ctx.beginPath();
+      ctx.moveTo(L * 0.5, belt + h * 0.045);
+      ctx.lineTo(L * 0.425, belt + h * 0.01);
+      ctx.lineTo(L * 0.425, belt + h * 0.075);
+      ctx.closePath(); ctx.fill();
+      ctx.fillStyle = rgba(ACCENT, 0.85);
+      ctx.fillRect(-L * 0.5, belt + h * 0.03, L * 0.03, h * 0.05);
+
+      for (const wx of [wxR, wxF]) {
+        ctx.beginPath(); ctx.arc(wx, yb, wheelR, 0, Math.PI * 2);
+        ctx.fillStyle = rgba(INK, 0.82); ctx.fill();
+        ctx.beginPath(); ctx.arc(wx, yb, wheelR * 0.55, 0, Math.PI * 2);
+        ctx.fillStyle = rgba(PAPER, 0.88); ctx.fill();
+        ctx.strokeStyle = rgba(INK, 0.55); ctx.lineWidth = 1; ctx.stroke();
+        ctx.save(); ctx.translate(wx, yb); ctx.rotate(this.wheel);
+        ctx.strokeStyle = rgba(INK, 0.72); ctx.lineWidth = Math.max(1, h * 0.02);
+        for (let k = 0; k < 4; k++) {
+          const a = k * Math.PI / 2;
+          ctx.beginPath(); ctx.moveTo(0, 0);
+          ctx.lineTo(Math.cos(a) * wheelR * 0.5, Math.sin(a) * wheelR * 0.5); ctx.stroke();
+        }
+        ctx.fillStyle = rgba(INK, 0.88);
+        ctx.beginPath(); ctx.arc(0, 0, wheelR * 0.12, 0, Math.PI * 2); ctx.fill();
+        ctx.restore();
       }
       ctx.restore();
     }
   }
 
-  function makeAgents() {
-    const n = Math.max(6, Math.min(13, Math.round((W * H) / 135000)));
-    return Array.from({ length: n }, () => new Pedestrian());
-  }
-  function makeVehicles() {
+  /* =============================================================
+     Assembly, controls, main loop
+     ============================================================= */
+  let PLAYER = null;
+  const CONTROL = { active: false, ix: 0, iy: 0 };
+
+  function makeMovers() {
     const out = [];
-    const carCount = Math.max(1, Math.min(3, Math.round((W * H) / 520000)));
-    const robotCount = Math.max(1, Math.min(2, Math.round((W * H) / 700000)));
-    for (let i = 0; i < carCount; i++) out.push(new Vehicle('car'));
-    for (let i = 0; i < robotCount; i++) out.push(new Vehicle('robot'));
+    const density = MOBILE() ? 200000 : 150000;
+    const nPed = Math.max(6, Math.min(12, Math.round(W * H / density)));
+    for (let i = 0; i < nPed; i++) out.push(new Mover('ped'));
+    out.push(new Mover('robot'));
+    if (W > 900) out.push(new Mover('robot'));
+    if (W >= 480) out.push(new Mover('car'));
+    out[0].accent = true;
+    PLAYER = out[0];
     return out;
   }
+
   OBJECTS = makeObjects();
-  let agents = makeAgents();
-  let vehicles = makeVehicles();
+  let movers = makeMovers();
+
+  function drawDotGrid() {
+    const g = 64;
+    ctx.fillStyle = rgba(INK, 0.05);
+    for (let x = g; x < W; x += g)
+      for (let y = g; y < H; y += g) {
+        ctx.beginPath(); ctx.arc(x, y, 1, 0, Math.PI * 2); ctx.fill();
+      }
+  }
+
+  /* visibility + IntersectionObserver: pause rAF when off */
+  let visible = true;
+  let inView = true;
+  const isRunning = () => visible && inView;
+  document.addEventListener('visibilitychange', () => {
+    visible = !document.hidden;
+    if (isRunning() && !rafId) scheduleFrame();
+  });
+  new IntersectionObserver((entries) => {
+    inView = entries[0].isIntersecting;
+    if (isRunning() && !rafId) scheduleFrame();
+  }, { threshold: 0.02 }).observe(canvas);
+
+  let rafId = null;
+  function scheduleFrame() {
+    rafId = requestAnimationFrame(frame);
+  }
 
   function frame() {
+    rafId = null;
+    if (!isRunning()) return;
     ctx.clearRect(0, 0, W, H);
-    for (let ob of OBJECTS) drawObject(ob);
-    const movers = agents.concat(vehicles);
-    for (let a of agents) a.step(movers);
-    for (let v of vehicles) v.step(movers);
-    for (let a of agents) a.drawFutures();
-    for (let v of vehicles) v.drawFutures();
-    for (let a of agents) a.drawTrail();
-    for (let v of vehicles) v.drawTrail();
-    // depth sort everything together
-    movers.slice().sort((a, b) => a.y - b.y).forEach(a => a.drawFigure());
-    requestAnimationFrame(frame);
+    drawDotGrid();
+    for (const m of movers) m.step(movers);
+    for (const m of movers) m.drawTrail();
+    for (const m of movers) m.drawFutures();
+    if (CONTROL.active && PLAYER) {
+      const pr = 15 + 2.5 * Math.sin(performance.now() / 280);
+      ctx.save();
+      ctx.translate(PLAYER.x, PLAYER.y + 2); ctx.scale(1, 0.35);
+      ctx.beginPath(); ctx.arc(0, 0, pr, 0, Math.PI * 2);
+      ctx.strokeStyle = rgba(ACCENT, 0.7); ctx.lineWidth = 1.5;
+      ctx.setLineDash([4, 4]); ctx.stroke(); ctx.setLineDash([]);
+      ctx.restore();
+    }
+    const drawables = OBJECTS.map(o => ({ y: o.y, fn: () => drawObject(o) }))
+      .concat(movers.map(m => ({ y: m.y, fn: () => m.drawFigure() })));
+    drawables.sort((a, b) => a.y - b.y).forEach(d => d.fn());
+    scheduleFrame();
   }
 
   if (reduce) {
-    const movers = agents.concat(vehicles);
-    for (let i = 0; i < 60; i++) { for (let a of agents) a.step(movers); for (let v of vehicles) v.step(movers); }
-    for (let ob of OBJECTS) drawObject(ob);
-    for (let a of agents) { a.drawFutures(); a.drawTrail(); }
-    for (let v of vehicles) { v.drawFutures(); v.drawTrail(); }
-    movers.slice().sort((a, b) => a.y - b.y).forEach(a => a.drawFigure());
-  } else { frame(); }
+    // static settled frame
+    for (let i = 0; i < 80; i++) for (const m of movers) m.step(movers);
+    ctx.clearRect(0, 0, W, H);
+    drawDotGrid();
+    for (const m of movers) m.drawTrail();
+    for (const m of movers) m.drawFutures();
+    const drawables = OBJECTS.map(o => ({ y: o.y, fn: () => drawObject(o) }))
+      .concat(movers.map(m => ({ y: m.y, fn: () => m.drawFigure() })));
+    drawables.sort((a, b) => a.y - b.y).forEach(d => d.fn());
+  } else {
+    scheduleFrame();
+  }
 
   let rt;
-  window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { OBJECTS = makeObjects(); agents = makeAgents(); vehicles = makeVehicles(); }, 350); });
-})();
+  window.addEventListener('resize', () => {
+    clearTimeout(rt);
+    rt = setTimeout(() => {
+      OBJECTS = makeObjects();
+      movers = makeMovers();
+    }, 350);
+  });
 
-/* ===================== scroll reveals ===================== */
-(function () {
-  const io = new IntersectionObserver((entries) => {
-    for (const e of entries) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }
-  }, { threshold: 0.1 });
-  document.querySelectorAll('.reveal').forEach((el) => io.observe(el));
+  /* ---------- walk mode: arrow keys / WASD ---------- */
+  const keys = {};
+  function updateInput() {
+    const l = keys.ArrowLeft || keys.a, r = keys.ArrowRight || keys.d;
+    const u = keys.ArrowUp || keys.w, dn = keys.ArrowDown || keys.s;
+    let ix = (r ? 1 : 0) - (l ? 1 : 0), iy = (dn ? 1 : 0) - (u ? 1 : 0);
+    const m = Math.hypot(ix, iy) || 1;
+    CONTROL.ix = ix / m; CONTROL.iy = iy / m;
+  }
+  const gameBtn = document.getElementById('gameBtn');
+  function setGame(on) {
+    CONTROL.active = on;
+    if (!on) { CONTROL.ix = 0; CONTROL.iy = 0; for (const k in keys) keys[k] = false; }
+    gameBtn.classList.toggle('on', on);
+    // label text swaps via .en/.ja children — flip their contents
+    gameBtn.querySelector('.en').textContent = on ? '🎮 Walking · Esc to exit' : '🎮 Control the orange pedestrian';
+    gameBtn.querySelector('.ja').textContent = on ? '🎮 操作中 · Esc で終了' : '🎮 オレンジの歩行者を操作';
+  }
+  gameBtn.addEventListener('click', () => setGame(!CONTROL.active));
+  window.addEventListener('keydown', (e) => {
+    if (!CONTROL.active) return;
+    if (e.key === 'Escape') { setGame(false); return; }
+    if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(e.key)) e.preventDefault();
+    keys[e.key] = true; updateInput();
+  });
+  window.addEventListener('keyup', (e) => { keys[e.key] = false; updateInput(); });
 })();
 </script>
 </body>
