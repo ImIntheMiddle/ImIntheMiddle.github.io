@@ -302,24 +302,29 @@ const DATA = {
   /* One palette. The page is dark, full stop -- the simulation is a drawing
      in light on a dark ground and it is the reason the page looks the way it
      does; a second, paler version of it was never as good. */
+  /* The ground went from a warm brown-black to a near-neutral one, because
+     the crowd is now coloured and a warm ground tints every hue in it. The
+     side effect is more headroom everywhere: the faintest text on the page
+     is 5.2:1 against the lightest surface, where before it was 4.5:1.
+     Ratios in the comments are against --paper. */
   :root {
-    --stage: #14100b;              /* the ground the crowd walks on */
-    --stage-rgb: 20, 16, 11;
-    --paper: #211c15;              /* content, lifted off the ground */
-    --paper-rgb: 33, 28, 21;
-    --paper-2: #2a241c;            /* image slots */
-    --ink: #ece9e2;
-    --ink-rgb: 236, 233, 226;
-    --ink-dim: #a5a29a;            /* 6.63:1 on paper */
-    --ink-faint: #8f8b83;          /* 4.53:1, the worst case */
-    --ink-soft-rgb: 165, 162, 154;
-    --accent: #ff8144;
-    --accent-rgb: 255, 129, 68;
-    --accent-text: #ff8144;        /* 6.83:1 on paper */
-    --hairline: rgba(255, 230, 190, 0.14);
-    --hairline-soft: rgba(255, 230, 190, 0.07);
-    --card-shadow: 0 6px 44px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 235, 200, 0.05);
-    --shadow-a: 0.30;
+    --stage: #0a0b0f;              /* the ground the crowd walks on */
+    --stage-rgb: 10, 11, 15;
+    --paper: #13151b;              /* content, lifted off the ground */
+    --paper-rgb: 19, 21, 27;
+    --paper-2: #1b1e26;            /* image slots */
+    --ink: #e9eaf0;                /* 15.2:1 */
+    --ink-rgb: 233, 234, 240;
+    --ink-dim: #a4a8b5;            /* 7.69:1 */
+    --ink-faint: #8c909d;          /* 5.73:1 */
+    --ink-soft-rgb: 164, 168, 181;
+    --accent: #ff8a4c;             /* 7.81:1 -- legible as text too */
+    --accent-rgb: 255, 138, 76;
+    --accent-text: #ff9a62;        /* 8.73:1 */
+    --hairline: rgba(190, 205, 235, 0.14);
+    --hairline-soft: rgba(190, 205, 235, 0.07);
+    --card-shadow: 0 8px 48px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(200, 215, 245, 0.05);
+    --shadow-a: 0.34;
 
     /* Families, motion and measure, named once instead of 38 times. */
     --font-sans: "Inter", "Noto Sans JP", system-ui, sans-serif;
@@ -597,7 +602,7 @@ const DATA = {
   }
   .chips a:hover { border-color: var(--accent); color: var(--accent-text); }
   .chips a.primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
-  .chips a.primary:hover { background: var(--accent-text); border-color: var(--accent-text); color: #fff; }
+  .chips a.primary:hover { background: var(--accent-text); border-color: var(--accent-text); color: var(--stage); }
 
   /* Mission band */
   .mission {
@@ -1080,8 +1085,8 @@ const DATA = {
     100% { box-shadow: 0 0 0 0 rgba(var(--accent-rgb), 0); }
   }
   .gamebtn:hover { background: rgba(var(--accent-rgb), 0.18); border-color: var(--accent); }
-  .gamebtn.on { background: var(--accent); color: #1a1209; border-color: var(--accent); }
-  .gamebtn.on .dot { background: #1a1209; animation: none; }
+  .gamebtn.on { background: var(--accent); color: var(--stage); border-color: var(--accent); }
+  .gamebtn.on .dot { background: var(--stage); animation: none; }
   @media (prefers-reduced-motion: reduce) { .gamebtn .dot { animation: none; } }
 
   /* Walking clears the page. Everything but the control fades out, so the
@@ -1646,14 +1651,22 @@ const P = {
 /* Visual constants live beside the model so the headless preview renderer in
    tools/verify/preview.mjs draws from exactly the same numbers. */
 const V = {
-  trailLife: 9.0,      // seconds a path stays visible
-  trailAlpha: 0.40,    // light laid down per pass
+  trailLife: 6.0,      // seconds a path stays visible
+  trailAlpha: 0.56,    // light laid down per pass -- short trails, vivid
   accentAlpha: 0.80,
-  headScale: 0.052,    // head radius, in metres-to-px units
+  headScale: 0.078,    // head radius, in metres-to-px units
+  headVary: [0.62, 1.5], // and a wide spread, so the crowd is not uniform
   lineScale: 1 / 36,   // trail width, likewise
   // Three weights rather than one. A field of identical strokes reads as
   // noise; a little variation reads as a drawing.
-  weights: [0.72, 1.0, 1.42]
+  weights: [0.72, 1.0, 1.42],
+  // Hue is assigned by direction of travel: warm going one way, cool going
+  // the other. That keeps the thing colour was hiding -- which stream a
+  // walker belongs to, and therefore where the lanes are -- while still
+  // letting you follow one person across the frame. Every hue was checked
+  // against the ground; the range is 5.5:1 to 9.4:1.
+  warm: [[217, 164, 65], [201, 118, 106], [228, 99, 127], [224, 154, 78]],
+  cool: [[88, 168, 201], [95, 185, 154], [126, 143, 232], [156, 191, 91]]
 };
 
 function mulberry32(a) {
@@ -1830,6 +1843,8 @@ function makeAgent(world, rnd) {
     pref: P.speedPref[0] + rnd() * (P.speedPref[1] - P.speedPref[0]),
     group: -1, side: 1, flow: 0, phase: 0, age: 0, life: 0,
     wt: (rnd() * 3) | 0,
+    hue: (rnd() * 4) | 0,
+    hs: V.headVary[0] + rnd() * (V.headVary[1] - V.headVary[0]),
     hot: 0,
     px: 0, py: 0, alpha: 0, accent: false, driven: false
   };
@@ -1885,6 +1900,24 @@ function createWorld(wMetres, hMetres, seed) {
   accent.accent = true;
   world.accent = accent;
   return world;
+}
+
+/* Hands the highlight to whoever is nearest the middle. Without this the
+   one walker the page is pointing at eventually walks out of frame, and the
+   page is pointing at nothing. */
+function adoptCentral(world) {
+  const cx = world.w * 0.5, cy = world.h * 0.5;
+  let best = null, bd = Infinity;
+  for (const a of world.agents) {
+    if (a === world.accent) continue;
+    const d = (a.x - cx) * (a.x - cx) + (a.y - cy) * (a.y - cy);
+    if (d < bd) { bd = d; best = a; }
+  }
+  if (!best) return;
+  if (world.accent) { world.accent.accent = false; world.accent.driven = false; }
+  best.accent = true;
+  best.driven = !!world.driving;
+  world.accent = best;
 }
 
 /* ---------- one physics step ---------- */
@@ -2051,6 +2084,7 @@ function step(world, dt, control) {
     // hover around.
     const out = a.x < -5 || a.x > world.w + 5 || a.y < -5 || a.y > world.h + 5;
     if (out || a.age > 260) {
+      const wasAccent = a.accent;
       if (a.group >= 0) {
         // Respawn the whole party together, or it teleports apart.
         const mates = world.groups[a.group];
@@ -2069,6 +2103,12 @@ function step(world, dt, control) {
         spawn(world, rnd, a);
         a.px = a.x; a.py = a.y;
       }
+      if (wasAccent) adoptCentral(world);
+    } else if (a.accent && !a.driven &&
+               (a.x < -1 || a.x > world.w + 1 || a.y < -1 || a.y > world.h + 1)) {
+      // Hand over the moment it leaves the visible frame, not when it is
+      // finally recycled several metres later.
+      adoptCentral(world);
     }
   }
 }
@@ -2248,39 +2288,39 @@ function forecast(world, agent, out, opts) {
 
   function strokeTrails() {
     const A = world.agents;
-    // Opposing streams get slightly different tone. Nothing is colour-coded
-    // for its own sake: it is what makes lane formation legible.
-    const toneA = mix(INK, ACCENT, 0.34);
-    const toneB = mix(INK_SOFT, PAPER, 0.30);
     const wide = SCALE * V.lineScale;
     const alpha = V.trailAlpha;
     tctx.lineCap = 'round';
 
+    // Direction picks the family, the family picks the hue: warm one way,
+    // cool the other. Twenty-four batched strokes a frame, which is nothing.
     for (let pass = 0; pass < 2; pass++) {
-      for (let wi = 0; wi < V.weights.length; wi++) {
-        tctx.beginPath();
-        let any = false;
-        for (let i = 0; i < A.length; i++) {
-          const a = A[i];
-          if (a.accent || a.flow !== pass || a.wt !== wi || a.life < 0.05) continue;
-          const dx = a.x - a.px, dy = a.y - a.py;
-          if (dx * dx + dy * dy > 4) continue;      // just respawned
-          tctx.moveTo(a.px * SCALE, a.py * SCALE);
-          tctx.lineTo(a.x * SCALE, a.y * SCALE);
-          any = true;
+      const fam = pass === 0 ? V.warm : V.cool;
+      for (let hu = 0; hu < fam.length; hu++) {
+        for (let wi = 0; wi < V.weights.length; wi++) {
+          tctx.beginPath();
+          let any = false;
+          for (let i = 0; i < A.length; i++) {
+            const a = A[i];
+            if (a.accent || a.flow !== pass || a.hue !== hu || a.wt !== wi || a.life < 0.05) continue;
+            const dx = a.x - a.px, dy = a.y - a.py;
+            if (dx * dx + dy * dy > 4) continue;      // just respawned
+            tctx.moveTo(a.px * SCALE, a.py * SCALE);
+            tctx.lineTo(a.x * SCALE, a.y * SCALE);
+            any = true;
+          }
+          if (!any) continue;
+          tctx.lineWidth = Math.max(0.65, wide * V.weights[wi]);
+          tctx.strokeStyle = rgba(fam[hu], alpha);
+          tctx.stroke();
         }
-        if (!any) continue;
-        tctx.lineWidth = Math.max(0.65, wide * V.weights[wi] * (pass === 0 ? 1.05 : 0.9));
-        tctx.strokeStyle = rgba(pass === 0 ? toneA : toneB, alpha * (pass === 0 ? 1 : 0.86));
-        tctx.stroke();
       }
     }
 
-    // While you are driving it, the accent walker leaves no trail: the point
-    // is where you are now, and a bright line following you around is just
-    // one more thing to lose yourself in.
+    // The walker you can take over keeps its trail whether or not you are
+    // driving: where you have been is the useful part.
     const a = world.accent;
-    if (a && a.life > 0.05 && !(CONTROL.active && a.driven)) {
+    if (a && a.life > 0.05) {
       const dx = a.x - a.px, dy = a.y - a.py;
       if (dx * dx + dy * dy <= 4) {
         tctx.beginPath();
@@ -2339,7 +2379,7 @@ function forecast(world, agent, out, opts) {
       ctx.arc(o.x * SCALE, o.y * SCALE, o.r * SCALE, 0, TWO_PI);
       ctx.fillStyle = rgba(PAPER, 0.05);
       ctx.fill();
-      ctx.strokeStyle = rgba(INK, walking ? 0.16 : 0.26);
+      ctx.strokeStyle = rgba(INK, walking ? 0.12 : 0.18);
       ctx.stroke();
     }
 
@@ -2369,39 +2409,46 @@ function forecast(world, agent, out, opts) {
 
     // heads
     const A = world.agents;
-    const rHead = Math.max(1.2, SCALE * V.headScale);
+    const rHead = Math.max(1.4, SCALE * V.headScale);
     for (let pass = 0; pass < 2; pass++) {
-      ctx.beginPath();
-      let any = false;
-      for (let i = 0; i < A.length; i++) {
-        const a = A[i];
-        if (a.accent || a.flow !== pass) continue;
-        const r = rHead * (0.78 + 0.34 * (a.r - P.radius[0]) / (P.radius[1] - P.radius[0]));
-        ctx.moveTo(a.x * SCALE + r, a.y * SCALE);
-        ctx.arc(a.x * SCALE, a.y * SCALE, r, 0, TWO_PI);
-        any = true;
+      const fam = pass === 0 ? V.warm : V.cool;
+      for (let hu = 0; hu < fam.length; hu++) {
+        ctx.beginPath();
+        let any = false;
+        for (let i = 0; i < A.length; i++) {
+          const a = A[i];
+          if (a.accent || a.flow !== pass || a.hue !== hu) continue;
+          const r = rHead * a.hs;
+          ctx.moveTo(a.x * SCALE + r, a.y * SCALE);
+          ctx.arc(a.x * SCALE, a.y * SCALE, r, 0, TWO_PI);
+          any = true;
+        }
+        if (!any) continue;
+        ctx.fillStyle = rgba(fam[hu], walking ? 0.5 : 0.88);
+        ctx.fill();
       }
-      if (!any) continue;
-      const tone = pass === 0 ? mix(INK, ACCENT, 0.14) : INK_SOFT;
-      ctx.fillStyle = rgba(tone, walking ? 0.55 : 0.80);
-      ctx.fill();
     }
 
-    // Anyone currently negotiating gets a brief flare. Two dots brightening
-    // at each other is the moment the model is about to do its work.
-    ctx.beginPath();
-    let hot = false;
-    for (let i = 0; i < A.length; i++) {
-      const a = A[i];
-      if (a.accent || a.hot < P.flareShow) continue;
-      const r = rHead * (1.6 + Math.min(1.8, a.hot / 9));
-      ctx.moveTo(a.x * SCALE + r, a.y * SCALE);
-      ctx.arc(a.x * SCALE, a.y * SCALE, r, 0, TWO_PI);
-      hot = true;
-    }
-    if (hot) {
-      ctx.fillStyle = rgba(ACCENT, walking ? 0.14 : 0.26);
-      ctx.fill();
+    // Anyone currently negotiating gets a brief halo in their own colour.
+    // Two walkers brightening at each other is the moment the model is about
+    // to do its work.
+    for (let pass = 0; pass < 2; pass++) {
+      const fam = pass === 0 ? V.warm : V.cool;
+      for (let hu = 0; hu < fam.length; hu++) {
+        ctx.beginPath();
+        let hot = false;
+        for (let i = 0; i < A.length; i++) {
+          const a = A[i];
+          if (a.accent || a.flow !== pass || a.hue !== hu || a.hot < P.flareShow) continue;
+          const r = rHead * a.hs * (1.7 + Math.min(1.6, a.hot / 9));
+          ctx.moveTo(a.x * SCALE + r, a.y * SCALE);
+          ctx.arc(a.x * SCALE, a.y * SCALE, r, 0, TWO_PI);
+          hot = true;
+        }
+        if (!hot) continue;
+        ctx.fillStyle = rgba(fam[hu], walking ? 0.10 : 0.16);
+        ctx.fill();
+      }
     }
 
     // the walker you are, or could be
@@ -2409,16 +2456,12 @@ function forecast(world, agent, out, opts) {
     if (!acc) return;
     const x = acc.x * SCALE, y = acc.y * SCALE;
 
-    if (!reduce) {
+    // No forecast while you are driving. Where this walker goes next is your
+    // decision, not the model's, so predicting it is just clutter over the
+    // one thing you are trying to watch.
+    if (!reduce && !walking) {
       const now = performance.now();
-      if (now - fanAt > 100) {
-        const sp = Math.sqrt(acc.vx * acc.vx + acc.vy * acc.vy);
-        // Driving it, the forecast follows where you are actually heading --
-        // so you watch the model predict you, and watch the crowd bend it.
-        forecast(world, acc, FAN, walking && sp > 0.05
-          ? { heading: { x: acc.vx / sp, y: acc.vy / sp } } : null);
-        fanAt = now;
-      }
+      if (now - fanAt > 100) { forecast(world, acc, FAN); fanAt = now; }
       ctx.save();
       const a0 = FAN[0], a2 = FAN[2];
       if (a0.length > 3) {
@@ -2444,14 +2487,26 @@ function forecast(world, agent, out, opts) {
       ctx.restore();
     }
 
-    const glow = ctx.createRadialGradient(x, y, 0, x, y, rHead * (walking ? 11 : 6));
-    glow.addColorStop(0, rgba(ACCENT, walking ? 0.30 : 0.20));
+    // Nothing else on the field is white, and nothing else is this big. In a
+    // crowd of eight hues a ninth would just be a ninth.
+    const gr = rHead * (walking ? 9 : 5.5);
+    const glow = ctx.createRadialGradient(x, y, 0, x, y, gr);
+    glow.addColorStop(0, rgba(ACCENT, walking ? 0.40 : 0.26));
     glow.addColorStop(1, rgba(ACCENT, 0));
     ctx.fillStyle = glow;
-    ctx.beginPath(); ctx.arc(x, y, rHead * (walking ? 11 : 6), 0, TWO_PI); ctx.fill();
+    ctx.beginPath(); ctx.arc(x, y, gr, 0, TWO_PI); ctx.fill();
 
-    ctx.beginPath(); ctx.arc(x, y, rHead * (walking ? 1.6 : 1.3), 0, TWO_PI);
+    ctx.beginPath(); ctx.arc(x, y, rHead * (walking ? 3.4 : 2.7), 0, TWO_PI);
     ctx.fillStyle = rgba(ACCENT, 0.98); ctx.fill();
+    ctx.beginPath(); ctx.arc(x, y, rHead * (walking ? 1.7 : 1.35), 0, TWO_PI);
+    ctx.fillStyle = 'rgba(255,255,255,0.96)'; ctx.fill();
+    // A quiet ring even when you are not driving, so the walker you could
+    // take over is always the one thing on the field that is circled.
+    if (!walking) {
+      ctx.beginPath(); ctx.arc(x, y, rHead * 5.0, 0, TWO_PI);
+      ctx.strokeStyle = rgba(ACCENT, 0.34); ctx.lineWidth = 1;
+      ctx.stroke();
+    }
 
     if (walking) {
       // Unmistakable: a steady ring, a pulsing one outside it, and four
@@ -2459,8 +2514,8 @@ function forecast(world, agent, out, opts) {
       const t = performance.now() / 1000;
       ctx.strokeStyle = rgba(ACCENT, 0.75);
       ctx.lineWidth = 1.4;
-      ctx.beginPath(); ctx.arc(x, y, rHead * 3.4, 0, TWO_PI); ctx.stroke();
-      const pr = rHead * (4.6 + 2.2 * (0.5 + 0.5 * Math.sin(t * 2.2)));
+      ctx.beginPath(); ctx.arc(x, y, rHead * 5.2, 0, TWO_PI); ctx.stroke();
+      const pr = rHead * (6.6 + 3.0 * (0.5 + 0.5 * Math.sin(t * 2.2)));
       ctx.strokeStyle = rgba(ACCENT, 0.30);
       ctx.lineWidth = 1;
       ctx.beginPath(); ctx.arc(x, y, pr, 0, TWO_PI); ctx.stroke();
@@ -2470,8 +2525,8 @@ function forecast(world, agent, out, opts) {
       for (let k = 0; k < 4; k++) {
         const ang = k * Math.PI / 2;
         const c = Math.cos(ang), sn = Math.sin(ang);
-        ctx.moveTo(x + c * rHead * 4.4, y + sn * rHead * 4.4);
-        ctx.lineTo(x + c * rHead * 5.8, y + sn * rHead * 5.8);
+        ctx.moveTo(x + c * rHead * 6.4, y + sn * rHead * 6.4);
+        ctx.lineTo(x + c * rHead * 8.4, y + sn * rHead * 8.4);
       }
       ctx.stroke();
     }
@@ -2581,6 +2636,7 @@ function forecast(world, agent, out, opts) {
   const gameBtn = document.getElementById('gameBtn');
   function setGame(on) {
     CONTROL.active = on;
+    if (world) world.driving = on;
     if (world && world.accent) {
       world.accent.driven = on;
       // Hand over whoever is nearest the middle of the frame, so you start
