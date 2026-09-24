@@ -1640,6 +1640,10 @@ const P = {
   sideGain: 1.05,
   headOn: 0.18,              // below this share of lateral force, pick a side
 
+  // Target for the walker you steer. Set from the speed actually achieved,
+  // not the speed asked for: pushing through a crowd costs about a third of
+  // it, so 2.68 is what lands 1.5x faster than the old setting on screen.
+  driveSpeed: 2.68,
   wander: 0.09,              // slow heading noise, so paths are never ruler-straight
   linkShow: 0.15,             // record an interaction once it is this strong (m/s^2)
   flareShow: 5.0,             // and light both walkers up once it is this strong
@@ -1965,7 +1969,10 @@ function step(world, dt, control) {
       dgx /= m; dgy /= m;
     }
 
-    const want = a.driven && control && control.active ? a.pref * 1.25 : a.pref;
+    // Being driven is worth a turn of speed -- you are steering, not
+    // commuting, and at crowd pace the frame takes too long to cross.
+    const driving = a.driven && control && control.active;
+    const want = driving ? a.pref * P.driveSpeed : a.pref;
     ax += (dgx * want - a.vx) / P.relax;
     ay += (dgy * want - a.vy) / P.relax;
 
@@ -2082,7 +2089,8 @@ function step(world, dt, control) {
     a.vx += ax * dt;
     a.vy += ay * dt;
     const sp = Math.sqrt(a.vx * a.vx + a.vy * a.vy);
-    const cap = a.pref * 1.45;
+    // The cap has to clear the target or the target is never reached.
+    const cap = a.pref * (driving ? P.driveSpeed * 1.16 : 1.45);
     if (sp > cap) { const s = cap / sp; a.vx *= s; a.vy *= s; }
     a.x += a.vx * dt;
     a.y += a.vy * dt;
