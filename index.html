@@ -1,19 +1,14 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light" data-lang="en">
+<html lang="en" data-lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script>
-/* Boot. Resolves theme and language before the first paint so a dark-mode
-   visitor never sees a light flash, and marks the document as script-enabled
-   so reveal animations opt in instead of hiding content when JS fails. */
+/* Boot. Resolves the language before the first paint and marks the document
+   as script-enabled, so reveal animations opt in rather than hiding content
+   when JS fails. */
 (function () {
-  var d = document.documentElement, th, lg;
-  try { th = localStorage.getItem('ht.theme'); } catch (e) {}
-  if (th !== 'light' && th !== 'dark') {
-    th = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
-  }
-  d.setAttribute('data-theme', th);
+  var d = document.documentElement, lg;
   try { lg = localStorage.getItem('ht.lang'); } catch (e) {}
   if (lg !== 'en' && lg !== 'ja') {
     lg = /^ja\b/i.test(navigator.language || '') ? 'ja' : 'en';
@@ -26,9 +21,8 @@
 <title>Hiromu Taketsugu — Trajectory Forecasting & Embodied AI</title>
 <meta name="description" content="Hiromu Taketsugu (武次 広夢) — Ph.D. student at Toyota Technological Institute, working on physically plausible pedestrian trajectory prediction, embodied AI, and social robot navigation.">
 <link rel="canonical" href="https://iminthemiddle.github.io/">
-<meta name="color-scheme" content="light dark">
-<meta name="theme-color" content="#fdfcf9" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#211c15" media="(prefers-color-scheme: dark)">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#14100b">
 <meta property="og:type" content="profile">
 <meta property="og:url" content="https://iminthemiddle.github.io/">
 <meta property="og:title" content="Hiromu Taketsugu — Trajectory Forecasting &amp; Embodied AI">
@@ -305,24 +299,27 @@ const DATA = {
   /* ====================================================================
      Studio Minimal × Depth Sim — design tokens
      ==================================================================== */
-  :root, [data-theme="light"] {
-    --stage: #efe8d8;              /* canvas world — warm cream */
-    --stage-rgb: 239, 232, 216;
-    --paper: #fdfcf9;              /* content card — crisp warm-white */
-    --paper-rgb: 253, 252, 249;
-    --paper-2: #f5f1e6;            /* image slots */
-    --ink: #16150f;
-    --ink-rgb: 22, 21, 15;
-    --ink-dim: #5b5952;            /* 6.83:1 on paper */
-    --ink-faint: #6b6860;          /* 4.56:1 on stage, the worst case */
-    --ink-soft-rgb: 122, 120, 112;
-    --accent: #e8500a;             /* graphics only: 3.1:1, legal for non-text */
-    --accent-rgb: 232, 80, 10;
-    --accent-text: #bb3e0a;        /* 4.52:1 on stage; use wherever text is */
-    --hairline: #e3ddce;
-    --hairline-soft: #efe9dc;
-    --card-shadow: 0 6px 44px rgba(52, 40, 15, 0.10), 0 1px 3px rgba(52, 40, 15, 0.04);
-    --shadow-a: 0.10;
+  /* One palette. The page is dark, full stop -- the simulation is a drawing
+     in light on a dark ground and it is the reason the page looks the way it
+     does; a second, paler version of it was never as good. */
+  :root {
+    --stage: #14100b;              /* the ground the crowd walks on */
+    --stage-rgb: 20, 16, 11;
+    --paper: #211c15;              /* content, lifted off the ground */
+    --paper-rgb: 33, 28, 21;
+    --paper-2: #2a241c;            /* image slots */
+    --ink: #ece9e2;
+    --ink-rgb: 236, 233, 226;
+    --ink-dim: #a5a29a;            /* 6.63:1 on paper */
+    --ink-faint: #8f8b83;          /* 4.53:1, the worst case */
+    --ink-soft-rgb: 165, 162, 154;
+    --accent: #ff8144;
+    --accent-rgb: 255, 129, 68;
+    --accent-text: #ff8144;        /* 6.83:1 on paper */
+    --hairline: rgba(255, 230, 190, 0.14);
+    --hairline-soft: rgba(255, 230, 190, 0.07);
+    --card-shadow: 0 6px 44px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 235, 200, 0.05);
+    --shadow-a: 0.30;
 
     /* Families, motion and measure, named once instead of 38 times. */
     --font-sans: "Inter", "Noto Sans JP", system-ui, sans-serif;
@@ -331,25 +328,6 @@ const DATA = {
     --col: 900px;                  /* reading column */
     --frame: 1200px;               /* hero + header, and the gantry rails */
     --canvas-gutter: 84px;         /* the sim needs somewhere to be seen */
-  }
-  [data-theme="dark"] {
-    --stage: #14100b;              /* canvas world — deep warm-dark */
-    --stage-rgb: 20, 16, 11;
-    --paper: #211c15;              /* content card — slightly lifted warm-dark */
-    --paper-rgb: 33, 28, 21;
-    --paper-2: #2a241c;
-    --ink: #ece9e2;
-    --ink-rgb: 236, 233, 226;
-    --ink-dim: #a5a29a;
-    --ink-faint: #8f8b83;          /* was #6f6c66 = 3.23:1 */
-    --ink-soft-rgb: 165, 162, 154;
-    --accent: #ff8144;
-    --accent-rgb: 255, 129, 68;
-    --accent-text: #ff8144;        /* already 6.83:1 on dark paper */
-    --hairline: rgba(255, 230, 190, 0.14);
-    --hairline-soft: rgba(255, 230, 190, 0.07);
-    --card-shadow: 0 6px 44px rgba(0, 0, 0, 0.55), inset 0 1px 0 rgba(255, 235, 200, 0.05);
-    --shadow-a: 0.30;
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -1075,25 +1053,52 @@ const DATA = {
   /* ====================================================================
      Game button
      ==================================================================== */
+  /* The one thing on the page you can actually play with, so it sits in the
+     header wearing the accent rather than hiding in a corner. */
   .gamebtn {
-    position: fixed; right: 20px; bottom: 20px; z-index: 40;
+    display: inline-flex; align-items: center; gap: 9px;
     font-family: var(--font-mono);
-    font-size: 12px;
-    color: var(--ink-dim);
-    background: var(--paper);
-    border: 1px solid var(--hairline);
+    font-size: 12.5px;
+    letter-spacing: 0.02em;
+    color: var(--accent-text);
+    background: rgba(var(--accent-rgb), 0.10);
+    border: 1px solid rgba(var(--accent-rgb), 0.55);
     border-radius: 999px;
-    padding: 10px 18px;
+    padding: 8px 16px;
     cursor: pointer;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
     transition: color 0.2s, background 0.2s, border-color 0.2s;
   }
-  .gamebtn:hover { border-color: var(--accent); color: var(--accent-text); }
-  .gamebtn.on { background: var(--accent-text); color: #fff; border-color: var(--accent-text); }
+  .gamebtn .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--accent); flex: none;
+    box-shadow: 0 0 0 0 rgba(var(--accent-rgb), 0.55);
+    animation: walkPulse 2.4s var(--ease) infinite;
+  }
+  @keyframes walkPulse {
+    0%   { box-shadow: 0 0 0 0 rgba(var(--accent-rgb), 0.5); }
+    70%  { box-shadow: 0 0 0 7px rgba(var(--accent-rgb), 0); }
+    100% { box-shadow: 0 0 0 0 rgba(var(--accent-rgb), 0); }
+  }
+  .gamebtn:hover { background: rgba(var(--accent-rgb), 0.18); border-color: var(--accent); }
+  .gamebtn.on { background: var(--accent); color: #1a1209; border-color: var(--accent); }
+  .gamebtn.on .dot { background: #1a1209; animation: none; }
+  @media (prefers-reduced-motion: reduce) { .gamebtn .dot { animation: none; } }
+
+  /* Walking clears the page. Everything but the control fades out, so the
+     scene you are standing in is the only thing on screen. */
+  main, footer.contact, nav.links, .toggles .pill, .gantry, .nav-inner .mark {
+    transition: opacity 0.5s var(--ease);
+  }
+  html.walking main, html.walking footer.contact, html.walking nav.links,
+  html.walking .toggles .pill, html.walking .gantry, html.walking .nav-inner .mark {
+    opacity: 0; pointer-events: none;
+  }
+  html.walking header { background: transparent; border-bottom-color: transparent; }
+  html.walking .hero-block::before { opacity: 0; transition: opacity 0.5s var(--ease); }
+  .hero-block::before { transition: opacity 0.5s var(--ease); }
   /* Both states ship in markup so the language toggle keeps owning translation. */
   /* Each control names its destination, not its current state. */
   [data-lang="en"] .lang-to-en, [data-lang="ja"] .lang-to-ja { display: none; }
-  [data-theme="light"] .thm-light, [data-theme="dark"] .thm-dark { display: none; }
   .gamebtn .lbl-on { display: none; }
   .gamebtn.on .lbl-off { display: none; }
   .gamebtn.on .lbl-on { display: inline; }
@@ -1232,20 +1237,17 @@ const DATA = {
 
 <canvas id="field" aria-hidden="true"></canvas>
 <div class="gantry" aria-hidden="true"></div>
-<button class="gamebtn" id="gameBtn" aria-label="Toggle walk mode" aria-pressed="false">
-  <span class="en lbl-off" lang="en">Walk into the crowd</span><span class="en lbl-on" lang="en">Walking · Esc to exit</span><span class="ja lbl-off" lang="ja">群衆の中を歩く</span><span class="ja lbl-on" lang="ja">操作中 · Esc で終了</span>
-</button>
 
 <header>
   <div class="nav-inner">
     <div class="mark">H. Taketsugu <b>·</b> 武次 広夢</div>
     <nav class="links" id="nav-links"></nav>
     <div class="toggles">
-      <button class="pill" id="langBtn"><span class="lang-to-ja" lang="ja">日本語</span><span class="lang-to-en">EN</span></button>
-      <button class="pill" id="themeBtn">
-        <svg class="ico" id="themeIco" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/></svg>
-        <span class="thm-dark en">Dark</span><span class="thm-dark ja">ダークに</span><span class="thm-light en">Light</span><span class="thm-light ja">ライトに</span>
+      <button class="gamebtn" id="gameBtn" aria-pressed="false">
+        <span class="dot" aria-hidden="true"></span>
+        <span class="en lbl-off" lang="en">Walk into the crowd</span><span class="en lbl-on" lang="en">Walking &middot; Esc to leave</span><span class="ja lbl-off" lang="ja">群衆の中を歩く</span><span class="ja lbl-on" lang="ja">操作中 &middot; Esc で終了</span>
       </button>
+      <button class="pill" id="langBtn"><span class="lang-to-ja" lang="ja">日本語</span><span class="lang-to-en">EN</span></button>
     </div>
   </div>
 </header>
@@ -1540,40 +1542,6 @@ mount('#contact-links', DATA.links.map((l) => h`
 })();
 
 /* ====================================================================
-   THEME toggle
-   ==================================================================== */
-(function () {
-  const root = document.documentElement;
-  const btn = document.getElementById('themeBtn');
-  const ico = document.getElementById('themeIco');
-  const sun = '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/>';
-  const moon = '<path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/>';
-  /* The boot script already resolved the initial theme. Keep following the OS
-     only while the visitor has not made an explicit choice. */
-  const stored = () => { try { return localStorage.getItem('ht.theme'); } catch (e) { return null; } };
-  if (window.matchMedia) {
-    const mq = window.matchMedia('(prefers-color-scheme: dark)');
-    const onOS = () => {
-      if (stored()) return;
-      root.setAttribute('data-theme', mq.matches ? 'dark' : 'light');
-      sync();
-    };
-    mq.addEventListener ? mq.addEventListener('change', onOS) : mq.addListener(onOS);
-  }
-  function sync() {
-    ico.innerHTML = root.getAttribute('data-theme') === 'dark' ? sun : moon;
-  }
-  sync();
-  btn.addEventListener('click', () => {
-    const dark = root.getAttribute('data-theme') === 'dark';
-    const next = dark ? 'light' : 'dark';
-    root.setAttribute('data-theme', next);
-    try { localStorage.setItem('ht.theme', next); } catch (e) {}
-    sync();
-  });
-})();
-
-/* ====================================================================
    Header height -> --header-h, for scroll-margin on anchor targets.
    Measured rather than hardcoded because the header wraps at narrow widths.
    ==================================================================== */
@@ -1668,7 +1636,9 @@ const P = {
   headOn: 0.18,              // below this share of lateral force, pick a side
 
   wander: 0.09,              // slow heading noise, so paths are never ruler-straight
-  density: 0.105,            // agents per square metre
+  linkShow: 0.15,             // record an interaction once it is this strong (m/s^2)
+  flareShow: 5.0,             // and light both walkers up once it is this strong
+  density: 0.096,      // enough for texture; finding yourself is the marker's job            // agents per square metre
   agentsMin: 26,
   agentsMax: 190
 };
@@ -1676,11 +1646,11 @@ const P = {
 /* Visual constants live beside the model so the headless preview renderer in
    tools/verify/preview.mjs draws from exactly the same numbers. */
 const V = {
-  trailLife: { light: 13.0, dark: 17.0 },   // seconds a path stays visible
-  trailAlpha: { light: 0.34, dark: 0.38 },  // ink laid down per pass
-  accentAlpha: { light: 0.66, dark: 0.78 },
-  headScale: 0.050,                         // head radius, in metres-to-px units
-  lineScale: 1 / 38,                        // trail width, likewise
+  trailLife: 9.0,      // seconds a path stays visible
+  trailAlpha: 0.40,    // light laid down per pass
+  accentAlpha: 0.80,
+  headScale: 0.052,    // head radius, in metres-to-px units
+  lineScale: 1 / 36,   // trail width, likewise
   // Three weights rather than one. A field of identical strokes reads as
   // noise; a little variation reads as a drawing.
   weights: [0.72, 1.0, 1.42]
@@ -1860,6 +1830,7 @@ function makeAgent(world, rnd) {
     pref: P.speedPref[0] + rnd() * (P.speedPref[1] - P.speedPref[0]),
     group: -1, side: 1, flow: 0, phase: 0, age: 0, life: 0,
     wt: (rnd() * 3) | 0,
+    hot: 0,
     px: 0, py: 0, alpha: 0, accent: false, driven: false
   };
   spawn(world, rnd, a);
@@ -1872,7 +1843,9 @@ function createWorld(wMetres, hMetres, seed) {
   const world = {
     w: wMetres, h: hMetres, rnd, t: 0,
     agents: [], obstacles: [], gates: [], groups: [],
-    grid: makeGrid(wMetres, hMetres, 3.2)
+    grid: makeGrid(wMetres, hMetres, 3.2),
+    // Pairs currently exerting a real force on each other, refilled every step.
+    links: new Float32Array(2400 * 5), linkCount: 0
   };
   buildScene(world, rnd);
 
@@ -1921,10 +1894,12 @@ function step(world, dt, control) {
   const A = world.agents, g = world.grid, obs = world.obstacles, rnd = world.rnd;
   gridBuild(g, A);
   world.t += dt;
+  world.linkCount = 0;
 
   for (let i = 0; i < A.length; i++) {
     const a = A[i];
     a.px = a.x; a.py = a.y;
+    a.hot *= 0.86;          // the flare fades in about a fifth of a second
 
     let ax = 0, ay = 0;
 
@@ -1966,6 +1941,23 @@ function step(world, dt, control) {
           const R = a.r + b.r + P.comfort;
           if (anticipate(a.x, a.y, a.vx, a.vy, b.x, b.y, b.vx, b.vy, R, P.k, P.tau0, _f)) {
             const fm = Math.sqrt(_f.x * _f.x + _f.y * _f.y);
+            // The social force is invisible by definition. Recording the live
+            // ones lets the renderer show the moment two people notice each
+            // other, which is the part of this the page is actually about.
+            if (j > i && fm > P.linkShow && world.linkCount < 2400) {
+              const li = world.linkCount * 5;
+              world.links[li] = a.x; world.links[li + 1] = a.y;
+              world.links[li + 2] = b.x; world.links[li + 3] = b.y;
+              world.links[li + 4] = fm;
+              world.linkCount++;
+            }
+            // Both parties are now paying attention to each other. The
+            // renderer flares them, which is the most legible way to show an
+            // interaction that is otherwise invisible.
+            if (fm > P.linkShow) {
+              if (fm > a.hot) a.hot = fm;
+              if (fm > b.hot) b.hot = fm;
+            }
             const hl = Math.sqrt(a.vx * a.vx + a.vy * a.vy) || 1;
             const ux = a.vx / hl, uy = a.vy / hl;
             const along = _f.x * ux + _f.y * uy;
@@ -2095,7 +2087,9 @@ function forecast(world, agent, out, opts) {
   for (let br = 0; br < 3; br++) {
     const ang = (br - 1) * spread;
     let x = agent.x, y = agent.y, vx = agent.vx, vy = agent.vy;
-    let gdx = agent.gx - x, gdy = agent.gy - y;
+    let gdx, gdy;
+    if (opts && opts.heading) { gdx = opts.heading.x; gdy = opts.heading.y; }
+    else { gdx = agent.gx - x; gdy = agent.gy - y; }
     const gl = Math.sqrt(gdx * gdx + gdy * gdy) || 1;
     gdx /= gl; gdy /= gl;
     const ca = Math.cos(ang), sa = Math.sin(ang);
@@ -2162,7 +2156,7 @@ function forecast(world, agent, out, opts) {
   const MOBILE = () => window.innerWidth <= 640;
 
   /* palette, read from the stylesheet so themes drive the drawing */
-  let INK, INK_SOFT, ACCENT, PAPER, STAGE, DARK = false;
+  let INK, INK_SOFT, ACCENT, PAPER, STAGE;
   const FALLBACK = {
     '--ink-rgb': [22, 21, 15], '--ink-soft-rgb': [122, 120, 112],
     '--accent-rgb': [232, 80, 10], '--paper-rgb': [253, 252, 249],
@@ -2186,7 +2180,6 @@ function forecast(world, agent, out, opts) {
     ACCENT = readRGB(cs, '--accent-rgb');
     PAPER = readRGB(cs, '--paper-rgb');
     STAGE = readRGB(cs, '--stage-rgb');
-    DARK = root.getAttribute('data-theme') === 'dark';
   }
   const rgba = (c, a) => 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + a + ')';
   const mix = (a, b, t) => [
@@ -2235,14 +2228,20 @@ function forecast(world, agent, out, opts) {
   const FAN = [[], [], []];
   let fanAt = 0;
 
+  let fadeCarry = 0;
   function fadeTrails(dt) {
-    // Erode alpha rather than painting the background over it: fading toward
-    // transparent leaves no residue, and lets the stage colour show through.
-    const life = DARK ? V.trailLife.dark : V.trailLife.light;
-    const k = 1 - Math.exp(-dt / life);
+    // Erode alpha rather than painting over it, so the fade leaves no residue.
+    // But canvas alpha is 8-bit: at a seventeen-second trail life the erosion
+    // per frame worked out at 0.001, which rounds to zero and never fired --
+    // the trails simply accumulated until the screen filled in. Bank the
+    // fraction and spend it once it is large enough to register.
+    fadeCarry += 1 - Math.exp(-dt / V.trailLife);
+    if (fadeCarry < 0.02) return;
+    const k = Math.min(0.4, fadeCarry);
+    fadeCarry = 0;
     tctx.save();
     tctx.globalCompositeOperation = 'destination-out';
-    tctx.fillStyle = 'rgba(0,0,0,' + k.toFixed(4) + ')';
+    tctx.fillStyle = 'rgba(0,0,0,' + k.toFixed(3) + ')';
     tctx.fillRect(0, 0, W, H);
     tctx.restore();
   }
@@ -2251,10 +2250,10 @@ function forecast(world, agent, out, opts) {
     const A = world.agents;
     // Opposing streams get slightly different tone. Nothing is colour-coded
     // for its own sake: it is what makes lane formation legible.
-    const toneA = DARK ? mix(INK, ACCENT, 0.34) : mix(INK, ACCENT, 0.40);
-    const toneB = DARK ? mix(INK_SOFT, PAPER, 0.30) : mix(INK_SOFT, INK, 0.18);
+    const toneA = mix(INK, ACCENT, 0.34);
+    const toneB = mix(INK_SOFT, PAPER, 0.30);
     const wide = SCALE * V.lineScale;
-    const alpha = DARK ? V.trailAlpha.dark : V.trailAlpha.light;
+    const alpha = V.trailAlpha;
     tctx.lineCap = 'round';
 
     for (let pass = 0; pass < 2; pass++) {
@@ -2277,8 +2276,11 @@ function forecast(world, agent, out, opts) {
       }
     }
 
+    // While you are driving it, the accent walker leaves no trail: the point
+    // is where you are now, and a bright line following you around is just
+    // one more thing to lose yourself in.
     const a = world.accent;
-    if (a && a.life > 0.05) {
+    if (a && a.life > 0.05 && !(CONTROL.active && a.driven)) {
       const dx = a.x - a.px, dy = a.y - a.py;
       if (dx * dx + dy * dy <= 4) {
         tctx.beginPath();
@@ -2286,7 +2288,7 @@ function forecast(world, agent, out, opts) {
         tctx.lineTo(a.x * SCALE, a.y * SCALE);
         tctx.lineWidth = Math.max(1.1, wide * 1.7);
         tctx.lineCap = 'round';
-        tctx.strokeStyle = rgba(ACCENT, DARK ? V.accentAlpha.dark : V.accentAlpha.light);
+        tctx.strokeStyle = rgba(ACCENT, V.accentAlpha);
         tctx.stroke();
       }
     }
@@ -2318,8 +2320,16 @@ function forecast(world, agent, out, opts) {
   }
 
   function drawLive(control) {
+    const walking = !!(control && control.active);
     ctx.clearRect(0, 0, W, H);
     ctx.drawImage(trail, 0, 0, W, H);
+    // Walking knocks the accumulated past back, so what is happening right
+    // now -- you, and whoever is about to have to deal with you -- reads
+    // against it instead of competing with it.
+    if (walking) {
+      ctx.fillStyle = rgba(STAGE, 0.66);
+      ctx.fillRect(0, 0, W, H);
+    }
     if (edgeFade) ctx.drawImage(edgeFade, 0, 0, W, H);
 
     // obstacles
@@ -2327,45 +2337,34 @@ function forecast(world, agent, out, opts) {
     for (const o of world.obstacles) {
       ctx.beginPath();
       ctx.arc(o.x * SCALE, o.y * SCALE, o.r * SCALE, 0, TWO_PI);
-      // Lighter than the ground in both themes, so it reads as something
-      // standing there rather than a hole in the drawing.
-      // Barely a fill; the ring does the work. The wake the crowd leaves
-      // around it already says something is standing there.
-      ctx.fillStyle = rgba(PAPER, DARK ? 0.05 : 0.10);
+      ctx.fillStyle = rgba(PAPER, 0.05);
       ctx.fill();
-      ctx.strokeStyle = rgba(INK, DARK ? 0.26 : 0.30);
+      ctx.strokeStyle = rgba(INK, walking ? 0.16 : 0.26);
       ctx.stroke();
     }
 
-    // forecast for the highlighted walker
-    const acc = world.accent;
-    if (acc && !reduce) {
-      const now = performance.now();
-      if (now - fanAt > 100) { forecast(world, acc, FAN); fanAt = now; }
-      ctx.save();
-      // uncertainty envelope between the outer rollouts
-      ctx.beginPath();
-      const a0 = FAN[0], a2 = FAN[2];
-      if (a0.length > 3) {
-        ctx.moveTo(a0[0] * SCALE, a0[1] * SCALE);
-        for (let i = 2; i < a0.length; i += 2) ctx.lineTo(a0[i] * SCALE, a0[i + 1] * SCALE);
-        for (let i = a2.length - 2; i >= 0; i -= 2) ctx.lineTo(a2[i] * SCALE, a2[i + 1] * SCALE);
-        ctx.closePath();
-        ctx.fillStyle = rgba(ACCENT, DARK ? 0.07 : 0.06);
-        ctx.fill();
+    // Live interactions. A social force is invisible by construction; this
+    // draws the ones that currently exist, so the instant two people notice
+    // each other and begin to give way shows up and then goes again.
+    if (world.linkCount) {
+      const bins = [[], [], []];
+      for (let i = 0; i < world.linkCount; i++) {
+        const li = i * 5, f = world.links[li + 4];
+        const b = f > 6 ? 2 : f > 2 ? 1 : 0;
+        bins[b].push(li);
       }
-      ctx.setLineDash([2, 4]);
+      const alphas = walking ? [0.09, 0.18, 0.34] : [0.13, 0.24, 0.44];
       for (let b = 0; b < 3; b++) {
-        const p = FAN[b];
-        if (p.length < 4) continue;
+        if (!bins[b].length) continue;
         ctx.beginPath();
-        ctx.moveTo(p[0] * SCALE, p[1] * SCALE);
-        for (let i = 2; i < p.length; i += 2) ctx.lineTo(p[i] * SCALE, p[i + 1] * SCALE);
-        ctx.lineWidth = b === 1 ? 1.3 : 0.9;
-        ctx.strokeStyle = rgba(ACCENT, b === 1 ? 0.62 : 0.34);
+        for (const li of bins[b]) {
+          ctx.moveTo(world.links[li] * SCALE, world.links[li + 1] * SCALE);
+          ctx.lineTo(world.links[li + 2] * SCALE, world.links[li + 3] * SCALE);
+        }
+        ctx.lineWidth = 0.7 + b * 0.4;
+        ctx.strokeStyle = rgba(ACCENT, alphas[b]);
         ctx.stroke();
       }
-      ctx.restore();
     }
 
     // heads
@@ -2383,28 +2382,98 @@ function forecast(world, agent, out, opts) {
         any = true;
       }
       if (!any) continue;
-      const tone = pass === 0 ? mix(INK, ACCENT, DARK ? 0.14 : 0.18) : INK_SOFT;
-      ctx.fillStyle = rgba(tone, DARK ? 0.80 : 0.72);
+      const tone = pass === 0 ? mix(INK, ACCENT, 0.14) : INK_SOFT;
+      ctx.fillStyle = rgba(tone, walking ? 0.55 : 0.80);
       ctx.fill();
     }
 
-    if (acc) {
-      const x = acc.x * SCALE, y = acc.y * SCALE;
-      if (DARK) {
-        const g = ctx.createRadialGradient(x, y, 0, x, y, rHead * 6);
-        g.addColorStop(0, rgba(ACCENT, 0.34));
-        g.addColorStop(1, rgba(ACCENT, 0));
-        ctx.fillStyle = g;
-        ctx.beginPath(); ctx.arc(x, y, rHead * 6, 0, TWO_PI); ctx.fill();
+    // Anyone currently negotiating gets a brief flare. Two dots brightening
+    // at each other is the moment the model is about to do its work.
+    ctx.beginPath();
+    let hot = false;
+    for (let i = 0; i < A.length; i++) {
+      const a = A[i];
+      if (a.accent || a.hot < P.flareShow) continue;
+      const r = rHead * (1.6 + Math.min(1.8, a.hot / 9));
+      ctx.moveTo(a.x * SCALE + r, a.y * SCALE);
+      ctx.arc(a.x * SCALE, a.y * SCALE, r, 0, TWO_PI);
+      hot = true;
+    }
+    if (hot) {
+      ctx.fillStyle = rgba(ACCENT, walking ? 0.14 : 0.26);
+      ctx.fill();
+    }
+
+    // the walker you are, or could be
+    const acc = world.accent;
+    if (!acc) return;
+    const x = acc.x * SCALE, y = acc.y * SCALE;
+
+    if (!reduce) {
+      const now = performance.now();
+      if (now - fanAt > 100) {
+        const sp = Math.sqrt(acc.vx * acc.vx + acc.vy * acc.vy);
+        // Driving it, the forecast follows where you are actually heading --
+        // so you watch the model predict you, and watch the crowd bend it.
+        forecast(world, acc, FAN, walking && sp > 0.05
+          ? { heading: { x: acc.vx / sp, y: acc.vy / sp } } : null);
+        fanAt = now;
       }
-      ctx.beginPath(); ctx.arc(x, y, rHead * 1.32, 0, TWO_PI);
-      ctx.fillStyle = rgba(ACCENT, 0.95); ctx.fill();
-      if (control && control.active) {
+      ctx.save();
+      const a0 = FAN[0], a2 = FAN[2];
+      if (a0.length > 3) {
         ctx.beginPath();
-        ctx.arc(x, y, rHead * 3.1 + Math.sin(performance.now() / 300) * 1.6, 0, TWO_PI);
-        ctx.strokeStyle = rgba(ACCENT, 0.55);
-        ctx.lineWidth = 1.2; ctx.setLineDash([3, 4]); ctx.stroke(); ctx.setLineDash([]);
+        ctx.moveTo(a0[0] * SCALE, a0[1] * SCALE);
+        for (let i = 2; i < a0.length; i += 2) ctx.lineTo(a0[i] * SCALE, a0[i + 1] * SCALE);
+        for (let i = a2.length - 2; i >= 0; i -= 2) ctx.lineTo(a2[i] * SCALE, a2[i + 1] * SCALE);
+        ctx.closePath();
+        ctx.fillStyle = rgba(ACCENT, walking ? 0.10 : 0.07);
+        ctx.fill();
       }
+      ctx.setLineDash([2, 4]);
+      for (let b = 0; b < 3; b++) {
+        const pth = FAN[b];
+        if (pth.length < 4) continue;
+        ctx.beginPath();
+        ctx.moveTo(pth[0] * SCALE, pth[1] * SCALE);
+        for (let i = 2; i < pth.length; i += 2) ctx.lineTo(pth[i] * SCALE, pth[i + 1] * SCALE);
+        ctx.lineWidth = b === 1 ? 1.3 : 0.9;
+        ctx.strokeStyle = rgba(ACCENT, b === 1 ? (walking ? 0.78 : 0.62) : (walking ? 0.42 : 0.34));
+        ctx.stroke();
+      }
+      ctx.restore();
+    }
+
+    const glow = ctx.createRadialGradient(x, y, 0, x, y, rHead * (walking ? 11 : 6));
+    glow.addColorStop(0, rgba(ACCENT, walking ? 0.30 : 0.20));
+    glow.addColorStop(1, rgba(ACCENT, 0));
+    ctx.fillStyle = glow;
+    ctx.beginPath(); ctx.arc(x, y, rHead * (walking ? 11 : 6), 0, TWO_PI); ctx.fill();
+
+    ctx.beginPath(); ctx.arc(x, y, rHead * (walking ? 1.6 : 1.3), 0, TWO_PI);
+    ctx.fillStyle = rgba(ACCENT, 0.98); ctx.fill();
+
+    if (walking) {
+      // Unmistakable: a steady ring, a pulsing one outside it, and four
+      // ticks. On a field of a hundred dots you should never have to hunt.
+      const t = performance.now() / 1000;
+      ctx.strokeStyle = rgba(ACCENT, 0.75);
+      ctx.lineWidth = 1.4;
+      ctx.beginPath(); ctx.arc(x, y, rHead * 3.4, 0, TWO_PI); ctx.stroke();
+      const pr = rHead * (4.6 + 2.2 * (0.5 + 0.5 * Math.sin(t * 2.2)));
+      ctx.strokeStyle = rgba(ACCENT, 0.30);
+      ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.arc(x, y, pr, 0, TWO_PI); ctx.stroke();
+      ctx.strokeStyle = rgba(ACCENT, 0.6);
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      for (let k = 0; k < 4; k++) {
+        const ang = k * Math.PI / 2;
+        const c = Math.cos(ang), sn = Math.sin(ang);
+        ctx.moveTo(x + c * rHead * 4.4, y + sn * rHead * 4.4);
+        ctx.lineTo(x + c * rHead * 5.8, y + sn * rHead * 5.8);
+      }
+      ctx.stroke();
     }
   }
 
@@ -2421,13 +2490,18 @@ function forecast(world, agent, out, opts) {
     strokeTrails();
   }
 
+  // Past the hero only the margins and the gaps between sections show any of
+  // this, so it is repainted at half rate. The physics is fixed-step and
+  // unaffected; only how often the result is drawn changes.
+  let heroVisible = true, halfFrame = false;
   function frame(now) {
     rafId = null;
     if (!running() || !ready) return;
     const dt = last ? Math.min((now - last) / 1000, 0.1) : STEP;
     last = now;
     advance(dt);
-    drawLive(CONTROL);
+    halfFrame = !halfFrame;
+    if (heroVisible || CONTROL.active || halfFrame) drawLive(CONTROL);
     schedule();
   }
   function schedule() { if (!rafId && running()) rafId = requestAnimationFrame(frame); }
@@ -2455,15 +2529,6 @@ function forecast(world, agent, out, opts) {
   loadPalette();
   restart(false);
 
-  new MutationObserver(() => {
-    loadPalette();
-    buildEdgeFade();
-    tctx.clearRect(0, 0, W, H);
-    if (reduce) { settle(0); return; }
-    for (let i = 0; i < 420; i++) { step(world, STEP, CONTROL); strokeTrails(); }
-    drawLive(CONTROL);
-  }).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
-
   document.addEventListener('visibilitychange', () => {
     visible = !document.hidden;
     if (visible) last = 0;
@@ -2471,6 +2536,11 @@ function forecast(world, agent, out, opts) {
   });
   new IntersectionObserver((e) => { inView = e[0].isIntersecting; if (inView) last = 0; schedule(); },
     { threshold: 0.01 }).observe(canvas);
+  const hero = document.querySelector('.hero-block');
+  if (hero) {
+    new IntersectionObserver((e) => { heroVisible = e[0].isIntersecting; },
+      { threshold: 0.02 }).observe(hero);
+  }
 
   const onMotion = () => {
     reduce = RM.matches;
@@ -2489,7 +2559,7 @@ function forecast(world, agent, out, opts) {
     window.__sim = {
       get world() { return world; },
       get scale() { return SCALE; },
-      palette: () => ({ INK, INK_SOFT, ACCENT, PAPER, STAGE, DARK }),
+      palette: () => ({ INK, INK_SOFT, ACCENT, PAPER, STAGE }),
       seed: SEED
     };
   }
@@ -2511,12 +2581,35 @@ function forecast(world, agent, out, opts) {
   const gameBtn = document.getElementById('gameBtn');
   function setGame(on) {
     CONTROL.active = on;
-    if (world && world.accent) world.accent.driven = on;
+    if (world && world.accent) {
+      world.accent.driven = on;
+      // Hand over whoever is nearest the middle of the frame, so you start
+      // somewhere you can see rather than wherever the accent happened to be.
+      if (on) adoptNearestToCentre();
+    }
     if (!on) clearKeys();
+    // The page gets out of the way while you are in there.
+    root.classList.toggle('walking', on);
     if (gameBtn) {
       gameBtn.classList.toggle('on', on);
       gameBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
     }
+    if (on) { last = 0; schedule(); }
+  }
+
+  function adoptNearestToCentre() {
+    const cx = world.w * 0.5, cy = world.h * 0.5;
+    let best = null, bd = Infinity;
+    for (const a of world.agents) {
+      const d = (a.x - cx) * (a.x - cx) + (a.y - cy) * (a.y - cy);
+      if (d < bd) { bd = d; best = a; }
+    }
+    if (!best || best === world.accent) return;
+    world.accent.accent = false;
+    world.accent.driven = false;
+    best.accent = true;
+    best.driven = true;
+    world.accent = best;
   }
   if (gameBtn) gameBtn.addEventListener('click', () => setGame(!CONTROL.active));
   window.addEventListener('keydown', (e) => {

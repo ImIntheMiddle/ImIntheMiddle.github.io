@@ -28,6 +28,7 @@ const PX_H = parseInt(flag('h', '900'), 10);
 const SECONDS = parseFloat(flag('seconds', '26'));
 const SEED = parseInt(flag('seed', '20260924'), 10);
 const SS = 2;                       // supersampling factor
+const WALK = args.includes('--walk'); // render the walk-mode state
 
 /* ---------- pull the physics out of the source ---------- */
 const src = readFileSync(SRC, 'utf8');
@@ -43,19 +44,17 @@ const mod = new Function(physics + '\nreturn { createWorld, step, forecast, P, V
 const { createWorld, step, forecast, P, V } = mod;
 
 /* ---------- palette, matching the stylesheet ---------- */
-const THEMES = {
-  light: { ink: [22, 21, 15], inkSoft: [122, 120, 112], accent: [232, 80, 10],
-           paper: [253, 252, 249], stage: [239, 232, 216], hairline: [227, 221, 206] },
-  dark:  { ink: [236, 233, 226], inkSoft: [165, 162, 154], accent: [255, 129, 68],
-           paper: [33, 28, 21], stage: [20, 16, 11], hairline: [48, 42, 33] }
+/* The page has one palette now; THEME survives only so older invocations of
+   this script keep working. */
+void THEME;
+const T = {
+  ink: [236, 233, 226], inkSoft: [165, 162, 154], accent: [255, 129, 68],
+  paper: [33, 28, 21], stage: [20, 16, 11], hairline: [48, 42, 33],
+  trailLife: V.trailLife, aA: V.trailAlpha, aB: V.trailAlpha, aAcc: V.accentAlpha
 };
-const T = THEMES[THEME];
-T.trailLife = V.trailLife[THEME];
-T.aA = T.aB = V.trailAlpha[THEME];
-T.aAcc = V.accentAlpha[THEME];
 const mix = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
-const toneA = mix(T.ink, T.accent, THEME === 'dark' ? 0.34 : 0.40);
-const toneB = THEME === 'dark' ? mix(T.inkSoft, T.paper, 0.30) : mix(T.inkSoft, T.ink, 0.18);
+const toneA = mix(T.ink, T.accent, 0.34);
+const toneB = mix(T.inkSoft, T.paper, 0.30);
 
 /* ---------- world ---------- */
 const SCALE = Math.min(46, Math.max(20, PX_H / 26));
@@ -124,6 +123,7 @@ for (let n = 0; n < total; n++) {
     if (a.life < 0.05) continue;
     const dx = a.x - a.px, dy = a.y - a.py;
     if (dx * dx + dy * dy > 4) continue;
+    if (WALK && a.accent) continue;           // no trail while you drive it
     const buf = a.accent ? bufC : (a.flow === 0 ? bufA : bufB);
     const lw = a.accent ? wide * 1.7
       : wide * V.weights[a.wt] * (a.flow === 0 ? 1.05 : 0.9);
@@ -133,15 +133,53 @@ for (let n = 0; n < total; n++) {
   }
 }
 
+if (WALK) {
+  // drawLive() lays a stage-coloured scrim over the accumulated past
+  const k = 0.66;
+  for (let i = 0; i < bufA.length; i++) { bufA[i] *= 1 - k; bufB[i] *= 1 - k; bufC[i] *= 1 - k; }
+}
+
 /* heads and obstacles, drawn once on the final frame */
 const rHead = Math.max(1.2, SCALE * V.headScale) * SS;
 for (const a of world.agents) {
   if (a.accent) continue;
   const rr = rHead * (0.78 + 0.34 * (a.r - P.radius[0]) / (P.radius[1] - P.radius[0]));
-  disc(a.flow === 0 ? bufA : bufB, a.x * SCALE * SS, a.y * SCALE * SS, rr, 0.78);
+  disc(a.flow === 0 ? bufA : bufB, a.x * SCALE * SS, a.y * SCALE * SS, rr, WALK ? 0.55 : 0.80);
+  if (a.hot >= P.flareShow) {
+    disc(bufC, a.x * SCALE * SS, a.y * SCALE * SS,
+         rHead * (1.6 + Math.min(1.8, a.hot / 9)), WALK ? 0.14 : 0.26);
+  }
 }
 const acc = world.accent;
-if (acc) disc(bufC, acc.x * SCALE * SS, acc.y * SCALE * SS, rHead * 1.32, 1.0);
+if (acc) {
+  const ax = acc.x * SCALE * SS, ay = acc.y * SCALE * SS;
+  // glow
+  const gr = rHead * (WALK ? 11 : 6);
+  for (let y = Math.max(0, (ay - gr) | 0); y <= Math.min(h - 1, (ay + gr) | 0); y++) {
+    for (let x = Math.max(0, (ax - gr) | 0); x <= Math.min(w - 1, (ax + gr) | 0); x++) {
+      const d = Math.hypot(x - ax, y - ay);
+      if (d < gr) bufC[y * w + x] += (WALK ? 0.30 : 0.20) * (1 - d / gr);
+    }
+  }
+  disc(bufC, ax, ay, rHead * (WALK ? 1.6 : 1.3), 1.0);
+  if (WALK) {
+    const ring = (r, a, lw) => {
+      const steps = Math.max(24, Math.round(r * 6));
+      for (let k = 0; k < steps; k++) {
+        const t0 = (k / steps) * Math.PI * 2, t1 = ((k + 1) / steps) * Math.PI * 2;
+        line(bufC, ax + Math.cos(t0) * r, ay + Math.sin(t0) * r,
+             ax + Math.cos(t1) * r, ay + Math.sin(t1) * r, lw, a);
+      }
+    };
+    ring(rHead * 3.4, 0.75, 1.4);
+    ring(rHead * 5.7, 0.30, 1.0);
+    for (let k = 0; k < 4; k++) {
+      const an = k * Math.PI / 2, c = Math.cos(an), sn = Math.sin(an);
+      line(bufC, ax + c * rHead * 4.4, ay + sn * rHead * 4.4,
+           ax + c * rHead * 5.8, ay + sn * rHead * 5.8, 1.2, 0.6);
+    }
+  }
+}
 
 if (acc) {
   const fan = forecast(world, acc, [[], [], []]);
@@ -154,13 +192,22 @@ if (acc) {
   }
 }
 
+// live interactions on the final frame
+for (let i = 0; i < world.linkCount; i++) {
+  const li = i * 5, f = world.links[li + 4];
+  const b = f > 6 ? 2 : f > 2 ? 1 : 0;
+  line(bufC, world.links[li] * SCALE * SS, world.links[li + 1] * SCALE * SS,
+       world.links[li + 2] * SCALE * SS, world.links[li + 3] * SCALE * SS,
+       0.7 + b * 0.4, [0.13, 0.24, 0.44][b]);
+}
+
 const bufO = new Float32Array(w * h);
 for (const o of world.obstacles) {
   const cx = o.x * SCALE * SS, cy = o.y * SCALE * SS, r = o.r * SCALE * SS;
   for (let y = Math.max(0, (cy - r - 2) | 0); y <= Math.min(h - 1, (cy + r + 2) | 0); y++) {
     for (let x = Math.max(0, (cx - r - 2) | 0); x <= Math.min(w - 1, (cx + r + 2) | 0); x++) {
       const d = Math.sqrt((x - cx) * (x - cx) + (y - cy) * (y - cy));
-      if (d <= r) bufO[y * w + x] = Math.max(bufO[y * w + x], THEME === 'dark' ? 0.05 : 0.10);
+      if (d <= r) bufO[y * w + x] = Math.max(bufO[y * w + x], 0.05);
       if (Math.abs(d - r) < SS * 0.6) bufO[y * w + x] = 2;    // ring marker
     }
   }
@@ -185,7 +232,7 @@ for (let y = 0; y < PX_H; y++) {
     if (so > 0.001) {
       const ring = Math.max(0, Math.min(1, so - 1));      // 2 means "on the ring"
       over(px, T.paper, Math.min(1, so));
-      if (ring > 0) over(px, T.ink, Math.min(1, ring * 2) * (THEME === 'dark' ? 0.26 : 0.30));
+      if (ring > 0) over(px, T.ink, Math.min(1, ring * 2) * 0.26);
     }
     if (sb > 0.001) over(px, toneB, Math.min(0.92, sb));
     if (sa > 0.001) over(px, toneA, Math.min(0.94, sa));
