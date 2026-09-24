@@ -765,11 +765,6 @@ const DATA = {
     letter-spacing: 0.08em;
     margin-bottom: 14px;
   }
-  .focus .cell .motif {
-    display: block; width: 64px; height: 40px;
-    margin: 14px 0 4px; color: var(--ink-faint);
-  }
-  .focus .cell .motif .hl { stroke: var(--accent); }
   .focus .cell h3 {
     font-family: var(--font-sans);
     font-weight: 600;
@@ -1232,7 +1227,7 @@ const DATA = {
 <canvas id="field" aria-hidden="true"></canvas>
 <div class="gantry" aria-hidden="true"></div>
 <button class="gamebtn" id="gameBtn" aria-label="Toggle walk mode" aria-pressed="false">
-  <span class="en lbl-off">🎮 Control the orange pedestrian</span><span class="en lbl-on">🎮 Walking · Esc to exit</span><span class="ja lbl-off">🎮 オレンジの歩行者を操作</span><span class="ja lbl-on">🎮 操作中 · Esc で終了</span>
+  <span class="en lbl-off" lang="en">Walk into the crowd</span><span class="en lbl-on" lang="en">Walking · Esc to exit</span><span class="ja lbl-off" lang="ja">群衆の中を歩く</span><span class="ja lbl-on" lang="ja">操作中 · Esc で終了</span>
 </button>
 
 <header>
@@ -1309,8 +1304,8 @@ const DATA = {
         <div class="contact-links" id="contact-links"></div>
       </div>
       <p class="sfm-credit reveal">
-        <span class="en">↑ The scene above is a live <strong>Social Force Model</strong> simulation. People, a car, and a delivery robot pursue goals while avoiding one another and scattered street objects, and each one fans out a few plausible futures — the trajectory forecasting I study, quietly running behind everything else on the page.</span>
-        <span class="ja">↑ 上のシーンはリアルタイムの <strong>Social Force Model</strong> シミュレーションです。人・車・配送ロボットがゴールを目指しつつ、互いや点在するオブジェクトを避け、それぞれが「ありえる未来」を扇状に予測します。私が研究している軌道予測そのものを、ページの背景でしれっと動かしています。</span>
+        <span class="en" lang="en">↑ Behind this page, a crowd is crossing. Every walker anticipates <em>when</em> a collision would happen rather than reacting to how close someone is, following the power law Karamouzas, Skinner and Guy fitted to real pedestrians (PRL 113, 2014) — so paths that merely pass close by are ignored, and a real collision course is answered early and to one side. Nothing is drawn by hand and no route is scripted: the lanes, the wake behind each pillar, the way a pair walking abreast breaks into single file when it gets tight, all fall out of the forces. The orange walker also forecasts its own next few seconds, rolled out through the same model against the crowd actually around it.</span>
+        <span class="ja" lang="ja">↑ このページの背後を、群衆が横切っています。歩行者は「今どれだけ近いか」ではなく「<em>いつ</em>ぶつかるか」を予測して避けます。実際の歩行データに当てはめられた Karamouzas らのべき乗則（PRL 113, 2014）に従うため、ただすれ違うだけの相手は無視し、本当に衝突する相手は早めに、横へ避けます。手で描いた絵も、決められた経路もありません。レーンの形成も、柱の後ろにできる伴流も、並んで歩く二人が混雑で縦一列になる様子も、すべて力の帰結です。オレンジの歩行者は自分の数秒先も予測します。同じモデルを、いま周りにいる人たちに対して実際に転がした結果です。</span>
       </p>
       <div class="foot-row reveal">
         <span>© 2026 Hiromu Taketsugu · 武次 広夢</span>
@@ -1428,32 +1423,6 @@ const entryList = (items) => h`
         </div>`)}
       </div>`;
 
-/* One drawing per research pillar, in the same vocabulary as the background
-   simulation: a prediction fan, a grounded body, an avoidance arc. They cost
-   about half a kilobyte each, follow the theme through currentColor, and
-   give a page with almost no photographs something to look at. */
-const FOCUS_MOTIF = [
-  raw(`<svg class="motif" viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true" focusable="false">
-    <circle cx="8" cy="20" r="2.6" fill="currentColor" stroke="none"/>
-    <path d="M12 20C24 20 34 13 56 9" stroke-dasharray="2 3.6"/>
-    <path class="hl" d="M12 20C24 20 34 20 56 20" stroke-dasharray="2 3.6" stroke-width="1.7"/>
-    <path d="M12 20C24 20 34 27 56 32" stroke-dasharray="2 3.6"/>
-  </svg>`),
-  raw(`<svg class="motif" viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true" focusable="false">
-    <path d="M6 35h52" stroke-width="1" opacity="0.45"/>
-    <circle cx="25" cy="8" r="3.2"/>
-    <path d="M25 11.6v10.4M25 14.6l-6.4 5M25 14.6l6.4 5M25 22l-4.6 12M25 22l4.6 12"/>
-    <path class="hl" d="M36 34V22.6M33.4 25.2 36 22.6l2.6 2.6" stroke-width="1.7"/>
-  </svg>`),
-  raw(`<svg class="motif" viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true" focusable="false">
-    <path d="M5 30h20" stroke-dasharray="2 3.6"/>
-    <path d="M59 11H41" stroke-dasharray="2 3.6"/>
-    <path class="hl" d="M25 30c7.5 0 6.5-19 16-19" stroke-width="1.7"/>
-    <circle cx="5" cy="30" r="2.4" fill="currentColor" stroke="none"/>
-    <circle cx="59" cy="11" r="2.4" fill="currentColor" stroke="none"/>
-  </svg>`)
-];
-
 const BODY = {
   about: () => h`
       <div class="bio reveal${DATA.about.portrait ? '' : ' no-media'}">${DATA.about.portrait
@@ -1473,7 +1442,6 @@ const BODY = {
       <div class="focus reveal">${DATA.research.map((c, i) => h`
         <div class="cell">
           <div class="k">/ ${String(i + 1).padStart(2, '0')}</div>
-          ${FOCUS_MOTIF[i] || ''}
           <h3>${t(c.title)}</h3>
           <p>${t(c.body)}</p>
         </div>`)}
@@ -1626,931 +1594,894 @@ mount('#contact-links', DATA.links.map((l) => h`
 })();
 
 /* ====================================================================
-   Crowd simulation — Depth v2 with tint palettes + walk mode
-   Palette reads from CSS variables and reloads on theme change.
+   @@SIM@@ — top-down pedestrian flow.
+
+   Seen from above, because that is the only view in which the thing worth
+   showing is visible: from the side, an agent stepping around someone else
+   moves almost entirely in depth, so the avoidance -- the whole point --
+   cannot be perceived at all.
+
+   Agents react to when a collision would happen rather than to how close
+   someone is right now. That single change is what separates a crowd that
+   looks intentional from one that looks magnetic: paths that merely pass
+   near each other are ignored, while a genuine collision course is answered
+   early, laterally, and once. The interaction law is Karamouzas, Skinner and
+   Guy, "Universal Power Law Governing Pedestrian Interactions" (Phys. Rev.
+   Lett. 113, 2014): E(tau) = k/tau^2 * exp(-tau/tau0), force = -grad E.
+
+   Nothing here is drawn by hand and no path is scripted. Lanes, the arch
+   that forms at a bottleneck, the way a pair walking abreast breaks into
+   single file when it gets tight -- all of it falls out of the forces.
    ==================================================================== */
 (function () {
+  'use strict';
+
   const canvas = document.getElementById('field');
+  if (!canvas) return;
+
+/* @@PHYSICS-BEGIN@@ ---------------------------------------------------
+   Everything between these markers is pure: no DOM, no canvas, no timers.
+   tools/verify/preview.mjs runs exactly this block headlessly and rasterises
+   the result, which is how the look is judged without a browser.
+   -------------------------------------------------------------------- */
+
+const TWO_PI = Math.PI * 2;
+const clamp = (v, lo, hi) => (v < lo ? lo : v > hi ? hi : v);
+
+/* Metres, seconds, m/s. Keeping the model in real units means the constants
+   below can be read against the pedestrian-dynamics literature instead of
+   being tuned blind. */
+const P = {
+  radius: [0.21, 0.28],      // shoulder half-width
+  speedPref: [1.02, 1.58],   // free walking speed
+  relax: 0.40,               // velocity relaxation time
+  comfort: 0.34,             // personal space added to the physical radius
+
+  k: 2.6,                    // interaction strength
+  tau0: 3.2,                 // interaction horizon
+  tauMax: 8.0,               // ignore collisions further off than this
+  fMax: 26,                  // acceleration clamp
+
+  kObs: 4.0,                 // obstacles are avoided harder than people
+  tau0Obs: 2.6,
+
+  groupFrac: 0.40,           // share of agents walking with someone
+  groupPull: 1.5,            // cohesion toward the group centroid
+  groupSpace: 0.78,          // preferred abreast spacing
+  groupMax: 2.6,             // beyond this the group has effectively split
+
+  // People go around far more readily than they slow down, so the
+  // interaction force is split and the sideways half is favoured. Without
+  // this a head-on pair produces pure braking -- the gradient has no lateral
+  // component when the approach is exactly symmetric -- and the two creep to
+  // a halt facing each other. sideGain covers that degenerate case; it is
+  // also why real crowds have a side preference at all.
+  steerGain: 2.0,
+  brakeGain: 0.55,
+  sideGain: 1.05,
+  headOn: 0.18,              // below this share of lateral force, pick a side
+
+  wander: 0.09,              // slow heading noise, so paths are never ruler-straight
+  density: 0.105,            // agents per square metre
+  agentsMin: 26,
+  agentsMax: 190
+};
+
+/* Visual constants live beside the model so the headless preview renderer in
+   tools/verify/preview.mjs draws from exactly the same numbers. */
+const V = {
+  trailLife: { light: 13.0, dark: 17.0 },   // seconds a path stays visible
+  trailAlpha: { light: 0.34, dark: 0.38 },  // ink laid down per pass
+  accentAlpha: { light: 0.66, dark: 0.78 },
+  headScale: 0.050,                         // head radius, in metres-to-px units
+  lineScale: 1 / 38,                        // trail width, likewise
+  // Three weights rather than one. A field of identical strokes reads as
+  // noise; a little variation reads as a drawing.
+  weights: [0.72, 1.0, 1.42]
+};
+
+function mulberry32(a) {
+  return function () {
+    a = (a + 0x6D2B79F5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+/* ---------- uniform grid over the world, rebuilt each step ----------
+   Interaction falls off fast, so only neighbours within a few metres can
+   matter. Without this the pair loop is quadratic and caps out around forty
+   agents; with it, a couple of hundred cost the same. */
+function makeGrid(w, h, cell) {
+  const nx = Math.max(1, Math.ceil(w / cell));
+  const ny = Math.max(1, Math.ceil(h / cell));
+  return { nx, ny, cell, heads: new Int32Array(nx * ny), next: new Int32Array(0) };
+}
+
+function gridBuild(g, agents) {
+  if (g.next.length < agents.length) g.next = new Int32Array(agents.length + 64);
+  g.heads.fill(-1);
+  for (let i = 0; i < agents.length; i++) {
+    const a = agents[i];
+    const cx = clamp((a.x / g.cell) | 0, 0, g.nx - 1);
+    const cy = clamp((a.y / g.cell) | 0, 0, g.ny - 1);
+    const c = cy * g.nx + cx;
+    g.next[i] = g.heads[c];
+    g.heads[c] = i;
+  }
+}
+
+/* ---------- the interaction law ----------
+   Returns the force on A, or null when the two will not meet. Both the
+   braking component and the sideways component come out of the same
+   gradient, which is why avoidance reads as steering rather than shoving. */
+function anticipate(ax, ay, avx, avy, bx, by, bvx, bvy, R, k, tau0, out) {
+  const dx = bx - ax, dy = by - ay;
+  const vx = avx - bvx, vy = avy - bvy;
+  const a = vx * vx + vy * vy;
+  if (a < 1e-7) return false;
+  const b = dx * vx + dy * vy;
+  if (b <= 0) return false;                       // drawing apart already
+  const c = dx * dx + dy * dy - R * R;
+  const disc = b * b - a * c;
+  if (disc <= 0) return false;                    // the paths simply miss
+  const root = Math.sqrt(disc);
+  const tau = (b - root) / a;
+  if (tau <= 1e-3 || tau > P.tauMax) return false;
+
+  // dE/dtau for E = k/tau^2 * exp(-tau/tau0); always negative
+  const e = Math.exp(-tau / tau0);
+  const dE = -k * e * (2 / (tau * tau * tau) + 1 / (tau0 * tau * tau));
+  // d(tau)/d(relative position)
+  const gx = (vx - (b * vx - a * dx) / root) / a;
+  const gy = (vy - (b * vy - a * dy) / root) / a;
+
+  let fx = dE * gx, fy = dE * gy;
+  const m = Math.sqrt(fx * fx + fy * fy);
+  if (m > P.fMax) { const s = P.fMax / m; fx *= s; fy *= s; }
+  out.x = fx; out.y = fy;
+  return true;
+}
+
+/* ---------- scene ----------
+   Gates on the perimeter rather than loose waypoints. One wide opposing pair
+   carries the main flow, which is what lanes need in order to form; the
+   others cross it. Obstacles sit in the middle band with gaps between them,
+   so the flow has to split and rejoin. */
+function buildScene(world, rnd) {
+  const { w, h } = world;
+  const gates = [];
+  const gate = (x, y, nx, ny, span, weight) => {
+    gates.push({ x, y, nx, ny, span, weight, i: gates.length });
+  };
+  const midY = h * 0.5, midX = w * 0.5;
+
+  // Main axis: a narrow opposing pair. Width matters -- spread the flow too
+  // thin and the density never reaches the point where lanes form.
+  gate(-0.6, midY - h * 0.07, 1, 0, h * 0.58, 3.1);
+  gate(w + 0.6, midY + h * 0.07, -1, 0, h * 0.58, 3.1);
+  // cross traffic, so the main stream has something to negotiate with
+  gate(w * 0.22, -0.6, 0, 1, w * 0.13, 0.55);
+  gate(w * 0.78, h + 0.6, 0, -1, w * 0.13, 0.55);
+  gate(w * 0.72, -0.6, 0, 1, w * 0.11, 0.40);
+  gate(w * 0.28, h + 0.6, 0, -1, w * 0.11, 0.40);
+
+  world.gates = gates;
+  world.gateWeight = gates.reduce((s, g) => s + g.weight, 0);
+
+  // Obstacles: a loose row across the middle, offset so the gaps do not line
+  // up, plus one off to the side. Bottlenecks are where a crowd gets
+  // interesting to watch.
+  // A few large ones rather than many small ones. Something the stream has to
+  // genuinely divide around leaves a visible wake; a scattering of pebbles
+  // just adds wobble.
+  // All of them inside the corridor, staggered above and below the centre
+  // line. An obstacle outside the stream is just a shape on the page; one in
+  // it splits the flow and leaves a wake.
+  const obs = [];
+  const band = h * 0.24;
+  const n = clamp(Math.round(w / 14), 2, 5);
+  for (let i = 0; i < n; i++) {
+    const t = n === 1 ? 0.5 : i / (n - 1);
+    obs.push({
+      x: w * (0.16 + 0.68 * t) + (rnd() - 0.5) * 1.8,
+      y: midY + Math.sin(t * Math.PI * 1.9 + 0.4) * band + (rnd() - 0.5) * 1.0,
+      r: 1.0 + rnd() * 0.9
+    });
+  }
+  world.obstacles = obs.filter(o => o.x > 2 && o.x < w - 2 && o.y > 1.5 && o.y < h - 1.5);
+  void midX;
+}
+
+function pickGate(world, rnd, notIndex) {
+  const gates = world.gates;
+  for (let tries = 0; tries < 24; tries++) {
+    let r = rnd() * world.gateWeight;
+    for (const g of gates) {
+      r -= g.weight;
+      if (r <= 0) { if (g.i !== notIndex) return g; break; }
+    }
+  }
+  return gates[(rnd() * gates.length) | 0];
+}
+
+function gatePoint(g, rnd) {
+  const t = (rnd() - 0.5) * g.span;
+  // span runs perpendicular to the gate normal
+  return { x: g.x + (-g.ny) * t, y: g.y + (g.nx) * t };
+}
+
+function spawn(world, rnd, a) {
+  const from = pickGate(world, rnd, -1);
+  const to = pickGate(world, rnd, from.i);
+  const p = gatePoint(from, rnd);
+  const q = gatePoint(to, rnd);
+  // Start back from the gate by a random distance so arrivals spread out in
+  // time; entering exactly on the line piled everyone up at the frame edge.
+  const back = 0.3 + rnd() * 3.4;
+  a.x = p.x - from.nx * back;
+  a.y = p.y - from.ny * back;
+  // Aim well past the far gate -- further out than the despawn boundary, or
+  // walkers reach the target, stop, and pile up just off screen forever.
+  a.gx = q.x - to.nx * 40;
+  a.gy = q.y - to.ny * 40;
+  a.gate = to.i;
+  const dx = q.x - p.x, dy = q.y - p.y;
+  const d = Math.sqrt(dx * dx + dy * dy) || 1;
+  a.vx = (dx / d) * a.pref * 0.7;
+  a.vy = (dy / d) * a.pref * 0.7;
+  a.age = 0;
+  a.life = 0;
+  // Which side of an oncoming walker this one prefers to pass on. Giving
+  // everyone the same preference produces unrealistically clean lanes.
+  a.side = rnd() < 0.72 ? 1 : -1;
+  a.flow = dx >= 0 ? 0 : 1;      // used only for tone, so opposing streams read apart
+  a.phase = rnd() * TWO_PI;
+  return a;
+}
+
+function makeAgent(world, rnd) {
+  const a = {
+    x: 0, y: 0, vx: 0, vy: 0, gx: 0, gy: 0, gate: 0,
+    r: P.radius[0] + rnd() * (P.radius[1] - P.radius[0]),
+    pref: P.speedPref[0] + rnd() * (P.speedPref[1] - P.speedPref[0]),
+    group: -1, side: 1, flow: 0, phase: 0, age: 0, life: 0,
+    wt: (rnd() * 3) | 0,
+    px: 0, py: 0, alpha: 0, accent: false, driven: false
+  };
+  spawn(world, rnd, a);
+  a.px = a.x; a.py = a.y;
+  return a;
+}
+
+function createWorld(wMetres, hMetres, seed) {
+  const rnd = mulberry32(seed || 0x5eed);
+  const world = {
+    w: wMetres, h: hMetres, rnd, t: 0,
+    agents: [], obstacles: [], gates: [], groups: [],
+    grid: makeGrid(wMetres, hMetres, 3.2)
+  };
+  buildScene(world, rnd);
+
+  const target = clamp(Math.round(wMetres * hMetres * P.density), P.agentsMin, P.agentsMax);
+  for (let i = 0; i < target; i++) {
+    const a = makeAgent(world, rnd);
+    a.age = rnd() * 18;              // stagger, so nothing starts in a block
+    a.life = 1;
+    world.agents.push(a);
+  }
+
+  // Groups: pairs and the occasional trio, seeded near one another.
+  const pool = world.agents.slice();
+  let gi = 0;
+  const wanted = Math.floor(world.agents.length * P.groupFrac);
+  while (pool.length > 2 && gi * 2 < wanted) {
+    const idx = (rnd() * pool.length) | 0;
+    const lead = pool.splice(idx, 1)[0];
+    const size = rnd() < 0.78 ? 2 : 3;
+    const members = [lead];
+    for (let m = 1; m < size && pool.length; m++) {
+      const j = (rnd() * pool.length) | 0;
+      const mate = pool.splice(j, 1)[0];
+      mate.x = lead.x + (rnd() - 0.5) * 1.2;
+      mate.y = lead.y + (rnd() - 0.5) * 1.2;
+      mate.gx = lead.gx; mate.gy = lead.gy; mate.gate = lead.gate;
+      mate.pref = lead.pref;
+      members.push(mate);
+    }
+    if (members.length < 2) continue;
+    for (const m of members) { m.group = gi; m.px = m.x; m.py = m.y; }
+    world.groups.push(members);
+    gi++;
+  }
+
+  const accent = world.agents[0];
+  accent.accent = true;
+  world.accent = accent;
+  return world;
+}
+
+/* ---------- one physics step ---------- */
+const _f = { x: 0, y: 0 };
+
+function step(world, dt, control) {
+  const A = world.agents, g = world.grid, obs = world.obstacles, rnd = world.rnd;
+  gridBuild(g, A);
+  world.t += dt;
+
+  for (let i = 0; i < A.length; i++) {
+    const a = A[i];
+    a.px = a.x; a.py = a.y;
+
+    let ax = 0, ay = 0;
+
+    // --- driving force toward the exit gate -------------------------
+    let dgx = a.gx - a.x, dgy = a.gy - a.y;
+    const dg = Math.sqrt(dgx * dgx + dgy * dgy) || 1;
+    dgx /= dg; dgy /= dg;
+
+    if (a.driven && control && control.active) {
+      dgx = control.ix; dgy = control.iy;
+      const cm = Math.sqrt(dgx * dgx + dgy * dgy);
+      if (cm > 0.01) { dgx /= cm; dgy /= cm; } else { dgx = 0; dgy = 0; }
+    } else {
+      // A slow heading drift, so nobody walks a perfectly straight line.
+      a.phase += dt * 0.6;
+      const wob = Math.sin(a.phase) * P.wander;
+      const rx = -dgy, ry = dgx;
+      dgx += rx * wob; dgy += ry * wob;
+      const m = Math.sqrt(dgx * dgx + dgy * dgy) || 1;
+      dgx /= m; dgy /= m;
+    }
+
+    const want = a.driven && control && control.active ? a.pref * 1.25 : a.pref;
+    ax += (dgx * want - a.vx) / P.relax;
+    ay += (dgy * want - a.vy) / P.relax;
+
+    // --- people ------------------------------------------------------
+    const cx = clamp((a.x / g.cell) | 0, 0, g.nx - 1);
+    const cy = clamp((a.y / g.cell) | 0, 0, g.ny - 1);
+    for (let oy = -1; oy <= 1; oy++) {
+      const yy = cy + oy;
+      if (yy < 0 || yy >= g.ny) continue;
+      for (let ox = -1; ox <= 1; ox++) {
+        const xx = cx + ox;
+        if (xx < 0 || xx >= g.nx) continue;
+        for (let j = g.heads[yy * g.nx + xx]; j !== -1; j = g.next[j]) {
+          if (j === i) continue;
+          const b = A[j];
+          const R = a.r + b.r + P.comfort;
+          if (anticipate(a.x, a.y, a.vx, a.vy, b.x, b.y, b.vx, b.vy, R, P.k, P.tau0, _f)) {
+            const fm = Math.sqrt(_f.x * _f.x + _f.y * _f.y);
+            const hl = Math.sqrt(a.vx * a.vx + a.vy * a.vy) || 1;
+            const ux = a.vx / hl, uy = a.vy / hl;
+            const along = _f.x * ux + _f.y * uy;
+            let sx = _f.x - along * ux, sy = _f.y - along * uy;
+            let sl = Math.sqrt(sx * sx + sy * sy);
+            if (sl < fm * P.headOn) {
+              // Too symmetric to resolve itself: step to this walker's side.
+              sx = -uy * a.side; sy = ux * a.side;
+              sl = 1;
+              ax += sx * fm * P.sideGain; ay += sy * fm * P.sideGain;
+            } else {
+              ax += sx * P.steerGain; ay += sy * P.steerGain;
+            }
+            ax += along * ux * P.brakeGain;
+            ay += along * uy * P.brakeGain;
+          }
+          // hard separation, only when actually overlapping
+          const ddx = b.x - a.x, ddy = b.y - a.y;
+          const d2 = ddx * ddx + ddy * ddy;
+          const Rp = a.r + b.r;
+          if (d2 < Rp * Rp && d2 > 1e-6) {
+            const d = Math.sqrt(d2);
+            const s = (Rp - d) * 9;
+            ax -= (ddx / d) * s; ay -= (ddy / d) * s;
+          }
+        }
+      }
+    }
+
+    // --- obstacles ---------------------------------------------------
+    for (let o = 0; o < obs.length; o++) {
+      const ob = obs[o];
+      const R = a.r + ob.r + P.comfort * 0.7;
+      if (anticipate(a.x, a.y, a.vx, a.vy, ob.x, ob.y, 0, 0, R, P.kObs, P.tau0Obs, _f)) {
+        ax += _f.x; ay += _f.y;
+      }
+      const ddx = ob.x - a.x, ddy = ob.y - a.y;
+      const d2 = ddx * ddx + ddy * ddy;
+      const Rp = a.r + ob.r;
+      if (d2 < Rp * Rp && d2 > 1e-6) {
+        const d = Math.sqrt(d2);
+        const s = (Rp - d) * 16;
+        ax -= (ddx / d) * s; ay -= (ddy / d) * s;
+      }
+    }
+
+    // --- walking companions ------------------------------------------
+    if (a.group >= 0) {
+      const mates = world.groups[a.group];
+      let cxs = 0, cys = 0, n = 0;
+      for (const m of mates) { if (m !== a) { cxs += m.x; cys += m.y; n++; } }
+      if (n) {
+        cxs /= n; cys /= n;
+        const ddx = cxs - a.x, ddy = cys - a.y;
+        const d = Math.sqrt(ddx * ddx + ddy * ddy) || 1;
+        if (d > P.groupSpace) {
+          // Cohesion, but capped: in a crush the avoidance forces win and the
+          // group strings out into single file on its own.
+          const pull = Math.min(P.groupPull * (d - P.groupSpace), 3.2);
+          ax += (ddx / d) * pull; ay += (ddy / d) * pull;
+        } else if (d < P.groupSpace * 0.62) {
+          ax -= (ddx / d) * 2.0; ay -= (ddy / d) * 2.0;
+        }
+      }
+    }
+
+    // --- soft world bounds -------------------------------------------
+    // Only for walkers staying in frame. Applying it to someone heading for
+    // a gate on that edge shoves them back in and they mill at the boundary.
+    if (a.gy > 0 && a.gy < world.h) {
+      const edge = 0.9;
+      if (a.y < edge) ay += (edge - a.y) * 6;
+      if (a.y > world.h - edge) ay -= (a.y - (world.h - edge)) * 6;
+    }
+
+    // --- integrate ----------------------------------------------------
+    const am = Math.sqrt(ax * ax + ay * ay);
+    if (am > P.fMax) { const s = P.fMax / am; ax *= s; ay *= s; }
+    a.vx += ax * dt;
+    a.vy += ay * dt;
+    const sp = Math.sqrt(a.vx * a.vx + a.vy * a.vy);
+    const cap = a.pref * 1.45;
+    if (sp > cap) { const s = cap / sp; a.vx *= s; a.vy *= s; }
+    a.x += a.vx * dt;
+    a.y += a.vy * dt;
+
+    // --- lifecycle -----------------------------------------------------
+    a.age += dt;
+    a.life = Math.min(1, a.life + dt * 1.6);
+    // Leaving the frame is the only way out; there is no arrival radius to
+    // hover around.
+    const out = a.x < -5 || a.x > world.w + 5 || a.y < -5 || a.y > world.h + 5;
+    if (out || a.age > 260) {
+      if (a.group >= 0) {
+        // Respawn the whole party together, or it teleports apart.
+        const mates = world.groups[a.group];
+        const lead = spawn(world, rnd, mates[0]);
+        mates[0].px = lead.x; mates[0].py = lead.y; mates[0].life = 0;
+        for (let m = 1; m < mates.length; m++) {
+          const mm = mates[m];
+          mm.x = lead.x + (rnd() - 0.5) * 1.1;
+          mm.y = lead.y + (rnd() - 0.5) * 1.1;
+          mm.gx = lead.gx; mm.gy = lead.gy; mm.gate = lead.gate;
+          mm.vx = lead.vx; mm.vy = lead.vy;
+          mm.px = mm.x; mm.py = mm.y; mm.age = 0; mm.life = 0;
+          mm.flow = lead.flow; mm.side = lead.side;
+        }
+      } else {
+        spawn(world, rnd, a);
+        a.px = a.x; a.py = a.y;
+      }
+    }
+  }
+}
+
+/* ---------- forecast for the highlighted walker ----------
+   Rolls the same model forward against a frozen crowd, once per goal
+   hypothesis. It is the model's own answer, so the fan bends around whoever
+   is actually in the way instead of drawing through them. */
+function forecast(world, agent, out, opts) {
+  const steps = (opts && opts.steps) || 30;
+  const dt = (opts && opts.dt) || 0.17;
+  const spread = (opts && opts.spread) || 0.30;
+  const fCap = P.fMax * 0.30;      // coarse steps need a tighter clamp
+  const A = world.agents, obs = world.obstacles;
+
+  for (let br = 0; br < 3; br++) {
+    const ang = (br - 1) * spread;
+    let x = agent.x, y = agent.y, vx = agent.vx, vy = agent.vy;
+    let gdx = agent.gx - x, gdy = agent.gy - y;
+    const gl = Math.sqrt(gdx * gdx + gdy * gdy) || 1;
+    gdx /= gl; gdy /= gl;
+    const ca = Math.cos(ang), sa = Math.sin(ang);
+    const hx = gdx * ca - gdy * sa, hy = gdx * sa + gdy * ca;
+
+    const path = out[br] || (out[br] = []);
+    path.length = 0;
+    path.push(x, y);
+
+    for (let s = 0; s < steps; s++) {
+      let ax = (hx * agent.pref - vx) / P.relax;
+      let ay = (hy * agent.pref - vy) / P.relax;
+      for (let j = 0; j < A.length; j++) {
+        const b = A[j];
+        if (b === agent) continue;
+        const ddx = b.x - x, ddy = b.y - y;
+        if (ddx * ddx + ddy * ddy > 49) continue;
+        const R = agent.r + b.r + P.comfort;
+        if (anticipate(x, y, vx, vy, b.x + b.vx * s * dt, b.y + b.vy * s * dt,
+                       b.vx, b.vy, R, P.k, P.tau0, _f)) { ax += _f.x; ay += _f.y; }
+      }
+      for (let o = 0; o < obs.length; o++) {
+        const ob = obs[o];
+        const R = agent.r + ob.r + P.comfort * 0.7;
+        if (anticipate(x, y, vx, vy, ob.x, ob.y, 0, 0, R, P.kObs, P.tau0Obs, _f)) {
+          ax += _f.x; ay += _f.y;
+        }
+      }
+      const am = Math.sqrt(ax * ax + ay * ay);
+      if (am > fCap) { const sc = fCap / am; ax *= sc; ay *= sc; }
+      vx += ax * dt; vy += ay * dt;
+      const sp = Math.sqrt(vx * vx + vy * vy);
+      const cap = agent.pref * 1.35;
+      if (sp > cap) { const sc = cap / sp; vx *= sc; vy *= sc; }
+      x += vx * dt; y += vy * dt;
+      path.push(x, y);
+    }
+  }
+  return out;
+}
+
+/* @@PHYSICS-END@@ -------------------------------------------------- */
+
+  /* ==================================================================
+     Rendering.
+     Two layers. The trail layer is never cleared -- each frame its alpha is
+     eroded a little and the new segments are stroked on top, so paths build
+     up the way a long exposure does. The live layer holds only what has to
+     be crisp: heads, obstacles, the forecast.
+     ================================================================== */
   const ctx = canvas.getContext('2d');
   const root = document.documentElement;
   const RM = window.matchMedia('(prefers-reduced-motion: reduce)');
   let reduce = RM.matches;
-  /* ?seed=N makes the scene reproducible so drawing refactors can be compared
-     frame-for-frame; ?debug exposes the live scene for inspection. */
+
   const QS = new URLSearchParams(location.search);
-  const SEED = QS.has('seed') ? (parseInt(QS.get('seed'), 10) | 0) : 0;
+  const SEED = QS.has('seed') ? (parseInt(QS.get('seed'), 10) | 0) : ((Math.random() * 1e9) | 0);
   const DEBUG = QS.has('debug');
-  function mulberry32(a) {
-    return function () {
-      a = (a + 0x6D2B79F5) | 0;
-      let t = Math.imul(a ^ (a >>> 15), 1 | a);
-      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-    };
-  }
-  const rnd = SEED ? mulberry32(SEED) : Math.random;
-  const rand = (a, b) => a + rnd() * (b - a);
-  const pick = (arr) => arr[(rnd() * arr.length) | 0];
-  const mix = (a, b, t) => [Math.round(a[0] + (b[0] - a[0]) * t), Math.round(a[1] + (b[1] - a[1]) * t), Math.round(a[2] + (b[2] - a[2]) * t)];
-  const rgba = (c, a) => 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + a + ')';
 
-  let W, H, DPR;
-  let simReady = false;
+  const trail = document.createElement('canvas');
+  const tctx = trail.getContext('2d');
+
+  let W = 0, H = 0, DPR = 1, SCALE = 1, world = null, ready = false;
   const MOBILE = () => window.innerWidth <= 640;
-  function resize() {
-    const cap = MOBILE() ? 1.5 : 2;
-    DPR = Math.min(window.devicePixelRatio || 1, cap);
-    W = canvas.clientWidth; H = canvas.clientHeight;
-    canvas.width = W * DPR; canvas.height = H * DPR;
-    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    // Assigning canvas.width wipes the buffer. Under reduced motion nothing
-    // schedules a repaint, so without this the scene stays blank for good.
-    if (reduce && simReady) renderScene();
-  }
-  window.addEventListener('resize', resize);
-  resize();
 
-  /* palette read from CSS variables so themes flip cleanly */
-  let INK, INK_SOFT, ACCENT, PAPER, SHADOW_A;
-  const RGB_FALLBACK = { '--ink-rgb': [22, 21, 15], '--ink-soft-rgb': [122, 120, 112], '--accent-rgb': [232, 80, 10], '--paper-rgb': [253, 252, 249] };
-  let rgbWarned = false;
-  function parseRGB(cs, name) {
-    // Accepts "r, g, b", "r g b" and "rgb(r, g, b)". A silent NaN here renders
-    // nothing at all, so fall back loudly rather than draw an invisible scene.
+  /* palette, read from the stylesheet so themes drive the drawing */
+  let INK, INK_SOFT, ACCENT, PAPER, STAGE, DARK = false;
+  const FALLBACK = {
+    '--ink-rgb': [22, 21, 15], '--ink-soft-rgb': [122, 120, 112],
+    '--accent-rgb': [232, 80, 10], '--paper-rgb': [253, 252, 249],
+    '--stage-rgb': [239, 232, 216]
+  };
+  let warned = false;
+  function readRGB(cs, name) {
     const raw = cs.getPropertyValue(name).trim();
     const nums = raw.replace(/^rgba?\(|\)$/g, '').split(/[,\s/]+/)
-      .map(v => parseFloat(v)).filter(v => Number.isFinite(v));
+      .map(parseFloat).filter(Number.isFinite);
     if (nums.length < 3) {
-      if (!rgbWarned) { rgbWarned = true; console.warn('[sim] unreadable colour variable', name, JSON.stringify(raw)); }
-      return RGB_FALLBACK[name].slice();
+      if (!warned) { warned = true; console.warn('[sim] unreadable colour variable', name); }
+      return FALLBACK[name].slice();
     }
-    return nums.slice(0, 3).map(v => Math.round(v));
+    return [Math.round(nums[0]), Math.round(nums[1]), Math.round(nums[2])];
   }
   function loadPalette() {
     const cs = getComputedStyle(root);
-    INK = parseRGB(cs, '--ink-rgb');
-    INK_SOFT = parseRGB(cs, '--ink-soft-rgb');
-    ACCENT = parseRGB(cs, '--accent-rgb');
-    PAPER = parseRGB(cs, '--paper-rgb');
-    SHADOW_A = parseFloat(cs.getPropertyValue('--shadow-a')) || 0.1;
+    INK = readRGB(cs, '--ink-rgb');
+    INK_SOFT = readRGB(cs, '--ink-soft-rgb');
+    ACCENT = readRGB(cs, '--accent-rgb');
+    PAPER = readRGB(cs, '--paper-rgb');
+    STAGE = readRGB(cs, '--stage-rgb');
+    DARK = root.getAttribute('data-theme') === 'dark';
   }
-  loadPalette();
-  // Custom properties resolve synchronously on the attribute change; the CSS
-  // colour transition does not affect what getComputedStyle reports.
-  new MutationObserver(() => { loadPalette(); if (reduce && simReady) renderScene(); })
-    .observe(root, { attributes: true, attributeFilter: ['data-theme'] });
-
-  /* muted tints — used as color identity per agent (mid-value, work on both themes) */
-  const PED_TINTS_MID = [
-    null, null,                       // 2 slots stay neutral (mapped to INK at draw time)
-    [176, 96, 62],                    // terracotta
-    [146, 122, 60],                   // ochre
-    [104, 124, 88],                   // sage
-    [88, 108, 134],                   // slate blue
-    [122, 96, 124]                    // plum
-  ];
-  const CAR_TINTS_MID = [
-    [88, 108, 134], [146, 90, 78], [110, 128, 100], [120, 120, 128]
-  ];
-  const ROBOT_LIGHTS = [
-    [64, 160, 150], [232, 80, 10], [96, 140, 200], [180, 130, 60]
+  const rgba = (c, a) => 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + a + ')';
+  const mix = (a, b, t) => [
+    Math.round(a[0] + (b[0] - a[0]) * t),
+    Math.round(a[1] + (b[1] - a[1]) * t),
+    Math.round(a[2] + (b[2] - a[2]) * t)
   ];
 
-  function depthScale(y) { return 0.6 + (y / H) * 0.85; }
+  function resize(keep) {
+    const cap = MOBILE() ? 1.6 : 2;
+    DPR = Math.min(window.devicePixelRatio || 1, cap);
+    W = canvas.clientWidth; H = canvas.clientHeight;
+    if (!W || !H) return;
+    canvas.width = Math.round(W * DPR); canvas.height = Math.round(H * DPR);
+    trail.width = canvas.width; trail.height = canvas.height;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    tctx.setTransform(DPR, 0, 0, DPR, 0, 0);
 
-  function groundShadow(x, y, w, alpha) {
-    const g = ctx.createRadialGradient(x, y, 0, x, y, w);
-    g.addColorStop(0, rgba([20, 15, 10], alpha));
-    g.addColorStop(1, rgba([20, 15, 10], 0));
-    ctx.save();
-    ctx.translate(x, y); ctx.scale(1, 0.3); ctx.translate(-x, -y);
-    ctx.beginPath(); ctx.arc(x, y, w, 0, Math.PI * 2);
-    ctx.fillStyle = g; ctx.fill();
-    ctx.restore();
+    // Hold the scene at a constant real-world height so the composition does
+    // not change character between a laptop and a tall monitor.
+    SCALE = clamp(H / 26, 20, 46);
+    const wm = W / SCALE, hm = H / SCALE;
+
+    if (keep && world) {
+      const sx = wm / world.w, sy = hm / world.h;
+      for (const a of world.agents) {
+        a.x *= sx; a.y *= sy; a.px = a.x; a.py = a.y;
+        a.gx *= sx; a.gy *= sy;
+      }
+      for (const o of world.obstacles) { o.x *= sx; o.y *= sy; }
+      for (const g of world.gates) {
+        if (g.nx === 0) { g.x *= sx; g.y = g.y > 0 ? hm + 0.6 : -0.6; g.span *= sx; }
+        else { g.y *= sy; g.x = g.x > 0 ? wm + 0.6 : -0.6; g.span *= sy; }
+      }
+      world.w = wm; world.h = hm;
+      world.grid = makeGrid(wm, hm, 3.2);
+    } else {
+      world = createWorld(wm, hm, SEED);
+      ready = true;
+    }
+    tctx.clearRect(0, 0, W, H);
   }
 
-  /* tapered chain drawing for limbs */
-  function taperedChain(pts, ws, col) {
-    ctx.fillStyle = col;
-    for (let i = 0; i < pts.length - 1; i++) {
-      const x0 = pts[i][0], y0 = pts[i][1], x1 = pts[i + 1][0], y1 = pts[i + 1][1];
-      const a = Math.atan2(y1 - y0, x1 - x0) + Math.PI / 2;
-      const c = Math.cos(a), s = Math.sin(a);
+  /* ---------- drawing ---------- */
+  const FAN = [[], [], []];
+  let fanAt = 0;
+
+  function fadeTrails(dt) {
+    // Erode alpha rather than painting the background over it: fading toward
+    // transparent leaves no residue, and lets the stage colour show through.
+    const life = DARK ? V.trailLife.dark : V.trailLife.light;
+    const k = 1 - Math.exp(-dt / life);
+    tctx.save();
+    tctx.globalCompositeOperation = 'destination-out';
+    tctx.fillStyle = 'rgba(0,0,0,' + k.toFixed(4) + ')';
+    tctx.fillRect(0, 0, W, H);
+    tctx.restore();
+  }
+
+  function strokeTrails() {
+    const A = world.agents;
+    // Opposing streams get slightly different tone. Nothing is colour-coded
+    // for its own sake: it is what makes lane formation legible.
+    const toneA = DARK ? mix(INK, ACCENT, 0.34) : mix(INK, ACCENT, 0.40);
+    const toneB = DARK ? mix(INK_SOFT, PAPER, 0.30) : mix(INK_SOFT, INK, 0.18);
+    const wide = SCALE * V.lineScale;
+    const alpha = DARK ? V.trailAlpha.dark : V.trailAlpha.light;
+    tctx.lineCap = 'round';
+
+    for (let pass = 0; pass < 2; pass++) {
+      for (let wi = 0; wi < V.weights.length; wi++) {
+        tctx.beginPath();
+        let any = false;
+        for (let i = 0; i < A.length; i++) {
+          const a = A[i];
+          if (a.accent || a.flow !== pass || a.wt !== wi || a.life < 0.05) continue;
+          const dx = a.x - a.px, dy = a.y - a.py;
+          if (dx * dx + dy * dy > 4) continue;      // just respawned
+          tctx.moveTo(a.px * SCALE, a.py * SCALE);
+          tctx.lineTo(a.x * SCALE, a.y * SCALE);
+          any = true;
+        }
+        if (!any) continue;
+        tctx.lineWidth = Math.max(0.65, wide * V.weights[wi] * (pass === 0 ? 1.05 : 0.9));
+        tctx.strokeStyle = rgba(pass === 0 ? toneA : toneB, alpha * (pass === 0 ? 1 : 0.86));
+        tctx.stroke();
+      }
+    }
+
+    const a = world.accent;
+    if (a && a.life > 0.05) {
+      const dx = a.x - a.px, dy = a.y - a.py;
+      if (dx * dx + dy * dy <= 4) {
+        tctx.beginPath();
+        tctx.moveTo(a.px * SCALE, a.py * SCALE);
+        tctx.lineTo(a.x * SCALE, a.y * SCALE);
+        tctx.lineWidth = Math.max(1.1, wide * 1.7);
+        tctx.lineCap = 'round';
+        tctx.strokeStyle = rgba(ACCENT, DARK ? V.accentAlpha.dark : V.accentAlpha.light);
+        tctx.stroke();
+      }
+    }
+  }
+
+  function drawLive(control) {
+    ctx.clearRect(0, 0, W, H);
+    ctx.drawImage(trail, 0, 0, W, H);
+
+    // obstacles
+    ctx.lineWidth = 1.15;
+    for (const o of world.obstacles) {
       ctx.beginPath();
-      ctx.moveTo(x0 + c * ws[i], y0 + s * ws[i]);
-      ctx.lineTo(x1 + c * ws[i + 1], y1 + s * ws[i + 1]);
-      ctx.lineTo(x1 - c * ws[i + 1], y1 - s * ws[i + 1]);
-      ctx.lineTo(x0 - c * ws[i], y0 - s * ws[i]);
-      ctx.closePath(); ctx.fill();
-    }
-    for (let i = 0; i < pts.length; i++) {
-      ctx.beginPath(); ctx.arc(pts[i][0], pts[i][1], ws[i], 0, Math.PI * 2); ctx.fill();
-    }
-  }
-
-  /* =============================================================
-     Scene objects — side-view street furniture
-     ============================================================= */
-  let OBJECTS = [];
-  function makeObjects() {
-    const out = [];
-    const density = MOBILE() ? 260000 : 200000;
-    const n = Math.max(4, Math.min(10, Math.round(W * H / density)));
-    const kinds = ['tree', 'bench', 'lamp', 'planter', 'tree', 'bollard', 'bench'];
-    let tries = 0;
-    while (out.length < n && tries < 300) {
-      tries++;
-      const k = kinds[(rnd() * kinds.length) | 0];
-      const x = rand(W * 0.05, W * 0.95), y = rand(H * 0.25, H * 0.94);
-      const r = k === 'tree' ? rand(28, 42) : k === 'lamp' ? 12 : k === 'bollard' ? 9 : rand(22, 34);
-      if (out.some(o => Math.hypot(o.x - x, o.y - y) < (o.r + r + 60))) continue;
-      out.push({ k, x, y, r, seed: rnd() * 7 });
-    }
-    return out;
-  }
-
-  function drawObject(o) {
-    const ds = depthScale(o.y);
-    const s = o.r * ds;
-    ctx.save();
-    ctx.translate(o.x, o.y);
-    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-    ctx.strokeStyle = rgba(INK, 0.82);
-    ctx.lineWidth = Math.max(1.0, 1.3 * ds);
-    const fillCol = rgba(INK_SOFT, 0.12);
-
-    if (o.k === 'tree') {
-      groundShadow(0, 2, s * 1.0, 0.10);
-      ctx.strokeStyle = rgba(INK_SOFT, 0.5); ctx.lineWidth = 1;
-      for (let i = -2; i <= 2; i++) {
-        ctx.beginPath(); ctx.moveTo(i * s * 0.16, 0);
-        ctx.quadraticCurveTo(i * s * 0.16 + s * 0.04, -s * 0.10, i * s * 0.16 + s * 0.09, -s * 0.16);
-        ctx.stroke();
-      }
-      ctx.fillStyle = rgba(INK, 0.72);
-      ctx.beginPath();
-      ctx.moveTo(-s * 0.10, 0);
-      ctx.quadraticCurveTo(-s * 0.05, -s * 0.5, -s * 0.045, -s * 1.05);
-      ctx.lineTo(s * 0.045, -s * 1.05);
-      ctx.quadraticCurveTo(s * 0.06, -s * 0.5, s * 0.12, 0);
-      ctx.closePath(); ctx.fill();
-      ctx.strokeStyle = rgba(INK, 0.65); ctx.lineWidth = Math.max(1, 1.4 * ds);
-      ctx.beginPath(); ctx.moveTo(0, -s * 1.0);
-      ctx.quadraticCurveTo(s * 0.22, -s * 1.25, s * 0.38, -s * 1.42); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(0, -s * 0.95);
-      ctx.quadraticCurveTo(-s * 0.2, -s * 1.2, -s * 0.34, -s * 1.38); ctx.stroke();
-      const cy = -s * 1.72;
-      const blobs = [
-        [0, -s * 0.10, s * 0.58], [-s * 0.46, s * 0.16, s * 0.42], [s * 0.46, s * 0.16, s * 0.42],
-        [-s * 0.24, -s * 0.34, s * 0.38], [s * 0.24, -s * 0.34, s * 0.38], [0, s * 0.26, s * 0.44]
-      ];
-      ctx.fillStyle = rgba(INK_SOFT, 0.13);
-      for (const b of blobs) { ctx.beginPath(); ctx.arc(b[0], cy + b[1], b[2], 0, Math.PI * 2); ctx.fill(); }
-      ctx.strokeStyle = rgba(INK, 0.52); ctx.lineWidth = Math.max(1, 1.2 * ds);
-      for (const b of blobs.slice(0, 4)) {
-        ctx.beginPath();
-        ctx.arc(b[0], cy + b[1], b[2], o.seed + 0.4, o.seed + 2.2);
-        ctx.stroke();
-      }
-    } else if (o.k === 'bench') {
-      groundShadow(0, 2, s * 1.15, 0.08);
-      const w = s * 1.7, sh = s * 0.42;
-      ctx.strokeStyle = rgba(INK, 0.82);
-      for (const lx of [-w / 2 + s * 0.12, w / 2 - s * 0.12]) {
-        ctx.beginPath(); ctx.moveTo(lx, -sh);
-        ctx.quadraticCurveTo(lx - s * 0.05, -sh * 0.5, lx, 0); ctx.stroke();
-        ctx.beginPath(); ctx.moveTo(lx - s * 0.07, 0); ctx.lineTo(lx + s * 0.07, 0); ctx.stroke();
-      }
-      ctx.fillStyle = rgba(INK, 0.72);
-      ctx.fillRect(-w / 2, -sh - s * 0.05, w, s * 0.055);
-      ctx.fillRect(-w / 2, -sh + s * 0.045, w, s * 0.05);
-      ctx.save();
-      ctx.translate(-w / 2, -sh); ctx.rotate(-0.12);
-      ctx.fillRect(0, -sh * 1.15, w, s * 0.05);
-      ctx.fillRect(0, -sh * 0.72, w, s * 0.05);
-      ctx.strokeStyle = rgba(INK, 0.82);
-      ctx.beginPath(); ctx.moveTo(s * 0.12, 0); ctx.lineTo(s * 0.12, -sh * 1.2); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(w - s * 0.12, 0); ctx.lineTo(w - s * 0.12, -sh * 1.2); ctx.stroke();
-      ctx.restore();
-      ctx.beginPath(); ctx.moveTo(-w / 2 + s * 0.12, -sh);
-      ctx.quadraticCurveTo(-w / 2 + s * 0.02, -sh - s * 0.28, -w / 2 + s * 0.3, -sh - s * 0.3);
+      ctx.arc(o.x * SCALE, o.y * SCALE, o.r * SCALE, 0, TWO_PI);
+      // Lighter than the ground in both themes, so it reads as something
+      // standing there rather than a hole in the drawing.
+      // Barely a fill; the ring does the work. The wake the crowd leaves
+      // around it already says something is standing there.
+      ctx.fillStyle = rgba(PAPER, DARK ? 0.05 : 0.10);
+      ctx.fill();
+      ctx.strokeStyle = rgba(INK, DARK ? 0.26 : 0.30);
       ctx.stroke();
-    } else if (o.k === 'lamp') {
-      groundShadow(0, 2, s * 0.9, 0.07);
-      const ph = s * 3.6;
-      ctx.fillStyle = rgba(INK, 0.78);
-      ctx.beginPath();
-      ctx.moveTo(-s * 0.24, 0); ctx.lineTo(-s * 0.16, -s * 0.28);
-      ctx.lineTo(s * 0.16, -s * 0.28); ctx.lineTo(s * 0.24, 0); ctx.closePath(); ctx.fill();
-      ctx.beginPath();
-      ctx.moveTo(-s * 0.07, -s * 0.28); ctx.lineTo(-s * 0.035, -ph);
-      ctx.lineTo(s * 0.035, -ph); ctx.lineTo(s * 0.07, -s * 0.28);
-      ctx.closePath(); ctx.fill();
-      ctx.strokeStyle = rgba(INK, 0.82); ctx.lineWidth = Math.max(1.1, 1.5 * ds);
-      ctx.beginPath(); ctx.moveTo(0, -ph);
-      ctx.quadraticCurveTo(s * 0.75, -ph - s * 0.06, s * 0.8, -ph + s * 0.22); ctx.stroke();
-      ctx.fillStyle = rgba(INK, 0.82);
-      ctx.beginPath();
-      ctx.moveTo(s * 0.58, -ph + s * 0.22); ctx.lineTo(s * 1.02, -ph + s * 0.22);
-      ctx.lineTo(s * 0.94, -ph + s * 0.45); ctx.lineTo(s * 0.66, -ph + s * 0.45);
-      ctx.closePath(); ctx.fill();
-      ctx.fillStyle = rgba(ACCENT, 0.75);
-      ctx.beginPath(); ctx.arc(s * 0.8, -ph + s * 0.5, s * 0.14, 0, Math.PI * 2); ctx.fill();
-      const halo = ctx.createRadialGradient(s * 0.8, -ph + s * 0.5, 0, s * 0.8, -ph + s * 0.5, s * 1.3);
-      halo.addColorStop(0, rgba(ACCENT, 0.10)); halo.addColorStop(1, rgba(ACCENT, 0));
-      ctx.fillStyle = halo;
-      ctx.beginPath(); ctx.arc(s * 0.8, -ph + s * 0.5, s * 1.3, 0, Math.PI * 2); ctx.fill();
-    } else if (o.k === 'bollard') {
-      groundShadow(0, 2, s * 1.0, 0.08);
-      const bh = s * 2.4;
-      ctx.fillStyle = rgba(INK, 0.78);
-      ctx.beginPath();
-      ctx.moveTo(-s * 0.32, 0);
-      ctx.lineTo(-s * 0.26, -bh);
-      ctx.arc(0, -bh, s * 0.26, Math.PI, 0);
-      ctx.lineTo(s * 0.32, 0);
-      ctx.closePath(); ctx.fill();
-      ctx.fillStyle = rgba(ACCENT, 0.8);
-      ctx.fillRect(-s * 0.28, -bh * 0.72, s * 0.56, s * 0.22);
-    } else { // planter
-      groundShadow(0, 2, s * 0.85, 0.08);
-      const w = s * 1.05, h2 = s * 0.6;
-      ctx.fillStyle = rgba(INK_SOFT, 0.16);
-      ctx.beginPath();
-      ctx.moveTo(-w / 2, -h2); ctx.lineTo(-w / 2 * 0.78, 0); ctx.lineTo(w / 2 * 0.78, 0); ctx.lineTo(w / 2, -h2);
-      ctx.closePath(); ctx.fill();
-      ctx.strokeStyle = rgba(INK, 0.78); ctx.stroke();
-      ctx.strokeStyle = rgba(INK, 0.42);
-      ctx.beginPath(); ctx.moveTo(-w / 2 * 0.94, -h2 * 0.68); ctx.lineTo(w / 2 * 0.94, -h2 * 0.68); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(-w / 2 * 0.86, -h2 * 0.34); ctx.lineTo(w / 2 * 0.86, -h2 * 0.34); ctx.stroke();
-      ctx.strokeStyle = rgba(INK, 0.68); ctx.lineWidth = Math.max(1, 1.3 * ds);
-      for (let i = 0; i < 5; i++) {
-        const a = -Math.PI / 2 + (i - 2) * 0.32;
-        ctx.beginPath(); ctx.moveTo(0, -h2);
-        ctx.quadraticCurveTo(Math.cos(a) * s * 0.35, -h2 + Math.sin(a) * s * 0.55, Math.cos(a) * s * 0.62, -h2 + Math.sin(a) * s * 1.0);
-        ctx.stroke();
-      }
-      ctx.fillStyle = rgba(INK_SOFT, 0.35);
-      for (const lx of [-s * 0.22, s * 0.18]) {
-        ctx.beginPath();
-        ctx.ellipse(lx, -h2 - s * 0.34, s * 0.13, s * 0.30, lx > 0 ? 0.5 : -0.5, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-    ctx.restore();
-  }
-
-  /* =============================================================
-     Movers
-     ============================================================= */
-  const HAIRS = ['none', 'cap', 'pony', 'bun'];
-  const PROPS = ['none', 'none', 'backpack', 'bag', 'case'];
-
-  class Mover {
-    constructor(kind) {
-      this.kind = kind;
-      this.x = rand(0, W); this.y = rand(H * 0.2, H * 0.95);
-      this.vx = 0; this.vy = 0;
-      this.maxSpeed = kind === 'car' ? rand(0.6, 0.9) : kind === 'robot' ? rand(0.25, 0.42) : rand(0.24, 0.55);
-      this.radius = kind === 'car' ? 62 : 34;
-      this.tail = [];
-      this.maxTail = MOBILE() ? 20 : 30;
-      this.phase = rnd() * Math.PI * 2;
-      this.baseH = kind === 'ped' ? rand(30, 40) : kind === 'robot' ? rand(26, 30) : rand(32, 36);
-      this.face = rnd() < 0.5 ? 1 : -1;
-      this.wheel = 0;
-      this.accent = false;
-      const midTint = kind === 'car' ? pick(CAR_TINTS_MID)
-                    : kind === 'ped' ? pick(PED_TINTS_MID)
-                    : null;
-      this.midTint = midTint;    // null means "use ink (neutral)"
-      this.light = pick(ROBOT_LIGHTS);
-      this.build = rand(0.85, 1.18);
-      this.gaitF = rand(0.13, 0.17);
-      this.hair = pick(HAIRS);
-      this.prop = pick(PROPS);
-      this.newGoal();
-    }
-    tint() { return this.midTint || INK; }
-    newGoal() {
-      this.gx = this.x < W / 2 ? rand(W * 0.55, W - 30) : rand(30, W * 0.45);
-      this.gy = rand(H * 0.22, H * 0.95);
-    }
-    step(all) {
-      let ax, ay;
-      if (this === PLAYER && CONTROL.active) {
-        ax = CONTROL.ix * 0.06; ay = CONTROL.iy * 0.06;
-      } else {
-        let dx = this.gx - this.x, dy = this.gy - this.y;
-        let d = Math.hypot(dx, dy) || 1;
-        if (d < 38) { this.newGoal(); dx = this.gx - this.x; dy = this.gy - this.y; d = Math.hypot(dx, dy) || 1; }
-        ax = dx / d * 0.05; ay = dy / d * 0.05;
-      }
-      for (const o of all) {
-        if (o === this) continue;
-        const rx = this.x - o.x, ry = this.y - o.y;
-        const dd = Math.hypot(rx, ry);
-        const inf = this.radius + o.radius;
-        if (dd > 0 && dd < inf) { const f = (1 - dd / inf) * 0.15; ax += rx / dd * f; ay += ry / dd * f; }
-      }
-      for (const ob of OBJECTS) {
-        const rx = this.x - ob.x, ry = this.y - ob.y;
-        const dd = Math.hypot(rx, ry);
-        const inf = ob.r + 44;
-        if (dd > 0 && dd < inf) { const f = (1 - dd / inf) * 0.28; ax += rx / dd * f; ay += ry / dd * f; }
-      }
-      const m = 70;
-      if (this.x < m) ax += 0.013; if (this.x > W - m) ax -= 0.013;
-      if (this.y < H * 0.18) ay += 0.013; if (this.y > H - 40) ay -= 0.013;
-      this.vx = (this.vx + ax) * 0.95; this.vy = (this.vy + ay) * 0.95;
-      const sp = Math.hypot(this.vx, this.vy);
-      const ms = (this === PLAYER && CONTROL.active) ? this.maxSpeed * 1.5 : this.maxSpeed;
-      if (sp > ms) { this.vx *= ms / sp; this.vy *= ms / sp; }
-      this.x += this.vx; this.y += this.vy;
-      const mm = 100;
-      if (this.x < -mm) this.x = W + mm; if (this.x > W + mm) this.x = -mm;
-      if (this.vx > 0.03) this.face = 1; else if (this.vx < -0.03) this.face = -1;
-      this.phase += sp * (this.kind === 'ped' ? this.gaitF : 0.5);
-      this.wheel += sp * 0.6;
-      this.tail.push([this.x, this.y]);
-      if (this.tail.length > this.maxTail) this.tail.shift();
     }
 
-    drawTrail() {
-      if (this.tail.length < 3) return;
-      const col = this.accent ? ACCENT : this.tint();
-      for (let i = 2; i < this.tail.length; i++) {
-        const t = i / this.tail.length;
-        ctx.beginPath();
-        ctx.moveTo(this.tail[i - 1][0], this.tail[i - 1][1]);
-        ctx.lineTo(this.tail[i][0], this.tail[i][1]);
-        ctx.strokeStyle = rgba(col, t * 0.16);
-        ctx.lineWidth = 0.9;
-        ctx.stroke();
-      }
-    }
-
-    drawFutures() {
-      const sp = Math.hypot(this.vx, this.vy);
-      if (sp < 0.06) return;
-      const base = Math.atan2(this.vy, this.vx);
-      const col = this.accent ? ACCENT : this.tint();
-      const aBase = this.accent ? 0.5 : 0.24;
-      const steps = MOBILE() ? 22 : 32;
-      for (let k = 0; k < 3; k++) {
-        const off = (k - 1) * 0.26;
-        let px = this.x, py = this.y, ang = base + off;
-        const drift = -off / 40;
-        ctx.beginPath(); ctx.moveTo(px, py);
-        for (let i = 0; i < steps; i++) {
-          ang += drift;
-          px += Math.cos(ang) * (sp * 3.2 + 0.9);
-          py += Math.sin(ang) * (sp * 3.2 + 0.9);
-          ctx.lineTo(px, py);
-        }
-        ctx.strokeStyle = rgba(col, (k === 1 ? 1 : 0.5) * aBase);
-        ctx.lineWidth = k === 1 ? 1.2 : 0.8;
-        ctx.setLineDash([1.5, 4.5]);
-        ctx.stroke();
-        ctx.setLineDash([]);
-        if (k === 1) {
-          ctx.beginPath(); ctx.arc(px, py, 2.0, 0, Math.PI * 2);
-          ctx.fillStyle = rgba(col, aBase * 1.5); ctx.fill();
-        }
-      }
-    }
-
-    drawFigure() {
-      if (this.kind === 'ped') this.drawPed();
-      else if (this.kind === 'robot') this.drawRobot();
-      else this.drawCar();
-    }
-
-    drawPed() {
-      const ds = depthScale(this.y);
-      const h = this.baseH * ds;
-      const bk = this.build;
-      const sp = Math.hypot(this.vx, this.vy);
-      const runK = Math.min(sp / this.maxSpeed, 1);
-      const f = this.face, p = this.phase;
-      const stride = 0.28 + runK * 0.55;
-      const bob = Math.abs(Math.cos(p)) * h * 0.026 * runK;
-      const X = this.x, Y = this.y - 1;
-
-      const hipY = Y - h * 0.50 - bob;
-      const shY = Y - h * 0.78 - bob;
-      const lean = runK * 0.10;
-      const hipX = X, shX = X + f * lean * h * 0.42;
-      const headR = h * 0.088 * (0.95 + bk * 0.05);
-      const thigh = h * 0.26, shin = h * 0.24;
-      const uarm = h * 0.17, farm = h * 0.15;
-      const down = Math.PI / 2;
-
-      const wThigh = h * 0.052 * bk, wKnee = h * 0.038 * bk, wAnkle = h * 0.024 * bk;
-      const wUarm = h * 0.036 * bk, wElb = h * 0.030 * bk, wWrist = h * 0.020 * bk;
-
-      groundShadow(X, Y + 2, h * 0.36, 0.12 + 0.06 * ds);
-
-      const bodyC = this.accent ? ACCENT : this.tint();
-      const inkMain = rgba(bodyC, 0.96);
-      const inkBack = rgba(bodyC, 0.40);
-
-      const legPts = (swing, bend) => {
-        const a1 = down + f * swing;
-        const a2 = a1 + f * bend;
-        const kx = hipX + Math.cos(a1) * thigh, ky = hipY + Math.sin(a1) * thigh;
-        const ax2 = kx + Math.cos(a2) * shin, ay2 = ky + Math.sin(a2) * shin;
-        return [[hipX, hipY], [kx, ky], [ax2, ay2]];
-      };
-      const armPts = (swing) => {
-        const a1 = down + f * swing;
-        const a2 = a1 + f * 0.38;
-        const sx = shX, sy = shY + h * 0.03;
-        const ex = sx + Math.cos(a1) * uarm, ey = sy + Math.sin(a1) * uarm;
-        const wx2 = ex + Math.cos(a2) * farm, wy2 = ey + Math.sin(a2) * farm;
-        return [[sx, sy], [ex, ey], [wx2, wy2]];
-      };
-      const shoe = (ax2, ay2, pitch, col) => {
-        const L = h * 0.155, hh = h * 0.045;
-        ctx.save();
-        ctx.translate(ax2, ay2); ctx.scale(f, 1); ctx.rotate(pitch);
-        ctx.fillStyle = col;
-        ctx.beginPath();
-        ctx.moveTo(-L * 0.32, -hh);
-        ctx.lineTo(L * 0.5, -hh);
-        ctx.quadraticCurveTo(L * 0.72, -hh * 0.7, L * 0.72, hh * 0.35);
-        ctx.lineTo(-L * 0.32, hh * 0.35);
-        ctx.closePath(); ctx.fill();
-        ctx.restore();
-      };
-      const hand = (wx2, wy2, col) => {
-        ctx.fillStyle = col;
-        ctx.beginPath(); ctx.arc(wx2, wy2, h * 0.030 * bk, 0, Math.PI * 2); ctx.fill();
-      };
-
+    // forecast for the highlighted walker
+    const acc = world.accent;
+    if (acc && !reduce) {
+      const now = performance.now();
+      if (now - fanAt > 100) { forecast(world, acc, FAN); fanAt = now; }
       ctx.save();
-      ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-
-      const swingF = Math.sin(p), swingB = Math.sin(p + Math.PI);
-      const bendF = 0.10 + 0.45 * stride * Math.max(0, Math.cos(p));
-      const bendB = 0.10 + 0.45 * stride * Math.max(0, Math.cos(p + Math.PI));
-      const pitchF = 0.28 * stride * Math.sin(p - 0.7) * runK;
-      const pitchB = 0.28 * stride * Math.sin(p + Math.PI - 0.7) * runK;
-
-      /* BACK layer */
-      const lb = legPts(swingB * 0.5 * stride, bendB);
-      taperedChain(lb, [wThigh, wKnee, wAnkle], inkBack);
-      shoe(lb[2][0], lb[2][1], pitchB, inkBack);
-      const ab = armPts(Math.sin(p) * 0.42 * stride);
-      taperedChain(ab, [wUarm, wElb, wWrist], inkBack);
-      hand(ab[2][0], ab[2][1], inkBack);
-
-      /* TORSO */
-      const spA = Math.atan2(shY - hipY, shX - hipX);
-      const ux = Math.cos(spA + Math.PI / 2), uy = Math.sin(spA + Math.PI / 2);
-      const st = (t) => [hipX + (shX - hipX) * t, hipY + (shY - hipY) * t];
-      const wHip = h * 0.088 * bk, wWaist = h * 0.072 * bk, wChest = h * 0.098 * bk, wSh = h * 0.105 * bk;
-      const p0 = st(0), p1 = st(0.42), p2 = st(0.78), p3 = st(1.0);
-      p2[0] += f * h * 0.012;
-      ctx.fillStyle = inkMain;
+      // uncertainty envelope between the outer rollouts
       ctx.beginPath();
-      ctx.moveTo(p0[0] + ux * wHip, p0[1] + uy * wHip);
-      ctx.quadraticCurveTo(p1[0] + ux * wWaist, p1[1] + uy * wWaist, p2[0] + ux * wChest, p2[1] + uy * wChest);
-      ctx.quadraticCurveTo(p3[0] + ux * wSh, p3[1] + uy * wSh, p3[0], p3[1] - h * 0.01);
-      ctx.quadraticCurveTo(p3[0] - ux * wSh, p3[1] - uy * wSh, p2[0] - ux * wChest, p2[1] - uy * wChest);
-      ctx.quadraticCurveTo(p1[0] - ux * wWaist, p1[1] - uy * wWaist, p0[0] - ux * wHip, p0[1] - uy * wHip);
-      ctx.arc(p0[0], p0[1], wHip, spA - Math.PI / 2, spA + Math.PI / 2, true);
-      ctx.closePath(); ctx.fill();
-
-      /* props */
-      if (this.prop === 'backpack') {
-        const bx = p2[0] - f * (wChest + h * 0.052), by = p2[1] + h * 0.02;
-        ctx.fillStyle = inkMain;
-        ctx.beginPath();
-        const bw = h * 0.085, bh2 = h * 0.17;
-        ctx.moveTo(bx - bw / 2, by - bh2 / 2 + 2);
-        ctx.arcTo(bx - bw / 2, by + bh2 / 2, bx + bw / 2, by + bh2 / 2, 3);
-        ctx.arcTo(bx + bw / 2, by + bh2 / 2, bx + bw / 2, by - bh2 / 2, 3);
-        ctx.arcTo(bx + bw / 2, by - bh2 / 2, bx - bw / 2, by - bh2 / 2, 3);
-        ctx.arcTo(bx - bw / 2, by - bh2 / 2, bx - bw / 2, by + bh2 / 2, 3);
-        ctx.closePath(); ctx.fill();
-      } else if (this.prop === 'bag') {
-        ctx.strokeStyle = rgba(PAPER, 0.55);
-        ctx.lineWidth = Math.max(1, h * 0.022);
-        ctx.beginPath();
-        ctx.moveTo(p3[0] + f * wSh * 0.5, p3[1] + h * 0.02);
-        ctx.lineTo(p0[0] - f * wHip * 0.8, p0[1] - h * 0.01);
-        ctx.stroke();
-        ctx.fillStyle = inkMain;
-        const gx2 = p0[0] - f * (wHip + h * 0.05), gy2 = p0[1] + h * 0.02;
-        ctx.beginPath();
-        ctx.ellipse(gx2, gy2, h * 0.062, h * 0.078, 0, 0, Math.PI * 2);
+      const a0 = FAN[0], a2 = FAN[2];
+      if (a0.length > 3) {
+        ctx.moveTo(a0[0] * SCALE, a0[1] * SCALE);
+        for (let i = 2; i < a0.length; i += 2) ctx.lineTo(a0[i] * SCALE, a0[i + 1] * SCALE);
+        for (let i = a2.length - 2; i >= 0; i -= 2) ctx.lineTo(a2[i] * SCALE, a2[i + 1] * SCALE);
+        ctx.closePath();
+        ctx.fillStyle = rgba(ACCENT, DARK ? 0.07 : 0.06);
         ctx.fill();
       }
-
-      /* neck + head + hair */
-      const nx = p3[0] + f * h * 0.008, ny = p3[1];
-      const hx = nx + f * h * 0.028, hy = ny - h * 0.052 - headR * 0.8;
-      ctx.strokeStyle = inkMain; ctx.lineWidth = h * 0.045 * bk;
-      ctx.beginPath(); ctx.moveTo(nx, ny); ctx.lineTo(hx - f * h * 0.008, hy + headR * 0.85); ctx.stroke();
-      ctx.fillStyle = inkMain;
-      ctx.beginPath(); ctx.arc(hx, hy, headR, 0, Math.PI * 2); ctx.fill();
-      if (this.hair === 'cap') {
+      ctx.setLineDash([2, 4]);
+      for (let b = 0; b < 3; b++) {
+        const p = FAN[b];
+        if (p.length < 4) continue;
         ctx.beginPath();
-        ctx.moveTo(hx + f * (headR + h * 0.055), hy - headR * 0.25);
-        ctx.lineTo(hx + f * headR * 0.2, hy - headR * 0.30);
-        ctx.lineTo(hx + f * headR * 0.2, hy - headR * 0.05);
-        ctx.closePath(); ctx.fill();
-      } else if (this.hair === 'pony') {
-        const sway = Math.sin(p) * h * 0.012;
-        ctx.beginPath();
-        ctx.moveTo(hx - f * headR * 0.8, hy - headR * 0.25);
-        ctx.quadraticCurveTo(hx - f * (headR + h * 0.06), hy + headR * 0.5 + sway,
-                             hx - f * (headR + h * 0.035), hy + headR * 1.35 + sway);
-        ctx.quadraticCurveTo(hx - f * headR * 0.65, hy + headR * 0.6, hx - f * headR * 0.55, hy + headR * 0.1);
-        ctx.closePath(); ctx.fill();
-      } else if (this.hair === 'bun') {
-        ctx.beginPath();
-        ctx.arc(hx - f * headR * 0.85, hy - headR * 0.55, headR * 0.42, 0, Math.PI * 2);
-        ctx.fill();
-      }
-
-      /* FRONT layer */
-      const lf = legPts(swingF * 0.5 * stride, bendF);
-      taperedChain(lf, [wThigh, wKnee, wAnkle], inkMain);
-      shoe(lf[2][0], lf[2][1], pitchF, inkMain);
-      const af = armPts(Math.sin(p + Math.PI) * 0.42 * stride);
-      taperedChain(af, [wUarm, wElb, wWrist], inkMain);
-      hand(af[2][0], af[2][1], inkMain);
-      if (this.prop === 'case') {
-        const cw = h * 0.15, ch2 = h * 0.105;
-        const cx2 = af[2][0], cy2 = af[2][1] + h * 0.035;
-        ctx.fillStyle = inkMain;
-        ctx.beginPath();
-        ctx.moveTo(cx2 - cw / 2, cy2);
-        ctx.arcTo(cx2 - cw / 2, cy2 + ch2, cx2 + cw / 2, cy2 + ch2, 2.5);
-        ctx.arcTo(cx2 + cw / 2, cy2 + ch2, cx2 + cw / 2, cy2, 2.5);
-        ctx.lineTo(cx2 + cw / 2, cy2);
-        ctx.closePath(); ctx.fill();
-        ctx.strokeStyle = inkMain; ctx.lineWidth = Math.max(1, h * 0.02);
-        ctx.beginPath();
-        ctx.moveTo(cx2 - cw * 0.16, cy2);
-        ctx.lineTo(cx2 - cw * 0.16, cy2 - h * 0.02);
-        ctx.lineTo(cx2 + cw * 0.16, cy2 - h * 0.02);
-        ctx.lineTo(cx2 + cw * 0.16, cy2);
+        ctx.moveTo(p[0] * SCALE, p[1] * SCALE);
+        for (let i = 2; i < p.length; i += 2) ctx.lineTo(p[i] * SCALE, p[i + 1] * SCALE);
+        ctx.lineWidth = b === 1 ? 1.3 : 0.9;
+        ctx.strokeStyle = rgba(ACCENT, b === 1 ? 0.62 : 0.34);
         ctx.stroke();
       }
       ctx.restore();
     }
 
-    drawRobot() {
-      const ds = depthScale(this.y);
-      const h = this.baseH * ds;
-      const f = this.face;
-      const X = this.x, Y = this.y;
-      const wheelR = h * 0.16;
-      const bodyW = h * 0.60, bodyH = h * 0.44;
-      const bodyBot = -wheelR * 1.35, bodyTop = bodyBot - bodyH;
-      const headH = h * 0.15, headW = bodyW * 0.62;
-
-      groundShadow(X, Y + 1, h * 0.42, 0.11);
-
-      ctx.save();
-      ctx.translate(X, Y);
-      ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-      const line = rgba(INK, 0.86);
-      const fill = rgba(INK_SOFT, 0.16);
-      const lwMain = Math.max(1.1, h * 0.045);
-      ctx.lineWidth = lwMain;
-
-      for (const wx of [-bodyW * 0.36, bodyW * 0.36]) {
-        ctx.strokeStyle = line;
-        ctx.beginPath(); ctx.moveTo(wx, bodyBot); ctx.lineTo(wx, -wheelR); ctx.stroke();
-        ctx.beginPath(); ctx.arc(wx, -wheelR, wheelR, 0, Math.PI * 2);
-        ctx.fillStyle = rgba(INK, 0.78); ctx.fill();
-        ctx.beginPath(); ctx.arc(wx, -wheelR, wheelR * 0.55, 0, Math.PI * 2);
-        ctx.fillStyle = rgba(PAPER, 0.88); ctx.fill();
-        ctx.strokeStyle = line; ctx.lineWidth = 1; ctx.stroke();
-        ctx.save(); ctx.translate(wx, -wheelR); ctx.rotate(this.wheel * f);
-        ctx.strokeStyle = rgba(INK, 0.78); ctx.lineWidth = Math.max(1, h * 0.025);
-        for (let k = 0; k < 3; k++) {
-          const a = k * Math.PI * 2 / 3;
-          ctx.beginPath(); ctx.moveTo(0, 0);
-          ctx.lineTo(Math.cos(a) * wheelR * 0.5, Math.sin(a) * wheelR * 0.5); ctx.stroke();
-        }
-        ctx.fillStyle = rgba(INK, 0.88);
-        ctx.beginPath(); ctx.arc(0, 0, wheelR * 0.14, 0, Math.PI * 2); ctx.fill();
-        ctx.restore();
-        ctx.lineWidth = lwMain;
+    // heads
+    const A = world.agents;
+    const rHead = Math.max(1.2, SCALE * V.headScale);
+    for (let pass = 0; pass < 2; pass++) {
+      ctx.beginPath();
+      let any = false;
+      for (let i = 0; i < A.length; i++) {
+        const a = A[i];
+        if (a.accent || a.flow !== pass) continue;
+        const r = rHead * (0.78 + 0.34 * (a.r - P.radius[0]) / (P.radius[1] - P.radius[0]));
+        ctx.moveTo(a.x * SCALE + r, a.y * SCALE);
+        ctx.arc(a.x * SCALE, a.y * SCALE, r, 0, TWO_PI);
+        any = true;
       }
-
-      const r = h * 0.06;
-      ctx.beginPath();
-      ctx.moveTo(-bodyW / 2 + r, bodyTop);
-      ctx.arcTo(bodyW / 2, bodyTop, bodyW / 2, bodyBot, r);
-      ctx.arcTo(bodyW / 2, bodyBot, -bodyW / 2, bodyBot, r);
-      ctx.arcTo(-bodyW / 2, bodyBot, -bodyW / 2, bodyTop, r);
-      ctx.arcTo(-bodyW / 2, bodyTop, bodyW / 2, bodyTop, r);
-      ctx.closePath();
-      ctx.fillStyle = fill; ctx.fill();
-      ctx.strokeStyle = line; ctx.stroke();
-      ctx.strokeStyle = rgba(INK, 0.38); ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(-bodyW / 2 + 3, bodyTop + bodyH * 0.42); ctx.lineTo(bodyW / 2 - 3, bodyTop + bodyH * 0.42); ctx.stroke();
-      for (let k = 0; k < 3; k++) {
-        const vy = bodyTop + bodyH * (0.58 + k * 0.12);
-        ctx.beginPath(); ctx.moveTo(-f * bodyW * 0.34, vy); ctx.lineTo(-f * bodyW * 0.18, vy); ctx.stroke();
-      }
-      ctx.strokeStyle = line; ctx.lineWidth = Math.max(1.4, h * 0.055);
-      ctx.beginPath(); ctx.moveTo(f * bodyW / 2, bodyBot - bodyH * 0.16); ctx.lineTo(f * bodyW / 2, bodyBot - bodyH * 0.5); ctx.stroke();
-      ctx.lineWidth = 1;
-      ctx.strokeStyle = rgba(INK, 0.38);
-      ctx.beginPath(); ctx.moveTo(-bodyW * 0.42, bodyTop + bodyH * 0.14); ctx.lineTo(-bodyW * 0.05, bodyTop + bodyH * 0.14); ctx.stroke();
-
-      ctx.lineWidth = lwMain; ctx.strokeStyle = line;
-      ctx.beginPath();
-      ctx.moveTo(-headW / 2, bodyTop);
-      ctx.lineTo(-headW / 2 + headW * 0.08, bodyTop - headH);
-      ctx.lineTo(headW / 2 - headW * 0.08, bodyTop - headH);
-      ctx.lineTo(headW / 2, bodyTop);
-      ctx.closePath();
-      ctx.fillStyle = fill; ctx.fill(); ctx.stroke();
-      const eyeW = headW * 0.34;
-      ctx.fillStyle = rgba(this.light, 0.9);
-      ctx.fillRect(f > 0 ? headW * 0.04 : -headW * 0.04 - eyeW, bodyTop - headH * 0.68, eyeW, headH * 0.32);
-      ctx.beginPath(); ctx.arc(-f * headW * 0.3, bodyTop - headH * 0.5, headH * 0.1, 0, Math.PI * 2);
-      ctx.fillStyle = rgba(INK, 0.55); ctx.fill();
-
-      const ax0 = -f * bodyW * 0.4;
-      const atop = bodyTop - headH - h * 0.34;
-      ctx.strokeStyle = line; ctx.lineWidth = Math.max(1, h * 0.02);
-      ctx.beginPath(); ctx.moveTo(ax0, bodyTop);
-      ctx.quadraticCurveTo(ax0 - f * h * 0.03, bodyTop - h * 0.25, ax0 - f * h * 0.015, atop);
-      ctx.stroke();
-      ctx.fillStyle = rgba(this.light, 0.85);
-      ctx.beginPath();
-      ctx.moveTo(ax0 - f * h * 0.015, atop + h * 0.02);
-      ctx.lineTo(ax0 - f * h * 0.015 - f * h * 0.11, atop + h * 0.055);
-      ctx.lineTo(ax0 - f * h * 0.015, atop + h * 0.095);
-      ctx.closePath(); ctx.fill();
-      const blink = 0.35 + 0.65 * (0.5 + 0.5 * Math.sin(this.phase * 2));
-      ctx.beginPath(); ctx.arc(ax0 - f * h * 0.015, atop, h * 0.035, 0, Math.PI * 2);
-      ctx.fillStyle = rgba(this.light, blink); ctx.fill();
-
-      ctx.restore();
+      if (!any) continue;
+      const tone = pass === 0 ? mix(INK, ACCENT, DARK ? 0.14 : 0.18) : INK_SOFT;
+      ctx.fillStyle = rgba(tone, DARK ? 0.80 : 0.72);
+      ctx.fill();
     }
 
-    drawCar() {
-      const ds = depthScale(this.y);
-      const h = this.baseH * ds;
-      const f = this.face;
-      const X = this.x, Y = this.y;
-      const L = h * 2.5;
-      const wheelR = h * 0.17;
-      const archR = wheelR * 1.32;
-      const yb = -wheelR * 0.5;
-      const belt = yb - h * 0.36;
-      const roof = belt - h * 0.30;
-      const wxF = L * 0.30, wxR = -L * 0.30;
-
-      groundShadow(X, Y + 1, L * 0.52, 0.10);
-
-      ctx.save();
-      ctx.translate(X, Y);
-      ctx.scale(f, 1);
-      ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-      const bodyTint = this.midTint || INK;
-      const line = rgba(mix(bodyTint, INK, 0.5), 0.90);
-      const fill = rgba(bodyTint, 0.28);
-      ctx.lineWidth = Math.max(1.1, h * 0.045);
-
-      ctx.beginPath();
-      ctx.moveTo(wxR - archR, yb);
-      ctx.arc(wxR, yb, archR, Math.PI, Math.PI * 2, false);
-      ctx.lineTo(wxF - archR, yb);
-      ctx.arc(wxF, yb, archR, Math.PI, Math.PI * 2, false);
-      ctx.lineTo(L * 0.46, yb);
-      ctx.quadraticCurveTo(L * 0.5, yb, L * 0.5, yb - h * 0.09);
-      ctx.quadraticCurveTo(L * 0.505, belt + h * 0.05, L * 0.42, belt);
-      ctx.lineTo(L * 0.15, belt - h * 0.015);
-      ctx.quadraticCurveTo(L * 0.10, belt - h * 0.02, L * 0.05, roof + h * 0.02);
-      ctx.quadraticCurveTo(L * 0.02, roof, -L * 0.04, roof);
-      ctx.lineTo(-L * 0.24, roof);
-      ctx.quadraticCurveTo(-L * 0.36, roof + h * 0.02, -L * 0.43, belt - h * 0.01);
-      ctx.lineTo(-L * 0.48, belt);
-      ctx.quadraticCurveTo(-L * 0.505, belt + h * 0.03, -L * 0.5, belt + h * 0.12);
-      ctx.lineTo(-L * 0.5, yb - h * 0.07);
-      ctx.quadraticCurveTo(-L * 0.5, yb, -L * 0.46, yb);
-      ctx.closePath();
-      ctx.fillStyle = fill; ctx.fill();
-      ctx.strokeStyle = line; ctx.stroke();
-
-      ctx.fillStyle = rgba(PAPER, 0.65);
-      ctx.strokeStyle = rgba(INK, 0.5); ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(L * 0.115, belt - h * 0.035);
-      ctx.lineTo(L * 0.045, roof + h * 0.045);
-      ctx.lineTo(-L * 0.015, roof + h * 0.045);
-      ctx.lineTo(-L * 0.015, belt - h * 0.035);
-      ctx.closePath(); ctx.fill(); ctx.stroke();
-      ctx.beginPath();
-      ctx.moveTo(-L * 0.055, belt - h * 0.035);
-      ctx.lineTo(-L * 0.055, roof + h * 0.045);
-      ctx.lineTo(-L * 0.235, roof + h * 0.045);
-      ctx.lineTo(-L * 0.345, belt - h * 0.035);
-      ctx.closePath(); ctx.fill(); ctx.stroke();
-
-      ctx.strokeStyle = rgba(INK, 0.42);
-      ctx.beginPath(); ctx.moveTo(-L * 0.035, belt - h * 0.03); ctx.lineTo(-L * 0.035, yb - h * 0.02); ctx.stroke();
-      ctx.strokeStyle = rgba(INK, 0.65); ctx.lineWidth = Math.max(1, h * 0.025);
-      ctx.beginPath(); ctx.moveTo(-L * 0.02, belt + h * 0.045); ctx.lineTo(L * 0.03, belt + h * 0.045); ctx.stroke();
-      ctx.fillStyle = rgba(INK, 0.82);
-      ctx.beginPath();
-      ctx.moveTo(L * 0.115, belt - h * 0.03);
-      ctx.lineTo(L * 0.15, belt - h * 0.065);
-      ctx.lineTo(L * 0.155, belt - h * 0.02);
-      ctx.closePath(); ctx.fill();
-      ctx.fillStyle = 'rgba(255,238,190,0.95)';
-      ctx.beginPath();
-      ctx.moveTo(L * 0.5, belt + h * 0.045);
-      ctx.lineTo(L * 0.425, belt + h * 0.01);
-      ctx.lineTo(L * 0.425, belt + h * 0.075);
-      ctx.closePath(); ctx.fill();
-      ctx.fillStyle = rgba(ACCENT, 0.85);
-      ctx.fillRect(-L * 0.5, belt + h * 0.03, L * 0.03, h * 0.05);
-
-      for (const wx of [wxR, wxF]) {
-        ctx.beginPath(); ctx.arc(wx, yb, wheelR, 0, Math.PI * 2);
-        ctx.fillStyle = rgba(INK, 0.82); ctx.fill();
-        ctx.beginPath(); ctx.arc(wx, yb, wheelR * 0.55, 0, Math.PI * 2);
-        ctx.fillStyle = rgba(PAPER, 0.88); ctx.fill();
-        ctx.strokeStyle = rgba(INK, 0.55); ctx.lineWidth = 1; ctx.stroke();
-        ctx.save(); ctx.translate(wx, yb); ctx.rotate(this.wheel);
-        ctx.strokeStyle = rgba(INK, 0.72); ctx.lineWidth = Math.max(1, h * 0.02);
-        for (let k = 0; k < 4; k++) {
-          const a = k * Math.PI / 2;
-          ctx.beginPath(); ctx.moveTo(0, 0);
-          ctx.lineTo(Math.cos(a) * wheelR * 0.5, Math.sin(a) * wheelR * 0.5); ctx.stroke();
-        }
-        ctx.fillStyle = rgba(INK, 0.88);
-        ctx.beginPath(); ctx.arc(0, 0, wheelR * 0.12, 0, Math.PI * 2); ctx.fill();
-        ctx.restore();
+    if (acc) {
+      const x = acc.x * SCALE, y = acc.y * SCALE;
+      if (DARK) {
+        const g = ctx.createRadialGradient(x, y, 0, x, y, rHead * 6);
+        g.addColorStop(0, rgba(ACCENT, 0.34));
+        g.addColorStop(1, rgba(ACCENT, 0));
+        ctx.fillStyle = g;
+        ctx.beginPath(); ctx.arc(x, y, rHead * 6, 0, TWO_PI); ctx.fill();
       }
-      ctx.restore();
+      ctx.beginPath(); ctx.arc(x, y, rHead * 1.32, 0, TWO_PI);
+      ctx.fillStyle = rgba(ACCENT, 0.95); ctx.fill();
+      if (control && control.active) {
+        ctx.beginPath();
+        ctx.arc(x, y, rHead * 3.1 + Math.sin(performance.now() / 300) * 1.6, 0, TWO_PI);
+        ctx.strokeStyle = rgba(ACCENT, 0.55);
+        ctx.lineWidth = 1.2; ctx.setLineDash([3, 4]); ctx.stroke(); ctx.setLineDash([]);
+      }
     }
   }
 
-  /* =============================================================
-     Assembly, controls, main loop
-     ============================================================= */
-  let PLAYER = null;
+  /* ---------- loop ---------- */
   const CONTROL = { active: false, ix: 0, iy: 0 };
+  const STEP = 1 / 60;
+  let acc = 0, last = 0, rafId = null, visible = true, inView = true;
+  const running = () => visible && inView && !reduce;
 
-  function makeMovers() {
-    const out = [];
-    const density = MOBILE() ? 200000 : 150000;
-    const nPed = Math.max(6, Math.min(12, Math.round(W * H / density)));
-    for (let i = 0; i < nPed; i++) out.push(new Mover('ped'));
-    out.push(new Mover('robot'));
-    if (W > 900) out.push(new Mover('robot'));
-    if (W >= 480) out.push(new Mover('car'));
-    out[0].accent = true;
-    PLAYER = out[0];
-    return out;
+  function advance(dt) {
+    acc = Math.min(acc + dt, 0.25);
+    while (acc >= STEP) { step(world, STEP, CONTROL); acc -= STEP; }
+    fadeTrails(dt);
+    strokeTrails();
   }
 
-  OBJECTS = makeObjects();
-  let movers = makeMovers();
+  function frame(now) {
+    rafId = null;
+    if (!running() || !ready) return;
+    const dt = last ? Math.min((now - last) / 1000, 0.1) : STEP;
+    last = now;
+    advance(dt);
+    drawLive(CONTROL);
+    schedule();
+  }
+  function schedule() { if (!rafId && running()) rafId = requestAnimationFrame(frame); }
 
-  function drawDotGrid() {
-    const g = 64;
-    ctx.fillStyle = rgba(INK, 0.05);
-    for (let x = g; x < W; x += g)
-      for (let y = g; y < H; y += g) {
-        ctx.beginPath(); ctx.arc(x, y, 1, 0, Math.PI * 2); ctx.fill();
-      }
+  function settle(seconds) {
+    // Run the crowd in before showing it, so the first frame is a scene that
+    // has been walking for a while rather than a starting grid.
+    const n = Math.round(seconds / STEP);
+    for (let i = 0; i < n; i++) step(world, STEP, CONTROL);
+    tctx.clearRect(0, 0, W, H);
+    for (let i = 0; i < 150; i++) { step(world, STEP, CONTROL); strokeTrails(); }
+    drawLive(CONTROL);
   }
 
-  /* visibility + IntersectionObserver: pause rAF when off */
-  let visible = true;
-  let inView = true;
-  const isRunning = () => visible && inView;
+  function restart(keep) {
+    resize(keep);
+    if (!ready) return;
+    if (reduce) { settle(20); }
+    else { last = 0; acc = 0; settle(14); schedule(); }
+  }
+
+  /* ---------- lifecycle ---------- */
+  loadPalette();
+  restart(false);
+
+  new MutationObserver(() => {
+    loadPalette();
+    tctx.clearRect(0, 0, W, H);
+    if (reduce) settle(0); else { for (let i = 0; i < 120; i++) { step(world, STEP, CONTROL); strokeTrails(); } drawLive(CONTROL); }
+  }).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+
   document.addEventListener('visibilitychange', () => {
     visible = !document.hidden;
-    if (isRunning() && !rafId) scheduleFrame();
+    if (visible) last = 0;
+    schedule();
   });
-  new IntersectionObserver((entries) => {
-    inView = entries[0].isIntersecting;
-    if (isRunning() && !rafId) scheduleFrame();
-  }, { threshold: 0.02 }).observe(canvas);
+  new IntersectionObserver((e) => { inView = e[0].isIntersecting; if (inView) last = 0; schedule(); },
+    { threshold: 0.01 }).observe(canvas);
 
-  let rafId = null;
-  function scheduleFrame() {
-    rafId = requestAnimationFrame(frame);
-  }
-
-  /* Single render path. The animation loop and the static reduced-motion
-     frame both go through here, so draw order can only ever change once. */
-  function renderScene() {
-    ctx.clearRect(0, 0, W, H);
-    drawDotGrid();
-    for (const m of movers) m.drawTrail();
-    for (const m of movers) m.drawFutures();
-    if (CONTROL.active && PLAYER) {
-      const pr = 15 + 2.5 * Math.sin(performance.now() / 280);
-      ctx.save();
-      ctx.translate(PLAYER.x, PLAYER.y + 2); ctx.scale(1, 0.35);
-      ctx.beginPath(); ctx.arc(0, 0, pr, 0, Math.PI * 2);
-      ctx.strokeStyle = rgba(ACCENT, 0.7); ctx.lineWidth = 1.5;
-      ctx.setLineDash([4, 4]); ctx.stroke(); ctx.setLineDash([]);
-      ctx.restore();
-    }
-    const drawables = OBJECTS.map(o => ({ y: o.y, fn: () => drawObject(o) }))
-      .concat(movers.map(m => ({ y: m.y, fn: () => m.drawFigure() })));
-    drawables.sort((a, b) => a.y - b.y).forEach(d => d.fn());
-  }
-
-  function frame() {
-    rafId = null;
-    if (!isRunning()) return;
-    for (const m of movers) m.step(movers);
-    renderScene();
-    scheduleFrame();
-  }
-
-  function settleAndDraw() {
-    for (let i = 0; i < 80; i++) for (const m of movers) m.step(movers);
-    renderScene();
-  }
-
-  function startOrStop() {
-    if (reduce) {
-      if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
-      settleAndDraw();
-    } else if (!rafId && isRunning()) {
-      scheduleFrame();
-    }
-  }
-
-  simReady = true;
-  startOrStop();
-  const onMotionPref = () => { reduce = RM.matches; startOrStop(); };
-  RM.addEventListener ? RM.addEventListener('change', onMotionPref) : RM.addListener(onMotionPref);
-
-  if (DEBUG) {
-    window.__sim = {
-      get movers() { return movers; },
-      get objects() { return OBJECTS; },
-      get reduce() { return reduce; },
-      palette: () => ({ INK, INK_SOFT, ACCENT, PAPER, SHADOW_A }),
-      render: renderScene
-    };
-  }
+  const onMotion = () => {
+    reduce = RM.matches;
+    if (reduce) { if (rafId) { cancelAnimationFrame(rafId); rafId = null; } settle(0); }
+    else { last = 0; schedule(); }
+  };
+  RM.addEventListener ? RM.addEventListener('change', onMotion) : RM.addListener(onMotion);
 
   let rt;
   window.addEventListener('resize', () => {
     clearTimeout(rt);
-    rt = setTimeout(() => {
-      OBJECTS = makeObjects();
-      movers = makeMovers();
-      if (reduce) settleAndDraw();
-    }, 350);
+    rt = setTimeout(() => restart(true), 220);
   });
 
-  /* ---------- walk mode: arrow keys / WASD ---------- */
-  /* Keyed on e.code, not e.key: Shift, CapsLock and IME all rewrite e.key
-     between keydown and keyup, which latched a direction on permanently. */
+  if (DEBUG) {
+    window.__sim = {
+      get world() { return world; },
+      get scale() { return SCALE; },
+      palette: () => ({ INK, INK_SOFT, ACCENT, PAPER, STAGE, DARK }),
+      seed: SEED
+    };
+  }
+
+  /* ---------- walk mode ---------- */
   const DIR_BY_CODE = {
-    ArrowLeft: 'l', KeyA: 'l',
-    ArrowRight: 'r', KeyD: 'r',
-    ArrowUp: 'u', KeyW: 'u',
-    ArrowDown: 'd', KeyS: 'd'
+    ArrowLeft: 'l', KeyA: 'l', ArrowRight: 'r', KeyD: 'r',
+    ArrowUp: 'u', KeyW: 'u', ArrowDown: 'd', KeyS: 'd'
   };
   const keys = { l: false, r: false, u: false, d: false };
   function updateInput() {
     const ix = (keys.r ? 1 : 0) - (keys.l ? 1 : 0);
     const iy = (keys.d ? 1 : 0) - (keys.u ? 1 : 0);
-    const m = Math.hypot(ix, iy) || 1;
+    const m = Math.sqrt(ix * ix + iy * iy) || 1;
     CONTROL.ix = ix / m; CONTROL.iy = iy / m;
   }
-  function clearKeys() {
-    keys.l = keys.r = keys.u = keys.d = false;
-    CONTROL.ix = 0; CONTROL.iy = 0;
-  }
+  function clearKeys() { keys.l = keys.r = keys.u = keys.d = false; CONTROL.ix = 0; CONTROL.iy = 0; }
+
   const gameBtn = document.getElementById('gameBtn');
   function setGame(on) {
     CONTROL.active = on;
+    if (world && world.accent) world.accent.driven = on;
     if (!on) clearKeys();
-    gameBtn.classList.toggle('on', on);
-    gameBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    if (gameBtn) {
+      gameBtn.classList.toggle('on', on);
+      gameBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+    }
   }
-  gameBtn.addEventListener('click', () => setGame(!CONTROL.active));
+  if (gameBtn) gameBtn.addEventListener('click', () => setGame(!CONTROL.active));
   window.addEventListener('keydown', (e) => {
     if (!CONTROL.active) return;
     if (e.key === 'Escape') { setGame(false); return; }
     if (e.ctrlKey || e.metaKey || e.altKey) return;
     const dir = DIR_BY_CODE[e.code];
     if (!dir) return;
-    if (e.code.startsWith('Arrow')) e.preventDefault();
+    if (e.code.indexOf('Arrow') === 0) e.preventDefault();
     keys[dir] = true; updateInput();
   });
   window.addEventListener('keyup', (e) => {
@@ -2558,7 +2489,6 @@ mount('#contact-links', DATA.links.map((l) => h`
     if (!dir) return;
     keys[dir] = false; updateInput();
   });
-  // Alt-tabbing away while holding a key never delivers the keyup.
   window.addEventListener('blur', clearKeys);
   document.addEventListener('visibilitychange', () => { if (document.hidden) clearKeys(); });
 })();

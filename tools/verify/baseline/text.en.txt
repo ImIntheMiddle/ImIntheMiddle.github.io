@@ -1,5 +1,5 @@
 Skip to content
-🎮 Control the orange pedestrian
+Walk into the crowd
 H. Taketsugu · 武次 広夢
 News
 Research
@@ -136,6 +136,6 @@ GitHub
 LinkedIn
 X
 CV
-↑ The scene above is a live Social Force Model simulation. People, a car, and a delivery robot pursue goals while avoiding one another and scattered street objects, and each one fans out a few plausible futures — the trajectory forecasting I study, quietly running behind everything else on the page.
+↑ Behind this page, a crowd is crossing. Every walker anticipates when a collision would happen rather than reacting to how close someone is, following the power law Karamouzas, Skinner and Guy fitted to real pedestrians (PRL 113, 2014) — so paths that merely pass close by are ignored, and a real collision course is answered early and to one side. Nothing is drawn by hand and no route is scripted: the lanes, the wake behind each pillar, the way a pair walking abreast breaks into single file when it gets tight, all fall out of the forces. The orange walker also forecasts its own next few seconds, rolled out through the same model against the crowd actually around it.
 © 2026 Hiromu Taketsugu · 武次 広夢
 Built around pedestrian trajectory forecasting
