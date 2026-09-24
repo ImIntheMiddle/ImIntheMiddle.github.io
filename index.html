@@ -423,14 +423,14 @@ const DATA = {
   /* Hero: no paper card. Rather than haloing every glyph -- which fringes
      badly at 108px and still leaves accent text short of contrast -- light a
      soft clearing in the scene and set the type on that. */
-  .hero-block .wrap { position: relative; }
-  .hero-block .wrap::before {
-    content: ""; position: absolute; inset: -6% -10% -10%; z-index: -1;
+  .hero-block { position: relative; }
+  .hero-block::before {
+    content: ""; position: absolute; inset: -6% 0 -12%; z-index: 1;
     pointer-events: none;
-    background: radial-gradient(118% 88% at 34% 44%,
-      rgba(var(--paper-rgb), 0.94) 0%,
-      rgba(var(--paper-rgb), 0.74) 44%,
-      rgba(var(--paper-rgb), 0) 76%);
+    background: radial-gradient(53% 49% at 28% 51%,
+      rgba(var(--paper-rgb), 0.96) 0%,
+      rgba(var(--paper-rgb), 0.90) 50%,
+      rgba(var(--paper-rgb), 0) 100%);
   }
   .hero-block .wrap {
     max-width: 1200px;
@@ -518,6 +518,10 @@ const DATA = {
      Hero — 12-col grid, asymmetric
      ==================================================================== */
   .hero { padding: clamp(70px, 12vh, 140px) 0 clamp(50px, 8vh, 90px); }
+  /* Everything the hero says sits in the left seven columns. The right of
+     the frame is left to the simulation -- it is the only place on the page
+     where the drawing is seen at full width, and a paper wash wide enough to
+     carry the meta rail across to column twelve erased it. */
   .hero-grid {
     display: grid;
     grid-template-columns: repeat(12, 1fr);
@@ -525,7 +529,8 @@ const DATA = {
     row-gap: clamp(18px, 3vh, 32px);
   }
   .eyebrow {
-    grid-column: 1 / -1;
+    grid-column: 1 / 8;
+    order: 0;
     font-family: var(--font-mono);
     font-size: 12px;
     letter-spacing: 0.14em;
@@ -537,7 +542,8 @@ const DATA = {
     content: ""; width: 40px; height: 1px; background: var(--accent);
   }
   h1.name {
-    grid-column: 1 / 9;
+    grid-column: 1 / 8;
+    order: 1;
     font-family: var(--font-sans);
     font-size: clamp(48px, 7.4vw, 108px);
     font-weight: 700;
@@ -558,11 +564,14 @@ const DATA = {
     margin-top: 22px;
   }
   .side-rail {
-    grid-column: 9 / -1;
-    padding-top: 14px;
-    border-left: 1px solid var(--hairline);
-    padding-left: 22px;
-    display: flex; flex-direction: column; gap: 16px;
+    grid-column: 1 / 8;
+    order: 3;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(14px, 2vw, 26px);
+    border-top: 1px solid var(--hairline);
+    padding-top: 18px;
+    margin-top: 6px;
   }
   .side-rail .k {
     font-family: var(--font-mono);
@@ -578,7 +587,8 @@ const DATA = {
   }
   .side-rail .v b { color: var(--accent-text); font-weight: 600; }
   .lede {
-    grid-column: 1 / 9;
+    grid-column: 1 / 8;
+    order: 2;
     font-size: clamp(17px, 1.7vw, 22px);
     line-height: 1.5;
     color: var(--ink);
@@ -591,7 +601,8 @@ const DATA = {
     font-weight: 600;
   }
   .chips {
-    grid-column: 1 / -1;
+    grid-column: 1 / 8;
+    order: 4;
     display: flex; gap: 10px; flex-wrap: wrap;
     margin-top: 20px;
   }
@@ -612,8 +623,9 @@ const DATA = {
 
   /* Mission band */
   .mission {
-    grid-column: 1 / -1;
-    margin-top: clamp(38px, 6vh, 62px);
+    grid-column: 1 / 8;
+    order: 5;
+    margin-top: clamp(30px, 5vh, 48px);
     padding: clamp(24px, 4vh, 34px) 0;
     border-top: 1px solid var(--hairline);
     border-bottom: 1px solid var(--hairline);
@@ -1178,18 +1190,12 @@ const DATA = {
       box-shadow: none;
     }
     .hero-grid { grid-template-columns: 1fr; row-gap: 22px; }
+    .eyebrow, .lede, .chips, .mission, .side-rail { grid-column: 1; }
+    .side-rail { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 26px; }
     h1.name { grid-column: 1; font-size: clamp(40px, 12vw, 66px); }
     h1.name .lower { display: inline; margin-left: 0.2em; }
     h1.name small { font-size: 15px; margin-top: 16px; }
-    .side-rail {
-      grid-column: 1;
-      border-left: none;
-      border-top: 1px solid var(--hairline);
-      padding-left: 0; padding-top: 20px;
-      flex-direction: row; flex-wrap: wrap; gap: 22px 32px;
-    }
-    .side-rail > div { flex: 1 1 auto; }
-    .lede { grid-column: 1; font-size: 17px; }
+    .lede { font-size: 17px; }
     .mission { grid-template-columns: 1fr; gap: 12px; }
     .sec-head { grid-template-columns: 44px 1fr; gap: 14px; }
     .sec-head .note { grid-column: 2; margin-top: -8px; }
