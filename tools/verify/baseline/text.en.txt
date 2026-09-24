@@ -29,8 +29,8 @@ Mission
 Through technology, to eliminate preventable deaths.
 00
 About
-I am a Ph.D. student (D2) at Toyota Technological Institute, advised by Prof. Norimichi Ukita in the Intelligent Information Media Lab. My research builds human- and scene-interactive, physics-aware systems for predicting how people move.
-I am a JSPS Research Fellow (DC1) and have published as first author at top-tier venues including CVPR and WACV. I spent a term as a visiting student at TTI Chicago with Prof. Matthew R. Walter, and completed a research internship at Woven by Toyota. I serve the community as Technical Chair for ACCV 2026 and as a reviewer for T-PAMI and CVIU.
+I am a Ph.D. student (D2) at Toyota Technological Institute, advised by Prof. Norimichi Ukita in the Intelligent Information Media Lab. I work on predicting how people move — and on one claim in particular: a predicted path should be one a body could actually walk. A model tuned only for statistical likelihood will happily produce motion no person could perform, and a robot that trusts it will act on that.
+So I keep prediction tied to the thing that is doing the moving: physics, locomotion, and the people already in the scene. The aim is not a better number on a benchmark, but a machine that can cross a crowded space without making it more dangerous — which is why the work runs through embodiment and social navigation rather than forecasting alone.
 01
 What's New
 2026 / 08INTERNCompleted a research internship at Woven by Toyota
