@@ -1655,11 +1655,16 @@ const V = {
   trailAlpha: 0.56,    // light laid down per pass -- short trails, vivid
   accentAlpha: 0.80,
   headScale: 0.078,    // head radius, in metres-to-px units
-  headVary: [0.62, 1.5], // and a wide spread, so the crowd is not uniform
+  // Marker size spans nearly six to one, and the draw is biased small: a
+  // uniform pick over a wide range still reads as "all about the same size"
+  // because most of the range sits in the middle. Squaring it gives a crowd
+  // of mostly small marks with a few that carry real weight.
+  headVary: [0.40, 2.30],
+  headBias: 2.0,
   lineScale: 1 / 36,   // trail width, likewise
-  // Three weights rather than one. A field of identical strokes reads as
-  // noise; a little variation reads as a drawing.
-  weights: [0.72, 1.0, 1.42],
+  // Trail weight follows the marker rather than being rolled separately, so
+  // a walker who reads as heavy leaves a heavy line.
+  weights: [0.58, 1.0, 1.62],
   // Hue is assigned by direction of travel: warm going one way, cool going
   // the other. That keeps the thing colour was hiding -- which stream a
   // walker belongs to, and therefore where the lanes are -- while still
@@ -1842,12 +1847,17 @@ function makeAgent(world, rnd) {
     r: P.radius[0] + rnd() * (P.radius[1] - P.radius[0]),
     pref: P.speedPref[0] + rnd() * (P.speedPref[1] - P.speedPref[0]),
     group: -1, side: 1, flow: 0, phase: 0, age: 0, life: 0,
-    wt: (rnd() * 3) | 0,
     hue: (rnd() * 4) | 0,
-    hs: V.headVary[0] + rnd() * (V.headVary[1] - V.headVary[0]),
+    hs: 0, wt: 0,
     hot: 0,
     px: 0, py: 0, alpha: 0, accent: false, driven: false
   };
+  const t = Math.pow(rnd(), V.headBias);
+  a.hs = V.headVary[0] + (V.headVary[1] - V.headVary[0]) * t;
+  a.wt = a.hs < 0.85 ? 0 : a.hs < 1.45 ? 1 : 2;
+  // Physical size follows the mark. A walker drawn large that slips through
+  // a gap a small one could not would read as a cheat.
+  a.r = P.radius[0] + (P.radius[1] - P.radius[0]) * t;
   spawn(world, rnd, a);
   a.px = a.x; a.py = a.y;
   return a;
