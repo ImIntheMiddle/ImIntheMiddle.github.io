@@ -1,6 +1,7 @@
 #awards
 #life
 #main
+#media
 #news
 #research
 #service
@@ -27,6 +28,7 @@ https://openaccess.thecvf.com/content/WACV2026/papers/Tokoro_MMCM_Multimodality-
 https://scholar.google.co.jp/citations?user=HkFAVbcAAAAJ
 https://twitter.com/ImlntheMiddle
 https://www.linkedin.com/in/ImIntheMiddle/
+https://www.toyota-ti.ac.jp/news/checktti/002900.html
 https://youtu.be/OYLDYinc9DU
 mailto:sd25502@toyota-ti.ac.jp
 static/uploads/resume.pdf
