@@ -1,7 +1,6 @@
 Skip to content
 H. Taketsugu · 武次 広夢
 News
-Research
 Publications
 Awards
 Service
@@ -37,17 +36,6 @@ What's New
 2025 / 08SERVICEAppointed Technical Chair for ACCV 2026
 2025 / 02CVPR'25EmLoco accepted to CVPR 2025 — arXiv
 02
-Research Focus
-/ 01
-Human Motion Estimation
-Estimating how people are moving, from video and other sensors. In the real world that means occlusion and crowds.
-/ 02
-Human Motion Prediction
-Forecasting how people move next. It depends on who and what is around them, and rarely has one right answer.
-/ 03
-Physical AI
-AI that acts under the constraints of a body and of physics, among people, to reduce preventable deaths.
-03
 Selected Publications
 Full list on Scholar →
 CVPR 2025 · poster · 22.1% accept
@@ -89,7 +77,7 @@ arXiv preprint · co-author
 Human Motion Prediction via Test-domain-aware Adaptation with Easily-available Human Motions Estimated from Videos
 K. Shimbo, H. Taketsugu, N. Ukita
 arXiv
-04
+03
 Awards & Honors
 2026
 IEEE Nagoya Section International Conference Research Presentation AwardFor EmLoco (CVPR 2025)
@@ -105,7 +93,7 @@ JSPS Research Fellowship for Young Scientists (DC1)Japan Society for the Promoti
 Outstanding Student AwardThe Society of Instrument and Control Engineers (SICE)
 2022
 Outstanding Graduate — top 1% of the cohortGlobal Consumer Intelligence (GCI) 2021 Winter · The University of Tokyo
-05
+04
 Service & Teaching
 2026
 Technical Chair — ACCV 2026Asian Conference on Computer Vision · Osaka, December 2026
@@ -117,7 +105,7 @@ Teaching AssistantToyota Technological Institute · Face Recognition · AI & Dee
 Course material — Experiments in Artificial Intelligence & Deep LearningToyota Technological Institute · 2025 academic year
 2024
 Course material — Experiments in Artificial Intelligence & Deep LearningToyota Technological Institute · 2024 academic year
-06
+05
 Experience
 2025.04 –
 Ph.D. student, Information-Aided TechnologyToyota Technological Institute · Intelligent Information Media Lab
@@ -137,7 +125,7 @@ Teaching Assistant — Global Consumer Intelligence (GCI)The University of Tokyo
 Research InternToyota Central R&D Labs., Inc.
 2019.04 – 2023.03
 B.Eng., Electronics and Information EngineeringToyota Technological Institute · ranked 1st of 83 · minor in Mechanical Engineering
-07
+06
 Talks & Presentations
 MIRU 2025 · Invited TalkPhysical Plausibility-aware Trajectory Prediction via Locomotion Embodiment
 The 28th Meeting on Image Recognition and Understanding · July 2025
@@ -145,7 +133,7 @@ Toyota Frontier Research Center · Invited TalkHuman Trajectory Prediction for S
 Tech meetup · May 2024
 NTT Atsugi R&D Center · Invited TalkComputer Vision for Social Navigation
 NTT, Inc. · May 2024
-08
+07
 Media & Coverage
 Doctoral student Hiromu Taketsugu receives the IEEE Nagoya Section International Conference Research Presentation AwardToyota Technological Institute2026 / 05
 Let's talk.

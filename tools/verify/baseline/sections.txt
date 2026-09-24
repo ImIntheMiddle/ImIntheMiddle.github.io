@@ -1,9 +1,8 @@
 about	00
 news	01
-research	02
-work	03
-awards	04
-service	05
-timeline	06
-talks	07
-media	08
+work	02
+awards	03
+service	04
+timeline	05
+talks	06
+media	07

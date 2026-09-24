@@ -1,7 +1,6 @@
 本文へスキップ
 H. Taketsugu · 武次 広夢
 最新情報
-研究
 論文
 受賞
 活動
@@ -37,17 +36,6 @@ X
 2025 / 08SERVICEACCV 2026 の Technical Chair に就任
 2025 / 02CVPR'25EmLoco が CVPR 2025 に採択 — arXiv
 02
-研究の柱
-/ 01
-人の動きの推定
-映像やセンサから、人がいまどう動いているかを捉える。実環境では、隠れも混雑もついて回る。
-/ 02
-人の動きの予測
-人が次にどう動くかを予測する。周りの人や場に左右され、正解は一つとは限らない。
-/ 03
-Physical AI
-身体と物理の制約のもとで動くAI。人のいる空間で、避けられる死を減らすために。
-03
 主要論文
 全業績は Scholar へ →
 CVPR 2025 · poster · 22.1% accept
@@ -89,7 +77,7 @@ arXiv preprint · co-author
 Human Motion Prediction via Test-domain-aware Adaptation with Easily-available Human Motions Estimated from Videos
 K. Shimbo, H. Taketsugu, N. Ukita
 arXiv
-04
+03
 受賞・助成
 2026
 IEEE名古屋支部 国際会議研究発表賞EmLoco (CVPR 2025) に対して
@@ -105,7 +93,7 @@ Best Poster Award — MVA 2025共著 · 多人数姿勢推定の新規評価指�
 優秀学生賞計測自動制御学会 (SICE)
 2022
 優秀修了生 — 修了生の上位1%グローバル消費インテリジェンス寄附講座 (GCI) 2021 Winter · 東京大学
-05
+04
 学会活動・教育
 2026
 Technical Chair — ACCV 2026アジアコンピュータビジョン会議 · 大阪 · 2026年12月
@@ -117,7 +105,7 @@ Technical Chair — ACCV 2026アジアコンピュータビジョン会議 · �
 実験教材 — Experiments in Artificial Intelligence & Deep Learning豊田工業大学 · 2025年度
 2024
 実験教材 — Experiments in Artificial Intelligence & Deep Learning豊田工業大学 · 2024年度
-06
+05
 経歴
 2025.04 –
 博士後期課程 — 情報援用工学専攻豊田工業大学 · 知能情報メディア研究室
@@ -137,7 +125,7 @@ Technical Chair — ACCV 2026アジアコンピュータビジョン会議 · �
 研究インターン株式会社 豊田中央研究所
 2019.04 – 2023.03
 学士課程 — 先端工学基礎学科 電子情報分野豊田工業大学 · 卒業時成績 83名中1位 · 副専攻 機械システム分野
-07
+06
 講演・発表
 MIRU 2025 · 招待講演Physical Plausibility-aware Trajectory Prediction via Locomotion Embodiment
 第28回 画像の認識・理解シンポジウム · 2025年7月
@@ -145,7 +133,7 @@ Toyota フロンティア研究センター · 招待講演Human Trajectory Pred
 技術交流会 · 2024年5月
 NTT 厚木研究開発センタ · 招待講演Computer Vision for Social Navigation
 日本電信電話株式会社 · 2024年5月
-08
+07
 メディア掲載
 【学生受賞】博士後期課程2年 武次広夢さんが IEEE 名古屋支部「国際会議研究発表賞」を受賞豊田工業大学2026 / 05
 お気軽にご連絡を。

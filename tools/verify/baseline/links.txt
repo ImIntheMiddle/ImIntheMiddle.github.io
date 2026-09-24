@@ -2,7 +2,6 @@
 #main
 #media
 #news
-#research
 #service
 #talks
 #timeline

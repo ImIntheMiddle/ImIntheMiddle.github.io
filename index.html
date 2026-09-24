@@ -180,21 +180,6 @@ const DATA = {
     ]
   },
 
-  /* The three terms the About names, in the same order. Each body describes
-     the area, not a paper: the previous set summarised EmLoco twice and left
-     the first-author estimation work with nowhere to sit. */
-  research: [
-    { title: { en: 'Human Motion Estimation', ja: '人の動きの推定' },
-      body: { en: 'Estimating how people are moving, from video and other sensors. In the real world that means occlusion and crowds.',
-              ja: '映像やセンサから、人がいまどう動いているかを捉える。実環境では、隠れも混雑もついて回る。' } },
-    { title: { en: 'Human Motion Prediction', ja: '人の動きの予測' },
-      body: { en: 'Forecasting how people move next. It depends on who and what is around them, and rarely has one right answer.',
-              ja: '人が次にどう動くかを予測する。周りの人や場に左右され、正解は一つとは限らない。' } },
-    { title: 'Physical AI',
-      body: { en: 'AI that acts under the constraints of a body and of physics, among people, to reduce preventable deaths.',
-              ja: '身体と物理の制約のもとで動くAI。人のいる空間で、避けられる死を減らすために。' } }
-  ],
-
   awards: [
     { year: '2026',
       name: { en: 'IEEE Nagoya Section International Conference Research Presentation Award',
@@ -339,7 +324,6 @@ const DATA = {
   sections: [
     { id: 'about',    title: { en: 'About', ja: '自己紹介' } },
     { id: 'news',     title: { en: "What's New", ja: '最新情報' },            nav: { en: 'News', ja: '最新情報' } },
-    { id: 'research', title: { en: 'Research Focus', ja: '研究の柱' },        nav: { en: 'Research', ja: '研究' } },
     { id: 'work',     title: { en: 'Selected Publications', ja: '主要論文' }, nav: { en: 'Publications', ja: '論文' },
       note: { href: 'https://scholar.google.co.jp/citations?user=HkFAVbcAAAAJ',
               label: { en: 'Full list on Scholar →', ja: '全業績は Scholar へ →' } } },
@@ -803,34 +787,6 @@ const DATA = {
   /* ====================================================================
      Research Focus — 3 hairline columns
      ==================================================================== */
-  .focus { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
-  .focus .cell {
-    padding: 4px 26px 4px 0;
-    border-right: 1px solid var(--hairline);
-  }
-  .focus .cell + .cell { padding-left: 26px; }
-  .focus .cell:last-child { border-right: none; padding-right: 0; }
-  .focus .cell .k {
-    font-family: var(--font-mono);
-    font-size: 11.5px;
-    color: var(--accent-text);
-    letter-spacing: 0.08em;
-    margin-bottom: 14px;
-  }
-  .focus .cell h3 {
-    font-family: var(--font-sans);
-    font-weight: 600;
-    font-size: 19px;
-    letter-spacing: -0.015em;
-    margin-bottom: 10px;
-  }
-  .focus .cell p {
-    font-size: 14px;
-    color: var(--ink-dim);
-    line-height: 1.6;
-    max-width: 34ch;
-  }
-
   /* ====================================================================
      Publications
      ==================================================================== */
@@ -1230,13 +1186,13 @@ const DATA = {
     font-variant-numeric: tabular-nums;
   }
   h1, h2, h3, .contact-head, .mission .stmt, .lede { text-wrap: balance; }
-  p, .bio-text p, .life-item p, .focus .cell p { text-wrap: pretty; }
+  p, .bio-text p, .life-item p { text-wrap: pretty; }
 
   /* The display settings are tuned for Latin; both are wrong for Japanese. */
   [data-lang="ja"] h1.name { letter-spacing: 0.01em; line-height: 1.16; }
   [data-lang="ja"] { font-feature-settings: "palt" 1; }
   [data-lang="ja"] .lede, [data-lang="ja"] .bio-text p,
-  [data-lang="ja"] .life-item p, [data-lang="ja"] .focus .cell p { line-height: 1.85; }
+  [data-lang="ja"] .life-item p { line-height: 1.85; }
 
   .reveal { opacity: 1; transform: none; }
   html.js .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.7s cubic-bezier(0.2,0.7,0.2,1), transform 0.7s cubic-bezier(0.2,0.7,0.2,1); }
@@ -1273,12 +1229,6 @@ const DATA = {
     .bio .portrait { width: 120px; height: 120px; }
     .news li { grid-template-columns: 1fr; gap: 6px; padding: 12px 0; }
     .news li .d { font-size: 11.5px; }
-    .focus { grid-template-columns: 1fr; }
-    .focus .cell {
-      padding: 20px 0; border-right: none; border-top: 1px solid var(--hairline);
-    }
-    .focus .cell:first-child { border-top: none; padding-top: 0; }
-    .focus .cell + .cell { padding-left: 0; }
     .pub { grid-template-columns: 1fr; gap: 16px; }
     .pub .pub-body { grid-column: auto; }
     .pub .thumb { width: 100%; max-width: 280px; }
@@ -1511,15 +1461,6 @@ const BODY = {
         <ul>${DATA.news.map(newsItem)}</ul>
       </div>`,
 
-  research: () => h`
-      <div class="focus reveal">${DATA.research.map((c, i) => h`
-        <div class="cell">
-          <div class="k">/ ${String(i + 1).padStart(2, '0')}</div>
-          <h3>${t(c.title)}</h3>
-          <p>${t(c.body)}</p>
-        </div>`)}
-      </div>`,
-
   work: () => DATA.publications.map((p) => pub(p, DATA.me)),
 
   awards: () => entryList(DATA.awards),
@@ -1549,7 +1490,6 @@ const BODY = {
 const HAS = {
   about: () => DATA.about.paras.length,
   news: () => DATA.news.length,
-  research: () => DATA.research.length,
   work: () => DATA.publications.length,
   awards: () => DATA.awards.length,
   service: () => DATA.service.length,
