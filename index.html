@@ -94,6 +94,44 @@ const DATA = {
     { date: 'placeholder', cls: 'verify',
       text: { en: 'Add your latest updates here. Newest first keeps the page feeling alive.',
               ja: '最新の更新をここに。新しい順に並べると活きのいいページになります。' } }
+  ],
+
+  /* Titles, authors, venues and URLs are the same in both languages, so a
+     publication carries no translated fields at all. `me` is matched against
+     `authors` to bold the right name. `rate`, `titleNote`, `thumbFile` and
+     `image` are all optional — leave one out and its markup is not emitted. */
+  me: 'H. Taketsugu',
+  publications: [
+    { venue: 'CVPR 2025', rate: 'poster · 22% accept',
+      title: 'Physical Plausibility-aware Trajectory Prediction via Locomotion Embodiment',
+      authors: ['H. Taketsugu', 'T. Oba', 'T. Maeda', 'S. Nobuhara', 'N. Ukita'],
+      thumbFile: 'emloco.png',
+      links: [
+        { label: 'arXiv', href: 'https://arxiv.org/abs/2503.17267' },
+        { label: 'Project', href: '#' },
+        { label: 'Code', href: '#' }
+      ] },
+
+    { venue: 'WACV 2026', rate: 'co-author',
+      title: 'MMCM', titleNote: '— confirm full title',
+      authors: ['K. Shimbo', 'H. Taketsugu', 'N. Ukita'],
+      thumbFile: 'mmcm.png',
+      links: [ { label: 'arXiv', href: '#' } ] },
+
+    { venue: 'arXiv preprint',
+      title: 'Human Motion Prediction via Test-domain-aware Adaptation with Easily-available Human Motions Estimated from Videos',
+      authors: ['K. Shimbo', 'H. Taketsugu', 'N. Ukita'],
+      links: [ { label: 'arXiv', href: 'https://arxiv.org/abs/2505.07301' } ] },
+
+    { venue: 'MVA 2023', rate: 'oral · 17% accept',
+      title: 'Uncertainty Criteria in Active Transfer Learning for Efficient Video-Specific Human Pose Estimation',
+      authors: ['H. Taketsugu', 'N. Ukita'],
+      links: [ { label: 'IEEE', href: 'https://ieeexplore.ieee.org/abstract/document/10215565' } ] },
+
+    { venue: 'WACV 2024', rate: 'poster · 41% accept',
+      title: 'Active Transfer Learning for Efficient Video-Specific Human Pose Estimation',
+      authors: ['H. Taketsugu', 'N. Ukita'],
+      links: [ { label: 'arXiv', href: 'https://arxiv.org/abs/2311.05041' } ] }
   ]
 };
 </script>
@@ -1043,40 +1081,7 @@ const DATA = {
         <span class="note"><a href="https://scholar.google.co.jp/citations?user=HkFAVbcAAAAJ" target="_blank" rel="noopener"><span class="en">Full list on Scholar →</span><span class="ja">全業績は Scholar へ →</span></a></span>
       </div>
 
-      <div class="pub reveal"><div class="thumb"><div class="ph">teaser<br>(emloco.png)</div></div><div>
-        <span class="venue">CVPR 2025 <span class="rate">· poster · 22% accept</span></span>
-        <h3>Physical Plausibility-aware Trajectory Prediction via Locomotion Embodiment</h3>
-        <div class="auth"><span class="me">H. Taketsugu</span>, T. Oba, T. Maeda, S. Nobuhara, N. Ukita</div>
-        <div class="pub-links"><a href="https://arxiv.org/abs/2503.17267" target="_blank" rel="noopener">arXiv</a><a href="#">Project</a><a href="#">Code</a></div>
-      </div></div>
-
-      <div class="pub reveal"><div class="thumb"><div class="ph">teaser<br>(mmcm.png)</div></div><div>
-        <span class="venue">WACV 2026 <span class="rate">· co-author</span></span>
-        <h3>MMCM <span class="verify">— confirm full title</span></h3>
-        <div class="auth">K. Shimbo, <span class="me">H. Taketsugu</span>, N. Ukita</div>
-        <div class="pub-links"><a href="#" target="_blank" rel="noopener">arXiv</a></div>
-      </div></div>
-
-      <div class="pub reveal"><div class="thumb"><div class="ph">teaser image</div></div><div>
-        <span class="venue">arXiv preprint</span>
-        <h3>Human Motion Prediction via Test-domain-aware Adaptation with Easily-available Human Motions Estimated from Videos</h3>
-        <div class="auth">K. Shimbo, <span class="me">H. Taketsugu</span>, N. Ukita</div>
-        <div class="pub-links"><a href="https://arxiv.org/abs/2505.07301" target="_blank" rel="noopener">arXiv</a></div>
-      </div></div>
-
-      <div class="pub reveal"><div class="thumb"><div class="ph">teaser image</div></div><div>
-        <span class="venue">MVA 2023 <span class="rate">· oral · 17% accept</span></span>
-        <h3>Uncertainty Criteria in Active Transfer Learning for Efficient Video-Specific Human Pose Estimation</h3>
-        <div class="auth"><span class="me">H. Taketsugu</span>, N. Ukita</div>
-        <div class="pub-links"><a href="https://ieeexplore.ieee.org/abstract/document/10215565" target="_blank" rel="noopener">IEEE</a></div>
-      </div></div>
-
-      <div class="pub reveal"><div class="thumb"><div class="ph">teaser image</div></div><div>
-        <span class="venue">WACV 2024 <span class="rate">· poster · 41% accept</span></span>
-        <h3>Active Transfer Learning for Efficient Video-Specific Human Pose Estimation</h3>
-        <div class="auth"><span class="me">H. Taketsugu</span>, N. Ukita</div>
-        <div class="pub-links"><a href="https://arxiv.org/abs/2311.05041" target="_blank" rel="noopener">arXiv</a></div>
-      </div></div>
+      <div id="pub-list"></div>
     </div>
   </section>
 
@@ -1270,7 +1275,23 @@ function mount(sel, tpl) {
 /* ---------- section templates ---------- */
 const newsItem = (n) => h`<li><span class="d">${n.date}</span><span class="t${n.cls ? ' ' + n.cls : ''}">${n.tag ? h`<span class="tag">${n.tag}</span>` : ''}${t(n.text, n.refs)}</span></li>`;
 
+const pubThumb = (p) => p.image
+  ? h`<img src="${p.image.src}" alt="${p.image.alt}" loading="lazy" decoding="async">`
+  : h`<div class="ph">${p.thumbFile ? h`teaser<br>(${p.thumbFile})` : 'teaser image'}</div>`;
+
+const pubAuthors = (p, me) => p.authors.map((a, i) =>
+  h`${i ? ', ' : ''}${a === me ? h`<span class="me">${a}</span>` : a}`);
+
+const pub = (p, me) => h`
+      <div class="pub reveal"><div class="thumb">${pubThumb(p)}</div><div>
+        <span class="venue">${p.venue}${p.rate ? h` <span class="rate">· ${p.rate}</span>` : ''}</span>
+        <h3>${p.title}${p.titleNote ? h` <span class="verify">${p.titleNote}</span>` : ''}</h3>
+        <div class="auth">${pubAuthors(p, me)}</div>
+        <div class="pub-links">${p.links.map((l) => ref(l, 'en'))}</div>
+      </div></div>`;
+
 mount('#news-list', DATA.news.map(newsItem));
+mount('#pub-list', DATA.publications.map((p) => pub(p, DATA.me)));
 
 /* ====================================================================
    LANGUAGE toggle
