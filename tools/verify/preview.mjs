@@ -190,6 +190,12 @@ for (let y = 0; y < PX_H; y++) {
     if (sb > 0.001) over(px, toneB, Math.min(0.92, sb));
     if (sa > 0.001) over(px, toneA, Math.min(0.94, sa));
     if (sc > 0.001) over(px, T.accent, Math.min(0.96, sc));
+    // edge fade, matching drawLive()
+    const m = Math.min(PX_W, PX_H) * 0.09;
+    const ex = Math.min(x, PX_W - 1 - x), ey = Math.min(y, PX_H - 1 - y);
+    const fx = ex < m ? 1 - ex / m : 0, fy = ey < m ? 1 - ey / m : 0;
+    const fade = Math.min(1, Math.max(fx, fy));
+    if (fade > 0) over(px, T.stage, fade);
     const o = (y * PX_W + x) * 3;
     rgb[o] = Math.round(Math.max(0, Math.min(255, px[0])));
     rgb[o + 1] = Math.round(Math.max(0, Math.min(255, px[1])));

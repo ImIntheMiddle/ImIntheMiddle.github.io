@@ -2184,7 +2184,7 @@ function forecast(world, agent, out, opts) {
   ];
 
   function resize(keep) {
-    const cap = MOBILE() ? 1.6 : 2;
+    const cap = MOBILE() ? 1.6 : 1.75;   // the trail layer is a second full-size buffer
     DPR = Math.min(window.devicePixelRatio || 1, cap);
     W = canvas.clientWidth; H = canvas.clientHeight;
     if (!W || !H) return;
@@ -2216,6 +2216,7 @@ function forecast(world, agent, out, opts) {
       ready = true;
     }
     tctx.clearRect(0, 0, W, H);
+    buildEdgeFade();
   }
 
   /* ---------- drawing ---------- */
@@ -2279,9 +2280,35 @@ function forecast(world, agent, out, opts) {
     }
   }
 
+  let edgeFade = null;
+  function buildEdgeFade() {
+    // Four short gradients in the stage colour. Without them every path is
+    // cut off square at the frame; with them the crowd walks out of view.
+    const m = Math.round(Math.min(W, H) * 0.09);
+    const c = document.createElement('canvas');
+    c.width = Math.max(1, Math.round(W)); c.height = Math.max(1, Math.round(H));
+    const g = c.getContext('2d');
+    const bands = [
+      [0, 0, m, H, 'x', 1], [W - m, 0, m, H, 'x', -1],
+      [0, 0, W, m, 'y', 1], [0, H - m, W, m, 'y', -1]
+    ];
+    for (const [x, y, bw, bh, axis, dir] of bands) {
+      const grad = axis === 'x'
+        ? g.createLinearGradient(dir > 0 ? x : x + bw, 0, dir > 0 ? x + bw : x, 0)
+        : g.createLinearGradient(0, dir > 0 ? y : y + bh, 0, dir > 0 ? y + bh : y);
+      grad.addColorStop(0, rgba(STAGE, 1));
+      grad.addColorStop(0.55, rgba(STAGE, 0.45));
+      grad.addColorStop(1, rgba(STAGE, 0));
+      g.fillStyle = grad;
+      g.fillRect(x, y, bw, bh);
+    }
+    edgeFade = c;
+  }
+
   function drawLive(control) {
     ctx.clearRect(0, 0, W, H);
     ctx.drawImage(trail, 0, 0, W, H);
+    if (edgeFade) ctx.drawImage(edgeFade, 0, 0, W, H);
 
     // obstacles
     ctx.lineWidth = 1.15;
@@ -2399,7 +2426,9 @@ function forecast(world, agent, out, opts) {
     const n = Math.round(seconds / STEP);
     for (let i = 0; i < n; i++) step(world, STEP, CONTROL);
     tctx.clearRect(0, 0, W, H);
-    for (let i = 0; i < 150; i++) { step(world, STEP, CONTROL); strokeTrails(); }
+    // Lay down most of a trail's worth of history, so the first painted frame
+    // is a scene with a past rather than one that starts drawing itself.
+    for (let i = 0; i < 420; i++) { step(world, STEP, CONTROL); strokeTrails(); }
     drawLive(CONTROL);
   }
 
@@ -2416,8 +2445,11 @@ function forecast(world, agent, out, opts) {
 
   new MutationObserver(() => {
     loadPalette();
+    buildEdgeFade();
     tctx.clearRect(0, 0, W, H);
-    if (reduce) settle(0); else { for (let i = 0; i < 120; i++) { step(world, STEP, CONTROL); strokeTrails(); } drawLive(CONTROL); }
+    if (reduce) { settle(0); return; }
+    for (let i = 0; i < 420; i++) { step(world, STEP, CONTROL); strokeTrails(); }
+    drawLive(CONTROL);
   }).observe(root, { attributes: true, attributeFilter: ['data-theme'] });
 
   document.addEventListener('visibilitychange', () => {
