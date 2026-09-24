@@ -163,6 +163,21 @@ const DATA = {
       links: [ { label: 'arXiv', href: 'https://arxiv.org/abs/2505.07301' } ] }
   ],
 
+  /* One list, rendered twice: short labels in the hero, fuller ones in the
+     footer. These used to be two hand-kept copies of the same six URLs. */
+  links: [
+    { label: 'Email', footLabel: 'sd25502@toyota-ti.ac.jp',
+      href: 'mailto:sd25502@toyota-ti.ac.jp', primary: true },
+    { label: 'Scholar', footLabel: 'Google Scholar',
+      href: 'https://scholar.google.co.jp/citations?user=HkFAVbcAAAAJ' },
+    { label: 'GitHub', href: 'https://github.com/ImIntheMiddle' },
+    { label: 'LinkedIn', href: 'https://www.linkedin.com/in/ImIntheMiddle/' },
+    { label: 'X', href: 'https://twitter.com/ImlntheMiddle' },
+    // BLOCKER: static/uploads/resume.pdf is still the Hugo theme's 2020
+    // demo CV. Replace the file or delete this entry before publishing.
+    { label: 'CV', href: 'static/uploads/resume.pdf', newTab: true }
+  ],
+
   about: {
     portrait: null,
     paras: [
@@ -1100,14 +1115,7 @@ const DATA = {
           <span class="en">Teaching machines to anticipate how people move — with <em>physical plausibility</em>, embodiment, and a sense of the social.</span>
           <span class="ja">人の動きを、<em>物理的にもっともらしく</em>、身体性と社会性をふまえて予測する。そんな機械の知能をつくっています。</span>
         </p>
-        <div class="chips reveal" style="transition-delay:.18s">
-          <a class="primary" href="mailto:sd25502@toyota-ti.ac.jp">Email</a>
-          <a href="https://scholar.google.co.jp/citations?user=HkFAVbcAAAAJ" target="_blank" rel="noopener">Scholar</a>
-          <a href="https://github.com/ImIntheMiddle" target="_blank" rel="noopener">GitHub</a>
-          <a href="https://www.linkedin.com/in/ImIntheMiddle/" target="_blank" rel="noopener">LinkedIn</a>
-          <a href="https://twitter.com/ImlntheMiddle" target="_blank" rel="noopener">X</a>
-          <a href="static/uploads/resume.pdf" target="_blank" rel="noopener">CV</a>
-        </div>
+        <div class="chips reveal" id="hero-chips" style="transition-delay:.18s"></div>
         <div class="mission reveal" style="transition-delay:.22s">
           <div class="label"><span class="en">Mission</span><span class="ja">ミッション</span></div>
           <div class="stmt">
@@ -1128,14 +1136,7 @@ const DATA = {
       <div class="reveal">
         <div class="contact-head"><span class="en">Let's talk.</span><span class="ja">お気軽にご連絡を。</span></div>
         <p class="contact-sub"><span class="en">For research collaborations, social-navigation problems, academic or industry roles, or a language exchange.</span><span class="ja">研究の共同・社会的ナビゲーションの課題・アカデミアや産業界のポジション・言語交換など、何でも。</span></p>
-        <div class="contact-links">
-          <a href="mailto:sd25502@toyota-ti.ac.jp">sd25502@toyota-ti.ac.jp</a>
-          <a href="https://scholar.google.co.jp/citations?user=HkFAVbcAAAAJ" target="_blank" rel="noopener">Google Scholar</a>
-          <a href="https://github.com/ImIntheMiddle" target="_blank" rel="noopener">GitHub</a>
-          <a href="https://www.linkedin.com/in/ImIntheMiddle/" target="_blank" rel="noopener">LinkedIn</a>
-          <a href="https://twitter.com/ImlntheMiddle" target="_blank" rel="noopener">X</a>
-          <a href="static/uploads/resume.pdf" target="_blank" rel="noopener">CV</a>
-        </div>
+        <div class="contact-links" id="contact-links"></div>
       </div>
       <p class="sfm-credit reveal">
         <span class="en">↑ The scene above is a live <strong>Social Force Model</strong> simulation. People, a car, and a delivery robot pursue goals while avoiding one another and scattered street objects, and each one fans out a few plausible futures — the trajectory forecasting I study, quietly running behind everything else on the page.</span>
@@ -1179,13 +1180,12 @@ const pickLang = (f, lang) => (f && typeof f === 'object' && !(RAW in f))
   ? (lang === 'ja' && f.ja != null ? f.ja : f.en) : f;
 
 /* A ref is a link, or a plain styled span when it has no href. */
+const newTabAttr = (href, newTab) => (newTab == null ? isExternal(href) : newTab)
+  ? raw(' target="_blank" rel="noopener"') : raw('');
+
 function ref(r, lang) {
   const label = pickLang(r.label, lang);
-  if (r.href) {
-    return isExternal(r.href)
-      ? h`<a href="${r.href}" target="_blank" rel="noopener">${label}</a>`
-      : h`<a href="${r.href}">${label}</a>`;
-  }
+  if (r.href) return h`<a href="${r.href}"${newTabAttr(r.href, r.newTab)}>${label}</a>`;
   return r.cls ? h`<span class="${r.cls}">${label}</span>` : h`${label}`;
 }
 
@@ -1323,6 +1323,12 @@ mount('#sections', live.map((s, i) => h`
 
 mount('#nav-links', live.filter((s) => s.nav).map((s) => h`
       <a href="#${s.id}">${t(s.nav)}</a>`));
+
+mount('#hero-chips', DATA.links.map((l) => h`
+          <a${l.primary ? raw(' class="primary"') : ''} href="${l.href}"${newTabAttr(l.href, l.newTab)}>${l.label}</a>`));
+
+mount('#contact-links', DATA.links.map((l) => h`
+          <a href="${l.href}"${newTabAttr(l.href, l.newTab)}>${l.footLabel || l.label}</a>`));
 
 /* ====================================================================
    LANGUAGE toggle
