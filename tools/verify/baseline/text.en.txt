@@ -18,7 +18,6 @@ Fellowship
 JSPS Research Fellow (DC1)
 Base
 Nagoya, Japan
-Teaching machines to anticipate how people move — with physical plausibility, embodiment, and a sense of the social.
 Email
 Scholar
 GitHub
@@ -136,13 +135,6 @@ NTT, Inc. · May 2024
 07
 Media & Coverage
 Doctoral student Hiromu Taketsugu receives the IEEE Nagoya Section International Conference Research Presentation AwardToyota Technological Institute2026 / 05
-Let's talk.
-For research collaborations, social-navigation problems, or academic and industry roles.
-sd25502@toyota-ti.ac.jp
-Google Scholar
-GitHub
-LinkedIn
-X
 ↑ Behind this page, a crowd is crossing. Every walker anticipates when a collision would happen rather than reacting to how close someone is, following the power law Karamouzas, Skinner and Guy fitted to real pedestrians (PRL 113, 2014) — so paths that merely pass close by are ignored, and a real collision course is answered early and to one side. Nothing is drawn by hand and no route is scripted: the lanes, the wake behind each pillar, the way a pair walking abreast breaks into single file when it gets tight, all fall out of the forces. The orange walker also forecasts its own next few seconds, rolled out through the same model against the crowd actually around it.
 © 2026 Hiromu Taketsugu · 武次 広夢
 Built around pedestrian trajectory forecasting
