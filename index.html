@@ -165,11 +165,11 @@ const DATA = {
       href: 'https://scholar.google.co.jp/citations?user=HkFAVbcAAAAJ' },
     { label: 'GitHub', href: 'https://github.com/ImIntheMiddle' },
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/ImIntheMiddle/' },
-    { label: 'X', href: 'https://twitter.com/ImlntheMiddle' },
-    // BLOCKER: the file is not in the repo yet. The owner is re-exporting the
-    // CV without the personal phone number the current build prints. Drop it
-    // in at exactly this path -- verify.sh fails for as long as it is missing.
-    { label: 'CV', href: 'static/uploads/CV_Hiromu_Taketsugu.pdf', newTab: true }
+    { label: 'X', href: 'https://twitter.com/ImlntheMiddle' }
+    // A CV link belongs here, next to Scholar. It is out until an export
+    // without the personal phone number exists:
+    //   { label: 'CV', href: 'static/uploads/CV_Hiromu_Taketsugu.pdf', newTab: true }
+    // Drop the file in at that path and uncomment. verify.sh checks it exists.
   ],
 
   about: {
