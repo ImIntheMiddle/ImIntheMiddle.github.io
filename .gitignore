@@ -8,3 +8,6 @@ jsconfig.json
 node_modules/
 go.sum
 .hugo_build.lock
+
+# Local working docs (contain personal details; must not be published)
+_questionnaire.md

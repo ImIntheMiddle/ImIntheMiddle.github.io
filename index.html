@@ -3,8 +3,62 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script>
+/* Boot. Resolves theme and language before the first paint so a dark-mode
+   visitor never sees a light flash, and marks the document as script-enabled
+   so reveal animations opt in instead of hiding content when JS fails. */
+(function () {
+  var d = document.documentElement, th, lg;
+  try { th = localStorage.getItem('ht.theme'); } catch (e) {}
+  if (th !== 'light' && th !== 'dark') {
+    th = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  d.setAttribute('data-theme', th);
+  try { lg = localStorage.getItem('ht.lang'); } catch (e) {}
+  if (lg !== 'en' && lg !== 'ja') {
+    lg = /^ja\b/i.test(navigator.language || '') ? 'ja' : 'en';
+  }
+  d.setAttribute('data-lang', lg);
+  d.setAttribute('lang', lg);
+  d.classList.add('js');
+})();
+</script>
 <title>Hiromu Taketsugu — Trajectory Forecasting & Embodied AI</title>
 <meta name="description" content="Hiromu Taketsugu (武次 広夢) — Ph.D. student at Toyota Technological Institute, working on physically plausible pedestrian trajectory prediction, embodied AI, and social robot navigation.">
+<link rel="canonical" href="https://iminthemiddle.github.io/">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#fdfcf9" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#211c15" media="(prefers-color-scheme: dark)">
+<meta property="og:type" content="profile">
+<meta property="og:url" content="https://iminthemiddle.github.io/">
+<meta property="og:title" content="Hiromu Taketsugu — Trajectory Forecasting &amp; Embodied AI">
+<meta property="og:description" content="Ph.D. student at Toyota Technological Institute, working on physically plausible pedestrian trajectory prediction, embodied AI, and social robot navigation.">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="ja_JP">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:creator" content="@ImlntheMiddle">
+<!-- TODO(og-card): add og:image (1200x630 static/img/og-card.png) and switch
+     twitter:card to summary_large_image once the card artwork exists. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Hiromu Taketsugu",
+  "alternateName": "武次 広夢",
+  "jobTitle": "Ph.D. Student",
+  "url": "https://iminthemiddle.github.io/",
+  "affiliation": {
+    "@type": "CollegeOrUniversity",
+    "name": "Toyota Technological Institute"
+  },
+  "sameAs": [
+    "https://scholar.google.co.jp/citations?user=HkFAVbcAAAAJ",
+    "https://github.com/ImIntheMiddle",
+    "https://www.linkedin.com/in/ImIntheMiddle/",
+    "https://twitter.com/ImlntheMiddle"
+  ]
+}
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -731,8 +785,11 @@
   /* ====================================================================
      Reveal animation
      ==================================================================== */
-  .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.7s cubic-bezier(0.2,0.7,0.2,1), transform 0.7s cubic-bezier(0.2,0.7,0.2,1); }
-  .reveal.in { opacity: 1; transform: none; }
+  /* Content is visible by default; only a live script opts into the animation,
+     so a JS failure can never leave the page blank. */
+  .reveal { opacity: 1; transform: none; }
+  html.js .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.7s cubic-bezier(0.2,0.7,0.2,1), transform 0.7s cubic-bezier(0.2,0.7,0.2,1); }
+  html.js .reveal.in { opacity: 1; transform: none; }
 
   /* ====================================================================
      Responsive — ≤900px (tablet) and ≤640px (phone)
@@ -788,7 +845,7 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .reveal { opacity: 1; transform: none; transition: none; }
+    html.js .reveal, .reveal { opacity: 1; transform: none; transition: none; }
     html { scroll-behavior: auto; }
     .gamebtn { display: none; }
   }
@@ -1127,7 +1184,9 @@
   sync();
   btn.addEventListener('click', () => {
     const ja = root.getAttribute('data-lang') === 'ja';
-    root.setAttribute('data-lang', ja ? 'en' : 'ja');
+    const next = ja ? 'en' : 'ja';
+    root.setAttribute('data-lang', next);
+    try { localStorage.setItem('ht.lang', next); } catch (e) {}
     sync();
   });
 })();
@@ -1142,8 +1201,17 @@
   const ico = document.getElementById('themeIco');
   const sun = '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M1 12h2M21 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4"/>';
   const moon = '<path d="M21 12.8A9 9 0 1 1 11.2 3 7 7 0 0 0 21 12.8z"/>';
-  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-    root.setAttribute('data-theme', 'dark');
+  /* The boot script already resolved the initial theme. Keep following the OS
+     only while the visitor has not made an explicit choice. */
+  const stored = () => { try { return localStorage.getItem('ht.theme'); } catch (e) { return null; } };
+  if (window.matchMedia) {
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    const onOS = () => {
+      if (stored()) return;
+      root.setAttribute('data-theme', mq.matches ? 'dark' : 'light');
+      sync();
+    };
+    mq.addEventListener ? mq.addEventListener('change', onOS) : mq.addListener(onOS);
   }
   function sync() {
     const dark = root.getAttribute('data-theme') === 'dark';
@@ -1153,7 +1221,9 @@
   sync();
   btn.addEventListener('click', () => {
     const dark = root.getAttribute('data-theme') === 'dark';
-    root.setAttribute('data-theme', dark ? 'light' : 'dark');
+    const next = dark ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('ht.theme', next); } catch (e) {}
     sync();
   });
 })();
