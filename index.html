@@ -1790,13 +1790,19 @@ function buildScene(world, rnd) {
   const n = clamp(Math.round(w / 14), 2, 5);
   for (let i = 0; i < n; i++) {
     const t = n === 1 ? 0.5 : i / (n - 1);
+    // Radius is capped by the world, so a phone-shaped frame still gets
+    // something the stream has to go around rather than nothing at all.
+    const r = Math.min(1.0 + rnd() * 0.9, w * 0.13, h * 0.09);
     obs.push({
-      x: w * (0.16 + 0.68 * t) + (rnd() - 0.5) * 1.8,
+      x: w * (0.22 + 0.56 * t) + (rnd() - 0.5) * 1.6,
       y: midY + Math.sin(t * Math.PI * 1.9 + 0.4) * band + (rnd() - 0.5) * 1.0,
-      r: 1.0 + rnd() * 0.9
+      r
     });
   }
-  world.obstacles = obs.filter(o => o.x > 2 && o.x < w - 2 && o.y > 1.5 && o.y < h - 1.5);
+  // Keep the margin proportional to the obstacle, or a narrow phone-shaped
+  // world rejects every one of them and the flow has nothing to divide around.
+  world.obstacles = obs.filter(o =>
+    o.x > o.r + 0.6 && o.x < w - o.r - 0.6 && o.y > o.r + 0.6 && o.y < h - o.r - 0.6);
   void midX;
 }
 
