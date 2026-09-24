@@ -102,36 +102,65 @@ const DATA = {
      `image` are all optional — leave one out and its markup is not emitted. */
   me: 'H. Taketsugu',
   publications: [
-    { venue: 'CVPR 2025', rate: 'poster · 22% accept',
+    /* First-author work first, then co-authored, each newest first. */
+    { venue: 'CVPR 2025', rate: 'poster · 22.1% accept',
       title: 'Physical Plausibility-aware Trajectory Prediction via Locomotion Embodiment',
       authors: ['H. Taketsugu', 'T. Oba', 'T. Maeda', 'S. Nobuhara', 'N. Ukita'],
       thumbFile: 'emloco.png',
       links: [
         { label: 'arXiv', href: 'https://arxiv.org/abs/2503.17267' },
-        { label: 'Project', href: '#' },
-        { label: 'Code', href: '#' }
+        { label: 'Project', href: 'https://iminthemiddle.github.io/EmLoco-Page/' },
+        { label: 'Code', href: 'https://github.com/ImIntheMiddle/EmLoco' },
+        { label: 'Video', href: 'https://youtu.be/OYLDYinc9DU' }
       ] },
-
-    { venue: 'WACV 2026', rate: 'co-author',
-      title: 'MMCM', titleNote: '— confirm full title',
-      authors: ['K. Shimbo', 'H. Taketsugu', 'N. Ukita'],
-      thumbFile: 'mmcm.png',
-      links: [ { label: 'arXiv', href: '#' } ] },
-
-    { venue: 'arXiv preprint',
-      title: 'Human Motion Prediction via Test-domain-aware Adaptation with Easily-available Human Motions Estimated from Videos',
-      authors: ['K. Shimbo', 'H. Taketsugu', 'N. Ukita'],
-      links: [ { label: 'arXiv', href: 'https://arxiv.org/abs/2505.07301' } ] },
-
-    { venue: 'MVA 2023', rate: 'oral · 17% accept',
-      title: 'Uncertainty Criteria in Active Transfer Learning for Efficient Video-Specific Human Pose Estimation',
-      authors: ['H. Taketsugu', 'N. Ukita'],
-      links: [ { label: 'IEEE', href: 'https://ieeexplore.ieee.org/abstract/document/10215565' } ] },
 
     { venue: 'WACV 2024', rate: 'poster · 41% accept',
       title: 'Active Transfer Learning for Efficient Video-Specific Human Pose Estimation',
       authors: ['H. Taketsugu', 'N. Ukita'],
-      links: [ { label: 'arXiv', href: 'https://arxiv.org/abs/2311.05041' } ] }
+      links: [
+        { label: 'arXiv', href: 'https://arxiv.org/abs/2311.05041' },
+        { label: 'Project', href: 'https://iminthemiddle.github.io/VATL4Pose-Page/' },
+        { label: 'Code', href: 'https://github.com/ImIntheMiddle/VATL4Pose-WACV2024' }
+      ] },
+
+    { venue: 'MVA 2023', rate: 'oral',
+      title: 'Uncertainty Criteria in Active Transfer Learning for Efficient Video-Specific Human Pose Estimation',
+      authors: ['H. Taketsugu', 'N. Ukita'],
+      links: [ { label: 'IEEE', href: 'https://ieeexplore.ieee.org/abstract/document/10215565' } ] },
+
+    { venue: 'ECCV 2026 Workshop', rate: 'Agent in World · co-author',
+      title: 'PRISM: Predictive Representation of Interaction Style and Motion for Social Robot Navigation',
+      authors: ['B.-H. Chen', 'H. Taketsugu', 'N. Ukita'],
+      links: [ { label: 'arXiv', href: 'https://arxiv.org/abs/2609.18125' } ] },
+
+    { venue: 'ECCV 2026 Workshop', rate: 'FCAM · co-author',
+      title: 'Energy-Regularized Imitation Learning for Force- and Work-Aware Robotic Manipulation',
+      authors: ['T. Otani', 'H. Taketsugu', 'N. Ukita'],
+      links: [ { label: 'arXiv', href: 'https://arxiv.org/abs/2609.18164' } ] },
+
+    { venue: 'WACV 2026', rate: 'co-author',
+      title: 'MMCM: Multimodality-aware Metric using Clustering-based Modes for Probabilistic Human Motion Prediction',
+      authors: ['K. Tokoro', 'H. Taketsugu', 'N. Ukita'],
+      thumbFile: 'mmcm.png',
+      links: [
+        { label: 'arXiv', href: 'https://arxiv.org/abs/2511.15179' },
+        { label: 'PDF', href: 'https://openaccess.thecvf.com/content/WACV2026/papers/Tokoro_MMCM_Multimodality-aware_Metric_using_Clustering-based_Modes_for_Probabilistic_Human_Motion_WACV_2026_paper.pdf' }
+      ] },
+
+    { venue: 'MVA 2025', rate: 'Best Poster Award · co-author',
+      title: 'Multi-Person Pose Estimation Evaluation Using Optimal Transportation and Improved Pose Matching',
+      authors: ['T. Moriki', 'H. Taketsugu', 'N. Ukita'],
+      links: [ { label: 'arXiv', href: 'https://arxiv.org/abs/2603.10398' } ] },
+
+    { venue: 'MIRU 2025', rate: 'co-author',
+      title: 'Selective Social-Interaction via Individual Importance for Fast Human Trajectory Prediction',
+      authors: ['Y. Urano', 'H. Taketsugu', 'N. Ukita'],
+      links: [ { label: 'arXiv', href: 'https://arxiv.org/abs/2506.18291' } ] },
+
+    { venue: 'arXiv preprint', rate: 'co-author',
+      title: 'Human Motion Prediction via Test-domain-aware Adaptation with Easily-available Human Motions Estimated from Videos',
+      authors: ['K. Shimbo', 'H. Taketsugu', 'N. Ukita'],
+      links: [ { label: 'arXiv', href: 'https://arxiv.org/abs/2505.07301' } ] }
   ]
 };
 </script>
