@@ -396,33 +396,11 @@ const DATA = {
 
   /* Below about 1060px the column filled the viewport and the simulation had
      nowhere to show. Give it a guaranteed strip on each side instead. */
-  /* Above phone widths the page is a set of blocks standing in the scene
-     rather than one column down the middle of it. Content hangs off a single
-     left axis and each block is only as wide as it needs to be, so the crowd
-     gets a channel down the right and real streets between the sections.
-     The gaps are not decorative: measured headless, closing them to the old
-     40px drops the crowd from 1.30 m/s to 0.72 and stalls seventeen walkers. */
   @media (min-width: 901px) {
-    .wrap {
-      --ml: max(var(--canvas-gutter), calc((100vw - var(--frame)) / 2));
-      margin-left: var(--ml);
-      margin-right: 0;
-      max-width: min(var(--w, var(--col)), calc(100vw - var(--ml) - var(--canvas-gutter)));
-    }
+    .wrap { max-width: min(var(--col), calc(100vw - 2 * var(--canvas-gutter))); }
     .hero-block .wrap, header .nav-inner {
-      max-width: min(var(--frame), calc(100vw - var(--canvas-gutter) * 2));
+      max-width: min(var(--frame), calc(100vw - 2 * var(--canvas-gutter)));
     }
-    header .nav-inner { margin-left: max(var(--canvas-gutter), calc((100vw - var(--frame)) / 2)); }
-
-    /* Lists of short rows do not want 900px; grids and publication rows do. */
-    #about > .wrap, #news > .wrap, #awards > .wrap,
-    #service > .wrap, #timeline > .wrap, #media > .wrap { --w: 680px; }
-    #research > .wrap, #work > .wrap, #talks > .wrap, #life > .wrap { --w: 880px; }
-    footer.contact > .wrap { --w: 780px; }
-
-    /* Streets between the blocks. */
-    .block { margin-top: clamp(96px, 12vh, 168px); }
-    footer.contact { margin-top: clamp(96px, 12vh, 168px); }
   }
 
   /* Hero: no paper card. Rather than haloing every glyph -- which fringes
@@ -1645,9 +1623,6 @@ const P = {
 
   kObs: 4.0,                 // obstacles are avoided harder than people
   tau0Obs: 2.6,
-  kWall: 4.2,                // and the page's own content harder still
-  wallClear: 0.62,           // standoff from a wall: people do not scrape along them
-  wallReach: 6.0,            // metres; ignore content blocks further off
 
   groupFrac: 0.40,           // share of agents walking with someone
   groupPull: 1.5,            // cohesion toward the group centroid
@@ -1668,7 +1643,7 @@ const P = {
   wander: 0.09,              // slow heading noise, so paths are never ruler-straight
   linkShow: 0.15,             // record an interaction once it is this strong (m/s^2)
   flareShow: 5.0,             // and light both walkers up once it is this strong
-  density: 0.086,      // enough for texture, loose enough to keep moving            // agents per square metre
+  density: 0.096,      // enough for texture; finding yourself is the marker's job            // agents per square metre
   agentsMin: 26,
   agentsMax: 190
 };
@@ -1756,27 +1731,6 @@ function anticipate(ax, ay, avx, avy, bx, by, bvx, bvy, R, k, tau0, out) {
   if (m > P.fMax) { const s = P.fMax / m; fx *= s; fy *= s; }
   out.x = fx; out.y = fy;
   return true;
-}
-
-/* Splits an interaction force into braking and steering and favours the
-   steering half, with a side preference for the degenerate head-on case.
-   Used for people, pillars and the page's own content blocks alike, which
-   is why a walker slides along an edge instead of stopping dead at it. */
-const _acc = { x: 0, y: 0 };
-function steerSplit(a, fx, fy) {
-  const fm = Math.sqrt(fx * fx + fy * fy);
-  const hl = Math.sqrt(a.vx * a.vx + a.vy * a.vy) || 1;
-  const ux = a.vx / hl, uy = a.vy / hl;
-  const along = fx * ux + fy * uy;
-  const sx = fx - along * ux, sy = fy - along * uy;
-  const sl = Math.sqrt(sx * sx + sy * sy);
-  if (sl < fm * P.headOn) {
-    _acc.x = -uy * a.side * fm * P.sideGain + along * ux * P.brakeGain;
-    _acc.y = ux * a.side * fm * P.sideGain + along * uy * P.brakeGain;
-  } else {
-    _acc.x = sx * P.steerGain + along * ux * P.brakeGain;
-    _acc.y = sy * P.steerGain + along * uy * P.brakeGain;
-  }
 }
 
 /* ---------- scene ----------
@@ -1906,8 +1860,7 @@ function createWorld(wMetres, hMetres, seed) {
     agents: [], obstacles: [], gates: [], groups: [],
     grid: makeGrid(wMetres, hMetres, 3.2),
     // Pairs currently exerting a real force on each other, refilled every step.
-    links: new Float32Array(2400 * 5), linkCount: 0,
-    rects: []          // on-screen content blocks, in metres
+    links: new Float32Array(2400 * 5), linkCount: 0
   };
   buildScene(world, rnd);
 
@@ -2038,8 +1991,21 @@ function step(world, dt, control) {
               if (fm > a.hot) a.hot = fm;
               if (fm > b.hot) b.hot = fm;
             }
-            steerSplit(a, _f.x, _f.y);
-            ax += _acc.x; ay += _acc.y;
+            const hl = Math.sqrt(a.vx * a.vx + a.vy * a.vy) || 1;
+            const ux = a.vx / hl, uy = a.vy / hl;
+            const along = _f.x * ux + _f.y * uy;
+            let sx = _f.x - along * ux, sy = _f.y - along * uy;
+            let sl = Math.sqrt(sx * sx + sy * sy);
+            if (sl < fm * P.headOn) {
+              // Too symmetric to resolve itself: step to this walker's side.
+              sx = -uy * a.side; sy = ux * a.side;
+              sl = 1;
+              ax += sx * fm * P.sideGain; ay += sy * fm * P.sideGain;
+            } else {
+              ax += sx * P.steerGain; ay += sy * P.steerGain;
+            }
+            ax += along * ux * P.brakeGain;
+            ay += along * uy * P.brakeGain;
           }
           // hard separation, only when actually overlapping
           const ddx = b.x - a.x, ddy = b.y - a.y;
@@ -2068,45 +2034,6 @@ function step(world, dt, control) {
         const d = Math.sqrt(d2);
         const s = (Rp - d) * 16;
         ax -= (ddx / d) * s; ay -= (ddy / d) * s;
-      }
-    }
-
-    // --- the page itself ------------------------------------------------
-    // Every block of content on screen is a solid the crowd has to get round,
-    // so people thread the gaps between sections and pour down the margin
-    // beside them. The rectangles are refreshed from the live layout, which
-    // means scrolling drives the page through the crowd.
-    const R = world.rects;
-    for (let o = 0; o < R.length; o++) {
-      const rc = R[o];
-      const qx = clamp(a.x, rc.x0, rc.x1), qy = clamp(a.y, rc.y0, rc.y1);
-      const ddx = qx - a.x, ddy = qy - a.y;
-      const d2 = ddx * ddx + ddy * ddy;
-      if (d2 > P.wallReach * P.wallReach) continue;
-      if (d2 < 1e-7) {
-        // Inside one, because the layout scrolled onto them. A force cannot
-        // be trusted to win against everything else pressing in, so this is
-        // a position correction: step out of the nearest edge and drop the
-        // velocity that was carrying them in.
-        const dl = a.x - rc.x0, dr = rc.x1 - a.x;
-        const dt = a.y - rc.y0, db = rc.y1 - a.y;
-        const m = Math.min(dl, dr, dt, db);
-        const out = a.r + 0.12;
-        if (m === dl) { a.x = rc.x0 - out; if (a.vx > 0) a.vx = -0.2; }
-        else if (m === dr) { a.x = rc.x1 + out; if (a.vx < 0) a.vx = 0.2; }
-        else if (m === dt) { a.y = rc.y0 - out; if (a.vy > 0) a.vy = -0.2; }
-        else { a.y = rc.y1 + out; if (a.vy < 0) a.vy = 0.2; }
-        continue;
-      }
-      if (anticipate(a.x, a.y, a.vx, a.vy, qx, qy, 0, 0,
-                     a.r + P.wallClear, P.kWall, P.tau0Obs, _f)) {
-        steerSplit(a, _f.x, _f.y);
-        ax += _acc.x; ay += _acc.y;
-      }
-      const d = Math.sqrt(d2);
-      if (d < a.r + 0.12) {
-        const push = (a.r + 0.12 - d) * 34;
-        ax -= (ddx / d) * push; ay -= (ddy / d) * push;
       }
     }
 
@@ -2195,7 +2122,7 @@ function forecast(world, agent, out, opts) {
   const dt = (opts && opts.dt) || 0.17;
   const spread = (opts && opts.spread) || 0.30;
   const fCap = P.fMax * 0.30;      // coarse steps need a tighter clamp
-  const A = world.agents, obs = world.obstacles, rects = world.rects;
+  const A = world.agents, obs = world.obstacles;
 
   for (let br = 0; br < 3; br++) {
     const ang = (br - 1) * spread;
@@ -2228,19 +2155,6 @@ function forecast(world, agent, out, opts) {
         const ob = obs[o];
         const R = agent.r + ob.r + P.comfort * 0.7;
         if (anticipate(x, y, vx, vy, ob.x, ob.y, 0, 0, R, P.kObs, P.tau0Obs, _f)) {
-          ax += _f.x; ay += _f.y;
-        }
-      }
-      // The page is solid to the forecast too, or the fan draws straight
-      // through an article -- which is the same dishonesty as a prediction
-      // that walks through a pillar.
-      for (let o = 0; o < rects.length; o++) {
-        const rc = rects[o];
-        const qx = clamp(x, rc.x0, rc.x1), qy = clamp(y, rc.y0, rc.y1);
-        const ddx = qx - x, ddy = qy - y;
-        if (ddx * ddx + ddy * ddy > P.wallReach * P.wallReach) continue;
-        if (anticipate(x, y, vx, vy, qx, qy, 0, 0,
-                       agent.r + P.wallClear, P.kWall, P.tau0Obs, _f)) {
           ax += _f.x; ay += _f.y;
         }
       }
@@ -2348,39 +2262,6 @@ function forecast(world, agent, out, opts) {
     }
     tctx.clearRect(0, 0, W, H);
     buildEdgeFade();
-  }
-
-  /* ---------- the page, handed to the simulation as solid ----------
-     Each block of content on screen becomes a rectangle the crowd has to get
-     around. Because the canvas is fixed and the page is not, scrolling moves
-     those rectangles through the crowd: the article pushes the walkers aside
-     as it goes past. The hero is left out -- there the type sits in the
-     scene rather than displacing it. */
-  let blockEls = [];
-  function collectBlocks() {
-    blockEls = Array.prototype.slice.call(
-      document.querySelectorAll('main .block > .wrap, footer.contact > .wrap'));
-  }
-  function readBlocks() {
-    if (!world || !SCALE) return;
-    if (CONTROL.active) { world.rects = []; return; }   // the page is out of the way
-    const out = [];
-    const pad = 0.22;                                   // metres of clearance
-    for (let i = 0; i < blockEls.length; i++) {
-      const r = blockEls[i].getBoundingClientRect();
-      if (r.width < 20 || r.height < 20) continue;
-      if (r.bottom < -80 || r.top > H + 80) continue;
-      out.push({
-        x0: r.left / SCALE - pad, y0: r.top / SCALE - pad,
-        x1: r.right / SCALE + pad, y1: r.bottom / SCALE + pad
-      });
-    }
-    world.rects = out;
-  }
-  let blockTick = 0;
-  function scheduleBlocks() {
-    if (blockTick) return;
-    blockTick = requestAnimationFrame(() => { blockTick = 0; readBlocks(); });
   }
 
   /* ---------- drawing ---------- */
@@ -2695,26 +2576,13 @@ function forecast(world, agent, out, opts) {
   function restart(keep) {
     resize(keep);
     if (!ready) return;
-    readBlocks();          // settle with the page already in place
-
     if (reduce) { settle(20); }
     else { last = 0; acc = 0; settle(14); schedule(); }
   }
 
   /* ---------- lifecycle ---------- */
   loadPalette();
-  collectBlocks();
   restart(false);
-
-  window.addEventListener('scroll', scheduleBlocks, { passive: true });
-  if (window.ResizeObserver) {
-    const ro = new ResizeObserver(scheduleBlocks);
-    const mainEl = document.getElementById('main');
-    if (mainEl) ro.observe(mainEl);
-  }
-  // Fonts settling changes every block's height.
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(scheduleBlocks);
-  window.addEventListener('load', scheduleBlocks);
 
   document.addEventListener('visibilitychange', () => {
     visible = !document.hidden;
@@ -2739,7 +2607,7 @@ function forecast(world, agent, out, opts) {
   let rt;
   window.addEventListener('resize', () => {
     clearTimeout(rt);
-    rt = setTimeout(() => { restart(true); collectBlocks(); readBlocks(); }, 220);
+    rt = setTimeout(() => restart(true), 220);
   });
 
   if (DEBUG) {
@@ -2783,7 +2651,6 @@ function forecast(world, agent, out, opts) {
       gameBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
     }
     if (on) { last = 0; schedule(); }
-    readBlocks();
   }
 
   function adoptNearestToCentre() {

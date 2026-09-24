@@ -23,7 +23,6 @@ const PX_H = parseInt(flag('h', '900'), 10);
 const SECONDS = parseFloat(flag('seconds', '40'));
 const SEED = parseInt(flag('seed', '20260924'), 10);
 const WALK = args.includes('--walk');
-const PAGE = args.includes('--page');   // stand the content blocks in the scene
 const SS = 2;
 
 /* ---------- pull the physics out of the page ---------- */
@@ -48,25 +47,6 @@ const ACCENT = cssRGB('accent', [255, 138, 76]);
 /* ---------- world ---------- */
 const SCALE = Math.min(46, Math.max(20, PX_H / 26));
 const world = createWorld(PX_W / SCALE, PX_H / SCALE, SEED);
-
-/* A stand-in for the live layout: the same left axis, the same block widths
-   and the same street between them that the stylesheet lays down. */
-const blocks = [];
-if (PAGE && !WALK) {
-  const FRAME = 1200, GUT = 84;
-  const ml = Math.max(GUT, (PX_W - FRAME) / 2);
-  const widths = [680, 880, 680, 880, 680];
-  const gap = 120;
-  let y = -180;
-  for (let i = 0; i < widths.length; i++) {
-    const hgt = i % 2 ? 430 : 300;
-    const wdt = Math.min(widths[i], PX_W - ml - GUT);
-    blocks.push({ x0: ml / SCALE, y0: y / SCALE, x1: (ml + wdt) / SCALE, y1: (y + hgt) / SCALE });
-    y += hgt + gap;
-    if (y > PX_H + 120) break;
-  }
-  world.rects = blocks;
-}
 
 const w = PX_W * SS, h = PX_H * SS, N = w * h;
 /* Premultiplied accumulation: eight hues would need eight coverage buffers,
@@ -156,19 +136,6 @@ if (WALK) {
 }
 
 /* ---------- final frame: obstacles, interactions, heads, player ------- */
-for (const r of blocks) {
-  // outline only -- the real page paints itself, this just shows where it is
-  const x0 = r.x0 * S, y0 = r.y0 * S, x1 = r.x1 * S, y1 = r.y1 * S;
-  line(x0, y0, x1, y0, 1, INK, 0.12); line(x1, y0, x1, y1, 1, INK, 0.12);
-  line(x1, y1, x0, y1, 1, INK, 0.12); line(x0, y1, x0, y0, 1, INK, 0.12);
-  for (let yy = Math.max(0, y0 | 0); yy < Math.min(h, y1 | 0); yy++) {
-    for (let xx = Math.max(0, x0 | 0); xx < Math.min(w, x1 | 0); xx++) {
-      const j = yy * w + xx, q = 0.9;
-      bA[j] += q; bR[j] += q * PAPER[0]; bG[j] += q * PAPER[1]; bB[j] += q * PAPER[2];
-    }
-  }
-}
-
 for (const o of world.obstacles) {
   ring(o.x * S, o.y * S, o.r * S, 1.15, INK, WALK ? 0.12 : 0.18);
   disc(o.x * S, o.y * S, o.r * S, PAPER, 0.05);
