@@ -110,7 +110,8 @@ const DATA = {
         { label: 'arXiv', href: 'https://arxiv.org/abs/2503.17267' },
         { label: 'Project', href: 'https://iminthemiddle.github.io/EmLoco-Page/' },
         { label: 'Code', href: 'https://github.com/ImIntheMiddle/EmLoco' },
-        { label: 'Video', href: 'https://youtu.be/OYLDYinc9DU' }
+        { label: 'Video', href: 'https://youtu.be/OYLDYinc9DU' },
+        { label: 'Weights', href: 'https://huggingface.co/iminthemiddle/EmLoco' }
       ] },
 
     { venue: 'WACV 2024', rate: 'poster · 41% accept',
@@ -218,6 +219,40 @@ const DATA = {
              ja: '採用率 約14%' } }
   ],
 
+  /* Community roles and course work share one section: each is only a row or
+     two on its own, and together they answer the same question. */
+  service: [
+    { year: '2026',
+      name: { en: 'Tech Chair — ACCV 2026', ja: 'Tech Chair — ACCV 2026' },
+      org: { en: 'Asian Conference on Computer Vision · Osaka, December 2026',
+             ja: 'アジアコンピュータビジョン会議 · 大阪 · 2026年12月' } },
+    { year: '2025',
+      name: { en: 'Course material — {course}', ja: '実験教材 — {course}' },
+      org: { en: 'Toyota Technological Institute · 2025 academic year',
+             ja: '豊田工業大学 · 2025年度' },
+      refs: { course: { href: 'https://github.com/ImIntheMiddle/TTI_AI-DL_2025',
+                        label: 'Experiments in Artificial Intelligence & Deep Learning' } } },
+    { year: '2024',
+      name: { en: 'Course material — {course}', ja: '実験教材 — {course}' },
+      org: { en: 'Toyota Technological Institute · 2024 academic year',
+             ja: '豊田工業大学 · 2024年度' },
+      refs: { course: { href: 'https://github.com/ImIntheMiddle/TTI_AI-DL_2024',
+                        label: 'Experiments in Artificial Intelligence & Deep Learning' } } }
+  ],
+
+  /* Career and education. Only what is on the record so far; earlier degrees
+     and the Woven internship dates are still open questions. */
+  timeline: [
+    { year: '2025.04 –',
+      name: { en: 'Ph.D. student, Information and Communication Engineering',
+              ja: '博士後期課程 — 工学研究科 情報通信系' },
+      org: { en: 'Toyota Technological Institute · Intelligent Information Media Lab',
+             ja: '豊田工業大学 · 知能情報メディア研究室' } },
+    { year: '2025.04 –',
+      name: { en: 'JSPS Research Fellow (DC1)', ja: '日本学術振興会 特別研究員 (DC1)' },
+      org: { en: 'Japan Society for the Promotion of Science', ja: '日本学術振興会' } }
+  ],
+
   /* Empty until real entries exist. An empty array hides the whole section
      and its nav link, and renumbers the ones that remain. */
   talks: [],
@@ -258,6 +293,8 @@ const DATA = {
       note: { href: 'https://scholar.google.co.jp/citations?user=HkFAVbcAAAAJ',
               label: { en: 'Full list on Scholar →', ja: '全業績は Scholar へ →' } } },
     { id: 'awards',   title: { en: 'Awards & Honors', ja: '受賞・助成' },     nav: { en: 'Awards', ja: '受賞' } },
+    { id: 'service',  title: { en: 'Service & Teaching', ja: '学会活動・教育' }, nav: { en: 'Service', ja: '活動' } },
+    { id: 'timeline', title: { en: 'Experience', ja: '経歴' },                nav: { en: 'Experience', ja: '経歴' } },
     { id: 'talks',    title: { en: 'Talks & Presentations', ja: '講演・発表' }, nav: { en: 'Talks', ja: '発表' } },
     { id: 'media',    title: { en: 'Media & Coverage', ja: 'メディア掲載' },  nav: { en: 'Media', ja: 'メディア' } },
     { id: 'life',     title: { en: 'Outside the Lab', ja: '研究室の外で' },   nav: { en: 'Life', ja: '日常' } }
@@ -1308,6 +1345,16 @@ const media = (im) => !im ? '' : h`<img src="${im.src}"${im.src2x
    span, so this pairs them per language rather than going through t(). */
 const awardName = (a) => h`<span class="en" lang="en">${rich(pickLang(a.name, 'en'), a.refs, 'en')}${a.org ? h`<span class="org">${rich(pickLang(a.org, 'en'), a.refs, 'en')}</span>` : ''}</span><span class="ja" lang="ja">${rich(pickLang(a.name, 'ja'), a.refs, 'ja')}${a.org ? h`<span class="org">${rich(pickLang(a.org, 'ja'), a.refs, 'ja')}</span>` : ''}</span>`;
 
+/* Awards, service and experience are all the same shape -- a period, a
+   title and a subtitle -- so they share one renderer and one set of rules. */
+const entryList = (items) => h`
+      <div class="awards reveal">${items.map((a) => h`
+        <div class="award">
+          <span class="yr">${a.year}</span>
+          <span class="name">${awardName(a)}</span>
+        </div>`)}
+      </div>`;
+
 const BODY = {
   about: () => h`
       <div class="bio reveal${DATA.about.portrait ? '' : ' no-media'}">${DATA.about.portrait
@@ -1334,13 +1381,9 @@ const BODY = {
 
   work: () => DATA.publications.map((p) => pub(p, DATA.me)),
 
-  awards: () => h`
-      <div class="awards reveal">${DATA.awards.map((a) => h`
-        <div class="award">
-          <span class="yr">${a.year}</span>
-          <span class="name">${awardName(a)}</span>
-        </div>`)}
-      </div>`,
+  awards: () => entryList(DATA.awards),
+  service: () => entryList(DATA.service),
+  timeline: () => entryList(DATA.timeline),
 
   talks: () => h`
       <div class="talks-grid reveal">${DATA.talks.map((k) => h`
@@ -1368,6 +1411,8 @@ const HAS = {
   research: () => DATA.research.length,
   work: () => DATA.publications.length,
   awards: () => DATA.awards.length,
+  service: () => DATA.service.length,
+  timeline: () => DATA.timeline.length,
   talks: () => DATA.talks.length,
   media: () => DATA.media.length,
   life: () => DATA.life.items.length

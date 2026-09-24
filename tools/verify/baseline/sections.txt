@@ -1,0 +1,8 @@
+about	00
+news	01
+research	02
+work	03
+awards	04
+service	05
+timeline	06
+life	07

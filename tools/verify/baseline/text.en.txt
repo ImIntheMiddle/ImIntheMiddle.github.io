@@ -1,0 +1,141 @@
+Skip to content
+🎮 Control the orange pedestrian
+H. Taketsugu · 武次 広夢
+News
+Research
+Publications
+Awards
+Service
+Experience
+Life
+日本語
+Dark
+Ph.D. Researcher — Trajectory Forecasting
+Hiromu Taketsugu
+武次 広夢 — Ph.D. Student, Toyota Technological Institute
+Affiliation
+TTI · Ukita Lab
+Fellowship
+JSPS Research Fellow (DC1)
+Base
+Nagoya, Japan
+Teaching machines to anticipate how people move — with physical plausibility, embodiment, and a sense of the social.
+Email
+Scholar
+GitHub
+LinkedIn
+X
+CV
+Mission
+Through technology, to eliminate preventable deaths.
+00
+About
+I am a Ph.D. student (D1) at Toyota Technological Institute, advised by Prof. Norimichi Ukita in the Intelligent Information Media Lab. My research builds human- and scene-interactive, physics-aware systems for predicting how people move.
+I am a JSPS Research Fellow (DC1) and have published as first author at top-tier venues including CVPR and WACV. I completed a research internship at Woven by Toyota, and I serve the community as Technical Chair for ACCV 2026. [confirm wording before publishing]
+01
+What's New
+2026 / XXSERVICEServing as Technical Chair for ACCV 2026 [verify]
+2026 / 08INTERNCompleted a research internship at Woven by Toyota
+2026 / XXAWARDReceived the 2026 IEEE Nagoya Section International Conference Research Presentation Award for EmLoco
+2025 / 02CVPR'25EmLoco accepted to CVPR 2025 — arXiv
+placeholderAdd your latest updates here. Newest first keeps the page feeling alive.
+02
+Research Focus
+/ 01
+Trajectory Forecasting
+Predicting pedestrian and human motion that stays physically plausible, not merely statistically likely.
+/ 02
+Embodied AI
+Grounding prediction in locomotion and physics, so models reason about bodies rather than only pixels.
+/ 03
+Social Robotics
+Navigation in shared human spaces, aimed at systems that help prevent avoidable harm.
+03
+Selected Publications
+Full list on Scholar →
+CVPR 2025 · poster · 22.1% accept
+Physical Plausibility-aware Trajectory Prediction via Locomotion Embodiment
+H. Taketsugu, T. Oba, T. Maeda, S. Nobuhara, N. Ukita
+arXivProjectCodeVideoWeights
+WACV 2024 · poster · 41% accept
+Active Transfer Learning for Efficient Video-Specific Human Pose Estimation
+H. Taketsugu, N. Ukita
+arXivProjectCode
+MVA 2023 · oral
+Uncertainty Criteria in Active Transfer Learning for Efficient Video-Specific Human Pose Estimation
+H. Taketsugu, N. Ukita
+IEEE
+ECCV 2026 Workshop · Agent in World · co-author
+PRISM: Predictive Representation of Interaction Style and Motion for Social Robot Navigation
+B.-H. Chen, H. Taketsugu, N. Ukita
+arXiv
+ECCV 2026 Workshop · FCAM · co-author
+Energy-Regularized Imitation Learning for Force- and Work-Aware Robotic Manipulation
+T. Otani, H. Taketsugu, N. Ukita
+arXiv
+WACV 2026 · co-author
+MMCM: Multimodality-aware Metric using Clustering-based Modes for Probabilistic Human Motion Prediction
+K. Tokoro, H. Taketsugu, N. Ukita
+arXivPDF
+MVA 2025 · Best Poster Award · co-author
+Multi-Person Pose Estimation Evaluation Using Optimal Transportation and Improved Pose Matching
+T. Moriki, H. Taketsugu, N. Ukita
+arXiv
+MIRU 2025 · co-author
+Selective Social-Interaction via Individual Importance for Fast Human Trajectory Prediction
+Y. Urano, H. Taketsugu, N. Ukita
+arXiv
+arXiv preprint · co-author
+Human Motion Prediction via Test-domain-aware Adaptation with Easily-available Human Motions Estimated from Videos
+K. Shimbo, H. Taketsugu, N. Ukita
+arXiv
+04
+Awards & Honors
+2026
+IEEE Nagoya Section International Conference Research Presentation AwardFor EmLoco (CVPR 2025)
+2025
+Best Poster Award — MVA 2025Co-author · Multi-Person Pose Estimation Evaluation
+2025
+Best Poster Finalist — Top 3 of 48JST ASPIRE Kyoto Workshop
+2025
+JSPS Research Fellowship for Young Scientists (DC1)Japan Society for the Promotion of Science · ~14% acceptance
+05
+Service & Teaching
+2026
+Tech Chair — ACCV 2026Asian Conference on Computer Vision · Osaka, December 2026
+2025
+Course material — Experiments in Artificial Intelligence & Deep LearningToyota Technological Institute · 2025 academic year
+2024
+Course material — Experiments in Artificial Intelligence & Deep LearningToyota Technological Institute · 2024 academic year
+06
+Experience
+2025.04 –
+Ph.D. student, Information and Communication EngineeringToyota Technological Institute · Intelligent Information Media Lab
+2025.04 –
+JSPS Research Fellow (DC1)Japan Society for the Promotion of Science
+07
+Outside the Lab
+Research is most of the picture, but not all of it. A husband and a father of one, raising a small family between two languages, and a firm believer that the body and the mind train together.
+Family & Home
+Father of one daughter and partner to a wonderful Vietnamese wife. Home runs across Japanese and Vietnamese, kept warm by a friendly Maltese and a lovely Ragdoll-Siamese mix who also keep the schedule honest.
+Community — Vista
+I run Vista, a Discord community for mutual progress and goal management, founded with a close friend in 2020 and still going strong.
+Languages
+A long-running language habit, with a Duolingo streak past 500 days. Mainly English and Vietnamese, picking up new places and new people along the way.
+Training
+Former captain of the university Spartan Race club. Exercise is a reliable partner that resets the mind and feeds back into research focus.
+Reading
+Drawn to books that re-examine ordinary life through a scientific lens, or leave room for quiet reflection. A personal compass I call "Root": chase the underlying principle, not the surface noise.
+Tools & Gadgets
+Always trying out new tools and gadgets, hunting for small ways to work and live a little better.
+Let's talk.
+For research collaborations, social-navigation problems, academic or industry roles, or a language exchange.
+sd25502@toyota-ti.ac.jp
+Google Scholar
+GitHub
+LinkedIn
+X
+CV
+↑ The scene above is a live Social Force Model simulation. People, a car, and a delivery robot pursue goals while avoiding one another and scattered street objects, and each one fans out a few plausible futures — the trajectory forecasting I study, quietly running behind everything else on the page.
+© 2026 Hiromu Taketsugu · 武次 広夢
+Built around pedestrian trajectory forecasting

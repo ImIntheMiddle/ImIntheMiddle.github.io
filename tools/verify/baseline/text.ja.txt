@@ -1,0 +1,141 @@
+本文へスキップ
+🎮 オレンジの歩行者を操作
+H. Taketsugu · 武次 広夢
+最新情報
+研究
+論文
+受賞
+活動
+経歴
+日常
+EN
+ダークに
+博士課程 — 軌道予測の研究者
+武次 広夢
+Hiromu Taketsugu — 豊田工業大学 博士後期課程
+所属
+豊田工業大学 · 浮田研究室
+研究員
+日本学術振興会 特別研究員 (DC1)
+拠点
+愛知県・名古屋
+人の動きを、物理的にもっともらしく、身体性と社会性をふまえて予測する。そんな機械の知能をつくっています。
+Email
+Scholar
+GitHub
+LinkedIn
+X
+CV
+ミッション
+テクノロジーを通じて、非業の死をなくす。
+00
+自己紹介
+豊田工業大学 博士後期課程（D1）に在籍し、知能情報メディア研究室にて浮田宗伯教授の指導のもと研究を行っています。人やシーンと相互作用する、物理を考慮した「人の動きの予測」システムを開発しています。
+日本学術振興会 特別研究員（DC1）であり、CVPR や WACV などのトップ国際会議に筆頭著者として論文を発表してきました。Woven by Toyota での研究インターンを経験し、ACCV 2026 では Technical Chair を務めています。[公開前に表記要確認]
+01
+最新情報
+2026 / XXSERVICEACCV 2026 の Technical Chair を担当 [要確認]
+2026 / 08INTERNWoven by Toyota での研究インターンを修了
+2026 / XXAWARDEmLoco にて 2026年 IEEE名古屋支部 国際会議研究発表賞を受賞
+2025 / 02CVPR'25EmLoco が CVPR 2025 に採択 — arXiv
+placeholder最新の更新をここに。新しい順に並べると活きのいいページになります。
+02
+研究の柱
+/ 01
+軌道予測
+統計的にありそうなだけでなく、物理的にもっともらしい歩行者・人の動きを予測します。
+/ 02
+身体性のあるAI
+予測を移動運動と物理に根ざすことで、ピクセルだけでなく「身体」を捉えるモデルを目指します。
+/ 03
+社会的ロボティクス
+人と共有する空間での移動・行動を扱い、防げる被害をなくすシステムを目指します。
+03
+主要論文
+全業績は Scholar へ →
+CVPR 2025 · poster · 22.1% accept
+Physical Plausibility-aware Trajectory Prediction via Locomotion Embodiment
+H. Taketsugu, T. Oba, T. Maeda, S. Nobuhara, N. Ukita
+arXivProjectCodeVideoWeights
+WACV 2024 · poster · 41% accept
+Active Transfer Learning for Efficient Video-Specific Human Pose Estimation
+H. Taketsugu, N. Ukita
+arXivProjectCode
+MVA 2023 · oral
+Uncertainty Criteria in Active Transfer Learning for Efficient Video-Specific Human Pose Estimation
+H. Taketsugu, N. Ukita
+IEEE
+ECCV 2026 Workshop · Agent in World · co-author
+PRISM: Predictive Representation of Interaction Style and Motion for Social Robot Navigation
+B.-H. Chen, H. Taketsugu, N. Ukita
+arXiv
+ECCV 2026 Workshop · FCAM · co-author
+Energy-Regularized Imitation Learning for Force- and Work-Aware Robotic Manipulation
+T. Otani, H. Taketsugu, N. Ukita
+arXiv
+WACV 2026 · co-author
+MMCM: Multimodality-aware Metric using Clustering-based Modes for Probabilistic Human Motion Prediction
+K. Tokoro, H. Taketsugu, N. Ukita
+arXivPDF
+MVA 2025 · Best Poster Award · co-author
+Multi-Person Pose Estimation Evaluation Using Optimal Transportation and Improved Pose Matching
+T. Moriki, H. Taketsugu, N. Ukita
+arXiv
+MIRU 2025 · co-author
+Selective Social-Interaction via Individual Importance for Fast Human Trajectory Prediction
+Y. Urano, H. Taketsugu, N. Ukita
+arXiv
+arXiv preprint · co-author
+Human Motion Prediction via Test-domain-aware Adaptation with Easily-available Human Motions Estimated from Videos
+K. Shimbo, H. Taketsugu, N. Ukita
+arXiv
+04
+受賞・助成
+2026
+IEEE名古屋支部 国際会議研究発表賞EmLoco (CVPR 2025) に対して
+2025
+Best Poster Award — MVA 2025共著 · 多人数姿勢推定の新規評価指標
+2025
+ベストポスター最終候補 — 48件中3件JST ASPIRE 京都ワークショップ
+2025
+日本学術振興会 特別研究員 (DC1)採用率 約14%
+05
+学会活動・教育
+2026
+Tech Chair — ACCV 2026アジアコンピュータビジョン会議 · 大阪 · 2026年12月
+2025
+実験教材 — Experiments in Artificial Intelligence & Deep Learning豊田工業大学 · 2025年度
+2024
+実験教材 — Experiments in Artificial Intelligence & Deep Learning豊田工業大学 · 2024年度
+06
+経歴
+2025.04 –
+博士後期課程 — 工学研究科 情報通信系豊田工業大学 · 知能情報メディア研究室
+2025.04 –
+日本学術振興会 特別研究員 (DC1)日本学術振興会
+07
+研究室の外で
+研究は人生の大半ですが、すべてではありません。二つの言語のあいだで小さな家族を育てる、一児の父であり夫。心と体は一緒に鍛えるもの、と信じています。
+家族と暮らし
+一児（娘）の父であり、素敵なベトナム人の妻のパートナー。家庭は日本語とベトナム語が行き交います。人懐っこいマルチーズと、ラグドール×シャム猫のミックスが、暮らしを温かく、そして規則正しくしてくれます。
+コミュニティ — Vista
+Vista という、互いの進捗・目標管理のための Discord コミュニティを運営しています。2020年に親友と立ち上げ、今も続いています。
+語学
+長く続く語学の習慣。Duolingo の連続記録は500日超え。主に英語とベトナム語を学びながら、新しい場所や人とのつながりを楽しんでいます。
+トレーニング
+大学のスパルタンレース部の元キャプテン。運動は頭をリセットし、研究の集中力に還ってくる、頼れる相棒です。
+読書
+日常を科学の視点で捉え直す本や、静かに思索できる本が好きです。「Root」と呼ぶ自分の指針があります。表面のノイズではなく、根本の原理を追うこと。
+ツールとガジェット
+新しいツールや新興ガジェットを次々と試すのが好きです。仕事や暮らしを少し良くする工夫を探しています。
+お気軽にご連絡を。
+研究の共同・社会的ナビゲーションの課題・アカデミアや産業界のポジション・言語交換など、何でも。
+sd25502@toyota-ti.ac.jp
+Google Scholar
+GitHub
+LinkedIn
+X
+CV
+↑ 上のシーンはリアルタイムの Social Force Model シミュレーションです。人・車・配送ロボットがゴールを目指しつつ、互いや点在するオブジェクトを避け、それぞれが「ありえる未来」を扇状に予測します。私が研究している軌道予測そのものを、ページの背景でしれっと動かしています。
+© 2026 Hiromu Taketsugu · 武次 広夢
+歩行者の軌道予測をモチーフに

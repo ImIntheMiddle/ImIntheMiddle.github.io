@@ -11,3 +11,6 @@ go.sum
 
 # Local working docs (contain personal details; must not be published)
 _questionnaire.md
+
+# Verification harness scratch output
+tools/verify/.work/
