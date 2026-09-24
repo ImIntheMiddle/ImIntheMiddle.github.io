@@ -106,7 +106,6 @@ const DATA = {
     { venue: 'CVPR 2025', rate: 'poster · 22.1% accept',
       title: 'Physical Plausibility-aware Trajectory Prediction via Locomotion Embodiment',
       authors: ['H. Taketsugu', 'T. Oba', 'T. Maeda', 'S. Nobuhara', 'N. Ukita'],
-      thumbFile: 'emloco.png',
       links: [
         { label: 'arXiv', href: 'https://arxiv.org/abs/2503.17267' },
         { label: 'Project', href: 'https://iminthemiddle.github.io/EmLoco-Page/' },
@@ -141,7 +140,6 @@ const DATA = {
     { venue: 'WACV 2026', rate: 'co-author',
       title: 'MMCM: Multimodality-aware Metric using Clustering-based Modes for Probabilistic Human Motion Prediction',
       authors: ['K. Tokoro', 'H. Taketsugu', 'N. Ukita'],
-      thumbFile: 'mmcm.png',
       links: [
         { label: 'arXiv', href: 'https://arxiv.org/abs/2511.15179' },
         { label: 'PDF', href: 'https://openaccess.thecvf.com/content/WACV2026/papers/Tokoro_MMCM_Multimodality-aware_Metric_using_Clustering-based_Modes_for_Probabilistic_Human_Motion_WACV_2026_paper.pdf' }
@@ -610,6 +608,7 @@ const DATA = {
   /* ====================================================================
      Bio
      ==================================================================== */
+  .bio.no-media { grid-template-columns: 1fr; }
   .bio {
     display: grid;
     grid-template-columns: 140px 1fr;
@@ -716,6 +715,15 @@ const DATA = {
     align-items: start;
   }
   .pub:last-child { border-bottom: 1px solid var(--hairline); }
+  /* A row without artwork spans the full width. But as soon as any row in
+     the list does have artwork, every row keeps the thumbnail gutter so the
+     titles share one left edge -- an indent is only worth paying for when
+     something sits in it. */
+  .pub .pub-body { grid-column: 2; }
+  .pub.no-media { grid-template-columns: 1fr; }
+  .pub.no-media .pub-body { grid-column: 1; }
+  #pub-list:has(.thumb) .pub.no-media { grid-template-columns: 168px 1fr; }
+  #pub-list:has(.thumb) .pub.no-media .pub-body { grid-column: 2; }
   .pub .thumb {
     width: 168px;
     aspect-ratio: 16 / 10;
@@ -725,7 +733,7 @@ const DATA = {
     overflow: hidden;
   }
   .pub .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-  .pub .thumb .ph {
+  .pub .thumb-dead {
     font-family: "IBM Plex Mono", monospace;
     font-size: 10.5px;
     color: var(--ink-faint);
@@ -814,7 +822,9 @@ const DATA = {
   /* ====================================================================
      Talks
      ==================================================================== */
-  .talks-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
+  /* Cards size to their own content, so a card without a photo simply ends
+     sooner instead of leaving a gap under its caption. */
+  .talks-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; align-items: start; }
   .talk { border: 1px solid var(--hairline); overflow: hidden; transition: border-color 0.2s; }
   .talk:hover { border-color: var(--accent); }
   .talk .pic {
@@ -824,11 +834,6 @@ const DATA = {
     border-bottom: 1px solid var(--hairline);
   }
   .talk .pic img { width: 100%; height: 100%; object-fit: cover; }
-  .talk .pic .ph {
-    font-family: "IBM Plex Mono", monospace;
-    font-size: 10.5px;
-    color: var(--ink-faint);
-  }
   .talk .cap { padding: 15px 18px 18px; }
   .talk .cap .v {
     font-family: "IBM Plex Mono", monospace;
@@ -1095,6 +1100,7 @@ const DATA = {
     .focus .cell:first-child { border-top: none; padding-top: 0; }
     .focus .cell + .cell { padding-left: 0; }
     .pub { grid-template-columns: 1fr; gap: 16px; }
+    .pub .pub-body { grid-column: auto; }
     .pub .thumb { width: 100%; max-width: 280px; }
     .talks-grid { grid-template-columns: 1fr; }
     .award { grid-template-columns: 70px 1fr; gap: 16px; }
@@ -1274,24 +1280,29 @@ function mount(sel, tpl) {
 /* ---------- section templates ---------- */
 const newsItem = (n) => h`<li><span class="d">${n.date}</span><span class="t${n.cls ? ' ' + n.cls : ''}">${n.tag ? h`<span class="tag">${n.tag}</span>` : ''}${t(n.text, n.refs)}</span></li>`;
 
-const pubThumb = (p) => p.image
-  ? h`<img src="${p.image.src}" alt="${p.image.alt}" loading="lazy" decoding="async">`
-  : h`<div class="ph">${p.thumbFile ? h`teaser<br>(${p.thumbFile})` : 'teaser image'}</div>`;
-
 const pubAuthors = (p, me) => p.authors.map((a, i) =>
   h`${i ? ', ' : ''}${a === me ? h`<span class="me">${a}</span>` : a}`);
 
 const pub = (p, me) => h`
-      <div class="pub reveal"><div class="thumb">${pubThumb(p)}</div><div>
+      <div class="pub reveal${p.image ? '' : ' no-media'}">${p.image ? h`<div class="thumb">${media(p.image)}</div>` : ''}<div class="pub-body">
         <span class="venue">${p.venue}${p.rate ? h` <span class="rate">· ${p.rate}</span>` : ''}</span>
         <h3>${p.title}${p.titleNote ? h` <span class="verify">${p.titleNote}</span>` : ''}</h3>
         <div class="auth">${pubAuthors(p, me)}</div>
         <div class="pub-links">${p.links.map((l) => ref(l, 'en'))}</div>
       </div></div>`;
 
-const slot = (img, fallback) => img
-  ? h`<img src="${img.src}" alt="${img.alt || ''}" loading="lazy" decoding="async">`
-  : fallback;
+/* An image is always optional. Where one is absent the layout closes up
+   rather than showing an empty frame, so rows and cards with and without
+   artwork sit together without looking unfinished.
+
+     image: { src: 'static/img/pub/emloco.webp',
+              src2x: 'static/img/pub/emloco@2x.webp',   // optional
+              w: 1200, h: 750,                          // optional, stops reflow
+              alt: { en: 'EmLoco teaser', ja: 'EmLoco の概要図' } }  */
+const media = (im) => !im ? '' : h`<img src="${im.src}"${im.src2x
+  ? h` srcset="${im.src} 1x, ${im.src2x} 2x"` : ''} alt="${pickLang(im.alt, 'en')}"${
+  im.alt && typeof im.alt === 'object' ? h` data-alt-en="${im.alt.en}" data-alt-ja="${im.alt.ja || im.alt.en}"` : ''}${
+  im.w ? h` width="${im.w}" height="${im.h}"` : ''} loading="lazy" decoding="async">`;
 
 /* The award title and its organisation line sit inside the same language
    span, so this pairs them per language rather than going through t(). */
@@ -1299,8 +1310,8 @@ const awardName = (a) => h`<span class="en" lang="en">${rich(pickLang(a.name, 'e
 
 const BODY = {
   about: () => h`
-      <div class="bio reveal">
-        <div class="portrait">${slot(DATA.about.portrait, h`<div>portrait<br>(avatar.jpg)</div>`)}</div>
+      <div class="bio reveal${DATA.about.portrait ? '' : ' no-media'}">${DATA.about.portrait
+        ? h`<div class="portrait">${media(DATA.about.portrait)}</div>` : ''}
         <div class="bio-text">
           ${DATA.about.paras.map((p) => h`<p class="en" lang="en">${rich(p.en, p.refs, 'en')}</p>`)}
           ${DATA.about.paras.map((p) => h`<p class="ja" lang="ja">${rich(p.ja, p.refs, 'ja')}</p>`)}
@@ -1333,7 +1344,7 @@ const BODY = {
 
   talks: () => h`
       <div class="talks-grid reveal">${DATA.talks.map((k) => h`
-        <div class="talk"><div class="pic">${slot(k.image, h`<div class="ph">photo</div>`)}</div><div class="cap"><span class="v">${t(k.venue)}</span><h3>${t(k.title)}</h3><p>${t(k.note)}</p></div></div>`)}
+        <div class="talk${k.image ? '' : ' no-media'}">${k.image ? h`<div class="pic">${media(k.image)}</div>` : ''}<div class="cap"><span class="v">${t(k.venue)}</span><h3>${t(k.title)}</h3><p>${t(k.note)}</p></div></div>`)}
       </div>`,
 
   media: () => h`
@@ -1346,7 +1357,7 @@ const BODY = {
       <div class="life-grid reveal">${DATA.life.items.map((it) => h`
         <div class="life-item"><h3><span class="dot"></span>${t(it.title)}</h3><p>${t(it.body, it.refs)}</p></div>`)}
       </div>${DATA.life.photos.length ? h`
-      <div class="life-photos reveal">${DATA.life.photos.map((p) => h`<div class="ph-box">${slot(p, '')}</div>`)}</div>` : ''}`
+      <div class="life-photos reveal">${DATA.life.photos.map((p) => h`<div class="ph-box">${media(p)}</div>`)}</div>` : ''}`
 };
 
 /* A section with no content disappears together with its nav link, and the
@@ -1392,7 +1403,12 @@ mount('#contact-links', DATA.links.map((l) => h`
   const btn = document.getElementById('langBtn');
   function sync() {
     // The button's two labels live in markup and swap via CSS.
-    root.setAttribute('lang', root.getAttribute('data-lang') === 'ja' ? 'ja' : 'en');
+    const ja = root.getAttribute('data-lang') === 'ja';
+    root.setAttribute('lang', ja ? 'ja' : 'en');
+    // alt is an attribute, so it cannot hold both languages at once.
+    for (const im of document.querySelectorAll('img[data-alt-ja]')) {
+      im.alt = ja ? im.dataset.altJa : im.dataset.altEn;
+    }
   }
   sync();
   btn.addEventListener('click', () => {
