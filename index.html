@@ -1014,15 +1014,6 @@ const DATA = {
     font-size: 11.5px;
     color: var(--ink-faint);
   }
-  .sfm-credit {
-    margin-top: 38px;
-    font-family: var(--font-mono);
-    font-size: 12px;
-    line-height: 1.7;
-    color: var(--ink-faint);
-    max-width: 66ch;
-  }
-  .sfm-credit strong { color: var(--accent-text); font-weight: 500; }
 
   /* ====================================================================
      Game button
@@ -1135,7 +1126,7 @@ const DATA = {
   /* Mono is used for dates, years, indices and rates -- all of which want to
      line up in a column. */
   .idx, .yr, .d, .m-date, .venue, .rate, .k, .v, .tag, .note,
-  .sfm-credit, .foot-row, .pill, .chips a, .gamebtn {
+  .foot-row, .pill, .chips a, .gamebtn {
     font-variant-numeric: tabular-nums;
   }
   h1, h2, h3, .mission .stmt { text-wrap: balance; }
@@ -1269,10 +1260,6 @@ const DATA = {
   <!-- ========== FOOTER ========== -->
   <footer class="page-foot">
     <div class="wrap">
-      <p class="sfm-credit reveal">
-        <span class="en" lang="en">↑ Behind this page, a crowd is crossing. Every walker anticipates <em>when</em> a collision would happen rather than reacting to how close someone is, following the power law Karamouzas, Skinner and Guy fitted to real pedestrians (PRL 113, 2014) — so paths that merely pass close by are ignored, and a real collision course is answered early and to one side. Nothing is drawn by hand and no route is scripted: the lanes, the wake behind each pillar, the way a pair walking abreast breaks into single file when it gets tight, all fall out of the forces. The orange walker also forecasts its own next few seconds, rolled out through the same model against the crowd actually around it.</span>
-        <span class="ja" lang="ja">↑ このページの背後を、群衆が横切っています。歩行者は「今どれだけ近いか」ではなく「<em>いつ</em>ぶつかるか」を予測して避けます。実際の歩行データに当てはめられた Karamouzas らのべき乗則（PRL 113, 2014）に従うため、ただすれ違うだけの相手は無視し、本当に衝突する相手は早めに、横へ避けます。手で描いた絵も、決められた経路もありません。レーンの形成も、柱の後ろにできる伴流も、並んで歩く二人が混雑で縦一列になる様子も、すべて力の帰結です。オレンジの歩行者は自分の数秒先も予測します。同じモデルを、いま周りにいる人たちに対して実際に転がした結果です。</span>
-      </p>
       <div class="foot-row reveal">
         <span>© 2026 Hiromu Taketsugu · 武次 広夢</span>
         <span class="en">Built around pedestrian trajectory forecasting</span>
