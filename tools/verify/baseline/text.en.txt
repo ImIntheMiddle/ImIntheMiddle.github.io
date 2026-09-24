@@ -29,8 +29,7 @@ Mission
 To reduce preventable deaths.
 00
 About
-I am a Ph.D. student (D2) at Toyota Technological Institute, advised by Prof. Norimichi Ukita in the Intelligent Information Media Lab. My interests are Physical AI and the estimation and prediction of human motion — reading what a person is doing now, and what they are about to do next.
-Both come down to the same thing: machines are moving into spaces that belong to people, and they can only act well there if they read people well.
+I am a Ph.D. student (D2) at Toyota Technological Institute, advised by Prof. Norimichi Ukita in the Intelligent Information Media Lab. My research interests are Physical AI and human motion estimation and prediction.
 01
 What's New
 2026 / 08INTERNCompleted a research internship at Woven by Toyota
@@ -150,7 +149,7 @@ NTT, Inc. · May 2024
 Media & Coverage
 Doctoral student Hiromu Taketsugu receives the IEEE Nagoya Section International Conference Research Presentation AwardToyota Technological Institute2026 / 05
 Let's talk.
-For research collaborations, social-navigation problems, academic or industry roles, or a language exchange.
+For research collaborations, social-navigation problems, or academic and industry roles.
 sd25502@toyota-ti.ac.jp
 Google Scholar
 GitHub
