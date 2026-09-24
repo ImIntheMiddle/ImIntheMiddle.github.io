@@ -180,16 +180,19 @@ const DATA = {
     ]
   },
 
+  /* The three terms the About names, in the same order. Each body describes
+     the area, not a paper: the previous set summarised EmLoco twice and left
+     the first-author estimation work with nowhere to sit. */
   research: [
-    { title: { en: 'Trajectory Forecasting', ja: '軌道予測' },
-      body: { en: 'Predicting pedestrian and human motion that stays physically plausible, not merely statistically likely.',
-              ja: '統計的にありそうなだけでなく、物理的にもっともらしい歩行者・人の動きを予測します。' } },
-    { title: { en: 'Embodied AI', ja: '身体性のあるAI' },
-      body: { en: 'Grounding prediction in locomotion and physics, so models reason about bodies rather than only pixels.',
-              ja: '予測を移動運動と物理に根ざすことで、ピクセルだけでなく「身体」を捉えるモデルを目指します。' } },
-    { title: { en: 'Social Robotics', ja: '社会的ロボティクス' },
-      body: { en: 'Navigation in shared human spaces, aimed at systems that help prevent avoidable harm.',
-              ja: '人と共有する空間での移動・行動を扱い、防げる被害をなくすシステムを目指します。' } }
+    { title: { en: 'Human Motion Estimation', ja: '人の動きの推定' },
+      body: { en: 'Estimating how people are moving, from video and other sensors. In the real world that means occlusion and crowds.',
+              ja: '映像やセンサから、人がいまどう動いているかを捉える。実環境では、隠れも混雑もついて回る。' } },
+    { title: { en: 'Human Motion Prediction', ja: '人の動きの予測' },
+      body: { en: 'Forecasting how people move next. It depends on who and what is around them, and rarely has one right answer.',
+              ja: '人が次にどう動くかを予測する。周りの人や場に左右され、正解は一つとは限らない。' } },
+    { title: 'Physical AI',
+      body: { en: 'AI that acts under the constraints of a body and of physics, among people, to reduce preventable deaths.',
+              ja: '身体と物理の制約のもとで動くAI。人のいる空間で、避けられる死を減らすために。' } }
   ],
 
   awards: [

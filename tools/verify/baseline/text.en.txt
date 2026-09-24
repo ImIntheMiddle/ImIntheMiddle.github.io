@@ -39,14 +39,14 @@ What's New
 02
 Research Focus
 / 01
-Trajectory Forecasting
-Predicting pedestrian and human motion that stays physically plausible, not merely statistically likely.
+Human Motion Estimation
+Estimating how people are moving, from video and other sensors. In the real world that means occlusion and crowds.
 / 02
-Embodied AI
-Grounding prediction in locomotion and physics, so models reason about bodies rather than only pixels.
+Human Motion Prediction
+Forecasting how people move next. It depends on who and what is around them, and rarely has one right answer.
 / 03
-Social Robotics
-Navigation in shared human spaces, aimed at systems that help prevent avoidable harm.
+Physical AI
+AI that acts under the constraints of a body and of physics, among people, to reduce preventable deaths.
 03
 Selected Publications
 Full list on Scholar →
