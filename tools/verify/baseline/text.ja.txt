@@ -6,6 +6,7 @@ H. Taketsugu · 武次 広夢
 受賞
 活動
 経歴
+発表
 メディア
 日常
 群衆の中を歩く
@@ -30,8 +31,8 @@ CV
 テクノロジーを通じて、非業の死をなくす。
 00
 自己紹介
-豊田工業大学 博士後期課程（D1）に在籍し、知能情報メディア研究室にて浮田宗伯教授の指導のもと研究を行っています。人やシーンと相互作用する、物理を考慮した「人の動きの予測」システムを開発しています。
-日本学術振興会 特別研究員（DC1）であり、CVPR や WACV などのトップ国際会議に筆頭著者として論文を発表してきました。Woven by Toyota での研究インターンを経験し、ACCV 2026 では Tech Chair を務めています。
+豊田工業大学 博士後期課程（D2）に在籍し、知能情報メディア研究室にて浮田宗伯教授の指導のもと研究を行っています。人やシーンと相互作用する、物理を考慮した「人の動きの予測」システムを開発しています。
+日本学術振興会 特別研究員（DC1）であり、CVPR や WACV などのトップ国際会議に筆頭著者として論文を発表してきました。豊田工業大学シカゴ校（TTIC）に客員学生として滞在し（Matthew R. Walter 教授）、Woven by Toyota での研究インターンも経験しています。ACCV 2026 では Tech Chair を、T-PAMI や CVIU では査読者を務めています。
 01
 最新情報
 2026SERVICEACCV 2026 の Tech Chair を担当
@@ -76,6 +77,9 @@ WACV 2026 · co-author
 MMCM: Multimodality-aware Metric using Clustering-based Modes for Probabilistic Human Motion Prediction
 K. Tokoro, H. Taketsugu, N. Ukita
 arXivPDF
+SNL 2025 · co-author
+Hierarchical Group-aware Token Merging for Efficient Trajectory Prediction
+Y. Yoshida, N. Ukita, H. Taketsugu
 MVA 2025 · Best Poster Award · co-author
 Multi-Person Pose Estimation Evaluation Using Optimal Transportation and Improved Pose Matching
 T. Moriki, H. Taketsugu, N. Ukita
@@ -93,15 +97,25 @@ arXiv
 2026
 IEEE名古屋支部 国際会議研究発表賞EmLoco (CVPR 2025) に対して
 2025
+プレゼン賞 — 第15回 企業と博士人材の交流会名古屋大学 · 2025年8月
+2025
 Best Poster Award — MVA 2025共著 · 多人数姿勢推定の新規評価指標
 2025
-ベストポスター最終候補 — 48件中3件JST ASPIRE 京都ワークショップ
+ポスター賞（第3位）JST ASPIRE 京都ワークショップ · 48件中3位
 2025
 日本学術振興会 特別研究員 (DC1)採用率 約14%
+2023
+優秀学生賞計測自動制御学会 (SICE)
+2022
+優秀修了生 — 修了生の上位1%グローバル消費インテリジェンス寄附講座 (GCI) 2021 Winter · 東京大学
 05
 学会活動・教育
 2026
 Tech Chair — ACCV 2026アジアコンピュータビジョン会議 · 大阪 · 2026年12月
+2024 –
+査読者T-PAMI · CVIU · CVPR 2024, 2025 · WACV 2026
+2023 –
+ティーチングアシスタント豊田工業大学 · 顔認識 · 人工知能・深層学習実験 · コンピュータグラフィックス
 2025
 実験教材 — Experiments in Artificial Intelligence & Deep Learning豊田工業大学 · 2025年度
 2024
@@ -109,13 +123,33 @@ Tech Chair — ACCV 2026アジアコンピュータビジョン会議 · 大阪 
 06
 経歴
 2025.04 –
-博士後期課程 — 工学研究科 情報通信系豊田工業大学 · 知能情報メディア研究室
+博士後期課程 — 情報援用工学専攻豊田工業大学 · 知能情報メディア研究室
 2025.04 –
 日本学術振興会 特別研究員 (DC1)日本学術振興会
+2023.10 – 2024.09
+サイエンスライターAI-SCHOLAR · リモート · 最新の機械学習論文の解説記事を執筆
+2023.09 – 2023.12
+客員学生豊田工業大学シカゴ校 (TTIC) · Matthew R. Walter 教授
+2023.04 – 2025.03
+修士課程 — 先端工学専攻 電子情報分野豊田工業大学
+2022.04 – 2025.03
+ティーチングアシスタント — グローバル消費インテリジェンス (GCI)東京大学 · リモート · 1学期あたり3万人超が受講
+2022.01 – 2022.03
+研究インターン株式会社 豊田中央研究所
+2019.04 – 2023.03
+学士課程 — 先端工学基礎学科 電子情報分野豊田工業大学 · 副専攻 機械システム分野
 07
+講演・発表
+MIRU 2025 · 招待講演Physical Plausibility-aware Trajectory Prediction via Locomotion Embodiment
+第28回 画像の認識・理解シンポジウム · 2025年7月
+Toyota フロンティア研究センター · 招待講演Human Trajectory Prediction for Social Navigation
+技術交流会 · 2024年5月
+NTT 厚木研究開発センタ · 招待講演Computer Vision for Social Navigation
+日本電信電話株式会社 · 2024年5月
+08
 メディア掲載
 【学生受賞】博士後期課程2年 武次広夢さんが IEEE 名古屋支部「国際会議研究発表賞」を受賞豊田工業大学2026 / 05
-08
+09
 研究室の外で
 研究は人生の大半ですが、すべてではありません。二つの言語のあいだで小さな家族を育てる、一児の父であり夫。心と体は一緒に鍛えるもの、と信じています。
 家族と暮らし
@@ -123,9 +157,9 @@ Tech Chair — ACCV 2026アジアコンピュータビジョン会議 · 大阪 
 コミュニティ — Vista
 Vista という、互いの進捗・目標管理のための Discord コミュニティを運営しています。2020年に親友と立ち上げ、今も続いています。
 語学
-長く続く語学の習慣。Duolingo の連続記録は500日超え。主に英語とベトナム語を学びながら、新しい場所や人とのつながりを楽しんでいます。
+長く続く語学の習慣。Duolingo の連続記録は700日超え。主に英語とベトナム語を学びながら、新しい場所や人とのつながりを楽しんでいます。
 トレーニング
-大学のスパルタンレース部の元キャプテン。運動は頭をリセットし、研究の集中力に還ってくる、頼れる相棒です。
+大学のスパルタンレース部 Ares の元キャプテン。日本最大規模のチームでした。運動は頭をリセットし、研究の集中力に還ってくる、頼れる相棒です。
 読書
 日常を科学の視点で捉え直す本や、静かに思索できる本が好きです。「Root」と呼ぶ自分の指針があります。表面のノイズではなく、根本の原理を追うこと。
 ツールとガジェット

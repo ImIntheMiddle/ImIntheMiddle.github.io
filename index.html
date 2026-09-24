@@ -135,6 +135,11 @@ const DATA = {
         { label: 'PDF', href: 'https://openaccess.thecvf.com/content/WACV2026/papers/Tokoro_MMCM_Multimodality-aware_Metric_using_Clustering-based_Modes_for_Probabilistic_Human_Motion_WACV_2026_paper.pdf' }
       ] },
 
+    { venue: 'SNL 2025', rate: 'co-author',
+      title: 'Hierarchical Group-aware Token Merging for Efficient Trajectory Prediction',
+      authors: ['Y. Yoshida', 'N. Ukita', 'H. Taketsugu'],
+      links: [] },
+
     { venue: 'MVA 2025', rate: 'Best Poster Award · co-author',
       title: 'Multi-Person Pose Estimation Evaluation Using Optimal Transportation and Improved Pose Matching',
       authors: ['T. Moriki', 'H. Taketsugu', 'N. Ukita'],
@@ -161,18 +166,20 @@ const DATA = {
     { label: 'GitHub', href: 'https://github.com/ImIntheMiddle' },
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/ImIntheMiddle/' },
     { label: 'X', href: 'https://twitter.com/ImlntheMiddle' },
-    // BLOCKER: static/uploads/resume.pdf is still the Hugo theme's 2020
-    // demo CV. Replace the file or delete this entry before publishing.
+    // BLOCKER: static/uploads/resume.pdf is still the Hugo theme's 2020 demo
+    // CV. The real CV now exists but is not publishable as-is: it prints a
+    // personal mobile number and is headed "Last updated in October 2024".
+    // Drop in a cleaned export, or delete this entry, before publishing.
     { label: 'CV', href: 'static/uploads/resume.pdf', newTab: true }
   ],
 
   about: {
     portrait: null,
     paras: [
-      { en: 'I am a Ph.D. student (D1) at **Toyota Technological Institute**, advised by Prof. Norimichi Ukita in the Intelligent Information Media Lab. My research builds human- and scene-interactive, physics-aware systems for predicting how people move.',
-        ja: '豊田工業大学 博士後期課程（D1）に在籍し、知能情報メディア研究室にて**浮田宗伯**教授の指導のもと研究を行っています。人やシーンと相互作用する、物理を考慮した「人の動きの予測」システムを開発しています。' },
-      { en: 'I am a **JSPS Research Fellow (DC1)** and have published as first author at top-tier venues including **CVPR** and **WACV**. I completed a research internship at **Woven by Toyota**, and I serve the community as Tech Chair for ACCV 2026.',
-        ja: '**日本学術振興会 特別研究員（DC1）**であり、**CVPR** や **WACV** などのトップ国際会議に筆頭著者として論文を発表してきました。**Woven by Toyota** での研究インターンを経験し、ACCV 2026 では Tech Chair を務めています。' }
+      { en: 'I am a Ph.D. student (D2) at **Toyota Technological Institute**, advised by Prof. Norimichi Ukita in the Intelligent Information Media Lab. My research builds human- and scene-interactive, physics-aware systems for predicting how people move.',
+        ja: '豊田工業大学 博士後期課程（D2）に在籍し、知能情報メディア研究室にて**浮田宗伯**教授の指導のもと研究を行っています。人やシーンと相互作用する、物理を考慮した「人の動きの予測」システムを開発しています。' },
+      { en: 'I am a **JSPS Research Fellow (DC1)** and have published as first author at top-tier venues including **CVPR** and **WACV**. I spent a term as a visiting student at **TTI Chicago** with Prof. Matthew R. Walter, and completed a research internship at **Woven by Toyota**. I serve the community as Tech Chair for ACCV 2026 and as a reviewer for **T-PAMI** and **CVIU**.',
+        ja: '**日本学術振興会 特別研究員（DC1）**であり、**CVPR** や **WACV** などのトップ国際会議に筆頭著者として論文を発表してきました。**豊田工業大学シカゴ校（TTIC）**に客員学生として滞在し（Matthew R. Walter 教授）、**Woven by Toyota** での研究インターンも経験しています。ACCV 2026 では Tech Chair を、**T-PAMI** や **CVIU** では査読者を務めています。' }
     ]
   },
 
@@ -194,17 +201,31 @@ const DATA = {
               ja: 'IEEE名古屋支部 国際会議研究発表賞' },
       org: { en: 'For EmLoco (CVPR 2025)', ja: 'EmLoco (CVPR 2025) に対して' } },
     { year: '2025',
+      name: { en: 'Presentation Award — 15th Exchange Meeting between Companies and Ph.D. Talent',
+              ja: 'プレゼン賞 — 第15回 企業と博士人材の交流会' },
+      org: { en: 'Nagoya University · August 2025', ja: '名古屋大学 · 2025年8月' } },
+    { year: '2025',
       name: 'Best Poster Award — MVA 2025',
       org: { en: 'Co-author · Multi-Person Pose Estimation Evaluation',
              ja: '共著 · 多人数姿勢推定の新規評価指標' } },
     { year: '2025',
-      name: { en: 'Best Poster Finalist — Top 3 of 48', ja: 'ベストポスター最終候補 — 48件中3件' },
-      org: { en: 'JST ASPIRE Kyoto Workshop', ja: 'JST ASPIRE 京都ワークショップ' } },
+      name: { en: 'Poster Award (3rd place)', ja: 'ポスター賞（第3位）' },
+      org: { en: 'JST ASPIRE Kyoto Workshop · 3rd of 48 posters',
+             ja: 'JST ASPIRE 京都ワークショップ · 48件中3位' } },
     { year: '2025',
       name: { en: 'JSPS Research Fellowship for Young Scientists (DC1)',
               ja: '日本学術振興会 特別研究員 (DC1)' },
       org: { en: 'Japan Society for the Promotion of Science · ~14% acceptance',
-             ja: '採用率 約14%' } }
+             ja: '採用率 約14%' } },
+    { year: '2023',
+      name: { en: 'Outstanding Student Award', ja: '優秀学生賞' },
+      org: { en: 'The Society of Instrument and Control Engineers (SICE)',
+             ja: '計測自動制御学会 (SICE)' } },
+    { year: '2022',
+      name: { en: 'Outstanding Graduate — top 1% of the cohort',
+              ja: '優秀修了生 — 修了生の上位1%' },
+      org: { en: 'Global Consumer Intelligence (GCI) 2021 Winter · The University of Tokyo',
+             ja: 'グローバル消費インテリジェンス寄附講座 (GCI) 2021 Winter · 東京大学' } }
   ],
 
   /* Community roles and course work share one section: each is only a row or
@@ -214,6 +235,14 @@ const DATA = {
       name: { en: 'Tech Chair — ACCV 2026', ja: 'Tech Chair — ACCV 2026' },
       org: { en: 'Asian Conference on Computer Vision · Osaka, December 2026',
              ja: 'アジアコンピュータビジョン会議 · 大阪 · 2026年12月' } },
+    { year: '2024 –',
+      name: { en: 'Reviewer', ja: '査読者' },
+      org: { en: 'T-PAMI · CVIU · CVPR 2024, 2025 · WACV 2026',
+             ja: 'T-PAMI · CVIU · CVPR 2024, 2025 · WACV 2026' } },
+    { year: '2023 –',
+      name: { en: 'Teaching Assistant', ja: 'ティーチングアシスタント' },
+      org: { en: 'Toyota Technological Institute · Face Recognition · AI & Deep Learning Experiments · Computer Graphics',
+             ja: '豊田工業大学 · 顔認識 · 人工知能・深層学習実験 · コンピュータグラフィックス' } },
     { year: '2025',
       name: { en: 'Course material — {course}', ja: '実験教材 — {course}' },
       org: { en: 'Toyota Technological Institute · 2025 academic year',
@@ -228,22 +257,62 @@ const DATA = {
                         label: 'Experiments in Artificial Intelligence & Deep Learning' } } }
   ],
 
-  /* Career and education. Only what is on the record so far; earlier degrees
-     and the Woven internship dates are still open questions. */
+  /* Career and education, ordered by start date. The Woven by Toyota
+     internship is missing its period and job title -- it postdates the CV
+     this section was built from. */
   timeline: [
     { year: '2025.04 –',
-      name: { en: 'Ph.D. student, Information and Communication Engineering',
-              ja: '博士後期課程 — 工学研究科 情報通信系' },
+      name: { en: 'Ph.D. student, Information-Aided Technology',
+              ja: '博士後期課程 — 情報援用工学専攻' },
       org: { en: 'Toyota Technological Institute · Intelligent Information Media Lab',
              ja: '豊田工業大学 · 知能情報メディア研究室' } },
     { year: '2025.04 –',
       name: { en: 'JSPS Research Fellow (DC1)', ja: '日本学術振興会 特別研究員 (DC1)' },
-      org: { en: 'Japan Society for the Promotion of Science', ja: '日本学術振興会' } }
+      org: { en: 'Japan Society for the Promotion of Science', ja: '日本学術振興会' } },
+    { year: '2023.10 – 2024.09',
+      name: { en: 'Science Writer', ja: 'サイエンスライター' },
+      org: { en: 'AI-SCHOLAR · remote · explaining recent machine-learning papers',
+             ja: 'AI-SCHOLAR · リモート · 最新の機械学習論文の解説記事を執筆' } },
+    { year: '2023.09 – 2023.12',
+      name: { en: 'Visiting Student', ja: '客員学生' },
+      org: { en: 'Toyota Technological Institute at Chicago · with Prof. Matthew R. Walter',
+             ja: '豊田工業大学シカゴ校 (TTIC) · Matthew R. Walter 教授' } },
+    { year: '2023.04 – 2025.03',
+      name: { en: 'M.Eng., Electronics and Information Engineering',
+              ja: '修士課程 — 先端工学専攻 電子情報分野' },
+      org: { en: 'Toyota Technological Institute', ja: '豊田工業大学' } },
+    { year: '2022.04 – 2025.03',
+      name: { en: 'Teaching Assistant — Global Consumer Intelligence (GCI)',
+              ja: 'ティーチングアシスタント — グローバル消費インテリジェンス (GCI)' },
+      org: { en: 'The University of Tokyo · remote · 30,000+ students per term',
+             ja: '東京大学 · リモート · 1学期あたり3万人超が受講' } },
+    { year: '2022.01 – 2022.03',
+      name: { en: 'Research Intern', ja: '研究インターン' },
+      org: { en: 'Toyota Central R&D Labs., Inc.', ja: '株式会社 豊田中央研究所' } },
+    { year: '2019.04 – 2023.03',
+      name: { en: 'B.Eng., Electronics and Information Engineering',
+              ja: '学士課程 — 先端工学基礎学科 電子情報分野' },
+      org: { en: 'Toyota Technological Institute · minor in Mechanical Engineering',
+             ja: '豊田工業大学 · 副専攻 機械システム分野' } }
   ],
 
-  /* Empty until real entries exist. An empty array hides the whole section
-     and its nav link, and renumbers the ones that remain. */
-  talks: [],
+  /* An empty array hides the whole section and its nav link, and renumbers
+     the ones that remain. Invited talks only; conference presentations of the
+     papers above are not repeated here. */
+  talks: [
+    { venue: { en: 'MIRU 2025 · Invited Talk', ja: 'MIRU 2025 · 招待講演' },
+      title: 'Physical Plausibility-aware Trajectory Prediction via Locomotion Embodiment',
+      note: { en: 'The 28th Meeting on Image Recognition and Understanding · July 2025',
+              ja: '第28回 画像の認識・理解シンポジウム · 2025年7月' } },
+    { venue: { en: 'Toyota Frontier Research Center · Invited Talk',
+               ja: 'Toyota フロンティア研究センター · 招待講演' },
+      title: 'Human Trajectory Prediction for Social Navigation',
+      note: { en: 'Tech meetup · May 2024', ja: '技術交流会 · 2024年5月' } },
+    { venue: { en: 'NTT Atsugi R&D Center · Invited Talk',
+               ja: 'NTT 厚木研究開発センタ · 招待講演' },
+      title: 'Computer Vision for Social Navigation',
+      note: { en: 'NTT, Inc. · May 2024', ja: '日本電信電話株式会社 · 2024年5月' } }
+  ],
   media: [
     { title: { en: 'Doctoral student Hiromu Taketsugu receives the IEEE Nagoya Section International Conference Research Presentation Award',
                ja: '【学生受賞】博士後期課程2年 武次広夢さんが IEEE 名古屋支部「国際会議研究発表賞」を受賞' },
@@ -263,11 +332,11 @@ const DATA = {
         body: { en: 'I run **Vista**, a Discord community for mutual progress and goal management, founded with a close friend in 2020 and still going strong.',
                 ja: '**Vista** という、互いの進捗・目標管理のための Discord コミュニティを運営しています。2020年に親友と立ち上げ、今も続いています。' } },
       { title: { en: 'Languages', ja: '語学' },
-        body: { en: 'A long-running language habit, with a Duolingo streak past 500 days. Mainly English and Vietnamese, picking up new places and new people along the way.',
-                ja: '長く続く語学の習慣。Duolingo の連続記録は500日超え。主に英語とベトナム語を学びながら、新しい場所や人とのつながりを楽しんでいます。' } },
+        body: { en: 'A long-running language habit, with a Duolingo streak past 700 days. Mainly English and Vietnamese, picking up new places and new people along the way.',
+                ja: '長く続く語学の習慣。Duolingo の連続記録は700日超え。主に英語とベトナム語を学びながら、新しい場所や人とのつながりを楽しんでいます。' } },
       { title: { en: 'Training', ja: 'トレーニング' },
-        body: { en: 'Former captain of the university Spartan Race club. Exercise is a reliable partner that resets the mind and feeds back into research focus.',
-                ja: '大学のスパルタンレース部の元キャプテン。運動は頭をリセットし、研究の集中力に還ってくる、頼れる相棒です。' } },
+        body: { en: 'Former captain of **Ares**, the university Spartan Race club and the largest such team in Japan. Exercise is a reliable partner that resets the mind and feeds back into research focus.',
+                ja: '大学のスパルタンレース部 **Ares** の元キャプテン。日本最大規模のチームでした。運動は頭をリセットし、研究の集中力に還ってくる、頼れる相棒です。' } },
       { title: { en: 'Reading', ja: '読書' },
         body: { en: 'Drawn to books that re-examine ordinary life through a scientific lens, or leave room for quiet reflection. A personal compass I call "Root": chase the underlying principle, not the surface noise.',
                 ja: '日常を科学の視点で捉え直す本や、静かに思索できる本が好きです。「Root」と呼ぶ自分の指針があります。表面のノイズではなく、根本の原理を追うこと。' } },
@@ -895,7 +964,10 @@ const DATA = {
      ==================================================================== */
   /* Cards size to their own content, so a card without a photo simply ends
      sooner instead of leaving a gap under its caption. */
-  .talks-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; align-items: start; }
+  /* The cards carry a visible border and their titles are paper titles, so
+     they differ by several lines. Let them stretch: three boxes of equal
+     height read as a set, three ragged ones read as a mistake. */
+  .talks-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
   .talk { border: 1px solid var(--hairline); overflow: hidden; transition: border-color 0.2s; }
   .talk:hover { border-color: var(--accent); }
   .talk .pic {
@@ -1406,7 +1478,7 @@ const pub = (p, me) => h`
         <span class="venue">${p.venue}${p.rate ? h` <span class="rate">· ${p.rate}</span>` : ''}</span>
         <h3>${p.title}${p.titleNote ? h` <span class="verify">${p.titleNote}</span>` : ''}</h3>
         <div class="auth">${pubAuthors(p, me)}</div>
-        <div class="pub-links">${p.links.map((l) => ref(l, 'en'))}</div>
+        ${p.links.length ? h`<div class="pub-links">${p.links.map((l) => ref(l, 'en'))}</div>` : ''}
       </div></div>`;
 
 /* An image is always optional. Where one is absent the layout closes up

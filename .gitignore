@@ -15,3 +15,6 @@ _questionnaire.md
 # Verification harness scratch output
 tools/verify/.work/
 _roadmap.md
+
+# The CV PDF prints a personal phone number; never commit it to a public repo
+Curriculum_Vitae_Hiromu_Taketsugu.pdf

@@ -5,5 +5,6 @@ work	03
 awards	04
 service	05
 timeline	06
-media	07
-life	08
+talks	07
+media	08
+life	09
