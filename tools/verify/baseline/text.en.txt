@@ -9,7 +9,7 @@ Talks
 Media
 Walk into the crowd
 日本語
-Ph.D. Researcher — Trajectory Forecasting
+Physical AI · Human Motion Estimation and Prediction
 Hiromu Taketsugu
 武次 広夢 — Ph.D. Student, Toyota Technological Institute
 Affiliation
@@ -23,8 +23,6 @@ Scholar
 GitHub
 LinkedIn
 X
-Mission
-To reduce preventable deaths.
 00
 About
 I am a Ph.D. student (D2) at Toyota Technological Institute, advised by Prof. Norimichi Ukita in the Intelligent Information Media Lab. My research interests are Physical AI and human motion estimation and prediction.
@@ -136,4 +134,4 @@ NTT, Inc. · May 2024
 Media & Coverage
 Doctoral student Hiromu Taketsugu receives the IEEE Nagoya Section International Conference Research Presentation AwardToyota Technological Institute2026 / 05
 © 2026 Hiromu Taketsugu · 武次 広夢
-Built around pedestrian trajectory forecasting
+Background: a simulated pedestrian crowd

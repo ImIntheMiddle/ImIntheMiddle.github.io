@@ -466,15 +466,9 @@ const DATA = {
   .hero-block .eyebrow,
   .hero-block h1.name,
   .hero-block h1.name small,
-  .hero-block .side-rail,
-  .hero-block .mission .label,
-  .hero-block .mission .stmt {
+  .hero-block .side-rail {
     /* One tight shadow as insurance where the clearing thins out. */
     text-shadow: 0 0 2px rgba(var(--paper-rgb), 0.9);
-  }
-  .hero-block .mission {
-    border-top-color: rgba(var(--paper-rgb), 0.6);
-    border-bottom-color: rgba(var(--paper-rgb), 0.6);
   }
 
   /* sections themselves are transparent — the paper card lives on .wrap only */
@@ -627,36 +621,6 @@ const DATA = {
   .chips a:hover { border-color: var(--accent); color: var(--accent-text); }
   .chips a.primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
   .chips a.primary:hover { background: var(--accent-text); border-color: var(--accent-text); color: var(--stage); }
-
-  /* Mission band */
-  .mission {
-    grid-column: 1 / 8;
-    order: 5;
-    margin-top: clamp(30px, 5vh, 48px);
-    padding: clamp(24px, 4vh, 34px) 0;
-    border-top: 1px solid var(--hairline);
-    border-bottom: 1px solid var(--hairline);
-    display: grid;
-    grid-template-columns: 180px 1fr;
-    gap: 28px;
-    align-items: baseline;
-  }
-  .mission .label {
-    font-family: var(--font-mono);
-    font-size: 11.5px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--accent-text);
-  }
-  .mission .stmt {
-    font-family: var(--font-sans);
-    font-size: clamp(20px, 2.5vw, 30px);
-    font-weight: 500;
-    letter-spacing: -0.02em;
-    line-height: 1.3;
-    max-width: 32ch;
-  }
-  .mission .stmt b { color: var(--accent-text); font-weight: 600; }
 
   /* ====================================================================
      Common section styles — no cards, hairline rules
@@ -1129,7 +1093,7 @@ const DATA = {
   .foot-row, .pill, .chips a, .gamebtn {
     font-variant-numeric: tabular-nums;
   }
-  h1, h2, h3, .mission .stmt { text-wrap: balance; }
+  h1, h2, h3 { text-wrap: balance; }
   p, .bio-text p, .life-item p { text-wrap: pretty; }
 
   /* The display settings are tuned for Latin; both are wrong for Japanese. */
@@ -1160,12 +1124,11 @@ const DATA = {
       box-shadow: none;
     }
     .hero-grid { grid-template-columns: 1fr; row-gap: 22px; }
-    .eyebrow, .chips, .mission, .side-rail { grid-column: 1; }
+    .eyebrow, .chips, .side-rail { grid-column: 1; }
     .side-rail { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 26px; }
     h1.name { grid-column: 1; font-size: clamp(40px, 12vw, 66px); }
     h1.name .lower { display: inline; margin-left: 0.2em; }
     h1.name small { font-size: 15px; margin-top: 16px; }
-    .mission { grid-template-columns: 1fr; gap: 12px; }
     .sec-head { grid-template-columns: 44px 1fr; gap: 14px; }
     .sec-head .note { grid-column: 2; margin-top: -8px; }
     .bio { grid-template-columns: 1fr; gap: 22px; }
@@ -1217,8 +1180,8 @@ const DATA = {
     <div class="wrap">
       <div class="hero hero-grid">
         <div class="eyebrow reveal">
-          <span class="en">Ph.D. Researcher — Trajectory Forecasting</span>
-          <span class="ja">博士課程 — 軌道予測の研究者</span>
+          <span class="en">Physical AI · Human Motion Estimation and Prediction</span>
+          <span class="ja">Physical AI・人の動きの推定と予測</span>
         </div>
         <h1 class="name reveal" style="transition-delay:.05s">
           <span class="en">Hiromu <span class="lower">Taketsugu</span></span>
@@ -1243,13 +1206,6 @@ const DATA = {
           </div>
         </div>
         <div class="chips reveal" id="hero-chips" style="transition-delay:.18s"></div>
-        <div class="mission reveal" style="transition-delay:.22s">
-          <div class="label"><span class="en">Mission</span><span class="ja">ミッション</span></div>
-          <div class="stmt">
-            <span class="en">To reduce <b>preventable deaths</b>.</span>
-            <span class="ja"><b>避けられる死</b>を、減らす。</span>
-          </div>
-        </div>
       </div>
     </div>
   </section>
@@ -1262,8 +1218,8 @@ const DATA = {
     <div class="wrap">
       <div class="foot-row reveal">
         <span>© 2026 Hiromu Taketsugu · 武次 広夢</span>
-        <span class="en">Built around pedestrian trajectory forecasting</span>
-        <span class="ja">歩行者の軌道予測をモチーフに</span>
+        <span class="en">Background: a simulated pedestrian crowd</span>
+        <span class="ja">背景は歩行者群衆のシミュレーション</span>
       </div>
     </div>
   </footer>
@@ -2137,6 +2093,14 @@ function forecast(world, agent, out, opts) {
   const trail = document.createElement('canvas');
   const tctx = trail.getContext('2d');
 
+  /* A four-by-four tile with a single opaque pixel, used to dither the fade.
+     See fadeTrails for why a flat fade cannot do the job. */
+  const DITHER_N = 4, DITHER_CELLS = DITHER_N * DITHER_N;
+  const ditherTile = document.createElement('canvas');
+  ditherTile.width = ditherTile.height = DITHER_N;
+  ditherTile.getContext('2d').fillRect(0, 0, 1, 1);
+  let ditherPat = null, ditherPhase = 0;
+
   let W = 0, H = 0, DPR = 1, SCALE = 1, world = null, ready = false;
   const MOBILE = () => window.innerWidth <= 640;
 
@@ -2213,21 +2177,39 @@ function forecast(world, agent, out, opts) {
   const FAN = [[], [], []];
   let fanAt = 0;
 
+  const FADE_STEP = 0.02;          // alpha budget spent per application
   let fadeCarry = 0;
   function fadeTrails(dt) {
-    // Erode alpha rather than painting over it, so the fade leaves no residue.
-    // But canvas alpha is 8-bit: at a seventeen-second trail life the erosion
-    // per frame worked out at 0.001, which rounds to zero and never fired --
-    // the trails simply accumulated until the screen filled in. Bank the
-    // fraction and spend it once it is large enough to register.
+    // Erode alpha rather than painting over it, so the fade leaves no colour
+    // behind. The catch is that canvas alpha is eight bits and this fade is
+    // multiplicative, so it has a fixed point wherever the cut rounds away:
+    // at two percent a pass it stops dead at 22/255 and stays there. That is
+    // the grey that built up over everywhere the crowd had walked -- not a
+    // fade that was too slow, a fade that had stopped.
+    //
+    // Spend the same budget through an ordered dither instead: one pixel in
+    // sixteen, cut sixteen times as deep. The average erosion is identical,
+    // the phase cycles so every pixel is cut exactly once per sixteen passes,
+    // and the smallest cut that ever lands is 32% -- which carries a pixel
+    // all the way down to 1/255, four thousandths of a percent, invisible
+    // against the stage.
     fadeCarry += 1 - Math.exp(-dt / V.trailLife);
-    if (fadeCarry < 0.02) return;
-    const k = Math.min(0.4, fadeCarry);
-    fadeCarry = 0;
+    if (fadeCarry < FADE_STEP) return;
+    // One step at a time. A backgrounded tab banks a large carry, and
+    // spending it in one pass would erase a sixteenth of the field outright.
+    fadeCarry -= FADE_STEP;
+    if (!ditherPat) ditherPat = tctx.createPattern(ditherTile, 'repeat');
+    const ox = ditherPhase % DITHER_N, oy = (ditherPhase / DITHER_N) | 0;
+    ditherPhase = (ditherPhase + 1) % DITHER_CELLS;
     tctx.save();
+    // Device pixels, unsmoothed: scaled or interpolated, the tile would
+    // average straight back into the flat fade it replaces.
+    tctx.setTransform(1, 0, 0, 1, ox, oy);
+    tctx.imageSmoothingEnabled = false;
     tctx.globalCompositeOperation = 'destination-out';
-    tctx.fillStyle = 'rgba(0,0,0,' + k.toFixed(3) + ')';
-    tctx.fillRect(0, 0, W, H);
+    tctx.globalAlpha = FADE_STEP * DITHER_CELLS;
+    tctx.fillStyle = ditherPat;
+    tctx.fillRect(-ox, -oy, trail.width, trail.height);
     tctx.restore();
   }
 
