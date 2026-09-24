@@ -50,6 +50,27 @@ echo "== html structure =="
 python3 "$S/wellformed.py" "$WORK/rendered.html" || fail=1
 
 echo
+echo "== local assets =="
+python3 - "$WORK/rendered.html" <<'PY' || fail=1
+import re, sys, os
+html = open(sys.argv[1], encoding='utf-8').read()
+# Script bodies still hold the template source, whose href="${l.href}" would
+# otherwise be reported as a missing file.
+html = re.sub(r'<script[^>]*>.*?</script>', '', html, flags=re.S)
+refs = set()
+for attr, val in re.findall(r'\b(href|src)="([^"]+)"', html):
+    if re.match(r'^(https?:)?//|^(mailto|tel|data):|^#|^$', val):
+        continue
+    refs.add(val.split('#')[0].split('?')[0])
+bad = sorted(r for r in refs if not os.path.isfile(r))
+for r in sorted(refs):
+    print(f"  {'MISSING' if r in bad else 'ok     '}  {r}")
+if not refs:
+    print("  (no local assets referenced)")
+sys.exit(1 if bad else 0)
+PY
+
+echo
 echo "== content vs baseline =="
 python3 "$S/extract.py" "$WORK/rendered.html" text en   > "$WORK/r.text.en.txt"
 python3 "$S/extract.py" "$WORK/rendered.html" text ja   > "$WORK/r.text.ja.txt"

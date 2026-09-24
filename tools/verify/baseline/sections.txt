@@ -7,4 +7,3 @@ service	05
 timeline	06
 talks	07
 media	08
-life	09

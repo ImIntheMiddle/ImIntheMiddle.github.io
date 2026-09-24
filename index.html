@@ -67,10 +67,6 @@
    ==================================================================== */
 const DATA = {
   news: [
-    { date: '2026', tag: 'SERVICE',
-      text: { en: 'Serving as Tech Chair for ACCV 2026',
-              ja: 'ACCV 2026 の Tech Chair を担当' } },
-
     { date: '2026 / 08', tag: 'INTERN',
       text: { en: 'Completed a research internship at Woven by Toyota',
               ja: 'Woven by Toyota での研究インターンを修了' } },
@@ -78,6 +74,10 @@ const DATA = {
     { date: '2026 / 05', tag: 'AWARD',
       text: { en: 'Received the 2026 IEEE Nagoya Section International Conference Research Presentation Award for EmLoco',
               ja: 'EmLoco にて 2026年 IEEE名古屋支部 国際会議研究発表賞を受賞' } },
+
+    { date: '2025 / 08', tag: 'SERVICE',
+      text: { en: 'Appointed Technical Chair for ACCV 2026',
+              ja: 'ACCV 2026 の Technical Chair に就任' } },
 
     { date: "2025 / 02", tag: "CVPR'25",
       text: { en: 'EmLoco accepted to CVPR 2025 — {arxiv}',
@@ -166,11 +166,10 @@ const DATA = {
     { label: 'GitHub', href: 'https://github.com/ImIntheMiddle' },
     { label: 'LinkedIn', href: 'https://www.linkedin.com/in/ImIntheMiddle/' },
     { label: 'X', href: 'https://twitter.com/ImlntheMiddle' },
-    // BLOCKER: static/uploads/resume.pdf is still the Hugo theme's 2020 demo
-    // CV. The real CV now exists but is not publishable as-is: it prints a
-    // personal mobile number and is headed "Last updated in October 2024".
-    // Drop in a cleaned export, or delete this entry, before publishing.
-    { label: 'CV', href: 'static/uploads/resume.pdf', newTab: true }
+    // BLOCKER: the file is not in the repo yet. The owner is re-exporting the
+    // CV without the personal phone number the current build prints. Drop it
+    // in at exactly this path -- verify.sh fails for as long as it is missing.
+    { label: 'CV', href: 'static/uploads/CV_Hiromu_Taketsugu.pdf', newTab: true }
   ],
 
   about: {
@@ -178,8 +177,8 @@ const DATA = {
     paras: [
       { en: 'I am a Ph.D. student (D2) at **Toyota Technological Institute**, advised by Prof. Norimichi Ukita in the Intelligent Information Media Lab. My research builds human- and scene-interactive, physics-aware systems for predicting how people move.',
         ja: '豊田工業大学 博士後期課程（D2）に在籍し、知能情報メディア研究室にて**浮田宗伯**教授の指導のもと研究を行っています。人やシーンと相互作用する、物理を考慮した「人の動きの予測」システムを開発しています。' },
-      { en: 'I am a **JSPS Research Fellow (DC1)** and have published as first author at top-tier venues including **CVPR** and **WACV**. I spent a term as a visiting student at **TTI Chicago** with Prof. Matthew R. Walter, and completed a research internship at **Woven by Toyota**. I serve the community as Tech Chair for ACCV 2026 and as a reviewer for **T-PAMI** and **CVIU**.',
-        ja: '**日本学術振興会 特別研究員（DC1）**であり、**CVPR** や **WACV** などのトップ国際会議に筆頭著者として論文を発表してきました。**豊田工業大学シカゴ校（TTIC）**に客員学生として滞在し（Matthew R. Walter 教授）、**Woven by Toyota** での研究インターンも経験しています。ACCV 2026 では Tech Chair を、**T-PAMI** や **CVIU** では査読者を務めています。' }
+      { en: 'I am a **JSPS Research Fellow (DC1)** and have published as first author at top-tier venues including **CVPR** and **WACV**. I spent a term as a visiting student at **TTI Chicago** with Prof. Matthew R. Walter, and completed a research internship at **Woven by Toyota**. I serve the community as Technical Chair for ACCV 2026 and as a reviewer for **T-PAMI** and **CVIU**.',
+        ja: '**日本学術振興会 特別研究員（DC1）**であり、**CVPR** や **WACV** などのトップ国際会議に筆頭著者として論文を発表してきました。**豊田工業大学シカゴ校（TTIC）**に客員学生として滞在し（Matthew R. Walter 教授）、**Woven by Toyota** での研究インターンも経験しています。ACCV 2026 では Technical Chair を、**T-PAMI** や **CVIU** では査読者を務めています。' }
     ]
   },
 
@@ -232,7 +231,7 @@ const DATA = {
      two on its own, and together they answer the same question. */
   service: [
     { year: '2026',
-      name: { en: 'Tech Chair — ACCV 2026', ja: 'Tech Chair — ACCV 2026' },
+      name: { en: 'Technical Chair — ACCV 2026', ja: 'Technical Chair — ACCV 2026' },
       org: { en: 'Asian Conference on Computer Vision · Osaka, December 2026',
              ja: 'アジアコンピュータビジョン会議 · 大阪 · 2026年12月' } },
     { year: '2024 –',
@@ -257,9 +256,8 @@ const DATA = {
                         label: 'Experiments in Artificial Intelligence & Deep Learning' } } }
   ],
 
-  /* Career and education, ordered by start date. The Woven by Toyota
-     internship is missing its period and job title -- it postdates the CV
-     this section was built from. */
+  /* Career and education: the two ongoing roles lead, then everything
+     closed by start date, newest first. */
   timeline: [
     { year: '2025.04 –',
       name: { en: 'Ph.D. student, Information-Aided Technology',
@@ -269,6 +267,10 @@ const DATA = {
     { year: '2025.04 –',
       name: { en: 'JSPS Research Fellow (DC1)', ja: '日本学術振興会 特別研究員 (DC1)' },
       org: { en: 'Japan Society for the Promotion of Science', ja: '日本学術振興会' } },
+    { year: '2026.06 – 2026.08',
+      name: { en: 'Research Intern — Machine Learning Engineer (Perception)',
+              ja: '研究インターン — Machine Learning Engineer (Perception)' },
+      org: { en: 'Woven by Toyota', ja: 'Woven by Toyota' } },
     { year: '2023.10 – 2024.09',
       name: { en: 'Science Writer', ja: 'サイエンスライター' },
       org: { en: 'AI-SCHOLAR · remote · explaining recent machine-learning papers',
@@ -280,7 +282,8 @@ const DATA = {
     { year: '2023.04 – 2025.03',
       name: { en: 'M.Eng., Electronics and Information Engineering',
               ja: '修士課程 — 先端工学専攻 電子情報分野' },
-      org: { en: 'Toyota Technological Institute', ja: '豊田工業大学' } },
+      org: { en: 'Toyota Technological Institute · ranked 2nd of 50',
+             ja: '豊田工業大学 · 修了時成績 50名中2位' } },
     { year: '2022.04 – 2025.03',
       name: { en: 'Teaching Assistant — Global Consumer Intelligence (GCI)',
               ja: 'ティーチングアシスタント — グローバル消費インテリジェンス (GCI)' },
@@ -292,8 +295,8 @@ const DATA = {
     { year: '2019.04 – 2023.03',
       name: { en: 'B.Eng., Electronics and Information Engineering',
               ja: '学士課程 — 先端工学基礎学科 電子情報分野' },
-      org: { en: 'Toyota Technological Institute · minor in Mechanical Engineering',
-             ja: '豊田工業大学 · 副専攻 機械システム分野' } }
+      org: { en: 'Toyota Technological Institute · ranked 1st of 83 · minor in Mechanical Engineering',
+             ja: '豊田工業大学 · 卒業時成績 83名中1位 · 副専攻 機械システム分野' } }
   ],
 
   /* An empty array hides the whole section and its nav link, and renumbers
@@ -321,29 +324,13 @@ const DATA = {
       href: 'https://www.toyota-ti.ac.jp/news/checktti/002900.html' }
   ],
 
+  /* Withdrawn pending a rewrite by the owner. An empty items array hides
+     the section and its nav link and renumbers the rest; the six previous
+     entries are in git at 15bb2ec if any are worth carrying over. */
   life: {
     intro: { en: 'Research is most of the picture, but not all of it. A husband and a father of one, raising a small family between two languages, and a firm believer that the body and the mind train together.',
              ja: '研究は人生の大半ですが、すべてではありません。二つの言語のあいだで小さな家族を育てる、一児の父であり夫。心と体は一緒に鍛えるもの、と信じています。' },
-    items: [
-      { title: { en: 'Family & Home', ja: '家族と暮らし' },
-        body: { en: 'Father of one daughter and partner to a wonderful Vietnamese wife. Home runs across Japanese and Vietnamese, kept warm by a friendly Maltese and a lovely Ragdoll-Siamese mix who also keep the schedule honest.',
-                ja: '一児（娘）の父であり、素敵なベトナム人の妻のパートナー。家庭は日本語とベトナム語が行き交います。人懐っこいマルチーズと、ラグドール×シャム猫のミックスが、暮らしを温かく、そして規則正しくしてくれます。' } },
-      { title: { en: 'Community — Vista', ja: 'コミュニティ — Vista' },
-        body: { en: 'I run **Vista**, a Discord community for mutual progress and goal management, founded with a close friend in 2020 and still going strong.',
-                ja: '**Vista** という、互いの進捗・目標管理のための Discord コミュニティを運営しています。2020年に親友と立ち上げ、今も続いています。' } },
-      { title: { en: 'Languages', ja: '語学' },
-        body: { en: 'A long-running language habit, with a Duolingo streak past 700 days. Mainly English and Vietnamese, picking up new places and new people along the way.',
-                ja: '長く続く語学の習慣。Duolingo の連続記録は700日超え。主に英語とベトナム語を学びながら、新しい場所や人とのつながりを楽しんでいます。' } },
-      { title: { en: 'Training', ja: 'トレーニング' },
-        body: { en: 'Former captain of **Ares**, the university Spartan Race club and the largest such team in Japan. Exercise is a reliable partner that resets the mind and feeds back into research focus.',
-                ja: '大学のスパルタンレース部 **Ares** の元キャプテン。日本最大規模のチームでした。運動は頭をリセットし、研究の集中力に還ってくる、頼れる相棒です。' } },
-      { title: { en: 'Reading', ja: '読書' },
-        body: { en: 'Drawn to books that re-examine ordinary life through a scientific lens, or leave room for quiet reflection. A personal compass I call "Root": chase the underlying principle, not the surface noise.',
-                ja: '日常を科学の視点で捉え直す本や、静かに思索できる本が好きです。「Root」と呼ぶ自分の指針があります。表面のノイズではなく、根本の原理を追うこと。' } },
-      { title: { en: 'Tools & Gadgets', ja: 'ツールとガジェット' },
-        body: { en: 'Always trying out new tools and gadgets, hunting for small ways to work and live a little better.',
-                ja: '新しいツールや新興ガジェットを次々と試すのが好きです。仕事や暮らしを少し良くする工夫を探しています。' } }
-    ],
+    items: [],
     photos: []
   },
 
