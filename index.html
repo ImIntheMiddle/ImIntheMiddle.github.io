@@ -61,7 +61,7 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script>
 /* ====================================================================
    @@DATA@@ — page content.
@@ -323,6 +323,14 @@ const DATA = {
     --hairline-soft: #efe9dc;
     --card-shadow: 0 6px 44px rgba(52, 40, 15, 0.10), 0 1px 3px rgba(52, 40, 15, 0.04);
     --shadow-a: 0.10;
+
+    /* Families, motion and measure, named once instead of 38 times. */
+    --font-sans: "Inter", "Noto Sans JP", system-ui, sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+    --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+    --col: 900px;                  /* reading column */
+    --frame: 1200px;               /* hero + header, and the gantry rails */
+    --canvas-gutter: 84px;         /* the sim needs somewhere to be seen */
   }
   [data-theme="dark"] {
     --stage: #14100b;              /* canvas world — deep warm-dark */
@@ -390,13 +398,40 @@ const DATA = {
     -webkit-backdrop-filter: blur(6px) saturate(1.05);
             backdrop-filter: blur(6px) saturate(1.05);
     box-shadow: var(--card-shadow);
-    -webkit-mask-image: linear-gradient(90deg, transparent 0, #000 48px, #000 calc(100% - 48px), transparent 100%);
-            mask-image: linear-gradient(90deg, transparent 0, #000 48px, #000 calc(100% - 48px), transparent 100%);
-    transition: background 0.4s ease;
+    /* Fade all four edges, so the gaps between sections read as windows onto
+       the scene rather than as margins. */
+    -webkit-mask-image:
+      linear-gradient(90deg, transparent 0, #000 48px, #000 calc(100% - 48px), transparent 100%),
+      linear-gradient(180deg, transparent 0, #000 26px, #000 calc(100% - 26px), transparent 100%);
+    -webkit-mask-composite: source-in;
+            mask-image:
+      linear-gradient(90deg, transparent 0, #000 48px, #000 calc(100% - 48px), transparent 100%),
+      linear-gradient(180deg, transparent 0, #000 26px, #000 calc(100% - 26px), transparent 100%);
+            mask-composite: intersect;
+    transition: background 0.4s var(--ease);
   }
 
-  /* Hero: no paper card — content sits directly over the canvas world.
-     Text gets a paper-colored glow (text-shadow) for legibility. */
+  /* Below about 1060px the column filled the viewport and the simulation had
+     nowhere to show. Give it a guaranteed strip on each side instead. */
+  @media (min-width: 901px) {
+    .wrap { max-width: min(var(--col), calc(100vw - 2 * var(--canvas-gutter))); }
+    .hero-block .wrap, header .nav-inner {
+      max-width: min(var(--frame), calc(100vw - 2 * var(--canvas-gutter)));
+    }
+  }
+
+  /* Hero: no paper card. Rather than haloing every glyph -- which fringes
+     badly at 108px and still leaves accent text short of contrast -- light a
+     soft clearing in the scene and set the type on that. */
+  .hero-block .wrap { position: relative; }
+  .hero-block .wrap::before {
+    content: ""; position: absolute; inset: -6% -10% -10%; z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(118% 88% at 34% 44%,
+      rgba(var(--paper-rgb), 0.94) 0%,
+      rgba(var(--paper-rgb), 0.74) 44%,
+      rgba(var(--paper-rgb), 0) 76%);
+  }
   .hero-block .wrap {
     max-width: 1200px;
     background: transparent;
@@ -413,10 +448,8 @@ const DATA = {
   .hero-block .lede,
   .hero-block .mission .label,
   .hero-block .mission .stmt {
-    text-shadow:
-      0 0 22px rgba(var(--paper-rgb), 0.9),
-      0 0 8px rgba(var(--paper-rgb), 0.95),
-      0 0 2px rgba(var(--paper-rgb), 1);
+    /* One tight shadow as insurance where the clearing thins out. */
+    text-shadow: 0 0 2px rgba(var(--paper-rgb), 0.9);
   }
   .hero-block .mission {
     border-top-color: rgba(var(--paper-rgb), 0.6);
@@ -447,7 +480,7 @@ const DATA = {
     gap: 20px;
   }
   .nav-inner .mark {
-    font-family: "Inter", "Noto Sans JP", sans-serif;
+    font-family: var(--font-sans);
     font-size: 14.5px;
     font-weight: 600;
     letter-spacing: -0.01em;
@@ -455,7 +488,7 @@ const DATA = {
   .nav-inner .mark b { color: var(--accent-text); font-weight: 600; }
   nav.links {
     display: flex; gap: 22px; margin-left: auto;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     letter-spacing: 0.04em;
   }
@@ -467,7 +500,7 @@ const DATA = {
   nav.links a:hover { color: var(--accent-text); }
   .toggles { display: flex; gap: 8px; margin-left: 8px; }
   .pill {
-    font-family: "IBM Plex Mono", monospace;
+    font-family: var(--font-mono);
     font-size: 11.5px;
     color: var(--ink-dim);
     background: transparent;
@@ -493,7 +526,7 @@ const DATA = {
   }
   .eyebrow {
     grid-column: 1 / -1;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -505,7 +538,7 @@ const DATA = {
   }
   h1.name {
     grid-column: 1 / 9;
-    font-family: "Inter", "Noto Sans JP", sans-serif;
+    font-family: var(--font-sans);
     font-size: clamp(48px, 7.4vw, 108px);
     font-weight: 700;
     letter-spacing: -0.045em;
@@ -517,7 +550,7 @@ const DATA = {
   }
   h1.name small {
     display: block;
-    font-family: "Inter", "Noto Sans JP", sans-serif;
+    font-family: var(--font-sans);
     font-size: clamp(15px, 1.4vw, 19px);
     font-weight: 500;
     letter-spacing: 0.01em;
@@ -532,7 +565,7 @@ const DATA = {
     display: flex; flex-direction: column; gap: 16px;
   }
   .side-rail .k {
-    font-family: "IBM Plex Mono", monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 0.14em;
@@ -563,7 +596,7 @@ const DATA = {
     margin-top: 20px;
   }
   .chips a {
-    font-family: "IBM Plex Mono", monospace;
+    font-family: var(--font-mono);
     font-size: 12.5px;
     color: var(--ink);
     text-decoration: none;
@@ -590,14 +623,14 @@ const DATA = {
     align-items: baseline;
   }
   .mission .label {
-    font-family: "IBM Plex Mono", monospace;
+    font-family: var(--font-mono);
     font-size: 11.5px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
     color: var(--accent-text);
   }
   .mission .stmt {
-    font-family: "Inter", "Noto Sans JP", sans-serif;
+    font-family: var(--font-sans);
     font-size: clamp(20px, 2.5vw, 30px);
     font-weight: 500;
     letter-spacing: -0.02em;
@@ -611,6 +644,7 @@ const DATA = {
      ==================================================================== */
   .block { margin-top: clamp(28px, 4vh, 48px); }
   .sec-head {
+    position: relative;
     display: grid;
     grid-template-columns: 60px 1fr auto;
     gap: 22px;
@@ -619,21 +653,26 @@ const DATA = {
     border-bottom: 1px solid var(--hairline);
     margin-bottom: 34px;
   }
+  /* A short accent lead-in so the eye catches where each section begins. */
+  .sec-head::after {
+    content: ""; position: absolute; left: 0; bottom: -1px;
+    width: 28px; height: 1px; background: var(--accent);
+  }
   .sec-head .idx {
-    font-family: "IBM Plex Mono", monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     color: var(--accent-text);
     letter-spacing: 0.08em;
   }
   .sec-head h2 {
-    font-family: "Inter", "Noto Sans JP", sans-serif;
+    font-family: var(--font-sans);
     font-weight: 600;
     font-size: clamp(22px, 3vw, 30px);
     letter-spacing: -0.025em;
     line-height: 1.15;
   }
   .sec-head .note {
-    font-family: "IBM Plex Mono", monospace;
+    font-family: var(--font-mono);
     font-size: 11.5px;
     color: var(--ink-faint);
   }
@@ -657,7 +696,7 @@ const DATA = {
     border: 1px solid var(--hairline);
     background: var(--paper-2);
     display: flex; align-items: center; justify-content: center;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: var(--font-mono);
     font-size: 10.5px;
     color: var(--ink-faint);
     text-align: center;
@@ -687,7 +726,7 @@ const DATA = {
   }
   .news li:first-child { border-top: none; padding-top: 4px; }
   .news li .d {
-    font-family: "IBM Plex Mono", monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     color: var(--ink-faint);
     letter-spacing: 0.04em;
@@ -697,7 +736,7 @@ const DATA = {
   .news li .t a:hover { text-decoration: underline; }
   .news li .tag {
     display: inline-block;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: var(--font-mono);
     font-size: 10.5px;
     letter-spacing: 0.06em;
     color: var(--accent-text);
@@ -720,14 +759,19 @@ const DATA = {
   .focus .cell + .cell { padding-left: 26px; }
   .focus .cell:last-child { border-right: none; padding-right: 0; }
   .focus .cell .k {
-    font-family: "IBM Plex Mono", monospace;
+    font-family: var(--font-mono);
     font-size: 11.5px;
     color: var(--accent-text);
     letter-spacing: 0.08em;
     margin-bottom: 14px;
   }
+  .focus .cell .motif {
+    display: block; width: 64px; height: 40px;
+    margin: 14px 0 4px; color: var(--ink-faint);
+  }
+  .focus .cell .motif .hl { stroke: var(--accent); }
   .focus .cell h3 {
-    font-family: "Inter", "Noto Sans JP", sans-serif;
+    font-family: var(--font-sans);
     font-weight: 600;
     font-size: 19px;
     letter-spacing: -0.015em;
@@ -771,7 +815,7 @@ const DATA = {
   }
   .pub .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .pub .thumb-dead {
-    font-family: "IBM Plex Mono", monospace;
+    font-family: var(--font-mono);
     font-size: 10.5px;
     color: var(--ink-faint);
     text-align: center;
@@ -779,7 +823,7 @@ const DATA = {
     line-height: 1.5;
   }
   .pub .venue {
-    font-family: "IBM Plex Mono", monospace;
+    font-family: var(--font-mono);
     font-size: 11.5px;
     letter-spacing: 0.06em;
     text-transform: uppercase;
@@ -789,7 +833,7 @@ const DATA = {
   }
   .pub .venue .rate { color: var(--ink-faint); text-transform: none; letter-spacing: 0.04em; }
   .pub h3 {
-    font-family: "Inter", "Noto Sans JP", sans-serif;
+    font-family: var(--font-sans);
     font-weight: 600;
     font-size: clamp(17px, 1.7vw, 20px);
     letter-spacing: -0.015em;
@@ -807,7 +851,7 @@ const DATA = {
     display: flex; gap: 16px; flex-wrap: wrap;
   }
   .pub .pub-links a {
-    font-family: "IBM Plex Mono", monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     color: var(--ink-dim);
     text-decoration: none;
@@ -842,7 +886,7 @@ const DATA = {
   .award:first-child { border-top: 1px solid var(--hairline); }
   .award:last-child { border-bottom: 1px solid var(--hairline); }
   .award .yr {
-    font-family: "IBM Plex Mono", monospace;
+    font-family: var(--font-mono);
     font-size: 13px;
     color: var(--accent-text);
     letter-spacing: 0.02em;
@@ -873,14 +917,14 @@ const DATA = {
   .talk .pic img { width: 100%; height: 100%; object-fit: cover; }
   .talk .cap { padding: 15px 18px 18px; }
   .talk .cap .v {
-    font-family: "IBM Plex Mono", monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     color: var(--accent-text);
     letter-spacing: 0.06em;
     text-transform: uppercase;
   }
   .talk .cap h3 {
-    font-family: "Inter", "Noto Sans JP", sans-serif;
+    font-family: var(--font-sans);
     font-weight: 600;
     font-size: 15.5px;
     letter-spacing: -0.01em;
@@ -908,14 +952,14 @@ const DATA = {
   .media-item .m-title a:hover { text-decoration: underline; }
   .media-item .m-title .src {
     display: block;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: var(--font-mono);
     font-size: 11.5px;
     color: var(--ink-faint);
     margin-top: 5px;
   }
   .media-item.placeholder .m-title { color: var(--ink-faint); }
   .media-item .m-date {
-    font-family: "IBM Plex Mono", monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     color: var(--ink-faint);
     white-space: nowrap;
@@ -929,7 +973,7 @@ const DATA = {
      Life
      ==================================================================== */
   .life-intro {
-    font-family: "Inter", "Noto Sans JP", sans-serif;
+    font-family: var(--font-sans);
     font-size: clamp(17px, 1.8vw, 20px);
     color: var(--ink-dim);
     line-height: 1.6;
@@ -938,7 +982,7 @@ const DATA = {
   }
   .life-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px 44px; }
   .life-item h3 {
-    font-family: "Inter", "Noto Sans JP", sans-serif;
+    font-family: var(--font-sans);
     font-weight: 600;
     font-size: 15.5px;
     letter-spacing: -0.005em;
@@ -966,7 +1010,7 @@ const DATA = {
     border: 1px solid var(--hairline);
     background: var(--paper-2);
     display: flex; align-items: center; justify-content: center;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: var(--font-mono);
     font-size: 10.5px;
     color: var(--ink-faint);
   }
@@ -977,7 +1021,7 @@ const DATA = {
      ==================================================================== */
   footer.contact { margin-top: clamp(28px, 4vh, 48px); }
   h2.contact-head {
-    font-family: "Inter", "Noto Sans JP", sans-serif;
+    font-family: var(--font-sans);
     font-weight: 700;
     font-size: clamp(30px, 5vw, 52px);
     letter-spacing: -0.035em;
@@ -992,7 +1036,7 @@ const DATA = {
   }
   .contact-links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 30px; }
   .contact-links a {
-    font-family: "IBM Plex Mono", monospace;
+    font-family: var(--font-mono);
     font-size: 12.5px;
     color: var(--ink);
     text-decoration: none;
@@ -1007,13 +1051,13 @@ const DATA = {
     display: flex; justify-content: space-between; flex-wrap: wrap; gap: 14px;
     margin-top: 56px; padding-top: 22px;
     border-top: 1px solid var(--hairline-soft);
-    font-family: "IBM Plex Mono", monospace;
+    font-family: var(--font-mono);
     font-size: 11.5px;
     color: var(--ink-faint);
   }
   .sfm-credit {
     margin-top: 38px;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     line-height: 1.7;
     color: var(--ink-faint);
@@ -1026,7 +1070,7 @@ const DATA = {
      ==================================================================== */
   .gamebtn {
     position: fixed; right: 20px; bottom: 20px; z-index: 40;
-    font-family: "IBM Plex Mono", monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     color: var(--ink-dim);
     background: var(--paper);
@@ -1046,6 +1090,19 @@ const DATA = {
   .gamebtn .lbl-on { display: none; }
   .gamebtn.on .lbl-off { display: none; }
   .gamebtn.on .lbl-on { display: inline; }
+
+  /* The hero and header run to 1200px while the reading column is 900px.
+     Two fixed rails at the wider edge turn that offset into a frame, and
+     give the empty margins a reason to be there. */
+  .gantry {
+    position: fixed; inset: 0; z-index: 1; pointer-events: none;
+    background:
+      linear-gradient(var(--hairline-soft), var(--hairline-soft)) no-repeat,
+      linear-gradient(var(--hairline-soft), var(--hairline-soft)) no-repeat;
+    background-size: 1px 100%, 1px 100%;
+    background-position: calc(50% - var(--frame) / 2) 0, calc(50% + var(--frame) / 2) 0;
+  }
+  @media (max-width: 1320px) { .gantry { display: none; } }
 
   /* ====================================================================
      Focus
@@ -1072,7 +1129,7 @@ const DATA = {
   .skip {
     position: fixed; top: 8px; left: 8px; z-index: 100;
     padding: 10px 16px;
-    font-family: "IBM Plex Mono", monospace; font-size: 12.5px;
+    font-family: var(--font-mono); font-size: 12.5px;
     color: var(--ink); background: var(--paper);
     border: 1px solid var(--hairline); border-radius: 999px;
     text-decoration: none;
@@ -1089,6 +1146,21 @@ const DATA = {
      ==================================================================== */
   /* Content is visible by default; only a live script opts into the animation,
      so a JS failure can never leave the page blank. */
+  /* Mono is used for dates, years, indices and rates -- all of which want to
+     line up in a column. */
+  .idx, .yr, .d, .m-date, .venue, .rate, .k, .v, .tag, .note,
+  .sfm-credit, .foot-row, .pill, .chips a, .contact-links a, .gamebtn {
+    font-variant-numeric: tabular-nums;
+  }
+  h1, h2, h3, .contact-head, .mission .stmt, .lede { text-wrap: balance; }
+  p, .bio-text p, .life-item p, .focus .cell p { text-wrap: pretty; }
+
+  /* The display settings are tuned for Latin; both are wrong for Japanese. */
+  [data-lang="ja"] h1.name { letter-spacing: 0.01em; line-height: 1.16; }
+  [data-lang="ja"] { font-feature-settings: "palt" 1; }
+  [data-lang="ja"] .lede, [data-lang="ja"] .bio-text p,
+  [data-lang="ja"] .life-item p, [data-lang="ja"] .focus .cell p { line-height: 1.85; }
+
   .reveal { opacity: 1; transform: none; }
   html.js .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.7s cubic-bezier(0.2,0.7,0.2,1), transform 0.7s cubic-bezier(0.2,0.7,0.2,1); }
   html.js .reveal.in { opacity: 1; transform: none; }
@@ -1158,6 +1230,7 @@ const DATA = {
 <a class="skip" href="#main"><span class="en" lang="en">Skip to content</span><span class="ja" lang="ja">本文へスキップ</span></a>
 
 <canvas id="field" aria-hidden="true"></canvas>
+<div class="gantry" aria-hidden="true"></div>
 <button class="gamebtn" id="gameBtn" aria-label="Toggle walk mode" aria-pressed="false">
   <span class="en lbl-off">🎮 Control the orange pedestrian</span><span class="en lbl-on">🎮 Walking · Esc to exit</span><span class="ja lbl-off">🎮 オレンジの歩行者を操作</span><span class="ja lbl-on">🎮 操作中 · Esc で終了</span>
 </button>
@@ -1355,6 +1428,32 @@ const entryList = (items) => h`
         </div>`)}
       </div>`;
 
+/* One drawing per research pillar, in the same vocabulary as the background
+   simulation: a prediction fan, a grounded body, an avoidance arc. They cost
+   about half a kilobyte each, follow the theme through currentColor, and
+   give a page with almost no photographs something to look at. */
+const FOCUS_MOTIF = [
+  raw(`<svg class="motif" viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true" focusable="false">
+    <circle cx="8" cy="20" r="2.6" fill="currentColor" stroke="none"/>
+    <path d="M12 20C24 20 34 13 56 9" stroke-dasharray="2 3.6"/>
+    <path class="hl" d="M12 20C24 20 34 20 56 20" stroke-dasharray="2 3.6" stroke-width="1.7"/>
+    <path d="M12 20C24 20 34 27 56 32" stroke-dasharray="2 3.6"/>
+  </svg>`),
+  raw(`<svg class="motif" viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true" focusable="false">
+    <path d="M6 35h52" stroke-width="1" opacity="0.45"/>
+    <circle cx="25" cy="8" r="3.2"/>
+    <path d="M25 11.6v10.4M25 14.6l-6.4 5M25 14.6l6.4 5M25 22l-4.6 12M25 22l4.6 12"/>
+    <path class="hl" d="M36 34V22.6M33.4 25.2 36 22.6l2.6 2.6" stroke-width="1.7"/>
+  </svg>`),
+  raw(`<svg class="motif" viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" aria-hidden="true" focusable="false">
+    <path d="M5 30h20" stroke-dasharray="2 3.6"/>
+    <path d="M59 11H41" stroke-dasharray="2 3.6"/>
+    <path class="hl" d="M25 30c7.5 0 6.5-19 16-19" stroke-width="1.7"/>
+    <circle cx="5" cy="30" r="2.4" fill="currentColor" stroke="none"/>
+    <circle cx="59" cy="11" r="2.4" fill="currentColor" stroke="none"/>
+  </svg>`)
+];
+
 const BODY = {
   about: () => h`
       <div class="bio reveal${DATA.about.portrait ? '' : ' no-media'}">${DATA.about.portrait
@@ -1374,6 +1473,7 @@ const BODY = {
       <div class="focus reveal">${DATA.research.map((c, i) => h`
         <div class="cell">
           <div class="k">/ ${String(i + 1).padStart(2, '0')}</div>
+          ${FOCUS_MOTIF[i] || ''}
           <h3>${t(c.title)}</h3>
           <p>${t(c.body)}</p>
         </div>`)}
