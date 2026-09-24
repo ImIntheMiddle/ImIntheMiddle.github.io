@@ -62,6 +62,41 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script>
+/* ====================================================================
+   @@DATA@@ — page content.
+   Edit this and nothing else to change what the page says. A field is either
+   a plain string (language-neutral: titles, authors, venues, URLs) or an
+   {en, ja} pair. Inline links use a {token} that resolves against the
+   entry's `refs`, so a URL is written exactly once for both languages.
+   Emphasis inside a translated string uses *em* and **strong**.
+   ==================================================================== */
+const DATA = {
+  news: [
+    { date: '2026 / XX', tag: 'SERVICE',
+      text: { en: 'Serving as Technical Chair for ACCV 2026 {v}',
+              ja: 'ACCV 2026 の Technical Chair を担当 {v}' },
+      refs: { v: { label: { en: '[verify]', ja: '[要確認]' }, cls: 'verify' } } },
+
+    { date: '2026 / 08', tag: 'INTERN',
+      text: { en: 'Completed a research internship at Woven by Toyota',
+              ja: 'Woven by Toyota での研究インターンを修了' } },
+
+    { date: '2026 / XX', tag: 'AWARD',
+      text: { en: 'Received the 2026 IEEE Nagoya Section International Conference Research Presentation Award for EmLoco',
+              ja: 'EmLoco にて 2026年 IEEE名古屋支部 国際会議研究発表賞を受賞' } },
+
+    { date: "2025 / 02", tag: "CVPR'25",
+      text: { en: 'EmLoco accepted to CVPR 2025 — {arxiv}',
+              ja: 'EmLoco が CVPR 2025 に採択 — {arxiv}' },
+      refs: { arxiv: { href: 'https://arxiv.org/abs/2503.17267', label: 'arXiv' } } },
+
+    { date: 'placeholder', cls: 'verify',
+      text: { en: 'Add your latest updates here. Newest first keeps the page feeling alive.',
+              ja: '最新の更新をここに。新しい順に並べると活きのいいページになります。' } }
+  ]
+};
+</script>
 <style>
   /* ====================================================================
      Studio Minimal × Depth Sim — design tokens
@@ -967,13 +1002,7 @@
         <h2><span class="en">What's New</span><span class="ja">最新情報</span></h2>
       </div>
       <div class="news reveal">
-        <ul>
-          <li><span class="d">2026 / XX</span><span class="t"><span class="tag">SERVICE</span><span class="en">Serving as Technical Chair for ACCV 2026 <span class="verify">[verify]</span></span><span class="ja">ACCV 2026 の Technical Chair を担当 <span class="verify">[要確認]</span></span></span></li>
-          <li><span class="d">2026 / 08</span><span class="t"><span class="tag">INTERN</span><span class="en">Completed a research internship at Woven by Toyota</span><span class="ja">Woven by Toyota での研究インターンを修了</span></span></li>
-          <li><span class="d">2026 / XX</span><span class="t"><span class="tag">AWARD</span><span class="en">Received the 2026 IEEE Nagoya Section International Conference Research Presentation Award for EmLoco</span><span class="ja">EmLoco にて 2026年 IEEE名古屋支部 国際会議研究発表賞を受賞</span></span></li>
-          <li><span class="d">2025 / 02</span><span class="t"><span class="tag">CVPR'25</span><span class="en">EmLoco accepted to CVPR 2025 — <a href="https://arxiv.org/abs/2503.17267" target="_blank" rel="noopener">arXiv</a></span><span class="ja">EmLoco が CVPR 2025 に採択 — <a href="https://arxiv.org/abs/2503.17267" target="_blank" rel="noopener">arXiv</a></span></span></li>
-          <li><span class="d">placeholder</span><span class="t verify"><span class="en">Add your latest updates here. Newest first keeps the page feeling alive.</span><span class="ja">最新の更新をここに。新しい順に並べると活きのいいページになります。</span></span></li>
-        </ul>
+        <ul id="news-list"></ul>
       </div>
     </div>
   </section>
@@ -1173,6 +1202,76 @@
 </main>
 
 <script>
+/* ====================================================================
+   @@TEMPLATES@@ — turns DATA into the markup the stylesheet expects.
+   Author text is escaped on the way in, so a stray "<" in a paper title
+   cannot break the page. Only h(), rich() and ref() ever produce markup,
+   and innerHTML is written in exactly one place: mount().
+   ==================================================================== */
+const RAW = Symbol('raw');
+const raw = (s) => ({ [RAW]: s });
+const ESC = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ESC[c]);
+
+function fmt(v) {
+  if (v == null || v === false || v === true) return '';
+  if (Array.isArray(v)) return v.map(fmt).join('');
+  if (typeof v === 'object' && RAW in v) return v[RAW];
+  return esc(v);
+}
+function h(strings, ...vals) {
+  let out = strings[0];
+  for (let i = 0; i < vals.length; i++) out += fmt(vals[i]) + strings[i + 1];
+  return raw(out);
+}
+const isExternal = (href) => /^(https?:)?\/\//.test(href);
+const pickLang = (f, lang) => (f && typeof f === 'object' && !(RAW in f))
+  ? (lang === 'ja' && f.ja != null ? f.ja : f.en) : f;
+
+/* A ref is a link, or a plain styled span when it has no href. */
+function ref(r, lang) {
+  const label = pickLang(r.label, lang);
+  if (r.href) {
+    return isExternal(r.href)
+      ? h`<a href="${r.href}" target="_blank" rel="noopener">${label}</a>`
+      : h`<a href="${r.href}">${label}</a>`;
+  }
+  return r.cls ? h`<span class="${r.cls}">${label}</span>` : h`${label}`;
+}
+
+/* Emphasis is per-language (EN and JA stress different words) so it stays in
+   the string; links are not, so they are referenced by token instead. */
+function rich(str, refs, lang) {
+  return raw(esc(str)
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g, '<em>$1</em>')
+    .replace(/\{(\w+)\}/g, (m, k) => {
+      const r = refs && refs[k];
+      if (!r) { console.warn('[tpl] unknown ref', k, 'in', str); return m; }
+      return fmt(ref(r, lang));
+    }));
+}
+
+/* Both languages are emitted; the stylesheet hides the inactive one. That
+   keeps the toggle instant and leaves both in the DOM for crawlers. */
+function t(field, refs) {
+  if (field == null) return raw('');
+  if (typeof field === 'object' && RAW in field) return field;
+  if (typeof field !== 'object') return rich(String(field), refs, 'en');
+  return h`<span class="en" lang="en">${rich(field.en, refs, 'en')}</span><span class="ja" lang="ja">${rich(field.ja == null ? field.en : field.ja, refs, 'ja')}</span>`;
+}
+
+function mount(sel, tpl) {
+  const el = document.querySelector(sel);
+  if (!el) { console.warn('[tpl] missing mount point', sel); return; }
+  el.innerHTML = fmt(tpl);
+}
+
+/* ---------- section templates ---------- */
+const newsItem = (n) => h`<li><span class="d">${n.date}</span><span class="t${n.cls ? ' ' + n.cls : ''}">${n.tag ? h`<span class="tag">${n.tag}</span>` : ''}${t(n.text, n.refs)}</span></li>`;
+
+mount('#news-list', DATA.news.map(newsItem));
+
 /* ====================================================================
    LANGUAGE toggle
    ==================================================================== */
