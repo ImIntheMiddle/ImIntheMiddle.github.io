@@ -21,8 +21,8 @@
 <title>Hiromu Taketsugu</title>
 <meta name="description" content="Hiromu Taketsugu (武次 広夢) — Ph.D. student at Toyota Technological Institute. Research interests: Physical AI, human motion estimation and prediction.">
 <link rel="canonical" href="https://iminthemiddle.github.io/">
-<meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#14100b">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#f4f5f9">
 <meta property="og:type" content="profile">
 <meta property="og:url" content="https://iminthemiddle.github.io/">
 <meta property="og:title" content="Hiromu Taketsugu">
@@ -55,7 +55,7 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Manrope:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script>
 /* ====================================================================
    @@DATA@@ — page content.
@@ -347,23 +347,25 @@ const DATA = {
      is 5.2:1 against the lightest surface, where before it was 4.5:1.
      Ratios in the comments are against --paper. */
   :root {
-    --stage: #0a0b0f;              /* the ground the crowd walks on */
-    --stage-rgb: 10, 11, 15;
-    --paper: #13151b;              /* content, lifted off the ground */
-    --paper-rgb: 19, 21, 27;
-    --paper-2: #1b1e26;            /* image slots */
-    --ink: #e9eaf0;                /* 15.2:1 */
-    --ink-rgb: 233, 234, 240;
-    --ink-dim: #a4a8b5;            /* 7.69:1 */
-    --ink-faint: #8c909d;          /* 5.73:1 */
-    --ink-soft-rgb: 164, 168, 181;
-    --accent: #ff8a4c;             /* 7.81:1 -- legible as text too */
-    --accent-rgb: 255, 138, 76;
-    --accent-text: #ff9a62;        /* 8.73:1 */
-    --hairline: rgba(190, 205, 235, 0.14);
-    --hairline-soft: rgba(190, 205, 235, 0.07);
-    --card-shadow: 0 8px 48px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(200, 215, 245, 0.05);
-    --shadow-a: 0.34;
+    /* Light. The crowd used to be light drawn in the dark; it is ink on
+       paper now, and every ratio below is measured against --paper. */
+    --stage: #f4f5f9;              /* the ground the crowd walks on */
+    --stage-rgb: 244, 245, 249;
+    --paper: #ffffff;              /* content, lifted off the ground */
+    --paper-rgb: 255, 255, 255;
+    --paper-2: #eceef6;            /* image slots */
+    --ink: #15171f;                /* 17.9:1 */
+    --ink-rgb: 21, 23, 31;
+    --ink-dim: #565b69;            /* 6.78:1 */
+    --ink-faint: #656b7a;          /* 5.31:1 */
+    --ink-soft-rgb: 86, 91, 105;
+    --accent: #5b2cf0;             /* 6.86:1 -- legible as text too */
+    --accent-rgb: 91, 44, 240;
+    --accent-text: #4c1fd6;        /* 8.49:1 */
+    --hairline: rgba(24, 28, 48, 0.13);
+    --hairline-soft: rgba(24, 28, 48, 0.07);
+    --card-shadow: 0 1px 2px rgba(20, 24, 44, 0.05), 0 14px 38px rgba(20, 24, 44, 0.07);
+    --radius: 18px;
 
     /* Families, motion and measure, named once instead of 38 times. */
     /* Japanese comes from the system. Noto Sans JP over the wire was 2.7 MB
@@ -372,11 +374,12 @@ const DATA = {
        in the DOM at once so the toggle is instant, which means every one of
        those files downloaded for a reader who never switched. Every platform
        this page runs on already ships a good Japanese sans.
-       Latin still comes from Inter: the browser picks per character, so Inter
-       first and a Japanese face after gives each script its own. */
+       Latin comes from the two faces below: the browser picks per character,
+       so Latin first and a Japanese face after gives each script its own. */
     --font-ja: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic Medium",
                "Yu Gothic", "Noto Sans JP", sans-serif;
-    --font-sans: "Inter", var(--font-ja);
+    --font-display: "Space Grotesk", var(--font-ja);
+    --font-sans: "Manrope", var(--font-ja);
     --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
     --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
     --col: 900px;                  /* reading column */
@@ -431,16 +434,7 @@ const DATA = {
        the 4% that shows through. Not worth a millisecond, let alone many. */
     background: rgba(var(--paper-rgb), 0.96);
     box-shadow: var(--card-shadow);
-    /* Fade all four edges, so the gaps between sections read as windows onto
-       the scene rather than as margins. */
-    -webkit-mask-image:
-      linear-gradient(90deg, transparent 0, #000 48px, #000 calc(100% - 48px), transparent 100%),
-      linear-gradient(180deg, transparent 0, #000 26px, #000 calc(100% - 26px), transparent 100%);
-    -webkit-mask-composite: source-in;
-            mask-image:
-      linear-gradient(90deg, transparent 0, #000 48px, #000 calc(100% - 48px), transparent 100%),
-      linear-gradient(180deg, transparent 0, #000 26px, #000 calc(100% - 26px), transparent 100%);
-            mask-composite: intersect;
+    border-radius: var(--radius);
     transition: background 0.4s var(--ease);
   }
 
@@ -469,8 +463,7 @@ const DATA = {
     max-width: 1200px;
     background: transparent;
     box-shadow: none;
-    -webkit-mask-image: none;
-            mask-image: none;
+    border-radius: 0;
   }
   .hero-block .eyebrow,
   .hero-block h1.name,
@@ -566,6 +559,7 @@ const DATA = {
     content: ""; width: 40px; height: 1px; background: var(--accent);
   }
   h1.name {
+    font-family: var(--font-display);
     grid-column: 1 / 8;
     order: 1;
     font-family: var(--font-sans);
@@ -657,6 +651,7 @@ const DATA = {
     letter-spacing: 0.08em;
   }
   .sec-head h2 {
+    font-family: var(--font-display);
     font-family: var(--font-sans);
     font-weight: 600;
     font-size: clamp(22px, 3vw, 30px);
@@ -865,7 +860,7 @@ const DATA = {
      they differ by several lines. Let them stretch: three boxes of equal
      height read as a set, three ragged ones read as a mistake. */
   .talks-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
-  .talk { border: 1px solid var(--hairline); overflow: hidden; transition: border-color 0.2s; }
+  .talk { border: 1px solid var(--hairline); border-radius: 14px; overflow: hidden; transition: border-color 0.2s; }
   .talk:hover { border-color: var(--accent); }
   .talk .pic {
     aspect-ratio: 4 / 3;
@@ -1566,8 +1561,11 @@ const V = {
   // walker belongs to, and therefore where the lanes are -- while still
   // letting you follow one person across the frame. Every hue was checked
   // against the ground; the range is 5.5:1 to 9.4:1.
-  warm: [[217, 164, 65], [201, 118, 106], [228, 99, 127], [224, 154, 78]],
-  cool: [[88, 168, 201], [95, 185, 154], [126, 143, 232], [156, 191, 91]]
+  /* Ink on paper: saturated and dark enough to hold a thin line against
+     white. Violet is missing on purpose -- it belongs to the walker you
+     steer, and the crowd should not borrow it. */
+  warm: [[214, 64, 52], [232, 140, 28], [206, 46, 118], [238, 106, 64]],
+  cool: [[28, 104, 214], [14, 156, 146], [16, 158, 220], [78, 158, 46]]
 };
 
 function mulberry32(a) {
