@@ -55,7 +55,7 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script>
 /* ====================================================================
    @@DATA@@ — page content.
@@ -366,7 +366,17 @@ const DATA = {
     --shadow-a: 0.34;
 
     /* Families, motion and measure, named once instead of 38 times. */
-    --font-sans: "Inter", "Noto Sans JP", system-ui, sans-serif;
+    /* Japanese comes from the system. Noto Sans JP over the wire was 2.7 MB
+       across 140 requests, and the stylesheet declaring it was 462 KB of
+       render-blocking CSS -- 496 @font-face rules. Worse, both languages sit
+       in the DOM at once so the toggle is instant, which means every one of
+       those files downloaded for a reader who never switched. Every platform
+       this page runs on already ships a good Japanese sans.
+       Latin still comes from Inter: the browser picks per character, so Inter
+       first and a Japanese face after gives each script its own. */
+    --font-ja: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic Medium",
+               "Yu Gothic", "Noto Sans JP", sans-serif;
+    --font-sans: "Inter", var(--font-ja);
     --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
     --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
     --col: 900px;                  /* reading column */
@@ -379,7 +389,7 @@ const DATA = {
   body {
     background: var(--stage);
     color: var(--ink);
-    font-family: "Inter", "Noto Sans JP", system-ui, sans-serif;
+    font-family: var(--font-sans);
     font-weight: 400;
     font-size: 16px;
     line-height: 1.6;
@@ -392,7 +402,6 @@ const DATA = {
   /* language visibility */
   [data-lang="en"] .ja { display: none !important; }
   [data-lang="ja"] .en { display: none !important; }
-  [data-lang="ja"] body { font-family: "Noto Sans JP", "Inter", sans-serif; }
 
   /* ====================================================================
      Canvas background — fixed behind everything
@@ -416,9 +425,11 @@ const DATA = {
     padding-right: clamp(56px, 6vw, 80px);
     /* default (info sections): mostly solid — text is the priority here,
        the canvas is barely visible under the card, only obvious in gaps */
-    background: rgba(var(--paper-rgb), 0.94);
-    -webkit-backdrop-filter: blur(6px) saturate(1.05);
-            backdrop-filter: blur(6px) saturate(1.05);
+    /* The canvas behind this is fixed and repaints every frame, so a
+       blurred backdrop would be recomputed every frame, for all eight
+       sections, over the whole viewport. At 96% opacity it was blurring
+       the 4% that shows through. Not worth a millisecond, let alone many. */
+    background: rgba(var(--paper-rgb), 0.96);
     box-shadow: var(--card-shadow);
     /* Fade all four edges, so the gaps between sections read as windows onto
        the scene rather than as margins. */
@@ -457,8 +468,6 @@ const DATA = {
   .hero-block .wrap {
     max-width: 1200px;
     background: transparent;
-    -webkit-backdrop-filter: none;
-            backdrop-filter: none;
     box-shadow: none;
     -webkit-mask-image: none;
             mask-image: none;
