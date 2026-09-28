@@ -2934,11 +2934,18 @@ function Plaza(opts) {
   document.addEventListener('visibilitychange', () => { if (document.hidden) clearKeys(); });
 
   // Where there is no keyboard: tap the ground to walk there. The first tap
-  // also starts walking, so a phone needs one gesture, not two.
-  let lastType = 'mouse';
-  canvas.addEventListener('pointerdown', (e) => { lastType = e.pointerType || 'mouse'; });
-  canvas.addEventListener('click', (e) => {
-    if (!pz || lastType === 'mouse') return;
+  // also starts walking, so a phone needs one gesture, not two. A tap is a
+  // touch or pen that lifts about where it landed -- read from the pointer
+  // itself, not from the click a browser may or may not synthesise after it.
+  // A drag that scrolls the page ends in pointercancel instead.
+  let down = null;
+  canvas.addEventListener('pointerdown', (e) => {
+    down = e.pointerType === 'mouse' ? null : { x: e.clientX, y: e.clientY };
+  });
+  canvas.addEventListener('pointercancel', () => { down = null; });
+  canvas.addEventListener('pointerup', (e) => {
+    const d = down; down = null;
+    if (!pz || !d || Math.hypot(e.clientX - d.x, e.clientY - d.y) > 12) return;
     const r = canvas.getBoundingClientRect();
     if (!pz.control.active) setGame(true);
     pz.tapAt(e.clientX - r.left, e.clientY - r.top);
