@@ -1,0 +1,9 @@
+{
+  "name": "homepage-verify",
+  "private": true,
+  "description": "Checks for index.html. Only preview.mjs needs a dependency: a headless canvas to run the page's own drawing.",
+  "type": "module",
+  "devDependencies": {
+    "@napi-rs/canvas": "0.1.100"
+  }
+}

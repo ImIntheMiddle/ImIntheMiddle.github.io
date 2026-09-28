@@ -18,3 +18,6 @@ _roadmap.md
 
 # The CV PDF prints a personal phone number; never commit it to a public repo
 Curriculum_Vitae_Hiromu_Taketsugu.pdf
+
+# The preview tool's one dependency, installed with npm in tools/verify
+tools/verify/node_modules/
