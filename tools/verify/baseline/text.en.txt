@@ -8,21 +8,18 @@ Experience
 Talks
 Media
 Walk into the crowd
+WalkLeave
 日本語
 Physical AI · Human Motion Estimation and Prediction
 Hiromu Taketsugu
 武次 広夢 — Ph.D. Student, Toyota Technological Institute
-Affiliation
-TTI · Ukita Lab
-Fellowship
-JSPS Research Fellow (DC1)
-Base
-Nagoya, Japan
 Email
 Scholar
 GitHub
 LinkedIn
 X
+Arrow keys or WASD to walk · Esc to leave
+Tap where you want to go
 00
 About
 I am a Ph.D. student (D2) at Toyota Technological Institute, advised by Prof. Norimichi Ukita in the Intelligent Information Media Lab. My research interests are Physical AI and human motion estimation and prediction.

@@ -366,6 +366,7 @@ const DATA = {
     --hairline-soft: rgba(24, 28, 48, 0.07);
     --card-shadow: 0 1px 2px rgba(20, 24, 44, 0.05), 0 14px 38px rgba(20, 24, 44, 0.07);
     --radius: 18px;
+    --grid: #e8eaf1;                /* the plaza's floor tiles */
 
     /* Families, motion and measure, named once instead of 38 times. */
     /* Japanese comes from the system. Noto Sans JP over the wire was 2.7 MB
@@ -407,15 +408,26 @@ const DATA = {
   [data-lang="ja"] .en { display: none !important; }
 
   /* ====================================================================
-     Canvas background — fixed behind everything
+     The plaza -- the hero, and only the hero
      ==================================================================== */
-  #field {
-    position: fixed; inset: 0;
-    width: 100%; height: 100%;
-    z-index: 0;
-    background: var(--stage);
-    transition: background 0.4s ease;
+  /* The ground's tile grid and the fade at its edges are CSS: static, drawn
+     once by the compositor. The canvas over them only clears and draws the
+     people, so each frame is as cheap as the scene allows. */
+  .hero-block {
+    position: relative; overflow: hidden;
+    height: clamp(520px, 72vh, 780px);
+    background-color: var(--stage);
+    background-image:
+      linear-gradient(to right, var(--grid) 1px, transparent 1px),
+      linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
+    background-size: var(--gx, 64px) var(--gy, 36px);
   }
+  #field { position: absolute; inset: 0; width: 100%; height: 100%; display: block;
+           touch-action: manipulation; }
+  .plaza-fade { position: absolute; inset: 0; pointer-events: none; z-index: 1;
+    background:
+      linear-gradient(to bottom, var(--stage), rgba(var(--stage-rgb), 0) 9%, rgba(var(--stage-rgb), 0) 88%, var(--stage)),
+      linear-gradient(to right, var(--stage), rgba(var(--stage-rgb), 0) 5%, rgba(var(--stage-rgb), 0) 95%, var(--stage)); }
 
   /* ====================================================================
      Wrap — page container
@@ -450,31 +462,35 @@ const DATA = {
   /* Hero: no paper card. Rather than haloing every glyph -- which fringes
      badly at 108px and still leaves accent text short of contrast -- light a
      soft clearing in the scene and set the type on that. */
-  .hero-block { position: relative; }
   .hero-block::before {
-    content: ""; position: absolute; inset: -6% 0 -12%; z-index: 1;
+    content: ""; position: absolute; inset: 0; z-index: 1;
     pointer-events: none;
-    background: radial-gradient(53% 49% at 28% 51%,
-      rgba(var(--paper-rgb), 0.96) 0%,
-      rgba(var(--paper-rgb), 0.90) 50%,
-      rgba(var(--paper-rgb), 0) 100%);
+    background: radial-gradient(40% 60% at 16% 32%,
+      rgba(var(--stage-rgb), 0.95) 0%,
+      rgba(var(--stage-rgb), 0.86) 48%,
+      rgba(var(--stage-rgb), 0) 100%);
   }
-  .hero-block .wrap {
-    max-width: 1200px;
-    background: transparent;
-    box-shadow: none;
-    border-radius: 0;
+  /* The copy floats over the plaza and lets taps through to it; only its
+     links take the pointer. */
+  .hero-copy {
+    position: absolute; left: 0; right: 0; top: clamp(36px, 8%, 84px); z-index: 2;
+    max-width: 1200px; margin: 0 auto;
+    display: flex; flex-direction: column; align-items: flex-start; gap: clamp(14px, 2.4vh, 22px);
+    background: transparent; box-shadow: none; border-radius: 0;
+    pointer-events: none;
   }
+  .hero-copy .chips { pointer-events: auto; }
   .hero-block .eyebrow,
   .hero-block h1.name,
-  .hero-block h1.name small,
-  .hero-block .side-rail {
+  .hero-block h1.name small {
     /* One tight shadow as insurance where the clearing thins out. */
     text-shadow: 0 0 2px rgba(var(--paper-rgb), 0.9);
   }
 
-  /* sections themselves are transparent — the paper card lives on .wrap only */
-  .block, .hero-block, footer.page-foot {
+  /* sections themselves are transparent -- the paper card lives on .wrap
+     only. Not the hero: it carries the plaza's floor, and a later
+     "background: transparent" here would wipe the tile grid off it. */
+  .block, footer.page-foot {
     background: transparent;
   }
   .block .wrap { padding-top: clamp(48px, 8vh, 88px); padding-bottom: clamp(48px, 8vh, 88px); }
@@ -534,20 +550,7 @@ const DATA = {
   /* ====================================================================
      Hero — 12-col grid, asymmetric
      ==================================================================== */
-  .hero { padding: clamp(70px, 12vh, 140px) 0 clamp(50px, 8vh, 90px); }
-  /* Everything the hero says sits in the left seven columns. The right of
-     the frame is left to the simulation -- it is the only place on the page
-     where the drawing is seen at full width, and a paper wash wide enough to
-     carry the meta rail across to column twelve erased it. */
-  .hero-grid {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-    gap: clamp(16px, 2.4vw, 28px);
-    row-gap: clamp(18px, 3vh, 32px);
-  }
   .eyebrow {
-    grid-column: 1 / 8;
-    order: 0;
     font-family: var(--font-mono);
     font-size: 12px;
     letter-spacing: 0.14em;
@@ -560,9 +563,6 @@ const DATA = {
   }
   h1.name {
     font-family: var(--font-display);
-    grid-column: 1 / 8;
-    order: 1;
-    font-family: var(--font-sans);
     font-size: clamp(48px, 7.4vw, 108px);
     font-weight: 700;
     letter-spacing: -0.045em;
@@ -581,34 +581,9 @@ const DATA = {
     color: var(--ink-dim);
     margin-top: 22px;
   }
-  .side-rail {
-    grid-column: 1 / 8;
-    order: 3;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: clamp(14px, 2vw, 26px);
-    border-top: 1px solid var(--hairline);
-    padding-top: 18px;
-    margin-top: 6px;
-  }
-  .side-rail .k {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.14em;
-    color: var(--ink-faint);
-  }
-  .side-rail .v {
-    font-size: 14.5px;
-    font-weight: 500;
-    margin-top: 4px;
-  }
-  .side-rail .v b { color: var(--accent-text); font-weight: 600; }
   .chips {
-    grid-column: 1 / 8;
-    order: 4;
     display: flex; gap: 10px; flex-wrap: wrap;
-    margin-top: 20px;
+    margin-top: 6px;
   }
   .chips a {
     font-family: var(--font-mono);
@@ -652,7 +627,6 @@ const DATA = {
   }
   .sec-head h2 {
     font-family: var(--font-display);
-    font-family: var(--font-sans);
     font-weight: 600;
     font-size: clamp(22px, 3vw, 30px);
     letter-spacing: -0.025em;
@@ -1017,37 +991,28 @@ const DATA = {
   .gamebtn.on .dot { background: var(--stage); animation: none; }
   @media (prefers-reduced-motion: reduce) { .gamebtn .dot { animation: none; } }
 
-  /* Walking clears the page. Everything but the control fades out, so the
-     scene you are standing in is the only thing on screen. */
-  main, footer.page-foot, nav.links, .toggles .pill, .gantry, .nav-inner .mark {
-    transition: opacity 0.5s var(--ease);
+  /* Walking: the name steps aside and a hint takes its place, so the plaza
+     you are standing in is all the hero shows. */
+  .hero-copy, .hero-block::before { transition: opacity 0.45s var(--ease), transform 0.45s var(--ease); }
+  html.walking .hero-copy { opacity: 0; transform: translateY(-6px); }
+  html.walking .hero-copy .chips { pointer-events: none; }
+  html.walking .hero-block::before { opacity: 0; }
+  .walk-hint {
+    position: absolute; left: 50%; bottom: 22px; z-index: 3; transform: translate(-50%, 8px);
+    padding: 9px 16px; border-radius: 999px; background: var(--paper); border: 1px solid var(--hairline);
+    font: 400 12px/1.3 var(--font-mono); color: var(--ink-dim); white-space: nowrap;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.3s;
   }
-  html.walking main, html.walking footer.page-foot, html.walking nav.links,
-  html.walking .toggles .pill, html.walking .gantry, html.walking .nav-inner .mark {
-    opacity: 0; pointer-events: none;
-  }
-  html.walking header { background: transparent; border-bottom-color: transparent; }
-  html.walking .hero-block::before { opacity: 0; transition: opacity 0.5s var(--ease); }
-  .hero-block::before { transition: opacity 0.5s var(--ease); }
+  html.walking .walk-hint { opacity: 1; transform: translate(-50%, 0); }
+  .walk-hint .touch, .coarse .walk-hint .keys { display: none; }
+  .coarse .walk-hint .touch { display: inline; }
   /* Both states ship in markup so the language toggle keeps owning translation. */
   /* Each control names its destination, not its current state. */
   [data-lang="en"] .lang-to-en, [data-lang="ja"] .lang-to-ja { display: none; }
-  .gamebtn .lbl-on { display: none; }
+  .gamebtn .lbl-on, .gamebtn .lbl-short-off, .gamebtn .lbl-short-on { display: none; }
   .gamebtn.on .lbl-off { display: none; }
   .gamebtn.on .lbl-on { display: inline; }
 
-  /* The hero and header run to 1200px while the reading column is 900px.
-     Two fixed rails at the wider edge turn that offset into a frame, and
-     give the empty margins a reason to be there. */
-  .gantry {
-    position: fixed; inset: 0; z-index: 1; pointer-events: none;
-    background:
-      linear-gradient(var(--hairline-soft), var(--hairline-soft)) no-repeat,
-      linear-gradient(var(--hairline-soft), var(--hairline-soft)) no-repeat;
-    background-size: 1px 100%, 1px 100%;
-    background-position: calc(50% - var(--frame) / 2) 0, calc(50% + var(--frame) / 2) 0;
-  }
-  @media (max-width: 1320px) { .gantry { display: none; } }
 
   /* ====================================================================
      Focus
@@ -1127,10 +1092,8 @@ const DATA = {
               mask-image: none;
       box-shadow: none;
     }
-    .hero-grid { grid-template-columns: 1fr; row-gap: 22px; }
-    .eyebrow, .chips, .side-rail { grid-column: 1; }
-    .side-rail { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 26px; }
-    h1.name { grid-column: 1; font-size: clamp(40px, 12vw, 66px); }
+    .hero-block { height: max(560px, 86vh); }
+    h1.name { font-size: clamp(40px, 12vw, 66px); }
     h1.name .lower { display: inline; margin-left: 0.2em; }
     h1.name small { font-size: 15px; margin-top: 16px; }
     .sec-head { grid-template-columns: 44px 1fr; gap: 14px; }
@@ -1147,21 +1110,20 @@ const DATA = {
     .life-grid { grid-template-columns: 1fr; gap: 22px; }
     .life-photos { grid-template-columns: repeat(2, 1fr); }
     .foot-row { flex-direction: column; }
-    .gamebtn { display: none; }
+    .gamebtn .lbl-off, .gamebtn.on .lbl-on { display: none; }
+    [data-lang="en"] .gamebtn .lbl-short-off.en, [data-lang="ja"] .gamebtn .lbl-short-off.ja { display: inline; }
+    [data-lang="en"] .gamebtn.on .lbl-short-off, [data-lang="ja"] .gamebtn.on .lbl-short-off { display: none; }
+    [data-lang="en"] .gamebtn.on .lbl-short-on.en, [data-lang="ja"] .gamebtn.on .lbl-short-on.ja { display: inline; }
   }
 
   @media (prefers-reduced-motion: reduce) {
     html.js .reveal, .reveal { opacity: 1; transform: none; transition: none; }
     html { scroll-behavior: auto; }
-    .gamebtn { display: none; }
   }
 </style>
 </head>
 <body>
 <a class="skip" href="#main"><span class="en" lang="en">Skip to content</span><span class="ja" lang="ja">本文へスキップ</span></a>
-
-<canvas id="field" aria-hidden="true"></canvas>
-<div class="gantry" aria-hidden="true"></div>
 
 <header>
   <div class="nav-inner">
@@ -1171,6 +1133,7 @@ const DATA = {
       <button class="gamebtn" id="gameBtn" aria-pressed="false">
         <span class="dot" aria-hidden="true"></span>
         <span class="en lbl-off" lang="en">Walk into the crowd</span><span class="en lbl-on" lang="en">Walking &middot; Esc to leave</span><span class="ja lbl-off" lang="ja">群衆の中を歩く</span><span class="ja lbl-on" lang="ja">操作中 &middot; Esc で終了</span>
+        <span class="en lbl-short-off" lang="en">Walk</span><span class="en lbl-short-on" lang="en">Leave</span><span class="ja lbl-short-off" lang="ja">歩く</span><span class="ja lbl-short-on" lang="ja">やめる</span>
       </button>
       <button class="pill" id="langBtn"><span class="lang-to-ja" lang="ja">日本語</span><span class="lang-to-en">EN</span></button>
     </div>
@@ -1181,8 +1144,9 @@ const DATA = {
 
   <!-- ========== HERO ========== -->
   <section class="hero-block">
-    <div class="wrap">
-      <div class="hero hero-grid">
+    <canvas id="field" role="img" aria-label="A small plaza seen from above at an angle: people walking between trees and planters, with a humanoid robot, two robot dogs, a wheeled support robot and a drone among them"></canvas>
+    <div class="plaza-fade" aria-hidden="true"></div>
+    <div class="wrap hero-copy">
         <div class="eyebrow reveal">
           <span class="en">Physical AI · Human Motion Estimation and Prediction</span>
           <span class="ja">Physical AI・人の動きの推定と予測</span>
@@ -1195,22 +1159,11 @@ const DATA = {
             <span class="ja">Hiromu Taketsugu — 豊田工業大学 博士後期課程</span>
           </small>
         </h1>
-        <div class="side-rail reveal" style="transition-delay:.10s">
-          <div>
-            <div class="k"><span class="en">Affiliation</span><span class="ja">所属</span></div>
-            <div class="v"><span class="en"><b>TTI</b> · Ukita Lab</span><span class="ja"><b>豊田工業大学</b> · 浮田研究室</span></div>
-          </div>
-          <div>
-            <div class="k"><span class="en">Fellowship</span><span class="ja">研究員</span></div>
-            <div class="v"><span class="en">JSPS Research Fellow <b>(DC1)</b></span><span class="ja">日本学術振興会 特別研究員 <b>(DC1)</b></span></div>
-          </div>
-          <div>
-            <div class="k"><span class="en">Base</span><span class="ja">拠点</span></div>
-            <div class="v"><span class="en">Nagoya, Japan</span><span class="ja">愛知県・名古屋</span></div>
-          </div>
-        </div>
-        <div class="chips reveal" id="hero-chips" style="transition-delay:.18s"></div>
-      </div>
+        <div class="chips reveal" id="hero-chips" style="transition-delay:.12s"></div>
+    </div>
+    <div class="walk-hint" aria-live="polite">
+      <span class="keys"><span class="en" lang="en">Arrow keys or WASD to walk · Esc to leave</span><span class="ja" lang="ja">矢印キーか WASD で歩く · Esc で終了</span></span>
+      <span class="touch"><span class="en" lang="en">Tap where you want to go</span><span class="ja" lang="ja">行きたい場所をタップ</span></span>
     </div>
   </section>
 
@@ -1460,24 +1413,17 @@ mount('#hero-chips', DATA.links.map((l) => h`
 })();
 
 /* ====================================================================
-   @@SIM@@ — top-down pedestrian flow.
+   @@SIM@@ -- a small plaza, seen from above at an angle.
 
-   Seen from above, because that is the only view in which the thing worth
-   showing is visible: from the side, an agent stepping around someone else
-   moves almost entirely in depth, so the avoidance -- the whole point --
-   cannot be perceived at all.
-
-   Agents react to when a collision would happen rather than to how close
-   someone is right now. That single change is what separates a crowd that
-   looks intentional from one that looks magnetic: paths that merely pass
-   near each other are ignored, while a genuine collision course is answered
-   early, laterally, and once. The interaction law is Karamouzas, Skinner and
+   People cross it, a few robots among them, and nobody's path is scripted.
+   Every walker reacts to when a collision would happen rather than to how
+   close someone is right now: the interaction law is Karamouzas, Skinner and
    Guy, "Universal Power Law Governing Pedestrian Interactions" (Phys. Rev.
-   Lett. 113, 2014): E(tau) = k/tau^2 * exp(-tau/tau0), force = -grad E.
+   Lett. 113, 2014), E(tau) = k/tau^2 * exp(-tau/tau0), force = -grad E. The
+   robots obey it too, and are avoided in turn.
 
-   Nothing here is drawn by hand and no path is scripted. Lanes, the arch
-   that forms at a bottleneck, the way a pair walking abreast breaks into
-   single file when it gets tight -- all of it falls out of the forces.
+   Around the walker the page follows, each person shows faintly where they
+   have been and where the same model expects them to go.
    ==================================================================== */
 (function () {
   'use strict';
@@ -1532,7 +1478,7 @@ const P = {
   // it, so 2.68 is what lands 1.5x faster than the old setting on screen.
   driveSpeed: 2.68,
   wander: 0.09,              // slow heading noise, so paths are never ruler-straight
-  linkShow: 0.15,             // record an interaction once it is this strong (m/s^2)
+  linkShow: 0.15,             // an interaction counts once it is this strong (m/s^2)
   flareShow: 5.0,             // and light both walkers up once it is this strong
   density: 0.096,      // enough for texture; finding yourself is the marker's job            // agents per square metre
   agentsMin: 26,
@@ -1542,30 +1488,10 @@ const P = {
 /* Visual constants live beside the model so the headless preview renderer in
    tools/verify/preview.mjs draws from exactly the same numbers. */
 const V = {
-  trailLife: 6.0,      // seconds a path stays visible
-  trailAlpha: 0.56,    // light laid down per pass -- short trails, vivid
-  accentAlpha: 0.80,
-  headScale: 0.156,    // head radius, in metres-to-px units
-  // Marker size spans nearly six to one, and the draw is biased small: a
-  // uniform pick over a wide range still reads as "all about the same size"
-  // because most of the range sits in the middle. Squaring it gives a crowd
-  // of mostly small marks with a few that carry real weight.
-  headVary: [0.40, 2.30],
-  headBias: 2.0,
-  lineScale: 1 / 36,   // trail width, likewise
-  // Trail weight follows the marker rather than being rolled separately, so
-  // a walker who reads as heavy leaves a heavy line.
-  weights: [0.58, 1.0, 1.62],
-  // Hue is assigned by direction of travel: warm going one way, cool going
-  // the other. That keeps the thing colour was hiding -- which stream a
-  // walker belongs to, and therefore where the lanes are -- while still
-  // letting you follow one person across the frame. Every hue was checked
-  // against the ground; the range is 5.5:1 to 9.4:1.
-  /* Ink on paper: saturated and dark enough to hold a thin line against
-     white. Violet is missing on purpose -- it belongs to the walker you
-     steer, and the crowd should not borrow it. */
-  warm: [[214, 64, 52], [232, 140, 28], [206, 46, 118], [238, 106, 64]],
-  cool: [[28, 104, 214], [14, 156, 146], [16, 158, 220], [78, 158, 46]]
+  // Body size is drawn biased small: squaring a uniform pick gives a crowd
+  // of mostly slight walkers with a few broad ones, where a flat pick reads
+  // as everyone about the same.
+  headBias: 2.0
 };
 
 function mulberry32(a) {
@@ -1742,15 +1668,12 @@ function makeAgent(world, rnd) {
     pref: P.speedPref[0] + rnd() * (P.speedPref[1] - P.speedPref[0]),
     group: -1, side: 1, flow: 0, phase: 0, age: 0, life: 0,
     hue: (rnd() * 4) | 0,
-    hs: 0, wt: 0,
     hot: 0,
     px: 0, py: 0, alpha: 0, accent: false, driven: false
   };
+  // Body size, biased small. Drawn in the same order as it always was, so
+  // the random stream -- and with it every walker's path -- is unchanged.
   const t = Math.pow(rnd(), V.headBias);
-  a.hs = V.headVary[0] + (V.headVary[1] - V.headVary[0]) * t;
-  a.wt = a.hs < 0.85 ? 0 : a.hs < 1.45 ? 1 : 2;
-  // Physical size follows the mark. A walker drawn large that slips through
-  // a gap a small one could not would read as a cheat.
   a.r = P.radius[0] + (P.radius[1] - P.radius[0]) * t;
   spawn(world, rnd, a);
   a.px = a.x; a.py = a.y;
@@ -1762,9 +1685,7 @@ function createWorld(wMetres, hMetres, seed) {
   const world = {
     w: wMetres, h: hMetres, rnd, t: 0,
     agents: [], obstacles: [], gates: [], groups: [],
-    grid: makeGrid(wMetres, hMetres, 3.2),
-    // Pairs currently exerting a real force on each other, refilled every step.
-    links: new Float32Array(2400 * 5), linkCount: 0
+    grid: makeGrid(wMetres, hMetres, 3.2)
   };
   buildScene(world, rnd);
 
@@ -1831,7 +1752,6 @@ function step(world, dt, control) {
   const A = world.agents, g = world.grid, obs = world.obstacles, rnd = world.rnd;
   gridBuild(g, A);
   world.t += dt;
-  world.linkCount = 0;
 
   for (let i = 0; i < A.length; i++) {
     const a = A[i];
@@ -1881,19 +1801,10 @@ function step(world, dt, control) {
           const R = a.r + b.r + P.comfort;
           if (anticipate(a.x, a.y, a.vx, a.vy, b.x, b.y, b.vx, b.vy, R, P.k, P.tau0, _f)) {
             const fm = Math.sqrt(_f.x * _f.x + _f.y * _f.y);
-            // The social force is invisible by definition. Recording the live
-            // ones lets the renderer show the moment two people notice each
-            // other, which is the part of this the page is actually about.
-            if (j > i && fm > P.linkShow && world.linkCount < 2400) {
-              const li = world.linkCount * 5;
-              world.links[li] = a.x; world.links[li + 1] = a.y;
-              world.links[li + 2] = b.x; world.links[li + 3] = b.y;
-              world.links[li + 4] = fm;
-              world.linkCount++;
-            }
-            // Both parties are now paying attention to each other. The
-            // renderer flares them, which is the most legible way to show an
-            // interaction that is otherwise invisible.
+            // The social force is invisible by definition. Both parties are
+            // now paying attention to each other, and the renderer marks them,
+            // which is the most legible way to show the moment two people
+            // notice each other -- the part of this the page is about.
             if (fm > P.linkShow) {
               if (fm > a.hot) a.hot = fm;
               if (fm > b.hot) b.hot = fm;
@@ -2081,477 +1992,828 @@ function forecast(world, agent, out, opts) {
 
 /* @@PHYSICS-END@@ -------------------------------------------------- */
 
-  /* ==================================================================
-     Rendering.
-     Two layers. The trail layer is never cleared -- each frame its alpha is
-     eroded a little and the new segments are stroked on top, so paths build
-     up the way a long exposure does. The live layer holds only what has to
-     be crisp: heads, obstacles, the forecast.
-     ================================================================== */
-  const ctx = canvas.getContext('2d');
-  const root = document.documentElement;
-  const RM = window.matchMedia('(prefers-reduced-motion: reduce)');
-  let reduce = RM.matches;
+/* @@PLAZA-BEGIN@@ ------------------------------------------------------
+   The drawing. Pure apart from the canvas it is handed: no DOM lookups, no
+   timers, so tools/verify/preview.mjs runs this block and the physics above
+   it headlessly and draws exactly what the page draws.
+   ------------------------------------------------------------------------ */
+/* ------------------------------------------------------------------ view */
+const SQ = 0.56;                       // ground squash: the camera looks down at ~34 deg
+const KH = Math.sqrt(1 - SQ * SQ);     // and people, standing up, shrink by cos of that
+const TAU = Math.PI * 2;
 
-  const QS = new URLSearchParams(location.search);
-  const SEED = QS.has('seed') ? (parseInt(QS.get('seed'), 10) | 0) : ((Math.random() * 1e9) | 0);
-  const DEBUG = QS.has('debug');
+/* A wardrobe rather than a palette. Tops carry the colour; trousers stay dark
+   or neutral, the way a real crowd dresses, so the plaza reads calm with
+   colour in it. Violet is kept back for the walker the page follows. */
+const TOPS = ['#2b3152', '#2b3152', '#3a3f4c', '#4a5270', '#7b8397', '#d8d2c6', '#b99d7b',
+              '#d6a04f', '#cf6a43', '#2f9a8c', '#4a86d0', '#d0607f', '#7ea05a'];
+const BOTTOMS = ['#23283a', '#23283a', '#2f323b', '#3d5a80', '#3d5a80', '#6b7080', '#a8997c', '#4a4f5c'];
+const SKIN = ['#f2d6c0', '#e8c2a3', '#d9a784', '#c08a64', '#a06d4b', '#7a5038', '#5c3a28'];
+const HAIR = ['#1f1a17', '#1f1a17', '#2f241d', '#3b2a20', '#5a3d27', '#7a5a3a', '#a88a66', '#8d9099', '#c9bfb0'];
+const PACKS = ['#3a3f4c', '#6b4f3a', '#2f5d57', '#7b8397'];
+const SHOE = '#26272c';
+const YOU = '#5b2cf0', YOU_BOTTOM = '#23283a';
+const FIG = 1.1;                        // figures a touch larger than their footprint
+const HIST = 28, HIST_DT = 0.1;         // the past: 2.8 s, sampled at 10 Hz
+const FUT = 14, FUT_DT = 0.2;           // the future: 2.8 s of the model's own forecast
+const FOCUS = 7.5;                      // how far round you the paths show, metres
+/* Robots: pale shells, dark joints, one cyan lamp -- a colour nothing else
+   on the plaza uses, so a machine is always a machine at a glance. */
+const BOT = { panel: '#e7e9ef', shade: '#c5c9d3', dark: '#2f323b', darker: '#1b1d24', lamp: '#2fc4da',
+              yellow: '#e2b33f', yellowShade: '#c2952a', base: '#3a3f4c', baseTop: '#585e6e' };
+const TREE = { canopy: '#c9dbbb', canopyDark: '#b7cda6', trunk: '#a39a91' };
+const PLANTER = { side: '#dfe2ea', top: '#eef0f5', plants: '#c3d8b4' };
 
-  const trail = document.createElement('canvas');
-  const tctx = trail.getContext('2d');
+function hash(n) {
+  let x = Math.imul((n | 0) + 1, 2654435761) >>> 0;
+  x ^= x >>> 15; x = Math.imul(x, 2246822519) >>> 0; x ^= x >>> 13;
+  return (x >>> 0) / 4294967296;
+}
+const rgbCache = new Map();
+function shade(hex, f) {
+  const k = hex + f;
+  let v = rgbCache.get(k);
+  if (v) return v;
+  const n = parseInt(hex.slice(1), 16);
+  v = `rgb(${Math.round(((n >> 16) & 255) * f)},${Math.round(((n >> 8) & 255) * f)},${Math.round((n & 255) * f)})`;
+  rgbCache.set(k, v);
+  return v;
+}
 
-  /* A four-by-four tile with a single opaque pixel, used to dither the fade.
-     See fadeTrails for why a flat fade cannot do the job. */
-  const DITHER_N = 4, DITHER_CELLS = DITHER_N * DITHER_N;
-  const ditherTile = document.createElement('canvas');
-  ditherTile.width = ditherTile.height = DITHER_N;
-  ditherTile.getContext('2d').fillRect(0, 0, 1, 1);
-  let ditherPat = null, ditherPhase = 0;
+/* ------------------------------------------------------------------ state */
+function Plaza(opts) {
+  const o = Object.assign({ w: 1280, h: 640, dpr: 1, seed: 0x5eed, density: 0.05,
+                            makeCanvas: null }, opts);
+  // One soft contact shadow, drawn once and stamped under everyone. On a GPU
+  // canvas a stamp costs almost nothing; one path holding every ellipse, tried
+  // instead, cost more than all of them.
+  let SHADOW = null;
+  if (o.makeCanvas) {
+    SHADOW = o.makeCanvas(64, 64);
+    const g = SHADOW.getContext('2d'), gr = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+    gr.addColorStop(0, 'rgba(21,23,31,0.34)'); gr.addColorStop(0.55, 'rgba(21,23,31,0.16)');
+    gr.addColorStop(1, 'rgba(21,23,31,0)');
+    g.fillStyle = gr; g.fillRect(0, 0, 64, 64);
+  }
+  const st = { o, S: 30, W: 0, H: 0, world: null, t: 0, fanAt: -1, fan: [[], [], []],
+               control: { active: false, ix: 0, iy: 0 }, keys: { ix: 0, iy: 0 }, tap: null,
+               items: [], onScreen: [], fanTmp: [[], [], []], wedge: null, wedgeCtx: null,
+               legPts: new Float32Array(12) };
 
-  let W = 0, H = 0, DPR = 1, SCALE = 1, world = null, ready = false;
-  const MOBILE = () => window.innerWidth <= 640;
-
-  /* palette, read from the stylesheet so themes drive the drawing */
-  let INK, INK_SOFT, ACCENT, PAPER, STAGE;
-  const FALLBACK = {
-    '--ink-rgb': [22, 21, 15], '--ink-soft-rgb': [122, 120, 112],
-    '--accent-rgb': [232, 80, 10], '--paper-rgb': [253, 252, 249],
-    '--stage-rgb': [239, 232, 216]
+  st.resize = function (w, h, dpr) {
+    st.W = w; st.H = h; o.dpr = dpr || o.dpr;
+    // Enough ground that a walker takes half a minute to cross a desktop,
+    // never so little that a phone shows three people.
+    st.S = Math.max(17, Math.min(34, w / 44));
+    P.density = o.density;
+    const world = createWorld(w / st.S, h / (st.S * SQ), o.seed);
+    world.agents.forEach((a, i) => {
+      a._id = i; a._hv = 0.9 + hash(i * 3 + 1) * 0.2; a._gait = hash(i * 3 + 2); a._swing = 0;
+      a._ph = new Float32Array(HIST * 2); a._pn = 0; a._pi = 0; a._pt = 0;
+      a._fut = new Float32Array((FUT + 1) * 2); a._fn = 0; a._fAt = -1e9;
+    });
+    world.obstacles.forEach((ob, i) => { ob._tree = hash(i * 7 + 5) < 0.55; });
+    castRobots(world);
+    st.world = world; st.tap = null; st.fanAt = -1;
+    st.drones = [{ x: world.w * 0.72, y: world.h * 0.42, z: 2.5, vx: 0, vy: 0, yaw: 0, tx: 0, ty: 0, hold: 0.8 }];
+    if (st.control.active) st.setWalking(true);
   };
-  let warned = false;
-  function readRGB(cs, name) {
-    const raw = cs.getPropertyValue(name).trim();
-    const nums = raw.replace(/^rgba?\(|\)$/g, '').split(/[,\s/]+/)
-      .map(parseFloat).filter(Number.isFinite);
-    if (nums.length < 3) {
-      if (!warned) { warned = true; console.warn('[sim] unreadable colour variable', name); }
-      return FALLBACK[name].slice();
+
+  /* A few robots among the crowd. They are walkers too -- their own size,
+     pace and gait -- and they avoid people by the same law people use, and
+     are avoided in turn. One dog is out with its owner. */
+  function castRobots(world) {
+    const solo = world.agents.filter((a) => a.group < 0 && a !== world.accent);
+    const big = world.agents.length > 60;
+    const want = big ? ['humanoid', 'dog', 'hsr', 'pair'] : ['hsr', 'pair'];
+    let k = 0;
+    const next = () => (k < solo.length ? solo[solo.length - 1 - (k++) * 3 % solo.length] : null);
+    for (const kind of want) {
+      const a = next();
+      if (!a || a._kind) continue;
+      if (kind === 'humanoid') { a._kind = 'humanoid'; a.r = 0.3; a.pref = 0.95; }
+      if (kind === 'dog') { a._kind = 'dog'; a._coat = 'yellow'; a.r = 0.34; a.pref = 1.25; }
+      if (kind === 'hsr') { a._kind = 'hsr'; a.r = 0.3; a.pref = 0.72; }
+      if (kind === 'pair') {
+        const owner = next();
+        if (!owner || owner._kind) continue;
+        a._kind = 'dog'; a._coat = 'white'; a.r = 0.3;
+        const gi = world.groups.length;
+        world.groups.push([owner, a]);
+        owner.group = gi; a.group = gi;
+        a.x = owner.x + 0.7; a.y = owner.y + 0.3; a.px = a.x; a.py = a.y;
+        a.gx = owner.gx; a.gy = owner.gy; a.gate = owner.gate; a.pref = owner.pref;
+        a.vx = owner.vx; a.vy = owner.vy;
+      }
     }
-    return [Math.round(nums[0]), Math.round(nums[1]), Math.round(nums[2])];
   }
-  function loadPalette() {
-    const cs = getComputedStyle(root);
-    INK = readRGB(cs, '--ink-rgb');
-    INK_SOFT = readRGB(cs, '--ink-soft-rgb');
-    ACCENT = readRGB(cs, '--accent-rgb');
-    PAPER = readRGB(cs, '--paper-rgb');
-    STAGE = readRGB(cs, '--stage-rgb');
+  /* The walker the page follows is always a person. */
+  function adoptHuman(w, driven) {
+    const cx = w.w * 0.5, cy = w.h * 0.5;
+    let best = null, bd = Infinity;
+    for (const a of w.agents) {
+      if (a._kind) continue;
+      const d = (a.x - cx) * (a.x - cx) + (a.y - cy) * (a.y - cy);
+      if (d < bd) { bd = d; best = a; }
+    }
+    if (!best || best === w.accent) return;
+    if (w.accent) { w.accent.accent = false; w.accent.driven = false; }
+    best.accent = true; best.driven = !!driven; w.accent = best;
   }
-  const rgba = (c, a) => 'rgba(' + c[0] + ',' + c[1] + ',' + c[2] + ',' + a + ')';
-  const mix = (a, b, t) => [
-    Math.round(a[0] + (b[0] - a[0]) * t),
-    Math.round(a[1] + (b[1] - a[1]) * t),
-    Math.round(a[2] + (b[2] - a[2]) * t)
-  ];
 
-  function resize(keep) {
-    const cap = MOBILE() ? 1.6 : 1.75;   // the trail layer is a second full-size buffer
-    DPR = Math.min(window.devicePixelRatio || 1, cap);
-    W = canvas.clientWidth; H = canvas.clientHeight;
-    if (!W || !H) return;
-    canvas.width = Math.round(W * DPR); canvas.height = Math.round(H * DPR);
-    trail.width = canvas.width; trail.height = canvas.height;
-    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    tctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  st.toScreen = (x, y) => [x * st.S, y * st.S * SQ];
+  st.toGround = (sx, sy) => [sx / st.S, sy / (st.S * SQ)];
 
-    // Hold the scene at a constant real-world height so the composition does
-    // not change character between a laptop and a tall monitor.
-    SCALE = clamp(H / 26, 20, 46);
-    const wm = W / SCALE, hm = H / SCALE;
+  /* ------------------------------------------------------------ walking */
+  st.setWalking = function (on) {
+    const w = st.world;
+    st.control.active = on; w.driving = on;
+    // Take over whoever is nearest the middle, so you start where you can see.
+    if (on) adoptHuman(w, true);
+    if (w.accent) w.accent.driven = on;
+    if (!on) { st.tap = null; st.keys.ix = st.keys.iy = 0; }
+  };
+  st.setKeys = function (ix, iy) {
+    st.keys.ix = ix; st.keys.iy = iy;
+    if (ix || iy) st.tap = null;         // the keyboard wins over a pending tap
+  };
+  st.tapAt = function (sx, sy) {
+    const [x, y] = st.toGround(sx, sy), w = st.world;
+    st.tap = { x: Math.max(0.5, Math.min(w.w - 0.5, x)), y: Math.max(0.5, Math.min(w.h - 0.5, y)), t: 0 };
+  };
 
-    if (keep && world) {
-      const sx = wm / world.w, sy = hm / world.h;
-      for (const a of world.agents) {
-        a.x *= sx; a.y *= sy; a.px = a.x; a.py = a.y;
-        a.gx *= sx; a.gy *= sy;
+  /* --------------------------------------------------------------- tick */
+  st.tick = function (dt) {
+    const w = st.world, c = st.control, you = w.accent;
+    st.t += dt;
+    if (c.active && st.tap && you) {
+      st.tap.t += dt;
+      const dx = st.tap.x - you.x, dy = st.tap.y - you.y, d = Math.hypot(dx, dy);
+      if (d < 0.4) { st.tap = null; c.ix = 0; c.iy = 0; }
+      else { c.ix = dx / d; c.iy = dy / d; }
+    } else { c.ix = st.keys.ix; c.iy = st.keys.iy; }
+    step(w, dt, c);
+    if (w.accent && w.accent._kind) adoptHuman(w, c.active);
+    for (const a of w.agents) {
+      const sp = Math.hypot(a.vx, a.vy);
+      // metres to a full gait cycle: people ~1.3, a stiffer humanoid, a trotting dog
+      const cyc = a._kind === 'dog' ? 0.62 : a._kind === 'humanoid' ? 1.1 : 1.3;
+      a._gait = (a._gait + sp * dt / cyc) % 1;
+      a._swing += (Math.min(1, sp / 0.9) - a._swing) * Math.min(1, dt * 6);
+      a._pt += dt;
+      if (a._pt >= HIST_DT) {
+        a._pt = 0;
+        const last = (a._pi + HIST - 1) % HIST;
+        // a respawn is a jump across the plaza, not a path
+        if (a._pn && Math.hypot(a.x - a._ph[last * 2], a.y - a._ph[last * 2 + 1]) > 2.5) a._pn = 0;
+        a._ph[a._pi * 2] = a.x; a._ph[a._pi * 2 + 1] = a.y;
+        a._pi = (a._pi + 1) % HIST; a._pn = Math.min(HIST, a._pn + 1);
       }
-      for (const o of world.obstacles) { o.x *= sx; o.y *= sy; }
-      for (const g of world.gates) {
-        if (g.nx === 0) { g.x *= sx; g.y = g.y > 0 ? hm + 0.6 : -0.6; g.span *= sx; }
-        else { g.y *= sy; g.x = g.x > 0 ? wm + 0.6 : -0.6; g.span *= sy; }
-      }
-      world.w = wm; world.h = hm;
-      world.grid = makeGrid(wm, hm, 3.2);
+    }
+    for (const d of st.drones) fly(d, dt);
+  };
+
+  /* A drone is not a walker: nobody on the ground has to avoid it. It flies
+     to a point, hangs there a moment, and picks another -- never over the name. */
+  function fly(d, dt) {
+    if (d.hold > 0) {
+      d.hold -= dt; d.vx *= 0.92; d.vy *= 0.92;
+      if (d.hold <= 0) aimDrone(d);
     } else {
-      world = createWorld(wm, hm, SEED);
-      ready = true;
-    }
-    tctx.clearRect(0, 0, W, H);
-    buildEdgeFade();
-  }
-
-  /* ---------- drawing ---------- */
-  const FAN = [[], [], []];
-  let fanAt = 0;
-
-  const FADE_STEP = 0.02;          // alpha budget spent per application
-  let fadeCarry = 0;
-  function fadeTrails(dt) {
-    // Erode alpha rather than painting over it, so the fade leaves no colour
-    // behind. The catch is that canvas alpha is eight bits and this fade is
-    // multiplicative, so it has a fixed point wherever the cut rounds away:
-    // at two percent a pass it stops dead at 22/255 and stays there. That is
-    // the grey that built up over everywhere the crowd had walked -- not a
-    // fade that was too slow, a fade that had stopped.
-    //
-    // Spend the same budget through an ordered dither instead: one pixel in
-    // sixteen, cut sixteen times as deep. The average erosion is identical,
-    // the phase cycles so every pixel is cut exactly once per sixteen passes,
-    // and the smallest cut that ever lands is 32% -- which carries a pixel
-    // all the way down to 1/255, four thousandths of a percent, invisible
-    // against the stage.
-    fadeCarry += 1 - Math.exp(-dt / V.trailLife);
-    if (fadeCarry < FADE_STEP) return;
-    // One step at a time. A backgrounded tab banks a large carry, and
-    // spending it in one pass would erase a sixteenth of the field outright.
-    fadeCarry -= FADE_STEP;
-    if (!ditherPat) ditherPat = tctx.createPattern(ditherTile, 'repeat');
-    const ox = ditherPhase % DITHER_N, oy = (ditherPhase / DITHER_N) | 0;
-    ditherPhase = (ditherPhase + 1) % DITHER_CELLS;
-    tctx.save();
-    // Device pixels, unsmoothed: scaled or interpolated, the tile would
-    // average straight back into the flat fade it replaces.
-    tctx.setTransform(1, 0, 0, 1, ox, oy);
-    tctx.imageSmoothingEnabled = false;
-    tctx.globalCompositeOperation = 'destination-out';
-    tctx.globalAlpha = FADE_STEP * DITHER_CELLS;
-    tctx.fillStyle = ditherPat;
-    tctx.fillRect(-ox, -oy, trail.width, trail.height);
-    tctx.restore();
-  }
-
-  function strokeTrails() {
-    const A = world.agents;
-    const wide = SCALE * V.lineScale;
-    const alpha = V.trailAlpha;
-    tctx.lineCap = 'round';
-
-    // Direction picks the family, the family picks the hue: warm one way,
-    // cool the other. Twenty-four batched strokes a frame, which is nothing.
-    for (let pass = 0; pass < 2; pass++) {
-      const fam = pass === 0 ? V.warm : V.cool;
-      for (let hu = 0; hu < fam.length; hu++) {
-        for (let wi = 0; wi < V.weights.length; wi++) {
-          tctx.beginPath();
-          let any = false;
-          for (let i = 0; i < A.length; i++) {
-            const a = A[i];
-            if (a.accent || a.flow !== pass || a.hue !== hu || a.wt !== wi || a.life < 0.05) continue;
-            const dx = a.x - a.px, dy = a.y - a.py;
-            if (dx * dx + dy * dy > 4) continue;      // just respawned
-            tctx.moveTo(a.px * SCALE, a.py * SCALE);
-            tctx.lineTo(a.x * SCALE, a.y * SCALE);
-            any = true;
-          }
-          if (!any) continue;
-          tctx.lineWidth = Math.max(0.65, wide * V.weights[wi]);
-          tctx.strokeStyle = rgba(fam[hu], alpha);
-          tctx.stroke();
-        }
+      const ex = d.tx - d.x, ey = d.ty - d.y, dist = Math.hypot(ex, ey);
+      if (dist < 0.3) d.hold = 1.5 + hash(Math.floor(st.t * 3)) * 2.5;
+      else {
+        const want = Math.min(2.4, dist * 0.9);
+        const ax = (ex / dist) * want - d.vx, ay = (ey / dist) * want - d.vy, am = Math.hypot(ax, ay);
+        const f = am > 2.2 * dt ? (2.2 * dt) / am : 1;
+        d.vx += ax * f; d.vy += ay * f;
       }
     }
-
-    // The walker you can take over keeps its trail whether or not you are
-    // driving: where you have been is the useful part.
-    const a = world.accent;
-    if (a && a.life > 0.05) {
-      const dx = a.x - a.px, dy = a.y - a.py;
-      if (dx * dx + dy * dy <= 4) {
-        tctx.beginPath();
-        tctx.moveTo(a.px * SCALE, a.py * SCALE);
-        tctx.lineTo(a.x * SCALE, a.y * SCALE);
-        tctx.lineWidth = Math.max(1.1, wide * 1.7);
-        tctx.lineCap = 'round';
-        tctx.strokeStyle = rgba(ACCENT, V.accentAlpha);
-        tctx.stroke();
-      }
+    d.x += d.vx * dt; d.y += d.vy * dt;
+    if (Math.hypot(d.vx, d.vy) > 0.2) {
+      let da = Math.atan2(d.vy, d.vx) - d.yaw;
+      da = Math.atan2(Math.sin(da), Math.cos(da));
+      d.yaw += da * Math.min(1, dt * 2.5);
     }
+    d.z = 2.5 + 0.07 * Math.sin(st.t * 2.2 + d.x);
+  }
+  function aimDrone(d) {
+    for (let i = 0; i < 16; i++) {
+      const u = hash(Math.floor(st.t * 97) + i * 13), v = hash(Math.floor(st.t * 97) + i * 13 + 7);
+      const sx = (0.12 + 0.82 * u) * st.W, sy = (0.3 + 0.6 * v) * st.H;
+      if (sx < 0.46 * st.W && sy < 0.66 * st.H) continue;
+      [d.tx, d.ty] = st.toGround(sx, sy);
+      return;
+    }
+    [d.tx, d.ty] = st.toGround(0.75 * st.W, 0.62 * st.H);
   }
 
-  let edgeFade = null;
-  function buildEdgeFade() {
-    // Four short gradients in the stage colour. Without them every path is
-    // cut off square at the frame; with them the crowd walks out of view.
-    const m = Math.round(Math.min(W, H) * 0.09);
-    const c = document.createElement('canvas');
-    c.width = Math.max(1, Math.round(W)); c.height = Math.max(1, Math.round(H));
-    const g = c.getContext('2d');
-    const bands = [
-      [0, 0, m, H, 'x', 1], [W - m, 0, m, H, 'x', -1],
-      [0, 0, W, m, 'y', 1], [0, H - m, W, m, 'y', -1]
-    ];
-    for (const [x, y, bw, bh, axis, dir] of bands) {
-      const grad = axis === 'x'
-        ? g.createLinearGradient(dir > 0 ? x : x + bw, 0, dir > 0 ? x + bw : x, 0)
-        : g.createLinearGradient(0, dir > 0 ? y : y + bh, 0, dir > 0 ? y + bh : y);
-      grad.addColorStop(0, rgba(STAGE, 1));
-      grad.addColorStop(0.55, rgba(STAGE, 0.45));
-      grad.addColorStop(1, rgba(STAGE, 0));
-      g.fillStyle = grad;
-      g.fillRect(x, y, bw, bh);
-    }
-    edgeFade = c;
+  /* --------------------------------------------------------------- draw */
+  function lookOf(a) {
+    const you = !!a.accent;
+    if (a._look && a._look.you === you) return a._look;
+    const i = a._id, pick = (arr, k) => arr[Math.floor(hash(i * 13 + k) * arr.length)];
+    a._look = {
+      you,
+      top: you ? YOU : pick(TOPS, 1), bottom: you ? YOU_BOTTOM : pick(BOTTOMS, 2),
+      skin: pick(SKIN, 3), hair: pick(HAIR, 4), pack: pick(PACKS, 8),
+      skirt: hash(i * 13 + 5) < 0.18, short: hash(i * 13 + 6) < 0.4,
+      bag: hash(i * 13 + 7) < 0.16, long: hash(i * 13 + 9) < 0.3
+    };
+    return a._look;
+  }
+  const colourOf = (a) => lookOf(a).top;
+
+  function ellipse(ctx, sx, sy, rx) {
+    ctx.beginPath();
+    ctx.ellipse(sx, sy, rx, rx * SQ, 0, 0, TAU);
   }
 
-  function drawLive(control) {
-    const walking = !!(control && control.active);
-    ctx.clearRect(0, 0, W, H);
-    ctx.drawImage(trail, 0, 0, W, H);
-    // Walking knocks the accumulated past back, so what is happening right
-    // now -- you, and whoever is about to have to deal with you -- reads
-    // against it instead of competing with it.
-    if (walking) {
-      ctx.fillStyle = rgba(STAGE, 0.66);
-      ctx.fillRect(0, 0, W, H);
-    }
-    if (edgeFade) ctx.drawImage(edgeFade, 0, 0, W, H);
+  /* Two-bone reach: where the knee (or elbow) sits between a fixed root and
+     an end point, bending toward +u when fwd and away from it otherwise.
+     Works in the body's own plane: u along the heading, v up, in metres. */
+  function joint(ru, rv, eu, ev, l1, l2, fwd, out) {
+    let du = eu - ru, dv = ev - rv, d = Math.hypot(du, dv);
+    const dm = (l1 + l2) * 0.999;
+    if (d > dm) { du *= dm / d; dv *= dm / d; d = dm; }
+    if (d < 1e-4) { out[0] = ru; out[1] = rv - l1; out[2] = ru; out[3] = rv - l1 - l2; return; }
+    const k = (l1 * l1 - l2 * l2 + d * d) / (2 * d), h = Math.sqrt(Math.max(0, l1 * l1 - k * k));
+    let pu = -dv / d, pv = du / d;
+    if ((pu > 0) !== fwd) { pu = -pu; pv = -pv; }
+    out[0] = ru + du * (k / d) + pu * h; out[1] = rv + dv * (k / d) + pv * h;
+    out[2] = ru + du; out[3] = rv + dv;
+  }
+  const J = [0, 0, 0, 0];
 
-    // obstacles
-    ctx.lineWidth = 1.15;
-    for (const o of world.obstacles) {
+  function person(ctx, a, sx, sy) {
+    const L = lookOf(a), m = st.S * a._hv * FIG, fine = st.S >= 22;
+    // Standing still, keep facing the way you were going.
+    const sp = Math.hypot(a.vx, a.vy);
+    if (sp > 0.05) { a._hx = a.vx / sp; a._hy = a.vy / sp; }
+    const dx = a._hx === undefined ? 1 : a._hx, dy = a._hy === undefined ? 0 : a._hy;
+    const px = -dy, py = dx;                              // across the heading
+    const P2 = (u, v, lat) => [sx + (dx * u + px * lat) * m,
+                               sy + (dy * u + py * lat) * m * SQ - v * m * KH];
+    const sw = a._swing, ph = a._gait;
+    const bob = 0.018 * sw * Math.cos(ph * TAU * 2);
+    const hipV = 0.8 + bob, shV = hipV + 0.5, headV = shV + 0.06 + 0.12;
+    // Seen from the side a torso is its depth; from the front, its width.
+    const torW = (0.25 + 0.13 * Math.abs(dy)) * m;
+    // which side is nearer the camera: the one pointing down the screen
+    const near = py >= 0 ? 1 : -1;
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+
+    // Both legs share a colour, and so do both shoes: one stroke each, the far
+    // leg traced first so the near one lies over it.
+    const LEG = st.legPts;
+    for (let q = 0; q < 2; q++) {
+      const side = q === 0 ? -near : near;
+      const t = TAU * ((ph + (side > 0 ? 0.5 : 0)) % 1);
+      joint(0, hipV, 0.27 * sw * Math.sin(t), 0.1 * sw * Math.max(0, Math.cos(t)), 0.42, 0.4, true, J);
+      const [hx, hy] = P2(0, hipV, side * 0.08), [kx, ky] = P2(J[0], J[1], side * 0.08);
+      const [fx, fy] = P2(J[2], J[3], side * 0.08);
+      LEG[q * 6] = hx; LEG[q * 6 + 1] = hy; LEG[q * 6 + 2] = kx; LEG[q * 6 + 3] = ky;
+      LEG[q * 6 + 4] = fx; LEG[q * 6 + 5] = fy;
+    }
+    const legs = () => {
+      ctx.strokeStyle = L.skirt ? L.skin : L.bottom;
+      ctx.lineWidth = Math.max(1.5, 0.12 * m);
       ctx.beginPath();
-      ctx.arc(o.x * SCALE, o.y * SCALE, o.r * SCALE, 0, TWO_PI);
-      ctx.fillStyle = rgba(PAPER, 0.05);
-      ctx.fill();
-      ctx.strokeStyle = rgba(INK, walking ? 0.12 : 0.18);
+      for (let q = 0; q < 2; q++) {
+        ctx.moveTo(LEG[q * 6], LEG[q * 6 + 1]); ctx.lineTo(LEG[q * 6 + 2], LEG[q * 6 + 3]);
+        ctx.lineTo(LEG[q * 6 + 4], LEG[q * 6 + 5]);
+      }
       ctx.stroke();
-    }
-
-    // Live interactions. A social force is invisible by construction; this
-    // draws the ones that currently exist, so the instant two people notice
-    // each other and begin to give way shows up and then goes again.
-    if (world.linkCount) {
-      const bins = [[], [], []];
-      for (let i = 0; i < world.linkCount; i++) {
-        const li = i * 5, f = world.links[li + 4];
-        const b = f > 6 ? 2 : f > 2 ? 1 : 0;
-        bins[b].push(li);
+      if (!fine) return;
+      ctx.strokeStyle = SHOE; ctx.lineWidth = Math.max(1.7, 0.13 * m);
+      ctx.beginPath();
+      for (let q = 0; q < 2; q++) {
+        const kx = LEG[q * 6 + 2], ky = LEG[q * 6 + 3], fx = LEG[q * 6 + 4], fy = LEG[q * 6 + 5];
+        ctx.moveTo(kx + (fx - kx) * 0.8, ky + (fy - ky) * 0.8); ctx.lineTo(fx, fy);
       }
-      const alphas = walking ? [0.09, 0.18, 0.34] : [0.13, 0.24, 0.44];
-      for (let b = 0; b < 3; b++) {
-        if (!bins[b].length) continue;
-        ctx.beginPath();
-        for (const li of bins[b]) {
-          ctx.moveTo(world.links[li] * SCALE, world.links[li + 1] * SCALE);
-          ctx.lineTo(world.links[li + 2] * SCALE, world.links[li + 3] * SCALE);
+      ctx.stroke();
+    };
+    const arm = (side) => {
+      const t = TAU * ((ph + (side > 0 ? 0.5 : 0)) % 1);
+      const hu = -0.2 * sw * Math.sin(t), hv = shV - 0.5;
+      joint(0.02 * sw, shV - 0.05, hu, hv, 0.28, 0.26, false, J);
+      const lat = side * 0.19;
+      const [ax, ay] = P2(0.02 * sw, shV - 0.05, lat), [ex, ey] = P2(J[0], J[1], lat);
+      const [hx, hy] = P2(J[2], J[3], lat);
+      ctx.lineWidth = Math.max(1.2, 0.078 * m);
+      ctx.strokeStyle = shade(L.top, 0.86);
+      ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(ex, ey);
+      if (!(L.short && fine)) ctx.lineTo(hx, hy);
+      ctx.stroke();
+      if (L.short && fine) {
+        ctx.strokeStyle = L.skin;
+        ctx.beginPath(); ctx.moveTo(ex, ey); ctx.lineTo(hx, hy); ctx.stroke();
+      }
+    };
+    const pack = () => {
+      const [bx, by] = P2(-0.17, shV - 0.2, 0);
+      ctx.fillStyle = L.pack;
+      ctx.beginPath(); ctx.roundRect(bx - 0.13 * m, by - 0.2 * m * KH, 0.26 * m, 0.36 * m * KH, 0.06 * m); ctx.fill();
+    };
+
+    if (fine && L.bag && dy >= 0) pack();                  // walking toward us: it is behind
+    arm(-near);
+    legs();
+    // torso, shaded on the side away from the light
+    const [tx, ty] = P2(0, shV, 0), [, by] = P2(0, hipV - 0.04, 0);
+    ctx.fillStyle = shade(L.top, 0.86);
+    ctx.beginPath(); ctx.roundRect(tx - torW / 2, ty, torW, by - ty, torW * 0.42); ctx.fill();
+    ctx.fillStyle = L.top;
+    ctx.beginPath(); ctx.roundRect(tx - torW / 2, ty, torW * 0.74, by - ty, torW * 0.4); ctx.fill();
+    if (L.skirt) {
+      const [, sy0] = P2(0, hipV + 0.03, 0), [, sy1] = P2(0, hipV - 0.36, 0);
+      const w0 = torW * 0.52, w1 = torW * 0.72;
+      ctx.fillStyle = L.bottom;
+      ctx.beginPath();
+      ctx.moveTo(tx - w0, sy0); ctx.lineTo(tx + w0, sy0); ctx.lineTo(tx + w1, sy1); ctx.lineTo(tx - w1, sy1);
+      ctx.closePath(); ctx.fill();
+    }
+    if (fine && L.bag && dy < 0) pack();                   // walking away: it is on show
+    // head: hair to the back and top, the face turned the way they walk
+    const [cx, cy] = P2(0, headV, 0), r = 0.12 * m;
+    ctx.fillStyle = L.hair;
+    if (fine && L.long) {
+      ctx.beginPath(); ctx.ellipse(cx - dx * r * 0.3, cy + r * 0.55, r * 0.9, r * 0.8, 0, 0, TAU); ctx.fill();
+    }
+    // skin first, then hair as a cap tilted to the back of the head; walking
+    // away, the back of the head is all you see
+    ctx.fillStyle = L.skin;
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, TAU); ctx.fill();
+    ctx.fillStyle = L.hair;
+    if (dy < -0.35) {
+      ctx.beginPath(); ctx.arc(cx, cy, r * 1.03, 0, TAU); ctx.fill();
+    } else {
+      const bx = -dx * 0.85, by = -1 - dy * SQ * 0.5;          // up, and toward the back
+      const c = Math.atan2(by, bx), span = Math.PI / 2 + 0.32 - 0.25 * Math.max(0, dy);
+      ctx.beginPath(); ctx.arc(cx, cy, r * 1.05, c - span, c + span); ctx.closePath(); ctx.fill();
+    }
+    arm(near);
+  }
+
+  function pathTo(ctx, pts, i0, i1) {
+    ctx.moveTo(pts[i0 * 2] * st.S, pts[i0 * 2 + 1] * st.S * SQ);
+    for (let i = i0 + 1; i <= i1; i++) ctx.lineTo(pts[i * 2] * st.S, pts[i * 2 + 1] * st.S * SQ);
+  }
+  const lin = new Float32Array((HIST + 1) * 2);
+  function trails(ctx, now) {
+    const w = st.world, you = w.accent;
+    if (!you) return;
+    let budget = 2;                                  // forecasts refreshed per frame, round-robin
+    ctx.lineWidth = 1.4; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    for (const a of st.onScreen) {
+      const d = Math.hypot(a.x - you.x, a.y - you.y);
+      if (d > FOCUS || a.life < 0.5) continue;
+      const q = d / FOCUS, wgt = a === you ? 1 : 1 - q * q;
+      if (wgt < 0.03) continue;
+      ctx.strokeStyle = a === you ? YOU : a._kind ? BOT.lamp : lookOf(a).top;
+      // the past, oldest first, brightening toward now
+      const n = a._pn;
+      if (n > 1) {
+        const i0 = (a._pi - n + HIST) % HIST;
+        for (let i = 0; i < n; i++) {
+          const j = (i0 + i) % HIST;
+          lin[i * 2] = a._ph[j * 2]; lin[i * 2 + 1] = a._ph[j * 2 + 1];
         }
-        ctx.lineWidth = 0.7 + b * 0.4;
-        ctx.strokeStyle = rgba(ACCENT, alphas[b]);
-        ctx.stroke();
-      }
-    }
-
-    // heads
-    const A = world.agents;
-    const rHead = Math.max(1.4, SCALE * V.headScale);
-    for (let pass = 0; pass < 2; pass++) {
-      const fam = pass === 0 ? V.warm : V.cool;
-      for (let hu = 0; hu < fam.length; hu++) {
-        ctx.beginPath();
-        let any = false;
-        for (let i = 0; i < A.length; i++) {
-          const a = A[i];
-          if (a.accent || a.flow !== pass || a.hue !== hu) continue;
-          const r = rHead * a.hs;
-          ctx.moveTo(a.x * SCALE + r, a.y * SCALE);
-          ctx.arc(a.x * SCALE, a.y * SCALE, r, 0, TWO_PI);
-          any = true;
+        lin[n * 2] = a.x; lin[n * 2 + 1] = a.y;
+        const cut = [0, Math.floor(n * 0.4), Math.floor(n * 0.75), n];
+        const al = a === you ? [0.1, 0.2, 0.34] : [0.07, 0.15, 0.27];
+        for (let c = 0; c < 3; c++) {
+          if (cut[c + 1] <= cut[c]) continue;
+          ctx.globalAlpha = al[c] * wgt;
+          ctx.beginPath(); pathTo(ctx, lin, cut[c], cut[c + 1]); ctx.stroke();
         }
-        if (!any) continue;
-        ctx.fillStyle = rgba(fam[hu], walking ? 0.5 : 0.88);
-        ctx.fill();
+      }
+      // the future, as the model forecasts it -- not yours: that one is drawn
+      // on its own, and hidden while you steer
+      if (a === you) continue;
+      if (now - a._fAt > 280 && budget > 0) {
+        budget--;
+        forecast(w, a, st.fanTmp, { steps: FUT, dt: FUT_DT });
+        const p = st.fanTmp[1], m = Math.min(FUT + 1, p.length / 2);
+        for (let i = 0; i < m * 2; i++) a._fut[i] = p[i];
+        a._fn = m; a._fAt = now;
+      }
+      if (a._fn > 2) {
+        a._fut[0] = a.x; a._fut[1] = a.y;              // start from where they are now
+        ctx.setLineDash([1.5, 4]);
+        const h = Math.floor(a._fn / 2);
+        ctx.globalAlpha = 0.34 * wgt; ctx.beginPath(); pathTo(ctx, a._fut, 0, h); ctx.stroke();
+        ctx.globalAlpha = 0.15 * wgt; ctx.beginPath(); pathTo(ctx, a._fut, h, a._fn - 1); ctx.stroke();
+        ctx.setLineDash([]);
       }
     }
+    ctx.globalAlpha = 1;
+  }
 
-    // Anyone currently negotiating gets a brief halo in their own colour.
-    // Two walkers brightening at each other is the moment the model is about
-    // to do its work.
-    for (let pass = 0; pass < 2; pass++) {
-      const fam = pass === 0 ? V.warm : V.cool;
-      for (let hu = 0; hu < fam.length; hu++) {
-        ctx.beginPath();
-        let hot = false;
-        for (let i = 0; i < A.length; i++) {
-          const a = A[i];
-          if (a.accent || a.flow !== pass || a.hue !== hu || a.hot < P.flareShow) continue;
-          const r = rHead * a.hs * (1.7 + Math.min(1.6, a.hot / 9));
-          ctx.moveTo(a.x * SCALE + r, a.y * SCALE);
-          ctx.arc(a.x * SCALE, a.y * SCALE, r, 0, TWO_PI);
-          hot = true;
-        }
-        if (!hot) continue;
-        ctx.fillStyle = rgba(fam[hu], walking ? 0.10 : 0.16);
-        ctx.fill();
+  function basis(a, sx, sy, m) {
+    const sp = Math.hypot(a.vx, a.vy);
+    if (sp > 0.05) { a._hx = a.vx / sp; a._hy = a.vy / sp; }
+    const dx = a._hx === undefined ? 1 : a._hx, dy = a._hy === undefined ? 0 : a._hy;
+    const px = -dy, py = dx;
+    return { dx, dy, px, py, near: py >= 0 ? 1 : -1,
+             P2: (u, v, lat) => [sx + (dx * u + px * lat) * m, sy + (dy * u + py * lat) * m * SQ - v * m * KH] };
+  }
+
+  function humanoid(ctx, a, sx, sy) {
+    const m = st.S * FIG * 1.03, fine = st.S >= 22;
+    const { dx, dy, near, P2 } = basis(a, sx, sy, m);
+    const sw = a._swing * 0.85, ph = a._gait;
+    const hipV = 0.86 + 0.012 * sw * Math.cos(ph * TAU * 2), shV = hipV + 0.5, headV = shV + 0.1 + 0.12;
+    const torW = (0.3 + 0.12 * Math.abs(dy)) * m;
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    const leg = (side) => {
+      const t = TAU * ((ph + (side > 0 ? 0.5 : 0)) % 1);
+      joint(0, hipV, 0.22 * sw * Math.sin(t), 0.07 * sw * Math.max(0, Math.cos(t)), 0.44, 0.42, true, J);
+      const lat = side * 0.09;
+      const [hx, hy] = P2(0, hipV, lat), [kx, ky] = P2(J[0], J[1], lat), [fx, fy] = P2(J[2], J[3], lat);
+      ctx.strokeStyle = BOT.shade; ctx.lineWidth = Math.max(1.8, 0.15 * m);
+      ctx.beginPath(); ctx.moveTo(hx, hy); ctx.lineTo(kx, ky); ctx.lineTo(fx, fy); ctx.stroke();
+      ctx.strokeStyle = BOT.panel; ctx.lineWidth = Math.max(1.1, 0.09 * m);
+      ctx.beginPath(); ctx.moveTo(hx, hy); ctx.lineTo(kx, ky); ctx.lineTo(fx, fy); ctx.stroke();
+      ctx.fillStyle = BOT.dark;
+      ctx.beginPath(); ctx.arc(kx, ky, 0.05 * m, 0, TAU); ctx.fill();
+      const [tx, ty] = P2(J[2] + 0.08, J[3], lat);
+      ctx.strokeStyle = BOT.dark; ctx.lineWidth = Math.max(1.8, 0.13 * m);
+      ctx.beginPath(); ctx.moveTo(fx, fy); ctx.lineTo(tx, ty); ctx.stroke();
+    };
+    const arm = (side) => {
+      const t = TAU * ((ph + (side > 0 ? 0.5 : 0)) % 1);
+      joint(0, shV - 0.05, -0.14 * sw * Math.sin(t), shV - 0.52, 0.28, 0.27, false, J);
+      const lat = side * 0.2;
+      const [ax, ay] = P2(0, shV - 0.05, lat), [ex, ey] = P2(J[0], J[1], lat), [hx, hy] = P2(J[2], J[3], lat);
+      ctx.strokeStyle = BOT.shade; ctx.lineWidth = Math.max(1.4, 0.1 * m);
+      ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(ex, ey); ctx.lineTo(hx, hy); ctx.stroke();
+      ctx.fillStyle = BOT.dark;
+      ctx.beginPath(); ctx.arc(ex, ey, 0.04 * m, 0, TAU); ctx.fill();
+      ctx.beginPath(); ctx.arc(hx, hy, 0.045 * m, 0, TAU); ctx.fill();
+    };
+    arm(-near); leg(-near); leg(near);
+    const [tx, ty] = P2(0, shV, 0), [, by] = P2(0, hipV - 0.02, 0), tH = (by - ty) * 0.8;
+    ctx.fillStyle = BOT.dark;
+    ctx.beginPath(); ctx.roundRect(tx - torW * 0.38, ty + tH - 0.02 * m, torW * 0.76, by - ty - tH + 0.04 * m, 0.04 * m); ctx.fill();
+    ctx.fillStyle = BOT.shade;
+    ctx.beginPath(); ctx.roundRect(tx - torW / 2, ty, torW, tH, torW * 0.22); ctx.fill();
+    ctx.fillStyle = BOT.panel;
+    ctx.beginPath(); ctx.roundRect(tx - torW / 2, ty, torW * 0.76, tH, torW * 0.2); ctx.fill();
+    if (fine && dy > -0.35) {
+      ctx.fillStyle = BOT.lamp;
+      ctx.beginPath(); ctx.arc(tx - torW * 0.08 + dx * torW * 0.12, ty + tH * 0.34, 0.03 * m, 0, TAU); ctx.fill();
+    }
+    const [nx, ny] = P2(0, shV + 0.07, 0);
+    ctx.strokeStyle = BOT.dark; ctx.lineWidth = Math.max(1.4, 0.07 * m);
+    ctx.beginPath(); ctx.moveTo(tx, ty + 0.02 * m); ctx.lineTo(nx, ny); ctx.stroke();
+    const [hx, hy] = P2(0, headV, 0), hw = 0.21 * m, hh = 0.25 * m * KH;
+    ctx.fillStyle = BOT.panel;
+    ctx.beginPath(); ctx.roundRect(hx - hw / 2, hy - hh / 2, hw, hh, 0.08 * m); ctx.fill();
+    if (dy > -0.35) {
+      const vw = hw * (0.55 + 0.25 * Math.max(0, dy)), vx = hx - vw / 2 + dx * hw * 0.16;
+      ctx.fillStyle = BOT.darker;
+      ctx.beginPath(); ctx.roundRect(vx, hy - hh * 0.14, vw, hh * 0.32, 0.03 * m); ctx.fill();
+      if (fine) {
+        ctx.strokeStyle = BOT.lamp; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(vx + vw * 0.22, hy + hh * 0.02); ctx.lineTo(vx + vw * 0.78, hy + hh * 0.02); ctx.stroke();
       }
     }
+    arm(near);
+  }
 
-    // the walker you are, or could be
-    const acc = world.accent;
-    if (!acc) return;
-    const x = acc.x * SCALE, y = acc.y * SCALE;
+  function dog(ctx, a, sx, sy) {
+    const m = st.S * FIG, fine = st.S >= 22;
+    const { py, near, P2 } = basis(a, sx, sy, m);
+    const coat = a._coat === 'white' ? [BOT.panel, BOT.shade] : [BOT.yellow, BOT.yellowShade];
+    const sw = a._swing, ph = a._gait;
+    const bodyV = 0.5 + 0.012 * sw * Math.cos(ph * TAU * 2);
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    // a trot: the diagonal pairs move together
+    const LEGS = [[0.24, 1, 0], [0.24, -1, 0.5], [-0.24, 1, 0.5], [-0.24, -1, 0]];
+    const legOf = (hu, side, off) => {
+      const t = TAU * ((ph + off) % 1), lat = side * 0.1;
+      joint(hu, bodyV - 0.03, hu + 0.12 * sw * Math.sin(t), 0.07 * sw * Math.max(0, Math.cos(t)), 0.26, 0.27, false, J);
+      const [hx, hy] = P2(hu, bodyV - 0.03, lat), [kx, ky] = P2(J[0], J[1], lat), [fx, fy] = P2(J[2], J[3], lat);
+      ctx.strokeStyle = BOT.dark; ctx.lineWidth = Math.max(1.4, 0.075 * m);
+      ctx.beginPath(); ctx.moveTo(hx, hy); ctx.lineTo(kx, ky); ctx.lineTo(fx, fy); ctx.stroke();
+      ctx.fillStyle = BOT.darker;
+      ctx.beginPath(); ctx.arc(fx, fy, 0.035 * m, 0, TAU); ctx.fill();
+    };
+    for (const L of LEGS) if (L[1] === -near) legOf(L[0], L[1], L[2]);
+    const [rx, ry] = P2(-0.3, bodyV, 0), [fx, fy] = P2(0.3, bodyV, 0);
+    const thick = (0.13 + 0.09 * Math.abs(py)) * m;
+    ctx.strokeStyle = coat[1]; ctx.lineWidth = thick;
+    ctx.beginPath(); ctx.moveTo(rx, ry); ctx.lineTo(fx, fy); ctx.stroke();
+    ctx.strokeStyle = coat[0]; ctx.lineWidth = thick * 0.6;
+    ctx.beginPath(); ctx.moveTo(rx, ry - thick * 0.18); ctx.lineTo(fx, fy - thick * 0.18); ctx.stroke();
+    for (const L of LEGS) if (L[1] === near) legOf(L[0], L[1], L[2]);
+    const [hx, hy] = P2(0.36, bodyV + 0.06, 0), [h2x, h2y] = P2(0.46, bodyV + 0.09, 0);
+    ctx.strokeStyle = BOT.dark; ctx.lineWidth = (0.11 + 0.05 * Math.abs(py)) * m;
+    ctx.beginPath(); ctx.moveTo(hx, hy); ctx.lineTo(h2x, h2y); ctx.stroke();
+    if (fine) {
+      ctx.fillStyle = BOT.lamp;
+      ctx.beginPath(); ctx.arc(h2x, h2y, 0.026 * m, 0, TAU); ctx.fill();
+    }
+  }
 
-    // No forecast while you are driving. Where this walker goes next is your
-    // decision, not the model's, so predicting it is just clutter over the
-    // one thing you are trying to watch.
-    if (!reduce && !walking) {
-      const now = performance.now();
-      if (now - fanAt > 100) { forecast(world, acc, FAN); fanAt = now; }
-      ctx.save();
-      const a0 = FAN[0], a2 = FAN[2];
-      if (a0.length > 3) {
-        ctx.beginPath();
-        ctx.moveTo(a0[0] * SCALE, a0[1] * SCALE);
-        for (let i = 2; i < a0.length; i += 2) ctx.lineTo(a0[i] * SCALE, a0[i + 1] * SCALE);
-        for (let i = a2.length - 2; i >= 0; i -= 2) ctx.lineTo(a2[i] * SCALE, a2[i + 1] * SCALE);
-        ctx.closePath();
-        ctx.fillStyle = rgba(ACCENT, walking ? 0.10 : 0.07);
-        ctx.fill();
+  function hsr(ctx, a, sx, sy) {
+    const m = st.S * FIG, fine = st.S >= 22, alpha = ctx.globalAlpha;
+    const { dx, dy, near, P2 } = basis(a, sx, sy, m);
+    // a squat drum on wheels, a status ring round its top
+    const rb = 0.22 * m, ryb = rb * SQ, hb = 0.3 * m * KH;
+    ctx.fillStyle = BOT.base;
+    ctx.beginPath(); ctx.ellipse(sx, sy, rb, ryb, 0, 0, Math.PI); ctx.fill();
+    ctx.fillRect(sx - rb, sy - hb, rb * 2, hb);
+    ctx.fillStyle = BOT.baseTop;
+    ctx.beginPath(); ctx.ellipse(sx, sy - hb, rb, ryb, 0, 0, TAU); ctx.fill();
+    if (fine) {
+      ctx.strokeStyle = BOT.lamp; ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.ellipse(sx, sy - hb, rb * 0.9, ryb * 0.9, 0, 0, TAU); ctx.stroke();
+    }
+    ctx.globalAlpha = alpha;
+    const [, m0] = P2(0, 0.3, 0), [, m1] = P2(0, 0.92, 0), mw = 0.11 * m;
+    ctx.fillStyle = BOT.shade;
+    ctx.beginPath(); ctx.roundRect(sx - mw / 2, m1, mw, m0 - m1, mw * 0.4); ctx.fill();
+    ctx.fillStyle = BOT.panel;
+    ctx.beginPath(); ctx.roundRect(sx - mw / 2, m1, mw * 0.6, m0 - m1, mw * 0.3); ctx.fill();
+    // one arm on the front, folded as if carrying something
+    const arm = () => {
+      const lat = near * 0.14;
+      const [ax, ay] = P2(0.03, 1.0, lat), [ex, ey] = P2(0.2, 0.86, lat), [gx, gy] = P2(0.34, 0.8, lat);
+      ctx.strokeStyle = BOT.panel; ctx.lineWidth = Math.max(1.4, 0.08 * m);
+      ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(ex, ey); ctx.lineTo(gx, gy); ctx.stroke();
+      ctx.fillStyle = BOT.dark;
+      ctx.beginPath(); ctx.arc(ex, ey, 0.04 * m, 0, TAU); ctx.fill();
+      const [g1x, g1y] = P2(0.42, 0.84, lat), [g2x, g2y] = P2(0.42, 0.76, lat);
+      ctx.strokeStyle = BOT.dark; ctx.lineWidth = Math.max(1, 0.035 * m);
+      ctx.beginPath(); ctx.moveTo(gx, gy); ctx.lineTo(g1x, g1y); ctx.moveTo(gx, gy); ctx.lineTo(g2x, g2y); ctx.stroke();
+    };
+    const front = dy >= 0;
+    if (!front) arm();
+    const [, s0] = P2(0, 1.06, 0), [, s1] = P2(0, 0.9, 0), sbw = (0.2 + 0.08 * Math.abs(dy)) * m;
+    ctx.fillStyle = BOT.shade;
+    ctx.beginPath(); ctx.roundRect(sx - sbw / 2, s0, sbw, s1 - s0, 0.05 * m); ctx.fill();
+    ctx.fillStyle = BOT.panel;
+    ctx.beginPath(); ctx.roundRect(sx - sbw / 2, s0, sbw * 0.74, s1 - s0, 0.05 * m); ctx.fill();
+    const [hx, hy] = P2(0, 1.2, 0), hw = (0.17 + 0.05 * Math.abs(dy)) * m, hh = 0.13 * m * KH;
+    ctx.strokeStyle = BOT.dark; ctx.lineWidth = Math.max(1.2, 0.05 * m);
+    ctx.beginPath(); ctx.moveTo(sx, s0); ctx.lineTo(hx, hy + hh / 2); ctx.stroke();
+    ctx.fillStyle = BOT.panel;
+    ctx.beginPath(); ctx.roundRect(hx - hw / 2, hy - hh / 2, hw, hh, 0.04 * m); ctx.fill();
+    if (dy > -0.35) {
+      const fw = hw * 0.7, fx = hx - fw / 2 + dx * hw * 0.14;
+      ctx.fillStyle = BOT.darker;
+      ctx.beginPath(); ctx.roundRect(fx, hy - hh * 0.3, fw, hh * 0.6, 0.03 * m); ctx.fill();
+      if (fine) {
+        ctx.fillStyle = BOT.lamp;
+        for (const e of [0.3, 0.7]) { ctx.beginPath(); ctx.arc(fx + fw * e, hy, 0.018 * m, 0, TAU); ctx.fill(); }
       }
-      ctx.setLineDash([2, 4]);
-      for (let b = 0; b < 3; b++) {
-        const pth = FAN[b];
-        if (pth.length < 4) continue;
-        ctx.beginPath();
-        ctx.moveTo(pth[0] * SCALE, pth[1] * SCALE);
-        for (let i = 2; i < pth.length; i += 2) ctx.lineTo(pth[i] * SCALE, pth[i + 1] * SCALE);
-        ctx.lineWidth = b === 1 ? 1.3 : 0.9;
-        ctx.strokeStyle = rgba(ACCENT, b === 1 ? (walking ? 0.78 : 0.62) : (walking ? 0.42 : 0.34));
-        ctx.stroke();
+    }
+    if (front) arm();
+  }
+
+  function drone(ctx, d) {
+    const m = st.S * FIG, [gx, gy] = st.toScreen(d.x, d.y), cx = gx, cy = gy - d.z * st.S * KH;
+    const c = Math.cos(d.yaw), s = Math.sin(d.yaw);
+    const L = (u, l) => [cx + (c * u - s * l) * m, cy + (s * u + c * l) * m * SQ];
+    const rotors = [L(0.2, 0.2), L(0.2, -0.2), L(-0.2, 0.2), L(-0.2, -0.2)];
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = BOT.dark; ctx.lineWidth = Math.max(1.2, 0.035 * m);
+    for (const [rx, ry] of rotors) { ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(rx, ry); ctx.stroke(); }
+    for (const [rx, ry] of rotors) {
+      ctx.fillStyle = 'rgba(47,50,59,0.16)'; ctx.strokeStyle = 'rgba(47,50,59,0.38)'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.ellipse(rx, ry, 0.14 * m, 0.14 * m * SQ, 0, 0, TAU); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = BOT.dark;
+      ctx.beginPath(); ctx.arc(rx, ry, 0.022 * m, 0, TAU); ctx.fill();
+    }
+    const bw = 0.2 * m, bh = 0.12 * m;
+    ctx.fillStyle = BOT.dark;
+    ctx.beginPath(); ctx.roundRect(cx - bw / 2, cy - bh / 2, bw, bh, 0.04 * m); ctx.fill();
+    ctx.fillStyle = '#4a4f5c';
+    ctx.beginPath(); ctx.roundRect(cx - bw / 2 + 1, cy - bh / 2 + 1, bw - 2, bh * 0.45, 0.03 * m); ctx.fill();
+    ctx.fillStyle = BOT.darker;
+    ctx.beginPath(); ctx.arc(cx + c * 0.06 * m, cy + bh * 0.58, 0.032 * m, 0, TAU); ctx.fill();
+    ctx.fillStyle = BOT.lamp; ctx.globalAlpha = 0.55 + 0.45 * Math.max(0, Math.sin(st.t * 5));
+    ctx.beginPath(); ctx.arc(cx, cy - bh * 0.08, 0.024 * m, 0, TAU); ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+
+  function tree(ctx, ob, sx, sy) {
+    const s = st.S, r = (ob.r * 0.95 + 0.3) * s, top = sy - 2.55 * s * KH;
+    ctx.strokeStyle = TREE.trunk; ctx.lineWidth = Math.max(2, 0.15 * s); ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(sx, top + r * 0.5); ctx.stroke();
+    ctx.fillStyle = TREE.canopyDark;
+    ctx.beginPath(); ctx.arc(sx + r * 0.1, top + r * 0.08, r, 0, TAU); ctx.fill();
+    ctx.fillStyle = TREE.canopy;
+    ctx.beginPath(); ctx.arc(sx - r * 0.05, top - r * 0.04, r * 0.93, 0, TAU); ctx.fill();
+  }
+
+  function planter(ctx, ob, sx, sy) {
+    const s = st.S, rw = ob.r * s, ry = rw * SQ, hC = 0.42 * s * KH;
+    ctx.fillStyle = PLANTER.side;
+    ctx.beginPath(); ctx.ellipse(sx, sy, rw, ry, 0, 0, Math.PI); ctx.fill();
+    ctx.fillRect(sx - rw, sy - hC, rw * 2, hC);
+    ctx.fillStyle = PLANTER.top;
+    ctx.beginPath(); ctx.ellipse(sx, sy - hC, rw, ry, 0, 0, TAU); ctx.fill();
+    ctx.fillStyle = PLANTER.plants;
+    ctx.beginPath(); ctx.ellipse(sx, sy - hC - 0.06 * s, rw * 0.8, ry * 0.8, 0, 0, TAU); ctx.fill();
+  }
+
+  st.draw = function (ctx, now) {
+    const w = st.world, S = st.S, you = w.accent, walking = st.control.active;
+    ctx.setTransform(o.dpr, 0, 0, o.dpr, 0, 0);
+    ctx.clearRect(0, 0, st.W, st.H);
+
+    // --- the ground: shadows, then the marks that belong on it ----------
+    ctx.fillStyle = '#15171f';
+    ctx.globalAlpha = 0.055;
+    for (const ob of w.obstacles) {
+      const [sx, sy] = st.toScreen(ob.x, ob.y);
+      if (ob._tree) ellipse(ctx, sx + 0.55 * S, sy + 0.18 * S, (ob.r * 0.95 + 0.35) * S);
+      else ellipse(ctx, sx + 0.18 * S, sy + 0.07 * S, ob.r * S * 1.04);
+      ctx.fill();
+    }
+    // who is on screen at all; nobody else is drawn
+    const on = st.onScreen;
+    on.length = 0;
+    for (const a of w.agents) {
+      if (a.life < 0.02) continue;
+      const [sx, sy] = st.toScreen(a.x, a.y);
+      if (sx < -60 || sx > st.W + 60 || sy < -40 || sy > st.H + 90) continue;
+      a._sx = sx; a._sy = sy;
+      on.push(a);
+    }
+    const stamp = (x, y, rr, al) => {
+      if (SHADOW) { ctx.globalAlpha = al; ctx.drawImage(SHADOW, x - rr, y - rr * SQ, rr * 2, rr * 2 * SQ); }
+      else { ctx.globalAlpha = 0.11 * al; ellipse(ctx, x, y, rr * 0.85); ctx.fill(); }
+    };
+    for (const a of on) {
+      const rr = (a._kind === 'dog' ? 0.46 : a._kind === 'hsr' ? 0.4 : a._kind ? 0.38 : 0.36 * a._hv) * S * FIG;
+      stamp(a._sx + 0.08 * S, a._sy + 0.02 * S, rr, a.life);
+    }
+    for (const d of st.drones) {
+      const [sx, sy] = st.toScreen(d.x, d.y);
+      stamp(sx, sy, 0.5 * S * FIG, 0.5);
+    }
+    ctx.globalAlpha = 1;
+
+    // Paths round you, faint: where each person has been (solid) and where
+    // the model expects them to go (dotted), fading with distance from you.
+    trails(ctx, now);
+
+    // what the ground robots are watching: a faint wedge ahead of them
+    for (const a of w.agents) {
+      if ((a._kind !== 'dog' && a._kind !== 'hsr') || a.life < 0.5) continue;
+      if (Math.hypot(a.vx, a.vy) < 0.1) continue;
+      const [sx, sy] = st.toScreen(a.x, a.y), R = 2.0 * S, ang = Math.atan2(a.vy, a.vx);
+      if (!st.wedge || st.wedgeCtx !== ctx) {
+        st.wedge = ctx.createRadialGradient(0, 0, 0.15, 0, 0, 1);
+        st.wedge.addColorStop(0, 'rgba(47,196,218,0.18)'); st.wedge.addColorStop(1, 'rgba(47,196,218,0)');
+        st.wedgeCtx = ctx;
       }
+      ctx.save(); ctx.translate(sx, sy); ctx.scale(R, R * SQ);
+      ctx.fillStyle = st.wedge;
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, 1, ang - 0.85, ang + 0.85); ctx.closePath(); ctx.fill();
       ctx.restore();
     }
 
-    // Nothing else on the field is white, and nothing else is this big. In a
-    // crowd of eight hues a ninth would just be a ninth.
-    const gr = rHead * (walking ? 9 : 5.5);
-    const glow = ctx.createRadialGradient(x, y, 0, x, y, gr);
-    glow.addColorStop(0, rgba(ACCENT, walking ? 0.40 : 0.26));
-    glow.addColorStop(1, rgba(ACCENT, 0));
-    ctx.fillStyle = glow;
-    ctx.beginPath(); ctx.arc(x, y, gr, 0, TWO_PI); ctx.fill();
-
-    ctx.beginPath(); ctx.arc(x, y, rHead * (walking ? 3.4 : 2.7), 0, TWO_PI);
-    ctx.fillStyle = rgba(ACCENT, 0.98); ctx.fill();
-    ctx.beginPath(); ctx.arc(x, y, rHead * (walking ? 1.7 : 1.35), 0, TWO_PI);
-    ctx.fillStyle = 'rgba(255,255,255,0.96)'; ctx.fill();
-    // A quiet ring even when you are not driving, so the walker you could
-    // take over is always the one thing on the field that is circled.
-    if (!walking) {
-      ctx.beginPath(); ctx.arc(x, y, rHead * 5.0, 0, TWO_PI);
-      ctx.strokeStyle = rgba(ACCENT, 0.34); ctx.lineWidth = 1;
+    // whoever is reacting to someone right now, a thin ring at their feet
+    ctx.lineWidth = 1.2;
+    for (const a of w.agents) {
+      if (a.accent || a._kind || a.hot < P.flareShow || a.life < 0.5) continue;
+      const [sx, sy] = st.toScreen(a.x, a.y);
+      ctx.strokeStyle = colourOf(a);
+      ctx.globalAlpha = Math.min(0.75, 0.25 + a.hot / 30);
+      ellipse(ctx, sx, sy, 0.46 * S * a._hv);
       ctx.stroke();
     }
+    ctx.globalAlpha = 1;
 
-    if (walking) {
-      // Unmistakable: a steady ring, a pulsing one outside it, and four
-      // ticks. On a field of a hundred dots you should never have to hunt.
-      const t = performance.now() / 1000;
-      ctx.strokeStyle = rgba(ACCENT, 0.75);
-      ctx.lineWidth = 1.4;
-      ctx.beginPath(); ctx.arc(x, y, rHead * 5.2, 0, TWO_PI); ctx.stroke();
-      const pr = rHead * (6.6 + 3.0 * (0.5 + 0.5 * Math.sin(t * 2.2)));
-      ctx.strokeStyle = rgba(ACCENT, 0.30);
-      ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.arc(x, y, pr, 0, TWO_PI); ctx.stroke();
-      ctx.strokeStyle = rgba(ACCENT, 0.6);
-      ctx.lineWidth = 1.2;
-      ctx.beginPath();
-      for (let k = 0; k < 4; k++) {
-        const ang = k * Math.PI / 2;
-        const c = Math.cos(ang), sn = Math.sin(ang);
-        ctx.moveTo(x + c * rHead * 6.4, y + sn * rHead * 6.4);
-        ctx.lineTo(x + c * rHead * 8.4, y + sn * rHead * 8.4);
+    if (you) {
+      const [sx, sy] = st.toScreen(you.x, you.y);
+      // Where it expects to be going. Hidden while you steer: then the
+      // future is yours to decide, and a forecast of it is only noise.
+      if (!walking) {
+        if (now - st.fanAt > 100) { forecast(w, you, st.fan); st.fanAt = now; }
+        ctx.strokeStyle = YOU; ctx.lineWidth = 1.6; ctx.setLineDash([2, 5]);
+        for (let b = 0; b < 3; b++) {
+          const p = st.fan[b];
+          if (!p || p.length < 4) continue;
+          ctx.globalAlpha = b === 1 ? 0.7 : 0.3;
+          ctx.beginPath();
+          ctx.moveTo(p[0] * S, p[1] * S * SQ);
+          for (let i = 2; i < p.length; i += 2) ctx.lineTo(p[i] * S, p[i + 1] * S * SQ);
+          ctx.stroke();
+        }
+        ctx.setLineDash([]);
       }
+      ctx.globalAlpha = walking ? 1 : 0.85;
+      ctx.lineWidth = walking ? 2 : 1.5; ctx.strokeStyle = YOU;
+      ellipse(ctx, sx, sy, (walking ? 0.72 : 0.58) * S);
       ctx.stroke();
+      ctx.globalAlpha = 1;
     }
-  }
+    if (st.tap) {
+      const [tx, ty] = st.toScreen(st.tap.x, st.tap.y), k = Math.min(1, st.tap.t * 4);
+      ctx.strokeStyle = YOU; ctx.fillStyle = YOU; ctx.lineWidth = 1.5; ctx.globalAlpha = 0.85;
+      ellipse(ctx, tx, ty, (0.3 + 0.3 * k) * S); ctx.stroke();
+      ellipse(ctx, tx, ty, 0.08 * S); ctx.fill();
+      ctx.globalAlpha = 1;
+    }
 
-  /* ---------- loop ---------- */
-  const CONTROL = { active: false, ix: 0, iy: 0 };
-  const STEP = 1 / 60;
-  let acc = 0, last = 0, rafId = null, visible = true, inView = true;
-  const running = () => visible && inView && !reduce;
-
-  function advance(dt) {
-    acc = Math.min(acc + dt, 0.25);
-    while (acc >= STEP) { step(world, STEP, CONTROL); acc -= STEP; }
-    fadeTrails(dt);
-    strokeTrails();
-  }
-
-  // Past the hero only the margins and the gaps between sections show any of
-  // this, so it is repainted at half rate. The physics is fixed-step and
-  // unaffected; only how often the result is drawn changes.
-  let heroVisible = true, halfFrame = false;
-  function frame(now) {
-    rafId = null;
-    if (!running() || !ready) return;
-    const dt = last ? Math.min((now - last) / 1000, 0.1) : STEP;
-    last = now;
-    advance(dt);
-    halfFrame = !halfFrame;
-    if (heroVisible || CONTROL.active || halfFrame) drawLive(CONTROL);
-    schedule();
-  }
-  function schedule() { if (!rafId && running()) rafId = requestAnimationFrame(frame); }
-
-  function settle(seconds) {
-    // Run the crowd in before showing it, so the first frame is a scene that
-    // has been walking for a while rather than a starting grid.
-    const n = Math.round(seconds / STEP);
-    for (let i = 0; i < n; i++) step(world, STEP, CONTROL);
-    tctx.clearRect(0, 0, W, H);
-    // Lay down most of a trail's worth of history, so the first painted frame
-    // is a scene with a past rather than one that starts drawing itself.
-    for (let i = 0; i < 420; i++) { step(world, STEP, CONTROL); strokeTrails(); }
-    drawLive(CONTROL);
-  }
-
-  function restart(keep) {
-    resize(keep);
-    if (!ready) return;
-    if (reduce) { settle(20); }
-    else { last = 0; acc = 0; settle(14); schedule(); }
-  }
-
-  /* ---------- lifecycle ---------- */
-  loadPalette();
-  restart(false);
-
-  document.addEventListener('visibilitychange', () => {
-    visible = !document.hidden;
-    if (visible) last = 0;
-    schedule();
-  });
-  new IntersectionObserver((e) => { inView = e[0].isIntersecting; if (inView) last = 0; schedule(); },
-    { threshold: 0.01 }).observe(canvas);
-  const hero = document.querySelector('.hero-block');
-  if (hero) {
-    new IntersectionObserver((e) => { heroVisible = e[0].isIntersecting; },
-      { threshold: 0.02 }).observe(hero);
-  }
-
-  const onMotion = () => {
-    reduce = RM.matches;
-    if (reduce) { if (rafId) { cancelAnimationFrame(rafId); rafId = null; } settle(0); }
-    else { last = 0; schedule(); }
+    // --- everything that stands up, back to front --------------------------
+    const items = st.items;
+    items.length = 0;
+    for (const ob of w.obstacles) items.push(ob);
+    for (const a of st.onScreen) items.push(a);
+    items.sort((p, q) => p.y - q.y);
+    for (const it of items) {
+      const [sx, sy] = st.toScreen(it.x, it.y);
+      if (it.vx === undefined) { (it._tree ? tree : planter)(ctx, it, sx, sy); continue; }
+      ctx.globalAlpha = it.life;
+      if (it._kind === 'humanoid') humanoid(ctx, it, sx, sy);
+      else if (it._kind === 'dog') dog(ctx, it, sx, sy);
+      else if (it._kind === 'hsr') hsr(ctx, it, sx, sy);
+      else person(ctx, it, sx, sy);
+    }
+    ctx.globalAlpha = 1;
+    for (const d of st.drones) drone(ctx, d);           // above everything
   };
-  RM.addEventListener ? RM.addEventListener('change', onMotion) : RM.addListener(onMotion);
 
-  let rt;
-  window.addEventListener('resize', () => {
-    clearTimeout(rt);
-    rt = setTimeout(() => restart(true), 220);
-  });
+  st.resize(o.w, o.h, o.dpr);
+  return st;
+}
+/* @@PLAZA-END@@ -------------------------------------------------------- */
+  /* ==================================================================
+     The page around the plaza: its size, its loop, and walk mode.
+     ================================================================== */
+  const root = document.documentElement;
+  const hero = canvas.closest('.hero-block');
+  const ctx = canvas.getContext('2d');
+  const RM = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const coarse = window.matchMedia('(pointer: coarse)');
+  const setCoarse = () => root.classList.toggle('coarse', coarse.matches);
+  setCoarse();
+  if (coarse.addEventListener) coarse.addEventListener('change', setCoarse);
 
-  if (DEBUG) {
-    window.__sim = {
-      get world() { return world; },
-      get scale() { return SCALE; },
-      palette: () => ({ INK, INK_SOFT, ACCENT, PAPER, STAGE }),
-      seed: SEED
-    };
+  const QS = new URLSearchParams(location.search);
+  const SEED = QS.has('seed') ? (parseInt(QS.get('seed'), 10) | 0) : ((Math.random() * 1e9) | 0);
+  const makeCanvas = (w, h) => Object.assign(document.createElement('canvas'), { width: w, height: h });
+  const STEP = 1 / 60;
+  let pz = null, W = 0, H = 0, DPR = 1;
+
+  function build() {
+    const r = hero.getBoundingClientRect();
+    W = Math.round(r.width); H = Math.round(r.height);
+    if (!W || !H) return;
+    DPR = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = Math.round(W * DPR); canvas.height = Math.round(H * DPR);
+    const walking = pz ? pz.control.active : false;
+    pz = Plaza({ w: W, h: H, dpr: DPR, seed: SEED, density: W < 640 ? 0.06 : 0.05, makeCanvas });
+    hero.style.setProperty('--gx', (2 * pz.S) + 'px');
+    hero.style.setProperty('--gy', (2 * pz.S * SQ) + 'px');
+    // Open mid-scene: everyone starts at a gate, so let a few seconds pass.
+    for (let i = 0; i < 60 * 12; i++) pz.tick(STEP);
+    if (walking) pz.setWalking(true);
+    pz.draw(ctx, performance.now());
   }
+
+  /* Fixed-step physics behind requestAnimationFrame, and only while the hero
+     can be seen: off screen, in a background tab, or for a reader who asked
+     for less motion, the plaza holds still. */
+  let raf = 0, last = 0, acc = 0, visible = !document.hidden, inView = true;
+  const animating = () => visible && inView && (!RM.matches || (pz && pz.control.active));
+  // At most ~80 frames a second: every refresh at 60 Hz, every other one at
+  // 120 or 144. The physics steps at 60 Hz regardless, so nothing moves
+  // differently -- the extra frames were drawing the same picture again.
+  const MIN_FRAME = 12.5;
+  function frame(ts) {
+    raf = 0;
+    if (!pz || !animating()) return;
+    if (last && ts - last < MIN_FRAME) { schedule(); return; }
+    const dt = last ? Math.min(0.1, (ts - last) / 1000) : STEP;
+    last = ts; acc += dt;
+    let n = 0;
+    while (acc >= STEP && n < 4) { pz.tick(STEP); acc -= STEP; n++; }
+    if (n === 4) acc = 0;
+    pz.draw(ctx, ts);
+    schedule();
+  }
+  function schedule() { if (!raf && animating()) raf = requestAnimationFrame(frame); }
+
+  document.addEventListener('visibilitychange', () => { visible = !document.hidden; last = 0; schedule(); });
+  new IntersectionObserver((e) => { inView = e[0].isIntersecting; last = 0; schedule(); },
+                           { threshold: 0.02 }).observe(hero);
+  if (RM.addEventListener) RM.addEventListener('change', () => { last = 0; schedule(); });
+  // The observer also fires once at start-up; rebuilding then would rewind
+  // the scene a fifth of a second in. Only a real change of size rebuilds.
+  let rt = 0;
+  new ResizeObserver(() => {
+    const r = hero.getBoundingClientRect();
+    if (Math.round(r.width) === W && Math.round(r.height) === H) return;
+    clearTimeout(rt); rt = setTimeout(() => { build(); schedule(); }, 180);
+  }).observe(hero);
 
   /* ---------- walk mode ---------- */
   const DIR_BY_CODE = {
@@ -2563,47 +2825,30 @@ function forecast(world, agent, out, opts) {
     const ix = (keys.r ? 1 : 0) - (keys.l ? 1 : 0);
     const iy = (keys.d ? 1 : 0) - (keys.u ? 1 : 0);
     const m = Math.sqrt(ix * ix + iy * iy) || 1;
-    CONTROL.ix = ix / m; CONTROL.iy = iy / m;
+    if (pz) pz.setKeys(ix / m, iy / m);
   }
-  function clearKeys() { keys.l = keys.r = keys.u = keys.d = false; CONTROL.ix = 0; CONTROL.iy = 0; }
+  function clearKeys() { keys.l = keys.r = keys.u = keys.d = false; updateInput(); }
 
   const gameBtn = document.getElementById('gameBtn');
   function setGame(on) {
-    CONTROL.active = on;
-    if (world) world.driving = on;
-    if (world && world.accent) {
-      world.accent.driven = on;
-      // Hand over whoever is nearest the middle of the frame, so you start
-      // somewhere you can see rather than wherever the accent happened to be.
-      if (on) adoptNearestToCentre();
-    }
+    if (!pz) return;
+    pz.setWalking(on);
     if (!on) clearKeys();
-    // The page gets out of the way while you are in there.
+    // The name steps out of the way while you are in there.
     root.classList.toggle('walking', on);
     if (gameBtn) {
       gameBtn.classList.toggle('on', on);
       gameBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
     }
-    if (on) { last = 0; schedule(); }
-  }
-
-  function adoptNearestToCentre() {
-    const cx = world.w * 0.5, cy = world.h * 0.5;
-    let best = null, bd = Infinity;
-    for (const a of world.agents) {
-      const d = (a.x - cx) * (a.x - cx) + (a.y - cy) * (a.y - cy);
-      if (d < bd) { bd = d; best = a; }
+    // You walk in the hero, so bring it back if the page has scrolled on.
+    if (on && hero.getBoundingClientRect().bottom < 120) {
+      hero.scrollIntoView({ behavior: RM.matches ? 'auto' : 'smooth', block: 'start' });
     }
-    if (!best || best === world.accent) return;
-    world.accent.accent = false;
-    world.accent.driven = false;
-    best.accent = true;
-    best.driven = true;
-    world.accent = best;
+    last = 0; schedule();
   }
-  if (gameBtn) gameBtn.addEventListener('click', () => setGame(!CONTROL.active));
+  if (gameBtn) gameBtn.addEventListener('click', () => setGame(!(pz && pz.control.active)));
   window.addEventListener('keydown', (e) => {
-    if (!CONTROL.active) return;
+    if (!pz || !pz.control.active) return;
     if (e.key === 'Escape') { setGame(false); return; }
     if (e.ctrlKey || e.metaKey || e.altKey) return;
     const dir = DIR_BY_CODE[e.code];
@@ -2618,6 +2863,23 @@ function forecast(world, agent, out, opts) {
   });
   window.addEventListener('blur', clearKeys);
   document.addEventListener('visibilitychange', () => { if (document.hidden) clearKeys(); });
+
+  // Where there is no keyboard: tap the ground to walk there. The first tap
+  // also starts walking, so a phone needs one gesture, not two.
+  let lastType = 'mouse';
+  canvas.addEventListener('pointerdown', (e) => { lastType = e.pointerType || 'mouse'; });
+  canvas.addEventListener('click', (e) => {
+    if (!pz || lastType === 'mouse') return;
+    const r = canvas.getBoundingClientRect();
+    if (!pz.control.active) setGame(true);
+    pz.tapAt(e.clientX - r.left, e.clientY - r.top);
+    schedule();
+  });
+
+  if (QS.has('debug')) window.__plaza = { get pz() { return pz; }, seed: SEED };
+
+  build();
+  schedule();
 })();
 </script>
 </body>
