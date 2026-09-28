@@ -331,7 +331,33 @@ const DATA = {
     { id: 'talks',    title: { en: 'Talks & Presentations', ja: '講演・発表' }, nav: { en: 'Talks', ja: '発表' } },
     { id: 'media',    title: { en: 'Media & Coverage', ja: 'メディア掲載' },  nav: { en: 'Media', ja: 'メディア' } },
     { id: 'life',     title: { en: 'Outside the Lab', ja: '研究室の外で' },   nav: { en: 'Life', ja: '日常' } }
-  ]
+  ],
+
+  /* The grid below the hero, in reading order: each tile's width in twelfths
+     and, for a tall one, how many rows it spans. A section's tile goes when
+     the section does. fellow, now and featured are not sections -- no
+     number, no nav link -- and are defined just below. */
+  layout: [
+    ['about', 6], ['fellow', 3], ['now', 3],
+    ['news', 5], ['featured', 7],
+    ['work', 12],
+    ['awards', 7], ['service', 5],
+    ['timeline', 7, 2], ['talks', 5], ['media', 5],
+    ['life', 12]
+  ],
+  highlights: {
+    fellow: { tone: 'dark',
+      label: { en: 'Fellowship', ja: 'フェローシップ' },
+      title: { en: 'JSPS Research Fellow (DC1)', ja: '日本学術振興会 特別研究員 (DC1)' },
+      note: { en: 'Japan Society for the Promotion of Science · ~14% acceptance', ja: '採用率 約14%' } },
+    now: { tone: 'accent',
+      label: { en: 'Now', ja: '現在' },
+      title: { en: 'Technical Chair, ACCV 2026', ja: 'ACCV 2026 Technical Chair' },
+      note: { en: 'Asian Conference on Computer Vision · Osaka, December 2026',
+              ja: 'アジアコンピュータビジョン会議 · 大阪 · 2026年12月' } }
+  },
+  /* The paper set large beside the news: an index into `publications`. */
+  featured: 0
 };
 </script>
 <style>
@@ -364,8 +390,7 @@ const DATA = {
     --accent-text: #4c1fd6;        /* 8.49:1 */
     --hairline: rgba(24, 28, 48, 0.13);
     --hairline-soft: rgba(24, 28, 48, 0.07);
-    --card-shadow: 0 1px 2px rgba(20, 24, 44, 0.05), 0 14px 38px rgba(20, 24, 44, 0.07);
-    --radius: 18px;
+    --radius: 24px;
     --grid: #e8eaf1;                /* the plaza's floor tiles */
 
     /* Families, motion and measure, named once instead of 38 times. */
@@ -383,9 +408,11 @@ const DATA = {
     --font-sans: "Manrope", var(--font-ja);
     --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
     --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
-    --col: 900px;                  /* reading column */
-    --frame: 1200px;               /* hero + header, and the gantry rails */
-    --canvas-gutter: 84px;         /* the sim needs somewhere to be seen */
+    --frame: 1200px;               /* header, hero copy, tiles and footer */
+    --gutter: clamp(14px, 3vw, 40px);  /* window edge to the tiles */
+    --pad: clamp(20px, 2.6vw, 34px);   /* inside a tile, and inside the header,
+                                          hero and footer, so all text shares
+                                          one left edge */
   }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -432,32 +459,12 @@ const DATA = {
   /* ====================================================================
      Wrap — page container
      ==================================================================== */
-  .wrap {
-    position: relative; z-index: 2;
-    max-width: 900px;
-    margin: 0 auto;
-    padding-left: clamp(56px, 6vw, 80px);
-    padding-right: clamp(56px, 6vw, 80px);
-    /* default (info sections): mostly solid — text is the priority here,
-       the canvas is barely visible under the card, only obvious in gaps */
-    /* The canvas behind this is fixed and repaints every frame, so a
-       blurred backdrop would be recomputed every frame, for all eight
-       sections, over the whole viewport. At 96% opacity it was blurring
-       the 4% that shows through. Not worth a millisecond, let alone many. */
-    background: rgba(var(--paper-rgb), 0.96);
-    box-shadow: var(--card-shadow);
-    border-radius: var(--radius);
-    transition: background 0.4s var(--ease);
+  .wrap, .tiles {
+    position: relative;
+    width: min(var(--frame), calc(100% - 2 * var(--gutter)));
+    margin-left: auto; margin-right: auto;
   }
-
-  /* Below about 1060px the column filled the viewport and the simulation had
-     nowhere to show. Give it a guaranteed strip on each side instead. */
-  @media (min-width: 901px) {
-    .wrap { max-width: min(var(--col), calc(100vw - 2 * var(--canvas-gutter))); }
-    .hero-block .wrap, header .nav-inner {
-      max-width: min(var(--frame), calc(100vw - 2 * var(--canvas-gutter)));
-    }
-  }
+  .wrap { padding-left: var(--pad); padding-right: var(--pad); }
 
   /* Hero: no paper card. Rather than haloing every glyph -- which fringes
      badly at 108px and still leaves accent text short of contrast -- light a
@@ -474,9 +481,7 @@ const DATA = {
      links take the pointer. */
   .hero-copy {
     position: absolute; left: 0; right: 0; top: clamp(36px, 8%, 84px); z-index: 2;
-    max-width: 1200px; margin: 0 auto;
     display: flex; flex-direction: column; align-items: flex-start; gap: clamp(14px, 2.4vh, 22px);
-    background: transparent; box-shadow: none; border-radius: 0;
     pointer-events: none;
   }
   .hero-copy .chips { pointer-events: auto; }
@@ -487,15 +492,6 @@ const DATA = {
     text-shadow: 0 0 2px rgba(var(--paper-rgb), 0.9);
   }
 
-  /* sections themselves are transparent -- the paper card lives on .wrap
-     only. Not the hero: it carries the plaza's floor, and a later
-     "background: transparent" here would wipe the tile grid off it. */
-  .block, footer.page-foot {
-    background: transparent;
-  }
-  .block .wrap { padding-top: clamp(48px, 8vh, 88px); padding-bottom: clamp(48px, 8vh, 88px); }
-  footer.page-foot .wrap { padding-top: clamp(56px, 9vh, 96px); padding-bottom: 56px; border-top: 1px solid var(--hairline); }
-
   /* ====================================================================
      Header
      ==================================================================== */
@@ -505,9 +501,9 @@ const DATA = {
     border-bottom: 1px solid var(--hairline);
   }
   .nav-inner {
-    max-width: 1200px;
+    width: min(var(--frame), calc(100% - 2 * var(--gutter)));
     margin: 0 auto;
-    padding: 14px clamp(20px, 5vw, 56px);
+    padding: 14px var(--pad);
     display: flex;
     align-items: center;
     gap: 20px;
@@ -532,6 +528,7 @@ const DATA = {
   }
   nav.links a:hover { color: var(--accent-text); }
   .toggles { display: flex; gap: 8px; margin-left: 8px; }
+  .gamebtn, .pill { white-space: nowrap; }
   .pill {
     font-family: var(--font-mono);
     font-size: 11.5px;
@@ -574,6 +571,7 @@ const DATA = {
   }
   h1.name small {
     display: block;
+    word-break: keep-all;
     font-family: var(--font-sans);
     font-size: clamp(15px, 1.4vw, 19px);
     font-weight: 500;
@@ -601,44 +599,75 @@ const DATA = {
   .chips a.primary:hover { background: var(--accent-text); border-color: var(--accent-text); color: var(--stage); }
 
   /* ====================================================================
-     Common section styles — no cards, hairline rules
+     Tiles -- the grid below the hero
      ==================================================================== */
-  .block { margin-top: clamp(28px, 4vh, 48px); }
+  /* White tiles on the plaza's ground. Widths, in twelfths, and row spans
+     come from DATA.layout; a tall tile lets the two beside it stack. */
+  .tiles {
+    display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 16px;
+    margin-top: clamp(16px, 3vh, 40px);
+  }
+  .tile {
+    grid-column: span var(--span, 12); grid-row: span var(--rows, 1);
+    min-width: 0;
+    background: var(--paper); border-radius: var(--radius);
+    padding: var(--pad);
+  }
   .sec-head {
-    position: relative;
-    display: grid;
-    grid-template-columns: 60px 1fr auto;
-    gap: 22px;
-    align-items: baseline;
-    padding-bottom: 22px;
-    border-bottom: 1px solid var(--hairline);
-    margin-bottom: 34px;
-  }
-  /* A short accent lead-in so the eye catches where each section begins. */
-  .sec-head::after {
-    content: ""; position: absolute; left: 0; bottom: -1px;
-    width: 28px; height: 1px; background: var(--accent);
-  }
-  .sec-head .idx {
-    font-family: var(--font-mono);
-    font-size: 12px;
-    color: var(--accent-text);
-    letter-spacing: 0.08em;
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px;
+    padding-bottom: 14px;
   }
   .sec-head h2 {
     font-family: var(--font-display);
-    font-weight: 600;
-    font-size: clamp(22px, 3vw, 30px);
-    letter-spacing: -0.025em;
+    font-weight: 700;
+    font-size: clamp(21px, 2vw, 24px);
+    letter-spacing: -0.02em;
     line-height: 1.15;
   }
-  .sec-head .note {
-    font-family: var(--font-mono);
-    font-size: 11.5px;
-    color: var(--ink-faint);
-  }
+  /* The index sits at the far right, with the note, if any, just before it. */
+  .sec-head .note { margin-left: auto; font-family: var(--font-mono); font-size: 12px; }
   .sec-head .note a { color: var(--accent-text); text-decoration: none; }
   .sec-head .note a:hover { text-decoration: underline; }
+  .sec-head .idx {
+    margin-left: auto;
+    font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.08em;
+    color: var(--ink-faint);
+  }
+  .sec-head .note + .idx { margin-left: 0; }
+  /* A tile's small caption. About wears one in place of a title: it opens
+     the page rather than being one section among the rest. */
+  .tile-label, #about .sec-head h2 {
+    font: 500 11.5px/1.4 var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  #about .bio-text p { font-size: 17px; color: var(--ink); }
+
+  /* The two highlights beside About: one dark, one in the accent. */
+  .hi { display: flex; flex-direction: column; justify-content: space-between; gap: 18px; min-height: 220px; }
+  .hi-body { display: flex; flex-direction: column; gap: 8px; }
+  .hi-title { font: 500 clamp(19px, 1.8vw, 24px)/1.18 var(--font-display); letter-spacing: -0.01em; text-wrap: balance; }
+  .hi-note { font-size: 13.5px; line-height: 1.45; }
+  .hi-dark { background: var(--ink); color: #ffffff; }
+  .hi-dark .tile-label, .hi-dark .hi-note { color: #c9ccd8; }
+  .hi-accent { background: var(--accent); color: #ffffff; }
+  .hi-accent .tile-label, .hi-accent .hi-note { color: #e4dcff; }
+
+  /* One paper set large, its links as buttons. */
+  .featured { display: flex; flex-direction: column; gap: 12px; }
+  .featured .venue { font-family: var(--font-mono); font-size: 12.5px; color: var(--accent-text); }
+  .featured .venue .rate { color: var(--ink-faint); }
+  .featured h3 { font: 500 clamp(22px, 2.3vw, 30px)/1.2 var(--font-display); letter-spacing: -0.02em; }
+  .featured .auth { font-size: 14.5px; color: var(--ink-dim); }
+  .featured .auth .me { color: var(--ink); font-weight: 600; }
+  .featured .pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 12px; }
+  .featured .pills a {
+    display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 999px;
+    background: #efeafe; color: var(--accent-text);
+    font-family: var(--font-mono); font-size: 12.5px; text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+  }
+  .featured .pills a:hover { background: var(--accent); color: #ffffff; }
+  .featured .pills a:focus-visible { border-radius: 999px; }
 
   .verify { color: var(--ink-faint); font-weight: 400; }
 
@@ -678,14 +707,13 @@ const DATA = {
   .news ul { list-style: none; }
   .news li {
     display: grid;
-    grid-template-columns: 110px 1fr;
-    gap: 22px;
-    padding: 14px 0;
+    grid-template-columns: 1fr;
+    gap: 4px;
+    padding: 12px 0;
     border-top: 1px solid var(--hairline-soft);
     font-size: 14.5px;
     align-items: baseline;
   }
-  .news li:first-child { border-top: none; padding-top: 4px; }
   .news li .d {
     font-family: var(--font-mono);
     font-size: 12px;
@@ -720,7 +748,6 @@ const DATA = {
     border-top: 1px solid var(--hairline);
     align-items: start;
   }
-  .pub:last-child { border-bottom: 1px solid var(--hairline); }
   /* A row without artwork spans the full width. But as soon as any row in
      the list does have artwork, every row keeps the thumbnail gutter so the
      titles share one left edge -- an indent is only worth paying for when
@@ -756,7 +783,8 @@ const DATA = {
     display: inline-block;
     margin-bottom: 8px;
   }
-  .pub .venue .rate { color: var(--ink-faint); text-transform: none; letter-spacing: 0.04em; }
+  .pub .venue .rate { color: var(--ink-faint); text-transform: none; letter-spacing: 0.04em; white-space: nowrap; }
+  .pub .venue .sep { white-space: normal; }
   .pub h3 {
     font-family: var(--font-sans);
     font-weight: 600;
@@ -795,6 +823,17 @@ const DATA = {
     transition: transform 0.18s cubic-bezier(0.2,0.7,0.2,1);
   }
   .pub .pub-links a:hover::after { transform: translate(1px, -1px); }
+  /* In the wide tile the venue gets a column of its own, the way a CV sets
+     it: the eye runs down the venues, and each row loses a line. */
+  @media (min-width: 901px) {
+    .pub { padding: 20px 0; }
+    .pub .pub-body { display: grid; grid-template-columns: 220px minmax(0, 1fr); column-gap: 28px; align-items: start; }
+    .pub .pub-body > * { grid-column: 2; }
+    .pub .venue { grid-column: 1; grid-row: 1 / span 3; margin-bottom: 0; }
+    .pub .venue .rate { display: block; margin-top: 4px; }
+    .pub .venue .sep { display: none; }
+    .pub h3 { text-wrap: wrap; text-wrap: pretty; }
+  }
 
   /* ====================================================================
      Awards
@@ -808,8 +847,6 @@ const DATA = {
     border-top: 1px solid var(--hairline-soft);
     align-items: baseline;
   }
-  .award:first-child { border-top: 1px solid var(--hairline); }
-  .award:last-child { border-bottom: 1px solid var(--hairline); }
   .award .yr {
     font-family: var(--font-mono);
     font-size: 13px;
@@ -824,18 +861,15 @@ const DATA = {
     margin-top: 4px;
   }
   .award.placeholder .name { color: var(--ink-faint); }
+  /* Service sits in a narrow tile, so there the period goes above the title. */
+  @media (min-width: 901px) { #service .award { grid-template-columns: 1fr; gap: 4px; } }
 
   /* ====================================================================
      Talks
      ==================================================================== */
-  /* Cards size to their own content, so a card without a photo simply ends
-     sooner instead of leaving a gap under its caption. */
-  /* The cards carry a visible border and their titles are paper titles, so
-     they differ by several lines. Let them stretch: three boxes of equal
-     height read as a set, three ragged ones read as a mistake. */
-  .talks-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
-  .talk { border: 1px solid var(--hairline); border-radius: 14px; overflow: hidden; transition: border-color 0.2s; }
-  .talk:hover { border-color: var(--accent); }
+  /* Rows, like every other list: the tile is the card now. */
+  .talks-grid { display: grid; grid-template-columns: 1fr; }
+  .talk { border-top: 1px solid var(--hairline-soft); }
   .talk .pic {
     aspect-ratio: 4 / 3;
     background: var(--paper-2);
@@ -843,8 +877,9 @@ const DATA = {
     border-bottom: 1px solid var(--hairline);
   }
   .talk .pic img { width: 100%; height: 100%; object-fit: cover; }
-  .talk .cap { padding: 15px 18px 18px; }
+  .talk .cap { padding: 14px 0; }
   .talk .cap .v {
+    display: block;
     font-family: var(--font-mono);
     font-size: 11px;
     color: var(--accent-text);
@@ -873,8 +908,6 @@ const DATA = {
     padding: 16px 0;
     border-top: 1px solid var(--hairline-soft);
   }
-  .media-item:first-child { border-top: 1px solid var(--hairline); }
-  .media-item:last-child { border-bottom: 1px solid var(--hairline); }
   .media-item .m-title { font-size: 15px; color: var(--ink); line-height: 1.4; }
   .media-item .m-title a { color: var(--accent-text); text-decoration: none; }
   .media-item .m-title a:hover { text-decoration: underline; }
@@ -947,11 +980,9 @@ const DATA = {
   /* ====================================================================
      Contact (footer)
      ==================================================================== */
-  footer.page-foot { margin-top: clamp(28px, 4vh, 48px); }
+  footer.page-foot { padding: clamp(28px, 4vh, 40px) 0 48px; }
   .foot-row {
     display: flex; justify-content: space-between; flex-wrap: wrap; gap: 14px;
-    margin-top: 56px; padding-top: 22px;
-    border-top: 1px solid var(--hairline-soft);
     font-family: var(--font-mono);
     font-size: 11.5px;
     color: var(--ink-faint);
@@ -1078,35 +1109,40 @@ const DATA = {
   /* ====================================================================
      Responsive — ≤900px (tablet) and ≤640px (phone)
      ==================================================================== */
-  @media (max-width: 900px) {
+  /* Below this the header links no longer fit beside the name and the two
+     buttons, so they go and the buttons take the right edge themselves. */
+  @media (max-width: 1100px) {
     nav.links { display: none; }
-    .block { margin-top: clamp(20px, 3vh, 32px); }
-    .block .wrap { padding-top: clamp(36px, 6vh, 56px); padding-bottom: clamp(36px, 6vh, 56px); }
+    .toggles { margin-left: auto; }
+  }
+  @media (max-width: 900px) {
+    .tile { grid-column: span 12; grid-row: auto; }
+    .hi { grid-column: span 6; min-height: 0; }
     .life-grid { gap: 24px 32px; }
   }
   @media (max-width: 640px) {
-    .wrap {
-      padding-left: clamp(18px, 5vw, 28px);
-      padding-right: clamp(18px, 5vw, 28px);
-      -webkit-mask-image: none;
-              mask-image: none;
-      box-shadow: none;
-    }
+    .hi { grid-column: span 12; }
+    .nav-inner { padding-left: 0; padding-right: 0; gap: 12px; }
     .hero-block { height: max(560px, 86vh); }
+    /* The copy spans a phone's width, so a clearing beside it would sit
+       under it. Veil the plaza behind the copy instead, down to just past
+       the links, and let it run in full below. */
+    .hero-block::before { display: none; }
+    .hero-copy::before {
+      content: ""; position: absolute; z-index: -1;
+      left: -40px; right: -40px; top: -120px; bottom: -72px;
+      background: linear-gradient(to bottom, rgba(var(--stage-rgb), 0.9) calc(100% - 72px), rgba(var(--stage-rgb), 0));
+    }
     h1.name { font-size: clamp(40px, 12vw, 66px); }
-    h1.name .lower { display: inline; margin-left: 0.2em; }
+    h1.name .lower { display: inline; }
     h1.name small { font-size: 15px; margin-top: 16px; }
-    .sec-head { grid-template-columns: 44px 1fr; gap: 14px; }
-    .sec-head .note { grid-column: 2; margin-top: -8px; }
     .bio { grid-template-columns: 1fr; gap: 22px; }
     .bio .portrait { width: 120px; height: 120px; }
-    .news li { grid-template-columns: 1fr; gap: 6px; padding: 12px 0; }
     .news li .d { font-size: 11.5px; }
     .pub { grid-template-columns: 1fr; gap: 16px; }
     .pub .pub-body { grid-column: auto; }
     .pub .thumb { width: 100%; max-width: 280px; }
-    .talks-grid { grid-template-columns: 1fr; }
-    .award { grid-template-columns: 70px 1fr; gap: 16px; }
+    .award { grid-template-columns: 1fr; gap: 4px; }
     .life-grid { grid-template-columns: 1fr; gap: 22px; }
     .life-photos { grid-template-columns: repeat(2, 1fr); }
     .foot-row { flex-direction: column; }
@@ -1256,7 +1292,7 @@ const pubAuthors = (p, me) => p.authors.map((a, i) =>
 
 const pub = (p, me) => h`
       <div class="pub reveal${p.image ? '' : ' no-media'}">${p.image ? h`<div class="thumb">${media(p.image)}</div>` : ''}<div class="pub-body">
-        <span class="venue">${p.venue}${p.rate ? h` <span class="rate">· ${p.rate}</span>` : ''}</span>
+        <span class="venue">${p.venue}${p.rate ? h`<span class="rate"><span class="sep"> · </span>${p.rate}</span>` : ''}</span>
         <h3>${p.title}${p.titleNote ? h` <span class="verify">${p.titleNote}</span>` : ''}</h3>
         <div class="auth">${pubAuthors(p, me)}</div>
         ${p.links.length ? h`<div class="pub-links">${p.links.map((l) => ref(l, 'en'))}</div>` : ''}
@@ -1344,16 +1380,49 @@ const HAS = {
 
 const live = DATA.sections.filter((s) => HAS[s.id] && HAS[s.id]());
 
-mount('#sections', live.map((s, i) => h`
-  <section class="block" id="${s.id}">
-    <div class="wrap">
+/* ---------- the grid below the hero ---------- */
+const hiTile = (x, span) => !x ? '' : h`
+    <div class="tile hi hi-${x.tone} reveal" style="--span:${span}">
+      <h2 class="tile-label">${t(x.label)}</h2>
+      <div class="hi-body"><span class="hi-title">${t(x.title)}</span> <span class="hi-note">${t(x.note)}</span></div>
+    </div>`;
+const featuredTile = (p, span) => !p ? '' : h`
+    <article class="tile featured reveal" style="--span:${span}">
+      <h2 class="tile-label">${t({ en: 'Featured', ja: '代表論文' })}</h2>
+      <span class="venue">${p.venue}${p.rate ? h` <span class="rate">· ${p.rate}</span>` : ''}</span>
+      <h3>${p.title}</h3>
+      <div class="auth">${pubAuthors(p, DATA.me)}</div>${p.links.length ? h`
+      <div class="pills">${p.links.map((l) => ref(l, 'en'))}</div>` : ''}
+    </article>`;
+const TILE = {
+  fellow: (span) => hiTile(DATA.highlights.fellow, span),
+  now: (span) => hiTile(DATA.highlights.now, span),
+  featured: (span) => featuredTile(DATA.publications[DATA.featured], span)
+};
+
+const liveAt = new Map(live.map((s, i) => [s.id, i]));
+const placed = new Set(DATA.layout.map((l) => l[0]));
+// A section left out of the layout still shows, full width at the end.
+const layout = DATA.layout.concat(live.filter((s) => !placed.has(s.id)).map((s) => [s.id, 12]));
+const tile = ([id, span, rows]) => {
+  if (TILE[id]) return TILE[id](span);
+  if (!liveAt.has(id)) {
+    if (!DATA.sections.some((s) => s.id === id)) console.warn('[tpl] unknown tile in layout', id);
+    return '';
+  }
+  const i = liveAt.get(id), s = live[i];
+  return h`
+    <section class="tile" id="${id}" style="--span:${span}${rows ? h`;--rows:${rows}` : ''}">
       <div class="sec-head reveal">
-        <span class="idx">${String(i).padStart(2, '0')}</span>
         <h2>${t(s.title)}</h2>${s.note ? h`
         <span class="note"><a href="${s.note.href}" target="_blank" rel="noopener">${t(s.note.label)}</a></span>` : ''}
-      </div>${BODY[s.id]()}
-    </div>
-  </section>`));
+        <span class="idx">${String(i).padStart(2, '0')}</span>
+      </div>${BODY[id]()}
+    </section>`;
+};
+mount('#sections', h`
+  <div class="tiles">${layout.map(tile)}
+  </div>`);
 
 mount('#nav-links', live.filter((s) => s.nav).map((s) => h`
       <a href="#${s.id}">${t(s.nav)}</a>`));

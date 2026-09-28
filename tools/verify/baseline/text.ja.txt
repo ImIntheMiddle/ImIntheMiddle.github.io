@@ -20,18 +20,27 @@ LinkedIn
 X
 矢印キーか WASD で歩く · Esc で終了
 行きたい場所をタップ
-00
 自己紹介
+00
 豊田工業大学 博士後期課程（D2）に在籍し、知能情報メディア研究室にて浮田宗伯教授の指導のもと研究を行っています。Physical AI と、人の動きの推定・予測に興味があります。
-01
+フェローシップ
+日本学術振興会 特別研究員 (DC1) 採用率 約14%
+現在
+ACCV 2026 Technical Chair アジアコンピュータビジョン会議 · 大阪 · 2026年12月
 最新情報
+01
 2026 / 08INTERNWoven by Toyota での研究インターンを修了
 2026 / 05AWARDEmLoco にて 2026年 IEEE名古屋支部 国際会議研究発表賞を受賞
 2025 / 08SERVICEACCV 2026 の Technical Chair に就任
 2025 / 02CVPR'25EmLoco が CVPR 2025 に採択 — arXiv
-02
+代表論文
+CVPR 2025 · poster · 22.1% accept
+Physical Plausibility-aware Trajectory Prediction via Locomotion Embodiment
+H. Taketsugu, T. Oba, T. Maeda, S. Nobuhara, N. Ukita
+arXivProjectCodeVideoWeights
 主要論文
 全業績は Scholar へ →
+02
 CVPR 2025 · poster · 22.1% accept
 Physical Plausibility-aware Trajectory Prediction via Locomotion Embodiment
 H. Taketsugu, T. Oba, T. Maeda, S. Nobuhara, N. Ukita
@@ -71,8 +80,8 @@ arXiv preprint · co-author
 Human Motion Prediction via Test-domain-aware Adaptation with Easily-available Human Motions Estimated from Videos
 K. Shimbo, H. Taketsugu, N. Ukita
 arXiv
-03
 受賞・助成
+03
 2026
 IEEE名古屋支部 国際会議研究発表賞EmLoco (CVPR 2025) に対して
 2025
@@ -87,8 +96,8 @@ Best Poster Award — MVA 2025共著 · 多人数姿勢推定の新規評価指�
 優秀学生賞計測自動制御学会 (SICE)
 2022
 優秀修了生 — 修了生の上位1%グローバル消費インテリジェンス寄附講座 (GCI) 2021 Winter · 東京大学
-04
 学会活動・教育
+04
 2026
 Technical Chair — ACCV 2026アジアコンピュータビジョン会議 · 大阪 · 2026年12月
 2024 –
@@ -99,8 +108,8 @@ Technical Chair — ACCV 2026アジアコンピュータビジョン会議 · �
 実験教材 — Experiments in Artificial Intelligence & Deep Learning豊田工業大学 · 2025年度
 2024
 実験教材 — Experiments in Artificial Intelligence & Deep Learning豊田工業大学 · 2024年度
-05
 経歴
+05
 2025.04 –
 博士後期課程 — 情報援用工学専攻豊田工業大学 · 知能情報メディア研究室
 2025.04 –
@@ -119,16 +128,16 @@ Technical Chair — ACCV 2026アジアコンピュータビジョン会議 · �
 研究インターン株式会社 豊田中央研究所
 2019.04 – 2023.03
 学士課程 — 先端工学基礎学科 電子情報分野豊田工業大学 · 卒業時成績 83名中1位 · 副専攻 機械システム分野
-06
 講演・発表
+06
 MIRU 2025 · 招待講演Physical Plausibility-aware Trajectory Prediction via Locomotion Embodiment
 第28回 画像の認識・理解シンポジウム · 2025年7月
 Toyota フロンティア研究センター · 招待講演Human Trajectory Prediction for Social Navigation
 技術交流会 · 2024年5月
 NTT 厚木研究開発センタ · 招待講演Computer Vision for Social Navigation
 日本電信電話株式会社 · 2024年5月
-07
 メディア掲載
+07
 【学生受賞】博士後期課程2年 武次広夢さんが IEEE 名古屋支部「国際会議研究発表賞」を受賞豊田工業大学2026 / 05
 © 2026 Hiromu Taketsugu · 武次 広夢
 背景は歩行者群衆のシミュレーション
