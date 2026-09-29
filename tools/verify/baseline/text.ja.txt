@@ -23,18 +23,19 @@ X
 行きたい場所をタップ
 自己紹介
 00
-豊田工業大学 博士後期課程（D2）に在籍し、知能情報メディア研究室にて浮田宗伯教授の指導のもと研究を行っています。Physical AI と、人の動きの推定・予測に興味があります。
+こんにちは！👋 豊田工業大学 博士後期課程（D2）に在籍し、知能情報メディア研究室にて浮田宗伯教授の指導のもと研究を行っています。Physical AI と、人の動きの推定・予測に興味があります。
 最新情報
 01
-2026 / 09FUNDING豊田工業大学 博士後期課程奨学金の「特別給付」に選出
-2026 / 08INTERNWoven by Toyota でのインターンを修了
-2026 / 07WORKSHOPACCV 2026 で HUFPEI Workshop をオーガナイズ
-2026 / 06SNLSNL 2026（TTIC）で Hexa-P と Re-EmLoco の2件をポスター発表
-2026 / 05AWARDEmLoco にて 2026年 IEEE名古屋支部 国際会議研究発表賞を受賞
-2026 / 04FUNDING豊秋奨学会の奨学生に採用
-2026 / 03AWARDHexa-P にて 第245回 情報処理学会 CVIM研究会 奨励賞を受賞
-2025 / 08SERVICEACCV 2026 の Technical Chair に就任
-2025 / 02CVPR'25EmLoco が CVPR 2025 に採択 — arXiv
+2026 / 09FUNDING豊田工業大学 博士後期課程奨学金の「特別給付」に選出 🎓
+2026 / 08INTERNWoven by Toyota でのインターンを修了 🚗
+2026 / 07WORKSHOPワークショップ提案 HUFPEI Workshop が ACCV 2026 に採択 🎉
+2026 / 06SNLSNL 2026（TTIC）で Hexa-P と Re-EmLoco の2件をポスター発表 🪧
+2026 / 05AWARDEmLoco にて 2026年 IEEE名古屋支部 国際会議研究発表賞を受賞 🏆
+2026 / 04FUNDING豊秋奨学会の奨学生に採用 🎓
+2026 / 03AWARDHexa-P にて 第245回 情報処理学会 CVIM研究会 奨励賞を受賞 🏆
+2025 / 08SERVICEACCV 2026 の Technical Chair に就任 🛠️
+2025 / 02CVPR'25EmLoco が CVPR 2025 に採択 🎉 — arXiv
+2025 / 01LIFE父になりました 👶
 主要論文
 全業績は Scholar へ →
 02

@@ -23,18 +23,19 @@ Arrow keys or WASD to walk · Esc to leave
 Tap where you want to go
 About
 00
-I am a Ph.D. student (D2) at Toyota Technological Institute, advised by Prof. Norimichi Ukita in the Intelligent Information Media Lab. My research interests are Physical AI and human motion estimation and prediction.
+Hi! 👋 I am a Ph.D. student (D2) at Toyota Technological Institute, advised by Prof. Norimichi Ukita in the Intelligent Information Media Lab. My research interests are Physical AI and human motion estimation and prediction.
 What's New
 01
-2026 / 09FUNDINGSelected for the special grant of TTI's Ph.D. Program Scholarship
-2026 / 08INTERNCompleted an internship at Woven by Toyota
-2026 / 07WORKSHOPOrganizing the HUFPEI Workshop at ACCV 2026
-2026 / 06SNLPresented two posters at SNL 2026, TTIC: Hexa-P and Re-EmLoco
-2026 / 05AWARDReceived the 2026 IEEE Nagoya Section International Conference Research Presentation Award for EmLoco
-2026 / 04FUNDINGSelected as a Toyoaki Scholarship Foundation scholar
-2026 / 03AWARDReceived the Encouragement Award at the 245th IPSJ CVIM meeting for Hexa-P
-2025 / 08SERVICEAppointed Technical Chair for ACCV 2026
-2025 / 02CVPR'25EmLoco accepted to CVPR 2025 — arXiv
+2026 / 09FUNDINGSelected for the special grant of TTI's Ph.D. Program Scholarship 🎓
+2026 / 08INTERNCompleted an internship at Woven by Toyota 🚗
+2026 / 07WORKSHOPOur workshop proposal, HUFPEI Workshop, was accepted at ACCV 2026 🎉
+2026 / 06SNLPresented two posters at SNL 2026, TTIC: Hexa-P and Re-EmLoco 🪧
+2026 / 05AWARDReceived the 2026 IEEE Nagoya Section International Conference Research Presentation Award for EmLoco 🏆
+2026 / 04FUNDINGSelected as a Toyoaki Scholarship Foundation scholar 🎓
+2026 / 03AWARDReceived the Encouragement Award at the 245th IPSJ CVIM meeting for Hexa-P 🏆
+2025 / 08SERVICEAppointed Technical Chair for ACCV 2026 🛠️
+2025 / 02CVPR'25EmLoco accepted to CVPR 2025 🎉 — arXiv
+2025 / 01LIFEBecame a father 👶
 Selected Publications
 Full list on Scholar →
 02
