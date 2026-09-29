@@ -479,14 +479,15 @@ const DATA = {
   /* The grid below the hero, in reading order: each tile's width in twelfths
      and, for a tall one, how many rows it spans. A section's tile goes when
      the section does. fellow, now and featured are not sections -- no
-     number, no nav link -- and are defined just below. */
+     number, no nav link -- and are defined just below. It is one column at
+     every width, as on a phone; only the two highlights share a row. */
   layout: [
-    ['about', 6], ['fellow', 3], ['now', 3],
-    ['news', 5], ['featured', 7],
+    ['about', 12], ['fellow', 6], ['now', 6],
+    ['news', 12], ['featured', 12],
     ['work', 12],
     ['domestic', 12],
-    ['awards', 7], ['service', 5],
-    ['timeline', 7, 2], ['talks', 5], ['media', 5],
+    ['awards', 12], ['service', 12],
+    ['timeline', 12], ['talks', 12], ['media', 12],
     ['life', 12]
   ],
   highlights: {
@@ -552,7 +553,7 @@ const DATA = {
     --font-sans: "Manrope", var(--font-ja);
     --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
     --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
-    --frame: 1200px;               /* header, hero copy, tiles and footer */
+    --frame: 860px;                /* header, hero copy, tiles and footer */
     --gutter: clamp(14px, 3vw, 40px);  /* window edge to the tiles */
     --pad: clamp(20px, 2.6vw, 34px);   /* inside a tile, and inside the header,
                                           hero and footer, so all text shares
@@ -619,7 +620,7 @@ const DATA = {
     /* It lights the name, and stops above the street, which it only washed out. */
     -webkit-mask-image: linear-gradient(to bottom, #000 60%, transparent 69%);
             mask-image: linear-gradient(to bottom, #000 60%, transparent 69%);
-    background: radial-gradient(40% 60% at 16% 32%,
+    background: radial-gradient(40% 60% at calc((100% - min(var(--frame), 100% - 2 * var(--gutter))) / 2 + var(--pad) + 90px) 32%,
       rgba(var(--stage-rgb), 0.95) 0%,
       rgba(var(--stage-rgb), 0.86) 48%,
       rgba(var(--stage-rgb), 0) 100%);
@@ -662,8 +663,10 @@ const DATA = {
     letter-spacing: -0.01em;
   }
   .nav-inner .mark b { color: var(--accent-text); font-weight: 600; }
+  /* The column is too narrow for the section links beside the name and the
+     two buttons, so they stay out and the buttons take the right edge. */
   nav.links {
-    display: flex; gap: 22px; margin-left: auto;
+    display: none; gap: 22px; margin-left: auto;
     font-family: var(--font-mono);
     font-size: 12px;
     letter-spacing: 0.04em;
@@ -674,7 +677,7 @@ const DATA = {
     transition: color 0.2s;
   }
   nav.links a:hover { color: var(--accent-text); }
-  .toggles { display: flex; gap: 8px; margin-left: 8px; }
+  .toggles { display: flex; gap: 8px; margin-left: auto; }
   .gamebtn, .pill { white-space: nowrap; }
   .pill {
     font-family: var(--font-mono);
@@ -789,8 +792,8 @@ const DATA = {
   }
   #about .bio-text p { font-size: 17px; color: var(--ink); }
 
-  /* The two highlights beside About: one dark, one in the accent. */
-  .hi { display: flex; flex-direction: column; justify-content: space-between; gap: 18px; min-height: 220px; }
+  /* The two highlights under About: one dark, one in the accent. */
+  .hi { display: flex; flex-direction: column; justify-content: space-between; gap: 18px; }
   .hi-body { display: flex; flex-direction: column; gap: 8px; }
   .hi-title { font: 500 clamp(19px, 1.8vw, 24px)/1.18 var(--font-display); letter-spacing: -0.01em; text-wrap: balance; }
   .hi-note { font-size: 13.5px; line-height: 1.45; }
@@ -1008,8 +1011,6 @@ const DATA = {
     margin-top: 4px;
   }
   .award.placeholder .name { color: var(--ink-faint); }
-  /* Service sits in a narrow tile, so there the period goes above the title. */
-  @media (min-width: 901px) { #service .award { grid-template-columns: 1fr; gap: 4px; } }
 
   /* ====================================================================
      Talks
@@ -1256,15 +1257,9 @@ const DATA = {
   /* ====================================================================
      Responsive — ≤900px (tablet) and ≤640px (phone)
      ==================================================================== */
-  /* Below this the header links no longer fit beside the name and the two
-     buttons, so they go and the buttons take the right edge themselves. */
-  @media (max-width: 1100px) {
-    nav.links { display: none; }
-    .toggles { margin-left: auto; }
-  }
   @media (max-width: 900px) {
     .tile { grid-column: span 12; grid-row: auto; }
-    .hi { grid-column: span 6; min-height: 0; }
+    .hi { grid-column: span 6; }
     .life-grid { gap: 24px 32px; }
   }
   @media (max-width: 640px) {
