@@ -1590,6 +1590,7 @@ const CAR = {
   aMax: 1.4, bComf: 2.4, bMax: 8.0,
   s0: 1.6, T: 1.4,           // behind another car: gap when standing, time headway
   bGentle: 2.0,              // the most a driver will brake to stop for someone waiting
+  bStart: 0.25,              // and a stop is not begun until it takes this much
   sFoot: 3.2,                // room left before a person
   sLine: 0.4,                // and at a stop line, just short of it
   ease: 26, slow: 0.55,      // this far out from a zebra someone is making for, this share of pace
@@ -1803,7 +1804,7 @@ function spawn(world, rnd, a) {
 
 function makeAgent(world, rnd) {
   const a = {
-    x: 0, y: 0, vx: 0, vy: 0, gx: 0, gy: 0, gate: 0, zebra: -1, up: false, zx: 0,
+    x: 0, y: 0, vx: 0, vy: 0, gx: 0, gy: 0, gate: 0, zebra: -1, up: false, zx: 0, held: false,
     r: P.radius[0] + rnd() * (P.radius[1] - P.radius[0]),
     pref: P.speedPref[0] + rnd() * (P.speedPref[1] - P.speedPref[0]),
     group: -1, side: 1, flow: 0, phase: 0, age: 0, life: 0,
@@ -1976,6 +1977,7 @@ function initTraffic(world) {
   world.wait = world.road.zebras.map(() => [null, null]);   // at the kerb, about to step out
   world.near = world.road.zebras.map(() => false);          // someone making for it
   world.unsafe = world.road.zebras.map(() => [false, false]); // a car too close to stop for it
+  world.onZebra = world.road.zebras.map(() => [0, 0]);       // a car on its stripes: 1 standing, 2 moving
   // Open with the street already in use: cars spread along both lanes.
   for (let li = 0; li < 2; li++) {
     const dir = world.road.lanes[li].dir;
@@ -2013,12 +2015,11 @@ function stepCars(world, dt) {
         }
       } else if (a.zebra === k || a.driven) {
         // walking up to it -- or you, standing by it: a driver eases off, and
-        // stops for whoever reaches the kerb
+        // in either lane stops for whoever reaches the kerb, who waits for both
         const above = a.y < r.top, dist = above ? r.top - a.y : a.y - r.bot;
         if (dist > ROAD.caution || !(a.driven || (above ? !a.up : a.up))) continue;
         near[k] = true;
-        const li = above ? 0 : 1;
-        if (dist < ROAD.approach && onIt && !q[li]) q[li] = a;
+        if (dist < ROAD.approach && onIt) { if (!q[0]) q[0] = a; if (!q[1]) q[1] = a; }
       }
     }
   }
@@ -2064,7 +2065,11 @@ function stepCars(world, dt) {
     const stopBy = (gap, margin) => {
       const d = gap - margin;
       // inside the margin: firmly if still moving, but a creep comes to rest softly
-      return d > 0.05 ? -1.15 * v * v / (2 * d) : v > 0.05 ? -Math.max(CAR.bComf, Math.min(CAR.bMax, v * 6)) : 0;
+      if (d <= 0.05) return v > 0.05 ? -Math.max(CAR.bComf, Math.min(CAR.bMax, v * 6)) : 0;
+      // Nothing to do yet while the mark is far and the car slow enough to carry
+      // on: braked for from any distance, it crawled toward it for minutes.
+      const need = v * v / (2 * d);
+      return need < CAR.bStart && d > 2 ? Infinity : -1.15 * need;
     };
     let acc = free, who = null, forFoot = false, ahead = null, aheadGap = Infinity, standFor = -1;
     for (const o of cars) {                        // the car ahead
@@ -2112,12 +2117,31 @@ function stepCars(world, dt) {
     // After standing for someone on foot, a moment before pulling away.
     if (forFoot && v < 0.6) c.calm = CAR.calm;
     else if (c.calm > 0) { c.calm -= dt; if (v < 0.6) acc = Math.min(acc, 0); }
+    // Pulling away from a line it has decided to go: from then on the people
+    // at the kerb wait for it, though it is still slow enough to stop.
+    if (acc > 0.05) {
+      for (let k = 0; k < r.zebras.length; k++) {
+        const g = (lineAt(k) - front) * c.dir;
+        if (g < 1.0 && g > -(ROAD.stopBack + ROAD.zebra) && k !== standFor) unsafe[k][c.lane] = true;
+      }
+    }
     acc = Math.max(-CAR.bMax, acc);
     c.v = Math.max(0, v + acc * dt);
     c.x += c.dir * c.v * dt;
     c.sees = who;
     // brake lamps: on while slowing, and while standing
     c.brake += ((acc < -0.8 || c.v < 0.3 ? 1 : 0) - c.brake) * Math.min(1, dt * 12);
+  }
+  // Which lanes of which zebra have a car on the stripes: nobody steps off the
+  // kerb while one is there, nor into a lane a car is still passing over.
+  for (let k = 0; k < r.zebras.length; k++) {
+    const z = r.zebras[k], oz = world.onZebra[k];
+    oz[0] = oz[1] = 0;
+    for (const c of cars) {
+      if (c.x + c.len * 0.5 > z.x - ROAD.zebra * 0.5 - 0.3 && c.x - c.len * 0.5 < z.x + ROAD.zebra * 0.5 + 0.3) {
+        oz[c.lane] = Math.max(oz[c.lane], c.v > 0.5 ? 2 : 1);
+      }
+    }
   }
   for (let i = cars.length - 1; i >= 0; i--) {    // departures
     const c = cars[i];
@@ -2169,6 +2193,10 @@ function step(world, dt, control) {
     ay += (dgy * want - a.vy) / P.relax;
 
     // --- people ------------------------------------------------------
+    // Someone on a zebra walks on through the people waiting at the kerb ahead:
+    // they are standing aside for them, not coming at them. Only the push that
+    // keeps two bodies apart is left between them.
+    const onStreet = a.zebra >= 0 && !driving && a.y > world.road.top && a.y < world.road.bot;
     const cx = clamp((a.x / g.cell) | 0, 0, g.nx - 1);
     const cy = clamp((a.y / g.cell) | 0, 0, g.ny - 1);
     for (let oy = -1; oy <= 1; oy++) {
@@ -2181,7 +2209,7 @@ function step(world, dt, control) {
           if (j === i) continue;
           const b = A[j];
           const R = a.r + b.r + P.comfort;
-          if (anticipate(a.x, a.y, a.vx, a.vy, b.x, b.y, b.vx, b.vy, R, P.k, P.tau0, _f)) {
+          if (!(onStreet && b.held) && anticipate(a.x, a.y, a.vx, a.vy, b.x, b.y, b.vx, b.vy, R, P.k, P.tau0, _f)) {
             const fm = Math.sqrt(_f.x * _f.x + _f.y * _f.y);
             // The social force is invisible by definition. Both parties are
             // now paying attention to each other, and the renderer marks them,
@@ -2244,37 +2272,49 @@ function step(world, dt, control) {
       ax += _c.x; ay += _c.y;
     }
     // Nobody steps off the kerb but at a zebra -- nobody but you.
+    a.held = false;
     if (!driving) {
       const road = world.road;
-      if (a.y > road.top - 0.45 && a.y < road.bot + 0.45) {
-        const z = a.zebra >= 0 ? road.zebras[a.zebra] : null;
-        const off = z ? a.x - z.x : Infinity, half = ROAD.zebra * 0.5 - a.r;
-        if (Math.abs(off) < half + 0.8) {
-          // crossing: keep to the stripes
+      const z = a.zebra >= 0 ? road.zebras[a.zebra] : null;
+      const off = z ? a.x - z.x : Infinity, half = ROAD.zebra * 0.5 - a.r;
+      if (Math.abs(off) < half + 0.8) {
+        // crossing: keep to the stripes while on the street -- only there, so
+        // someone stepping off it can go round the people waiting at the kerb
+        if (a.y > road.top && a.y < road.bot) {
           if (off > half) ax -= (off - half) * 14;
           else if (off < -half) ax -= (off + half) * 14;
-          // and at the kerb, wait while a car in either lane is too close to
-          // stop, or is taking its turn. Once off the kerb, walk on: with no
-          // island to stand on, stopping between the lanes only blocked both.
-          const dy = a.up ? -1 : 1, d = ((a.up ? road.bot : road.top) - a.y) * dy;
-          const u = world.unsafe[a.zebra];
-          if (d < 0.9 && d > -0.05 && (u[0] || u[1])) {
-            if (d < 0.35) ay -= dy * Math.min(10, (0.35 - d) * 14);
-            if (a.vy * dy > 0) ay -= a.vy * 4;              // and stop walking into it
-          }
-        } else {
-          // anywhere else, back onto the nearer kerb
-          const up = a.y - (road.top - 0.45), down = road.bot + 0.45 - a.y;
-          if (up < down) ay -= Math.min(8, up * 12); else ay += Math.min(8, down * 12);
         }
+        // At the kerb, wait while a car in either lane is on the stripes, too
+        // close to stop, or taking its turn -- back from the edge, leaving room
+        // for the people coming off. Once off the kerb, walk on: with no island,
+        // stopping between the lanes would block both. But let a car already
+        // passing over the stripes in the next lane go by.
+        const dy = a.up ? -1 : 1, u = world.unsafe[a.zebra], oz = world.onZebra[a.zebra];
+        const hold = (edge, wait, back) => {
+          const d = (edge - a.y) * dy;                      // how far short of that edge
+          if (d > back + 0.6 || d < -0.05 || !wait) return;
+          a.held = true;
+          if (d < back) ay -= dy * Math.min(12, (back - d) * 16);
+          if (a.vy * dy > 0) ay -= a.vy * 5;                // and stop walking into it
+        };
+        hold(a.up ? road.bot : road.top, u[0] || u[1] || oz[0] || oz[1], 0.9);
+        hold(road.top + ROAD.lane, oz[a.up ? 0 : 1] === 2, 0.35);
+      } else if (a.y > road.top - 0.45 && a.y < road.bot + 0.45) {
+        // anywhere else, back onto the nearer kerb
+        const up = a.y - (road.top - 0.45), down = road.bot + 0.45 - a.y;
+        if (up < down) ay -= Math.min(8, up * 12); else ay += Math.min(8, down * 12);
       }
     }
 
     // --- walking companions ------------------------------------------
     if (a.group >= 0) {
       const mates = world.groups[a.group];
+      // Only toward companions on the same side of the street, or on it too:
+      // pulled back toward one left waiting at the kerb, a walker stood in the
+      // road, and the cars waited for them.
+      const side = (y) => (y < world.road.top ? -1 : y > world.road.bot ? 1 : 0), here = side(a.y);
       let cxs = 0, cys = 0, n = 0;
-      for (const m of mates) { if (m !== a) { cxs += m.x; cys += m.y; n++; } }
+      for (const m of mates) { if (m !== a && side(m.y) === here) { cxs += m.x; cys += m.y; n++; } }
       if (n) {
         cxs /= n; cys /= n;
         const ddx = cxs - a.x, ddy = cys - a.y;
