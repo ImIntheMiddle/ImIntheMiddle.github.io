@@ -3,7 +3,8 @@ news	01
 work	02
 domestic	03
 awards	04
-service	05
-timeline	06
-talks	07
-media	08
+funding	05
+service	06
+timeline	07
+talks	08
+media	09

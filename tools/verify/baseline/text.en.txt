@@ -3,6 +3,7 @@ H. Taketsugu · 武次 広夢
 News
 Publications
 Awards
+Funding
 Service
 Experience
 Talks
@@ -122,11 +123,7 @@ IPSJ CVIM · 2024 / 05
 Awards & Honors
 04
 2026
-Ph.D. Program Scholarship — Special GrantToyota Technological Institute · September 2026
-2026
 IEEE Nagoya Section International Conference Research Presentation AwardFor EmLoco (CVPR 2025)
-2026 –
-Toyoaki ScholarshipToyoaki Scholarship Foundation · grant scholarship from April 2026
 2026
 Encouragement Award — 245th IPSJ CVIM MeetingFor Hexa-P · one per meeting, by attendee vote
 2025
@@ -135,18 +132,6 @@ Presentation Award — 15th Exchange Meeting between Companies and Ph.D. TalentN
 Best Poster Award — MVA 2025Co-author · Multi-Person Pose Estimation Evaluation
 2025
 Poster Award (3rd place)JST ASPIRE Kyoto Workshop · 3rd of 48 posters
-2025
-Travel Grant — CVPR 2025International Information Science Foundation (IISF)
-2025 –
-JSPS Research Fellowship for Young Scientists (DC1)Japan Society for the Promotion of Science · ~14% acceptance
-2025 –
-Ph.D. Program ScholarshipToyota Technological Institute · full tuition and admission fee
-2024
-Travel Grant — WACV 2024NEC C&C Foundation
-2023
-Tatsuro Toyoda Foundation ScholarshipToyota Technological Institute · travel and living costs for the TTIC exchange
-2023 –
-Integrated Master's and Doctoral ProgramToyota Technological Institute · a few students a year · stipend through the master's
 2023
 Toyoda Foundation Scholarship AwardToyota Technological Institute · sole undergraduate recipient, for grades and character
 2023
@@ -161,10 +146,28 @@ Outstanding Graduate — top 1% of the cohortGlobal Consumer Intelligence (GCI) 
 1st place — Advanced Technology DevelopmentToyota Technological Institute · December 2021
 2021
 1st place, free-theme division — English Science and Technology Presentation ContestToyota Technological Institute · November 2021
+Fellowships & Grants
+05
+2026
+Ph.D. Program Scholarship — Special GrantToyota Technological Institute · September 2026
+2026 –
+Toyoaki ScholarshipToyoaki Scholarship Foundation · grant scholarship
+2025
+Travel Grant — CVPR 2025International Information Science Foundation (IISF)
+2025 –
+JSPS Research Fellowship for Young Scientists (DC1)Japan Society for the Promotion of Science · ~14% acceptance
+2025 –
+Ph.D. Program ScholarshipToyota Technological Institute · full tuition and admission fee
+2024
+Travel Grant — WACV 2024NEC C&C Foundation
+2023
+Tatsuro Toyoda Foundation ScholarshipToyota Technological Institute · travel and living costs for the TTIC exchange
+2023 –
+Integrated Master's and Doctoral ProgramToyota Technological Institute · a few students a year · stipend through the master's
 2019 – 2023
 Toyoda Foundation ScholarshipToyota Technological Institute · tuition exemption through the bachelor's
 Service & Teaching
-05
+06
 2026
 Technical Chair — ACCV 2026Asian Conference on Computer Vision · Osaka, December 2026
 2026
@@ -178,7 +181,7 @@ Course material — Experiments in Artificial Intelligence & Deep LearningToyota
 2024
 Course material — Experiments in Artificial Intelligence & Deep LearningToyota Technological Institute · 2024 academic year
 Experience
-06
+07
 2025.04 –
 Ph.D. student, Information-Aided TechnologyToyota Technological Institute · Intelligent Information Media Lab
 2025.04 –
@@ -198,7 +201,7 @@ Research InternToyota Central R&D Labs., Inc.
 2019.04 – 2023.03
 B.Eng., Electronics and Information EngineeringToyota Technological Institute · ranked 1st of 83 · minor in Mechanical Engineering
 Talks & Presentations
-07
+08
 MIRU 2025 · Invited TalkPhysical Plausibility-aware Trajectory Prediction via Locomotion Embodiment
 The 28th Meeting on Image Recognition and Understanding · July 2025
 Toyota Frontier Research Center · Invited TalkHuman Trajectory Prediction for Social Navigation
@@ -206,7 +209,7 @@ Tech meetup · May 2024
 NTT Atsugi R&D Center · Invited TalkComputer Vision for Social Navigation
 NTT, Inc. · May 2024
 Media & Coverage
-08
+09
 Doctoral student Hiromu Taketsugu receives the IEEE Nagoya Section International Conference Research Presentation AwardToyota Technological Institute2026 / 05
 Doctoral student Hiromu Taketsugu receives the Encouragement Award at the 245th IPSJ CVIM meetingToyota Technological Institute2026 / 05
 Off to TTIC: master's students on three months at the Chicago campusToyota Technological Institute · ADVANCE vol.1182024 / 05
