@@ -52,7 +52,7 @@ WACV 2024 · poster · 41% accept
 Active Transfer Learning for Efficient Video-Specific Human Pose Estimation
 H. Taketsugu, N. Ukita
 arXivProjectCode
-MVA 2023 · oral
+MVA 2023 · Oral
 Uncertainty Criteria in Active Transfer Learning for Efficient Video-Specific Human Pose Estimation
 H. Taketsugu, N. Ukita
 IEEE

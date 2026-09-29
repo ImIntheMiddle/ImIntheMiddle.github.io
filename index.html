@@ -123,7 +123,7 @@ const DATA = {
       authors: ['H. Taketsugu', 'S. Nobuhara', 'N. Ukita'],
       links: [] },
 
-    { venue: 'CVPR 2025', rate: 'poster · 22.1% accept',
+    { venue: '**CVPR 2025**', rate: 'poster · 22.1% accept',
       title: 'Physical Plausibility-aware Trajectory Prediction via Locomotion Embodiment',
       authors: ['H. Taketsugu', 'T. Oba', 'T. Maeda', 'S. Nobuhara', 'N. Ukita'],
       image: { src: 'static/img/pub/emloco.webp', src2x: 'static/img/pub/emloco@2x.webp', w: 336, h: 210,
@@ -136,7 +136,7 @@ const DATA = {
         { label: 'Weights', href: 'https://huggingface.co/iminthemiddle/EmLoco' }
       ] },
 
-    { venue: 'WACV 2024', rate: 'poster · 41% accept',
+    { venue: '**WACV 2024**', rate: 'poster · 41% accept',
       title: 'Active Transfer Learning for Efficient Video-Specific Human Pose Estimation',
       authors: ['H. Taketsugu', 'N. Ukita'],
       image: { src: 'static/img/pub/vatl4pose.webp', src2x: 'static/img/pub/vatl4pose@2x.webp', w: 336, h: 210,
@@ -147,7 +147,7 @@ const DATA = {
         { label: 'Code', href: 'https://github.com/ImIntheMiddle/VATL4Pose-WACV2024' }
       ] },
 
-    { venue: 'MVA 2023', rate: 'oral',
+    { venue: 'MVA 2023', rate: '**Oral**',
       title: 'Uncertainty Criteria in Active Transfer Learning for Efficient Video-Specific Human Pose Estimation',
       authors: ['H. Taketsugu', 'N. Ukita'],
       links: [ { label: 'IEEE', href: 'https://ieeexplore.ieee.org/abstract/document/10215565' } ] },
@@ -166,7 +166,7 @@ const DATA = {
                alt: { en: 'An efficient and a redundant manipulation trajectory', ja: '効率的な軌道と冗長な軌道の比較' } },
       links: [ { label: 'arXiv', href: 'https://arxiv.org/abs/2609.18164' } ] },
 
-    { venue: 'WACV 2026', rate: 'co-author',
+    { venue: '**WACV 2026**', rate: 'co-author',
       title: 'MMCM: Multimodality-aware Metric using Clustering-based Modes for Probabilistic Human Motion Prediction',
       authors: ['K. Tokoro', 'H. Taketsugu', 'N. Ukita'],
       image: { src: 'static/img/pub/mmcm.webp', src2x: 'static/img/pub/mmcm@2x.webp', w: 336, h: 210,
@@ -181,7 +181,7 @@ const DATA = {
       authors: ['Y. Yoshida', 'N. Ukita', 'H. Taketsugu'],
       links: [] },
 
-    { venue: 'MVA 2025', rate: 'Best Poster Award · co-author',
+    { venue: 'MVA 2025', rate: '**Best Poster Award** · co-author',
       title: 'Multi-Person Pose Estimation Evaluation Using Optimal Transportation and Improved Pose Matching',
       authors: ['T. Moriki', 'H. Taketsugu', 'N. Ukita'],
       image: { src: 'static/img/pub/mva25.webp', src2x: 'static/img/pub/mva25@2x.webp', w: 336, h: 210,
@@ -926,6 +926,12 @@ const DATA = {
     margin-bottom: 8px;
   }
   .pub .venue .rate { color: var(--ink-faint); text-transform: none; letter-spacing: 0.04em; white-space: nowrap; }
+  /* What a reader should not miss -- CVPR and WACV, an oral, a best-poster
+     award -- is marked **so** in the data and set as a badge. */
+  .pub .venue strong {
+    font-weight: 600; color: #ffffff; background: var(--accent);
+    padding: 1px 6px; border-radius: 3px;
+  }
   .pub .venue .sep { white-space: normal; }
   .pub h3 {
     font-family: var(--font-sans);
@@ -1430,7 +1436,7 @@ const pubAuthors = (p, me) => p.authors.map((a, i) =>
 
 const pub = (p, me) => h`
       <div class="pub reveal${p.image ? '' : ' no-media'}">${p.image ? h`<div class="thumb">${media(p.image)}</div>` : ''}<div class="pub-body">
-        <span class="venue">${p.venue}${p.rate ? h`<span class="rate"><span class="sep"> · </span>${t(p.rate)}</span>` : ''}</span>
+        <span class="venue">${t(p.venue)}${p.rate ? h`<span class="rate"><span class="sep"> · </span>${t(p.rate)}</span>` : ''}</span>
         <h3>${p.title}${p.titleNote ? h` <span class="verify">${p.titleNote}</span>` : ''}</h3>
         <div class="auth">${pubAuthors(p, me)}</div>
         ${p.links.length ? h`<div class="pub-links">${p.links.map((l) => ref(l, 'en'))}</div>` : ''}
