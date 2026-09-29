@@ -1899,6 +1899,27 @@ function follow(m, lead) {
   m.zebra = lead.zebra; m.up = lead.up; m.zx = lead.zx;
 }
 
+/* The zebra someone is standing at or on, by where they are along the street. */
+function zebraAt(world, x) {
+  const zs = world.road.zebras;
+  for (let k = 0; k < zs.length; k++) if (Math.abs(x - zs[k].x) < ROAD.zebra * 0.5 + 0.55) return k;
+  return -1;
+}
+
+/* Whether someone at zebra `k`, going across it in direction `dy`, has to
+   wait: at the kerb while a car in either lane is on the stripes, too close to
+   stop, or taking its turn; at the centre line while one is still passing
+   over the next lane. `_h` gets the edge they wait short of and how far back. */
+const _h = { edge: 0, back: 0 };
+function mustWait(world, a, k, dy) {
+  const r = world.road, u = world.unsafe[k], oz = world.onZebra[k];
+  const kerb = dy > 0 ? r.top : r.bot, dk = (kerb - a.y) * dy;
+  if (dk <= 1.5 && dk > -0.05 && (u[0] || u[1] || oz[0] || oz[1])) { _h.edge = kerb; _h.back = 0.9; return true; }
+  const mid = r.top + ROAD.lane, dm = (mid - a.y) * dy;
+  if (dm <= 0.95 && dm > -0.05 && oz[dy > 0 ? 1 : 0] === 2) { _h.edge = mid; _h.back = 0.35; return true; }
+  return false;
+}
+
 /* Where a walker is heading right now: its gate -- except that the street is
    crossed only at a zebra. Walk to the kerb at the crossing, then straight
    over; coming off the street, straight up first. */
@@ -2189,14 +2210,33 @@ function step(world, dt, control) {
     // commuting, and at crowd pace the frame takes too long to cross.
     const driving = a.driven && control && control.active;
     const want = driving ? a.pref * P.driveSpeed : a.pref;
-    ax += (dgx * want - a.vx) / P.relax;
-    ay += (dgy * want - a.vy) / P.relax;
+    let vxd = dgx * want, vyd = dgy * want;
+    // The street's rules hold for everyone, you included. At a zebra, waiting
+    // is where you want to be -- a spot short of the edge, walked up to and
+    // stood on. Pushed back from the edge instead, people fought their own
+    // stride and spun on the spot.
+    const road = world.road;
+    const zk = driving ? zebraAt(world, a.x) : a.zebra;
+    const dy = driving ? (vyd > 0.3 ? 1 : vyd < -0.3 ? -1 : 0) : (a.up ? -1 : 1);
+    a.held = zk >= 0 && dy !== 0 && Math.abs(a.x - road.zebras[zk].x) < ROAD.zebra * 0.5 + 0.55 &&
+             mustWait(world, a, zk, dy);
+    if (a.held) {
+      const toward = clamp(((_h.edge - a.y) * dy - _h.back) * 1.6, -0.6, 0.9);
+      if (vyd * dy > toward) vyd = toward * dy;
+      if (!driving) vxd = 0;                             // waiting, not wandering
+    } else if (driving && zk < 0 && vyd !== 0) {
+      // and away from a zebra, you stop at the kerb like anyone else
+      const dir = vyd > 0 ? 1 : -1, edge = dir > 0 ? road.top : road.bot, short = (edge - a.y) * dir;
+      if (short > -0.3 && short < 1.0) vyd = dir * Math.min(vyd * dir, Math.max(0, (short - 0.3) * 2));
+    }
+    ax += (vxd - a.vx) / P.relax;
+    ay += (vyd - a.vy) / P.relax;
 
     // --- people ------------------------------------------------------
     // Someone on a zebra walks on through the people waiting at the kerb ahead:
     // they are standing aside for them, not coming at them. Only the push that
     // keeps two bodies apart is left between them.
-    const onStreet = a.zebra >= 0 && !driving && a.y > world.road.top && a.y < world.road.bot;
+    const onStreet = zk >= 0 && a.y > road.top && a.y < road.bot;
     const cx = clamp((a.x / g.cell) | 0, 0, g.nx - 1);
     const cy = clamp((a.y / g.cell) | 0, 0, g.ny - 1);
     for (let oy = -1; oy <= 1; oy++) {
@@ -2209,7 +2249,7 @@ function step(world, dt, control) {
           if (j === i) continue;
           const b = A[j];
           const R = a.r + b.r + P.comfort;
-          if (!(onStreet && b.held) && anticipate(a.x, a.y, a.vx, a.vy, b.x, b.y, b.vx, b.vy, R, P.k, P.tau0, _f)) {
+          if (!((onStreet || a.held) && b.held) && anticipate(a.x, a.y, a.vx, a.vy, b.x, b.y, b.vx, b.vy, R, P.k, P.tau0, _f)) {
             const fm = Math.sqrt(_f.x * _f.x + _f.y * _f.y);
             // The social force is invisible by definition. Both parties are
             // now paying attention to each other, and the renderer marks them,
@@ -2271,38 +2311,20 @@ function step(world, dt, control) {
       carForce(world, a.x, a.y, a.vx, a.vy, a.r, 0, !driving, true, crossing, _c);   // you don't step aside
       ax += _c.x; ay += _c.y;
     }
-    // Nobody steps off the kerb but at a zebra -- nobody but you.
-    a.held = false;
-    if (!driving) {
-      const road = world.road;
-      const z = a.zebra >= 0 ? road.zebras[a.zebra] : null;
-      const off = z ? a.x - z.x : Infinity, half = ROAD.zebra * 0.5 - a.r;
+    // Nobody steps off the kerb but at a zebra -- you neither -- and on the
+    // street a zebra's crossers keep to its stripes, only there, so stepping
+    // off it they can go round the people waiting at the kerb.
+    {
+      const off = zk >= 0 ? a.x - road.zebras[zk].x : Infinity, half = ROAD.zebra * 0.5 - a.r;
       if (Math.abs(off) < half + 0.8) {
-        // crossing: keep to the stripes while on the street -- only there, so
-        // someone stepping off it can go round the people waiting at the kerb
         if (a.y > road.top && a.y < road.bot) {
           if (off > half) ax -= (off - half) * 14;
           else if (off < -half) ax -= (off + half) * 14;
         }
-        // At the kerb, wait while a car in either lane is on the stripes, too
-        // close to stop, or taking its turn -- back from the edge, leaving room
-        // for the people coming off. Once off the kerb, walk on: with no island,
-        // stopping between the lanes would block both. But let a car already
-        // passing over the stripes in the next lane go by.
-        const dy = a.up ? -1 : 1, u = world.unsafe[a.zebra], oz = world.onZebra[a.zebra];
-        const hold = (edge, wait, back) => {
-          const d = (edge - a.y) * dy;                      // how far short of that edge
-          if (d > back + 0.6 || d < -0.05 || !wait) return;
-          a.held = true;
-          if (d < back) ay -= dy * Math.min(12, (back - d) * 16);
-          if (a.vy * dy > 0) ay -= a.vy * 5;                // and stop walking into it
-        };
-        hold(a.up ? road.bot : road.top, u[0] || u[1] || oz[0] || oz[1], 0.9);
-        hold(road.top + ROAD.lane, oz[a.up ? 0 : 1] === 2, 0.35);
       } else if (a.y > road.top - 0.45 && a.y < road.bot + 0.45) {
         // anywhere else, back onto the nearer kerb
         const up = a.y - (road.top - 0.45), down = road.bot + 0.45 - a.y;
-        if (up < down) ay -= Math.min(8, up * 12); else ay += Math.min(8, down * 12);
+        if (up < down) ay -= Math.min(20, up * 30); else ay += Math.min(20, down * 30);
       }
     }
 
@@ -2631,9 +2653,35 @@ function Plaza(opts) {
     if (ix || iy) st.tap = null;         // the keyboard wins over a pending tap
   };
   st.tapAt = function (sx, sy) {
-    const [x, y] = st.toGround(sx, sy), w = st.world;
-    st.tap = { x: Math.max(0.5, Math.min(w.w - 0.5, x)), y: Math.max(0.5, Math.min(w.h - 0.5, y)), t: 0 };
+    const [x, y] = st.toGround(sx, sy), w = st.world, r = w.road;
+    const tx = clamp(x, 0.5, w.w - 0.5);
+    let ty = clamp(y, 0.5, w.h - 0.5);
+    // Nobody stands in the street but on a zebra: a tap on the asphalt anywhere
+    // else means the nearer kerb.
+    if (ty > r.top && ty < r.bot && zebraAt(w, tx) < 0) ty = ty - r.top < r.bot - ty ? r.top - 0.5 : r.bot + 0.5;
+    st.tap = { x: tx, y: ty, t: 0 };
   };
+  /* The street is crossed at a zebra, by you as by anyone: a tap across it
+     leads to the kerb at the nearest crossing, over it, and on to the spot. */
+  function waypoint(w, you, tap) {
+    const r = w.road, side = (y) => (y < r.top ? -1 : y > r.bot ? 1 : 0);
+    const from = side(you.y), to = side(tap.y);
+    if (from === to && from !== 0) return [tap.x, tap.y];
+    if (from === 0) {
+      // on the stripes: straight over to the side the spot is on
+      if (to === 0 || zebraAt(w, you.x) < 0) return [tap.x, tap.y];
+      return [you.x, to < 0 ? r.top - 0.8 : r.bot + 0.8];
+    }
+    let k = zebraAt(w, tap.x);
+    if (k < 0) {
+      let best = Infinity;
+      r.zebras.forEach((z, i) => { const d = Math.abs(z.x - (you.x + tap.x) / 2); if (d < best) { best = d; k = i; } });
+    }
+    const z = r.zebras[k], half = ROAD.zebra * 0.5 - 0.6, kerb = from < 0 ? r.top : r.bot;
+    const lx = clamp(you.x, z.x - half, z.x + half);
+    if (Math.abs(you.x - lx) > 0.3 || Math.abs(you.y - kerb) > 1.6) return [lx, kerb + from * 0.6];
+    return [lx, to === 0 ? tap.y : from < 0 ? r.bot + 0.8 : r.top - 0.8];
+  }
 
   /* --------------------------------------------------------------- tick */
   st.tick = function (dt) {
@@ -2641,9 +2689,10 @@ function Plaza(opts) {
     st.t += dt;
     if (c.active && st.tap && you) {
       st.tap.t += dt;
-      const dx = st.tap.x - you.x, dy = st.tap.y - you.y, d = Math.hypot(dx, dy);
-      if (d < 0.4) { st.tap = null; c.ix = 0; c.iy = 0; }
-      else { c.ix = dx / d; c.iy = dy / d; }
+      const [wx, wy] = waypoint(w, you, st.tap);
+      const dx = wx - you.x, dy = wy - you.y, d = Math.hypot(dx, dy);
+      if (d < 0.4 && wx === st.tap.x && wy === st.tap.y) { st.tap = null; c.ix = 0; c.iy = 0; }
+      else { c.ix = dx / (d || 1); c.iy = dy / (d || 1); }
     } else { c.ix = st.keys.ix; c.iy = st.keys.iy; }
     step(w, dt, c);
     if (w.accent && w.accent._kind) adoptHuman(w, c.active);
@@ -2738,12 +2787,24 @@ function Plaza(opts) {
   }
   const J = [0, 0, 0, 0];
 
+  /* Which way a figure faces: the way it moves, turned toward smoothly, and
+     kept while it stands or waits at a kerb. Snapped to every small nudge, a
+     crowd standing at a zebra spun on the spot. */
+  function face(a) {
+    const sp = Math.hypot(a.vx, a.vy);
+    if (a._hx === undefined) { a._hx = sp > 0.01 ? a.vx / sp : 1; a._hy = sp > 0.01 ? a.vy / sp : 0; }
+    if (a.held || sp < 0.15) return;
+    const k = Math.min(1, sp * 0.35);                   // a stroll turns softer than a stride
+    let hx = a._hx + (a.vx / sp - a._hx) * k, hy = a._hy + (a.vy / sp - a._hy) * k;
+    let hl = Math.hypot(hx, hy);
+    if (hl < 0.05) { hx = -a._hy; hy = a._hx; hl = 1; }  // an about-turn goes round through the side
+    a._hx = hx / hl; a._hy = hy / hl;
+  }
+
   function person(ctx, a, sx, sy) {
     const L = lookOf(a), m = st.S * a._hv * FIG, fine = st.S >= 22;
-    // Standing still, keep facing the way you were going.
-    const sp = Math.hypot(a.vx, a.vy);
-    if (sp > 0.05) { a._hx = a.vx / sp; a._hy = a.vy / sp; }
-    const dx = a._hx === undefined ? 1 : a._hx, dy = a._hy === undefined ? 0 : a._hy;
+    face(a);
+    const dx = a._hx, dy = a._hy;
     const px = -dy, py = dx;                              // across the heading
     const P2 = (u, v, lat) => [sx + (dx * u + px * lat) * m,
                                sy + (dy * u + py * lat) * m * SQ - v * m * KH];
@@ -2904,9 +2965,8 @@ function Plaza(opts) {
   }
 
   function basis(a, sx, sy, m) {
-    const sp = Math.hypot(a.vx, a.vy);
-    if (sp > 0.05) { a._hx = a.vx / sp; a._hy = a.vy / sp; }
-    const dx = a._hx === undefined ? 1 : a._hx, dy = a._hy === undefined ? 0 : a._hy;
+    face(a);
+    const dx = a._hx, dy = a._hy;
     const px = -dy, py = dx;
     return { dx, dy, px, py, near: py >= 0 ? 1 : -1,
              P2: (u, v, lat) => [sx + (dx * u + px * lat) * m, sy + (dy * u + py * lat) * m * SQ - v * m * KH] };
