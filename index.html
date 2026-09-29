@@ -472,6 +472,9 @@ const DATA = {
   .hero-block::before {
     content: ""; position: absolute; inset: 0; z-index: 1;
     pointer-events: none;
+    /* It lights the name, and stops above the street, which it only washed out. */
+    -webkit-mask-image: linear-gradient(to bottom, #000 60%, transparent 69%);
+            mask-image: linear-gradient(to bottom, #000 60%, transparent 69%);
     background: radial-gradient(40% 60% at 16% 32%,
       rgba(var(--stage-rgb), 0.95) 0%,
       rgba(var(--stage-rgb), 0.86) 48%,
@@ -1180,7 +1183,7 @@ const DATA = {
 
   <!-- ========== HERO ========== -->
   <section class="hero-block">
-    <canvas id="field" role="img" aria-label="A small plaza seen from above at an angle: people walking between trees and planters, with a humanoid robot, two robot dogs, a wheeled support robot and a drone among them"></canvas>
+    <canvas id="field" role="img" aria-label="A small plaza seen from above at an angle: people walking between trees and planters, with a humanoid robot, two robot dogs, a wheeled support robot and a drone among them, and along the bottom a street whose cars stop for people at the zebra crossings"></canvas>
     <div class="plaza-fade" aria-hidden="true"></div>
     <div class="wrap hero-copy">
         <div class="eyebrow reveal">
@@ -1563,6 +1566,37 @@ const V = {
   headBias: 2.0
 };
 
+/* The street along the bottom of the frame: two lanes driven on the left, as
+   in Japan, so the far lane runs left to right and the near one right to
+   left. People cross only at the two zebras, one below each gate on the
+   bottom edge. Cars stop for anyone on a zebra or about to step onto one,
+   and for anyone at all in the lane ahead -- you included. */
+const ROAD = {
+  lane: 2.9,                 // lane width, metres
+  bottom: 0.88,              // the near kerb, as a share of the frame's height
+  zebra: 4.0,                // width of a crossing
+  approach: 1.3,             // this close to the kerb, heading out, is crossing
+  notice: 14,                // and a driver sees someone waiting from this far off
+  stopBack: 1.5              // stop line, back from the zebra
+};
+/* Cars drive by the Intelligent Driver Model (Treiber, Hennecke and Helbing
+   2000): accelerate toward a desired speed, brake to keep a safe gap to
+   whatever is ahead -- the car in front, a stop line, a person. */
+const CAR = {
+  v0: [6.2, 8.4],            // desired speed, m/s: 22-30 km/h, a street by a plaza
+  aMax: 1.4, bComf: 2.4, bMax: 8.0,
+  s0: 1.6,                   // gap left when standing
+  T: 1.2,                    // time headway
+  look: 32,                  // how far ahead a driver reacts, metres
+  headway: [2.4, 7.0]        // seconds between arrivals at each end of a lane
+};
+const CAR_KINDS = [          // share of arrivals; sizes in metres
+  { kind: 'sedan', p: 0.62, len: 4.5, wid: 1.76 },
+  { kind: 'kei', p: 0.31, len: 3.4, wid: 1.48 },
+  { kind: 'bus', p: 0.07, len: 9.0, wid: 2.3 }     // and never two at once: one fills a lane
+];
+const AV = { kind: 'av', len: 4.7, wid: 1.85 };   // at most one about at a time
+
 function mulberry32(a) {
   return function () {
     a = (a + 0x6D2B79F5) | 0;
@@ -1634,21 +1668,40 @@ function anticipate(ax, ay, avx, avy, bx, by, bvx, bvy, R, k, tau0, out) {
    so the flow has to split and rejoin. */
 function buildScene(world, rnd) {
   const { w, h } = world;
-  const gates = [];
-  const gate = (x, y, nx, ny, span, weight) => {
-    gates.push({ x, y, nx, ny, span, weight, i: gates.length });
+  // The street first. The plaza is everything above its far kerb.
+  const bot = h * ROAD.bottom, top = bot - 2 * ROAD.lane;
+  // A phone-width street has room for one crossing: two, a few metres apart,
+  // left no space between them for a car to wait in.
+  const narrow = w < 32;
+  world.road = {
+    top, bot,
+    lanes: [{ y: top + ROAD.lane * 0.5, dir: 1 }, { y: top + ROAD.lane * 1.5, dir: -1 }],
+    zebras: narrow ? [{ x: w * 0.5 }] : [{ x: w * 0.28 }, { x: w * 0.78 }]
   };
-  const midY = h * 0.5, midX = w * 0.5;
+  const hp = top;
+  // As many people as the plaza holds -- the street is not for standing in --
+  // and each zebra about as busy on any screen: the more people there are,
+  // the smaller the share of them whose trip crosses the street. 0.24 of the
+  // weight at the 56 a 1440-wide desktop holds.
+  world.people = clamp(Math.round(w * hp * P.density), P.agentsMin, P.agentsMax);
+  const cross = 0.24 * 56 / world.people;
+  const gates = [];
+  const gate = (x, y, nx, ny, span, weight, zebra) => {
+    gates.push({ x, y, nx, ny, span, weight, i: gates.length, zebra: zebra === undefined ? -1 : zebra });
+  };
+  const midY = hp * 0.5, midX = w * 0.5;
 
   // Main axis: a narrow opposing pair. Width matters -- spread the flow too
   // thin and the density never reaches the point where lanes form.
-  gate(-0.6, midY - h * 0.07, 1, 0, h * 0.58, 3.1);
-  gate(w + 0.6, midY + h * 0.07, -1, 0, h * 0.58, 3.1);
-  // cross traffic, so the main stream has something to negotiate with
+  gate(-0.6, midY - hp * 0.07, 1, 0, hp * 0.58, 3.1);
+  gate(w + 0.6, midY + hp * 0.07, -1, 0, hp * 0.58, 3.1);
+  // cross traffic, so the main stream has something to negotiate with. The
+  // bottom gates lie beyond the street, each as narrow as its zebra.
   gate(w * 0.22, -0.6, 0, 1, w * 0.13, 0.55);
-  gate(w * 0.78, h + 0.6, 0, -1, w * 0.13, 0.55);
+  if (narrow) gate(w * 0.5, h + 0.6, 0, -1, ROAD.zebra - 1.2, cross, 0);
+  else gate(w * 0.78, h + 0.6, 0, -1, ROAD.zebra - 1.2, cross * 1.17, 1);
   gate(w * 0.72, -0.6, 0, 1, w * 0.11, 0.40);
-  gate(w * 0.28, h + 0.6, 0, -1, w * 0.11, 0.40);
+  if (!narrow) gate(w * 0.28, h + 0.6, 0, -1, ROAD.zebra - 1.2, cross * 0.83, 0);
 
   world.gates = gates;
   world.gateWeight = gates.reduce((s, g) => s + g.weight, 0);
@@ -1663,13 +1716,13 @@ function buildScene(world, rnd) {
   // line. An obstacle outside the stream is just a shape on the page; one in
   // it splits the flow and leaves a wake.
   const obs = [];
-  const band = h * 0.24;
+  const band = hp * 0.24;
   const n = clamp(Math.round(w / 14), 2, 5);
   for (let i = 0; i < n; i++) {
     const t = n === 1 ? 0.5 : i / (n - 1);
     // Radius is capped by the world, so a phone-shaped frame still gets
     // something the stream has to go around rather than nothing at all.
-    const r = Math.min(1.0 + rnd() * 0.9, w * 0.13, h * 0.09);
+    const r = Math.min(1.0 + rnd() * 0.9, w * 0.13, hp * 0.09);
     obs.push({
       x: w * (0.22 + 0.56 * t) + (rnd() - 0.5) * 1.6,
       y: midY + Math.sin(t * Math.PI * 1.9 + 0.4) * band + (rnd() - 0.5) * 1.0,
@@ -1679,20 +1732,24 @@ function buildScene(world, rnd) {
   // Keep the margin proportional to the obstacle, or a narrow phone-shaped
   // world rejects every one of them and the flow has nothing to divide around.
   world.obstacles = obs.filter(o =>
-    o.x > o.r + 0.6 && o.x < w - o.r - 0.6 && o.y > o.r + 0.6 && o.y < h - o.r - 0.6);
+    o.x > o.r + 0.6 && o.x < w - o.r - 0.6 && o.y > o.r + 0.6 && o.y < hp - o.r - 0.6);
   void midX;
 }
 
-function pickGate(world, rnd, notIndex) {
+function pickGate(world, rnd, notIndex, noZebra) {
   const gates = world.gates;
+  // A trip that starts beyond the street ends on the plaza: nobody walks
+  // from one zebra to the other along the far pavement.
+  const ok = (g) => g.i !== notIndex && !(noZebra && g.zebra >= 0);
   for (let tries = 0; tries < 24; tries++) {
     let r = rnd() * world.gateWeight;
     for (const g of gates) {
       r -= g.weight;
-      if (r <= 0) { if (g.i !== notIndex) return g; break; }
+      if (r <= 0) { if (ok(g)) return g; break; }
     }
   }
-  return gates[(rnd() * gates.length) | 0];
+  const g = gates[(rnd() * gates.length) | 0];
+  return ok(g) ? g : gates[notIndex === 0 ? 1 : 0];
 }
 
 function gatePoint(g, rnd) {
@@ -1703,7 +1760,7 @@ function gatePoint(g, rnd) {
 
 function spawn(world, rnd, a) {
   const from = pickGate(world, rnd, -1);
-  const to = pickGate(world, rnd, from.i);
+  const to = pickGate(world, rnd, from.i, from.zebra >= 0);
   const p = gatePoint(from, rnd);
   const q = gatePoint(to, rnd);
   // Start back from the gate by a random distance so arrivals spread out in
@@ -1727,12 +1784,18 @@ function spawn(world, rnd, a) {
   a.side = rnd() < 0.72 ? 1 : -1;
   a.flow = dx >= 0 ? 0 : 1;      // used only for tone, so opposing streams read apart
   a.phase = rnd() * TWO_PI;
+  // Crossing the street: at the zebra under whichever end lies beyond it,
+  // each at a place of their own across its width, so a crowd crossing does
+  // not file down one line.
+  a.zebra = from.zebra >= 0 ? from.zebra : to.zebra;
+  a.up = from.zebra >= 0;
+  a.zx = (rnd() - 0.5) * (ROAD.zebra - 1.2);
   return a;
 }
 
 function makeAgent(world, rnd) {
   const a = {
-    x: 0, y: 0, vx: 0, vy: 0, gx: 0, gy: 0, gate: 0,
+    x: 0, y: 0, vx: 0, vy: 0, gx: 0, gy: 0, gate: 0, zebra: -1, up: false, zx: 0,
     r: P.radius[0] + rnd() * (P.radius[1] - P.radius[0]),
     pref: P.speedPref[0] + rnd() * (P.speedPref[1] - P.speedPref[0]),
     group: -1, side: 1, flow: 0, phase: 0, age: 0, life: 0,
@@ -1753,12 +1816,15 @@ function createWorld(wMetres, hMetres, seed) {
   const rnd = mulberry32(seed || 0x5eed);
   const world = {
     w: wMetres, h: hMetres, rnd, t: 0,
-    agents: [], obstacles: [], gates: [], groups: [],
-    grid: makeGrid(wMetres, hMetres, 3.2)
+    agents: [], obstacles: [], gates: [], groups: [], cars: [],
+    grid: makeGrid(wMetres, hMetres, 3.2),
+    // Traffic draws from a stream of its own, so a car arriving never
+    // changes where anybody walks.
+    crnd: mulberry32(((seed || 0x5eed) ^ 0x9e3779b9) >>> 0)
   };
   buildScene(world, rnd);
 
-  const target = clamp(Math.round(wMetres * hMetres * P.density), P.agentsMin, P.agentsMax);
+  const target = world.people;
   for (let i = 0; i < target; i++) {
     const a = makeAgent(world, rnd);
     a.age = rnd() * 18;              // stagger, so nothing starts in a block
@@ -1780,7 +1846,7 @@ function createWorld(wMetres, hMetres, seed) {
       const mate = pool.splice(j, 1)[0];
       mate.x = lead.x + (rnd() - 0.5) * 1.2;
       mate.y = lead.y + (rnd() - 0.5) * 1.2;
-      mate.gx = lead.gx; mate.gy = lead.gy; mate.gate = lead.gate;
+      follow(mate, lead);
       mate.pref = lead.pref;
       members.push(mate);
     }
@@ -1793,6 +1859,7 @@ function createWorld(wMetres, hMetres, seed) {
   const accent = world.agents[0];
   accent.accent = true;
   world.accent = accent;
+  initTraffic(world);
   return world;
 }
 
@@ -1815,12 +1882,189 @@ function adoptCentral(world) {
 }
 
 /* ---------- one physics step ---------- */
-const _f = { x: 0, y: 0 };
+const _f = { x: 0, y: 0 }, _g = { x: 0, y: 0 }, _c = { x: 0, y: 0 };
+
+/* Walking together is walking the same route: the gate, and the zebra. */
+function follow(m, lead) {
+  m.gx = lead.gx; m.gy = lead.gy; m.gate = lead.gate;
+  m.zebra = lead.zebra; m.up = lead.up; m.zx = lead.zx;
+}
+
+/* Where a walker is heading right now: its gate -- except that the street is
+   crossed only at a zebra. Walk to the kerb at the crossing, then straight
+   over; coming off the street, straight up first. */
+function goalOf(world, a, x, y, out) {
+  out.x = a.gx; out.y = a.gy;
+  if (a.zebra < 0) return out;
+  const r = world.road, lx = r.zebras[a.zebra].x + a.zx;
+  if (a.up) {
+    if (y > r.top - 0.6) { out.x = lx; out.y = r.top - 2.5; }
+  } else if (y < r.top - 0.2 && Math.abs(x - lx) > 0.6) {
+    out.x = lx; out.y = r.top - 0.3;
+  } else out.x = lx;
+  return out;
+}
+
+/* A car, to someone on foot, is a row of discs along its length moving at its
+   speed: the same anticipation law as for people and obstacles, so whoever is
+   about to step out in front of one hesitates. `t` looks that far ahead along
+   the car's path, for the forecast; `soft` is that hesitation, and `hard`
+   the push that stops anyone walking through a car. */
+function carForce(world, x, y, vx, vy, r, t, soft, hard, out) {
+  let fx = 0, fy = 0;
+  const road = world.road;
+  if (y > road.top - 2.5 && y < road.bot + 2.5) {
+    for (const c of world.cars) {
+      const cx = c.x + c.dir * c.v * t;
+      if (Math.abs(cx - x) > 14) continue;
+      const step = c.nd > 1 ? (c.len - 2 * c.cr) / (c.nd - 1) : 0;
+      for (let k = 0; k < c.nd; k++) {
+        const ox = cx - c.len * 0.5 + c.cr + k * step, oy = c.y;
+        if (soft && anticipate(x, y, vx, vy, ox, oy, c.dir * c.v, 0, r + c.cr + P.comfort * 0.7,
+                               P.kObs, P.tau0Obs, _f)) { fx += _f.x; fy += _f.y; }
+        if (!hard) continue;
+        const ddx = ox - x, ddy = oy - y, d2 = ddx * ddx + ddy * ddy, Rp = r + c.cr;
+        if (d2 < Rp * Rp && d2 > 1e-6) {
+          const d = Math.sqrt(d2), s = (Rp - d) * 16;
+          fx -= (ddx / d) * s; fy -= (ddy / d) * s;
+        }
+      }
+    }
+  }
+  out.x = fx; out.y = fy;
+  return out;
+}
+
+/* ---------- the street's traffic ---------- */
+function newCar(world, lane, x) {
+  const rnd = world.crnd, L = world.road.lanes[lane];
+  let spec = CAR_KINDS[CAR_KINDS.length - 1];
+  if (!world.av && rnd() < 0.3) spec = AV;
+  else {
+    let u = rnd();
+    for (const k of CAR_KINDS) { u -= k.p; if (u <= 0) { spec = k; break; } }
+    if (spec.kind === 'bus' && world.cars.some((o) => o.kind === 'bus')) spec = CAR_KINDS[0];
+  }
+  const c = { lane, dir: L.dir, x, y: L.y, kind: spec.kind, len: spec.len, wid: spec.wid,
+              v0: CAR.v0[0] + rnd() * (CAR.v0[1] - CAR.v0[0]), v: 0, brake: 0,
+              look: (rnd() * 1e6) | 0, sees: null };
+  if (c.kind === 'bus') c.v0 *= 0.85;
+  c.v = c.v0;
+  // discs for the people on foot: overlapping, so nobody slips between two
+  c.cr = c.wid * 0.5 + 0.08;
+  c.nd = 1 + Math.ceil((c.len - 2 * c.cr) / (1.8 * c.cr));
+  if (c.kind === 'av') world.av = c;
+  world.cars.push(c);
+  return c;
+}
+
+function initTraffic(world) {
+  const rnd = world.crnd;
+  world.cars = []; world.av = null; world.laneT = [0, 0];
+  world.busy = world.road.zebras.map(() => [null, null]);   // on the street, per lane
+  world.wait = world.road.zebras.map(() => [null, null]);   // at the kerb, about to step out
+  // Open with the street already in use: cars spread along both lanes.
+  for (let li = 0; li < 2; li++) {
+    const dir = world.road.lanes[li].dir;
+    for (let x = rnd() * 12 - 6; x < world.w + 6;) {
+      const c = newCar(world, li, 0);
+      c.x = dir > 0 ? x : world.w - x;
+      x += c.len + c.v0 * (CAR.headway[0] + rnd() * (CAR.headway[1] - CAR.headway[0]));
+    }
+    world.laneT[li] = rnd() * CAR.headway[1];
+  }
+}
+
+function stepCars(world, dt) {
+  const r = world.road, A = world.agents, cars = world.cars, rnd = world.crnd;
+  const busy = world.busy, wait = world.wait;
+  // Who is on each lane of each zebra, or about to step onto it.
+  for (let k = 0; k < busy.length; k++) busy[k][0] = busy[k][1] = wait[k][0] = wait[k][1] = null;
+  for (const a of A) {
+    if (a.life < 0.3) continue;
+    for (let k = 0; k < r.zebras.length; k++) {
+      if (Math.abs(a.x - r.zebras[k].x) > ROAD.zebra * 0.5 + 0.4) continue;
+      const mine = a.zebra === k || a.driven, b = busy[k], q = wait[k];
+      if (a.y >= r.top && a.y <= r.bot) {
+        // on the street: the lane underfoot, and the next one while close to it
+        for (let li = 0; li < 2; li++) {
+          if (!b[li] && Math.abs(a.y - r.lanes[li].y) < ROAD.lane * 0.5 + 1.2) b[li] = a;
+        }
+      } else if (mine && a.y < r.top && a.y > r.top - ROAD.approach && (!a.up || a.driven)) {
+        if (!q[0]) q[0] = a;
+      } else if (mine && a.y > r.bot && a.y < r.bot + ROAD.approach && (a.up || a.driven)) {
+        if (!q[1]) q[1] = a;
+      }
+    }
+  }
+  // Arrivals, one per lane every few seconds, when the way in is clear.
+  for (let li = 0; li < 2; li++) {
+    world.laneT[li] -= dt;
+    if (world.laneT[li] > 0) continue;
+    const entry = r.lanes[li].dir > 0 ? -8 : world.w + 8;
+    let clear = true;
+    for (const c of cars) if (c.lane === li && Math.abs(c.x - entry) < c.len * 0.5 + 14) clear = false;
+    if (!clear) { world.laneT[li] = 0.6; continue; }
+    newCar(world, li, entry);
+    world.laneT[li] = CAR.headway[0] + rnd() * (CAR.headway[1] - CAR.headway[0]);
+  }
+  for (const c of cars) {
+    const front = c.x + c.dir * c.len * 0.5;
+    let gap = Infinity, vl = 0, who = null, ahead = null;
+    for (const o of cars) {                        // the car ahead
+      if (o === c || o.lane !== c.lane) continue;
+      const g = (o.x - c.x) * c.dir - (o.len + c.len) * 0.5;
+      if (g > -1 && g < gap) { gap = g; vl = o.v; who = null; ahead = o; }
+    }
+    for (let k = 0; k < r.zebras.length; k++) {    // a zebra in use: stop at its line
+      const line = r.zebras[k].x - c.dir * (ROAD.zebra * 0.5 + ROAD.stopBack);
+      const g = (line - front) * c.dir + CAR.s0 * 0.8;
+      const p = busy[k][c.lane] || (g < ROAD.notice ? wait[k][c.lane] : null);
+      // Keep the crossing clear: with no room past it for the whole car behind
+      // a queue, wait at the line rather than stop on the stripes.
+      const room = ahead && ahead.v < 2.5
+        ? (ahead.x - c.dir * ahead.len * 0.5 - (r.zebras[k].x + c.dir * ROAD.zebra * 0.5)) * c.dir : Infinity;
+      if (!p && room > c.len + CAR.s0) continue;
+      // Too close to stop in comfort, a driver goes on -- and anyone actually
+      // in the lane is still caught below.
+      if (g < CAR.s0 * 0.6 || g > CAR.look || c.v * c.v > 2 * CAR.bComf * 1.5 * g) continue;
+      if (g < gap) { gap = g; vl = 0; who = p; }
+    }
+    const half = c.wid * 0.5 + 0.3;                // anyone in the lane ahead
+    for (const a of A) {
+      if (a.life < 0.3 || Math.abs(a.y - c.y) > half + a.r) continue;
+      const g = (a.x - front) * c.dir - a.r - 0.5;
+      if (g < -c.len * 0.5 || g > CAR.look) continue;
+      if (g < gap) { gap = Math.max(0, g); vl = Math.max(0, a.vx * c.dir); who = a; }
+    }
+    const v = c.v;
+    let acc = CAR.aMax * (1 - Math.pow(v / c.v0, 4));
+    if (gap < Infinity) {
+      const ss = CAR.s0 + Math.max(0, v * CAR.T + v * (v - vl) / (2 * Math.sqrt(CAR.aMax * CAR.bComf)));
+      const q = ss / Math.max(gap, 0.05);
+      acc -= CAR.aMax * q * q;
+    }
+    acc = Math.max(-CAR.bMax, acc);
+    c.v = Math.max(0, v + acc * dt);
+    c.x += c.dir * c.v * dt;
+    c.sees = who;
+    // brake lights: on while slowing, and while standing
+    c.brake += ((acc < -0.8 || c.v < 0.3 ? 1 : 0) - c.brake) * Math.min(1, dt * 12);
+  }
+  for (let i = cars.length - 1; i >= 0; i--) {    // departures
+    const c = cars[i];
+    if (c.dir > 0 ? c.x > world.w + c.len + 8 : c.x < -c.len - 8) {
+      if (c === world.av) world.av = null;
+      cars.splice(i, 1);
+    }
+  }
+}
 
 function step(world, dt, control) {
   const A = world.agents, g = world.grid, obs = world.obstacles, rnd = world.rnd;
   gridBuild(g, A);
   world.t += dt;
+  stepCars(world, dt);
 
   for (let i = 0; i < A.length; i++) {
     const a = A[i];
@@ -1830,7 +2074,8 @@ function step(world, dt, control) {
     let ax = 0, ay = 0;
 
     // --- driving force toward the exit gate -------------------------
-    let dgx = a.gx - a.x, dgy = a.gy - a.y;
+    goalOf(world, a, a.x, a.y, _g);
+    let dgx = _g.x - a.x, dgy = _g.y - a.y;
     const dg = Math.sqrt(dgx * dgx + dgy * dgy) || 1;
     dgx /= dg; dgy /= dg;
 
@@ -1924,6 +2169,29 @@ function step(world, dt, control) {
       }
     }
 
+    // --- cars, and the kerb ---------------------------------------------
+    if (world.cars.length) {
+      carForce(world, a.x, a.y, a.vx, a.vy, a.r, 0, !driving, true, _c);   // you don't step aside
+      ax += _c.x; ay += _c.y;
+    }
+    // Nobody steps off the kerb but at a zebra -- nobody but you.
+    if (!driving) {
+      const road = world.road;
+      if (a.y > road.top - 0.45 && a.y < road.bot + 0.45) {
+        const z = a.zebra >= 0 ? road.zebras[a.zebra] : null;
+        const off = z ? a.x - z.x : Infinity, half = ROAD.zebra * 0.5 - a.r;
+        if (Math.abs(off) < half + 0.8) {
+          // crossing: keep to the stripes
+          if (off > half) ax -= (off - half) * 14;
+          else if (off < -half) ax -= (off + half) * 14;
+        } else {
+          // anywhere else, back onto the nearer kerb
+          const up = a.y - (road.top - 0.45), down = road.bot + 0.45 - a.y;
+          if (up < down) ay -= Math.min(8, up * 12); else ay += Math.min(8, down * 12);
+        }
+      }
+    }
+
     // --- walking companions ------------------------------------------
     if (a.group >= 0) {
       const mates = world.groups[a.group];
@@ -1982,7 +2250,7 @@ function step(world, dt, control) {
           const mm = mates[m];
           mm.x = lead.x + (rnd() - 0.5) * 1.1;
           mm.y = lead.y + (rnd() - 0.5) * 1.1;
-          mm.gx = lead.gx; mm.gy = lead.gy; mm.gate = lead.gate;
+          follow(mm, lead);
           mm.vx = lead.vx; mm.vy = lead.vy;
           mm.px = mm.x; mm.py = mm.y; mm.age = 0; mm.life = 0;
           mm.flow = lead.flow; mm.side = lead.side;
@@ -2017,7 +2285,7 @@ function forecast(world, agent, out, opts) {
     let x = agent.x, y = agent.y, vx = agent.vx, vy = agent.vy;
     let gdx, gdy;
     if (opts && opts.heading) { gdx = opts.heading.x; gdy = opts.heading.y; }
-    else { gdx = agent.gx - x; gdy = agent.gy - y; }
+    else { goalOf(world, agent, x, y, _g); gdx = _g.x - x; gdy = _g.y - y; }
     const gl = Math.sqrt(gdx * gdx + gdy * gdy) || 1;
     gdx /= gl; gdy /= gl;
     const ca = Math.cos(ang), sa = Math.sin(ang);
@@ -2028,8 +2296,15 @@ function forecast(world, agent, out, opts) {
     path.push(x, y);
 
     for (let s = 0; s < steps; s++) {
-      let ax = (hx * agent.pref - vx) / P.relax;
-      let ay = (hy * agent.pref - vy) / P.relax;
+      // the route bends at the kerb, so the heading is read again as it goes
+      let ex = hx, ey = hy;
+      if (!(opts && opts.heading)) {
+        goalOf(world, agent, x, y, _g);
+        const qx = _g.x - x, qy = _g.y - y, ql = Math.sqrt(qx * qx + qy * qy) || 1;
+        ex = (qx * ca - qy * sa) / ql; ey = (qx * sa + qy * ca) / ql;
+      }
+      let ax = (ex * agent.pref - vx) / P.relax;
+      let ay = (ey * agent.pref - vy) / P.relax;
       for (let j = 0; j < A.length; j++) {
         const b = A[j];
         if (b === agent) continue;
@@ -2045,6 +2320,10 @@ function forecast(world, agent, out, opts) {
         if (anticipate(x, y, vx, vy, ob.x, ob.y, 0, 0, R, P.kObs, P.tau0Obs, _f)) {
           ax += _f.x; ay += _f.y;
         }
+      }
+      if (world.cars.length) {
+        carForce(world, x, y, vx, vy, agent.r, s * dt, true, false, _c);
+        ax += _c.x; ay += _c.y;
       }
       const am = Math.sqrt(ax * ax + ay * ay);
       if (am > fCap) { const sc = fCap / am; ax *= sc; ay *= sc; }
@@ -2092,6 +2371,24 @@ const BOT = { panel: '#e7e9ef', shade: '#c5c9d3', dark: '#2f323b', darker: '#1b1
               yellow: '#e2b33f', yellowShade: '#c2952a', base: '#3a3f4c', baseTop: '#585e6e' };
 const TREE = { canopy: '#c9dbbb', canopyDark: '#b7cda6', trunk: '#a39a91' };
 const PLANTER = { side: '#dfe2ea', top: '#eef0f5', plants: '#c3d8b4' };
+/* The street: pale asphalt between two kerbs, white paint. Cars keep to the
+   page's calm -- mostly white, silver and dark, a few colours from the
+   crowd's wardrobe -- and the one that drives itself wears the machines'
+   cyan. */
+const STREET = { asphalt: '#d6dae3', kerb: '#eceef3', face: '#c3c8d3', paint: '#fbfbfd' };
+const PAINTS = ['#f4f5f8', '#f4f5f8', '#f4f5f8', '#c8cdd7', '#c8cdd7', '#2c303b', '#3d5a80',
+                '#8f9bb0', '#a8434b', '#2f9a8c', '#d6a04f'];
+const GLASS = '#6d7c98', GLASS_SIDE = '#5d6a85';   // sky-lit from above, darker from the side
+/* Heights in metres -- clearance, waistline, roof, lamps -- the glass as
+   shares of the length from the tail (where the rear screen starts and ends,
+   then the windscreen), and how far in the roof sits from the flanks: the
+   windows lean in, so from above a roof is narrower than the car. */
+const CAR_LOOK = {
+  sedan: { cl: 0.2, belt: 0.8, roof: 1.42, g: [0.2, 0.35, 0.62, 0.78], tumble: 0.3, wheels: [0.17, 0.81], wr: 0.32, lamp: [0.58, 0.72] },
+  kei: { cl: 0.17, belt: 0.92, roof: 1.84, g: [0.03, 0.06, 0.8, 0.9], tumble: 0.14, wheels: [0.15, 0.83], wr: 0.28, lamp: [0.66, 0.84] },
+  av: { cl: 0.22, belt: 0.88, roof: 1.55, g: [0.17, 0.32, 0.64, 0.8], tumble: 0.26, wheels: [0.17, 0.81], wr: 0.34, lamp: [0.64, 0.8] },
+  bus: { cl: 0.32, belt: 1.2, roof: 2.95, wheels: [0.17, 0.8], wr: 0.46, lamp: [0.5, 0.72] }
+};
 
 function hash(n) {
   let x = Math.imul((n | 0) + 1, 2654435761) >>> 0;
@@ -2124,6 +2421,14 @@ function Plaza(opts) {
     gr.addColorStop(1, 'rgba(21,23,31,0)');
     g.fillStyle = gr; g.fillRect(0, 0, 64, 64);
   }
+  // and the red a braking car throws on the road behind it
+  let GLOW = null;
+  if (o.makeCanvas) {
+    GLOW = o.makeCanvas(64, 64);
+    const g = GLOW.getContext('2d'), gr = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+    gr.addColorStop(0, 'rgba(255,58,74,0.42)'); gr.addColorStop(1, 'rgba(255,58,74,0)');
+    g.fillStyle = gr; g.fillRect(0, 0, 64, 64);
+  }
   const st = { o, S: 30, W: 0, H: 0, world: null, t: 0, fanAt: -1, fan: [[], [], []],
                control: { active: false, ix: 0, iy: 0 }, keys: { ix: 0, iy: 0 }, tap: null,
                items: [], onScreen: [], fanTmp: [[], [], []], wedge: null, wedgeCtx: null,
@@ -2153,7 +2458,8 @@ function Plaza(opts) {
      are avoided in turn. One dog is out with its owner. */
   function castRobots(world) {
     const solo = world.agents.filter((a) => a.group < 0 && a !== world.accent);
-    const big = world.agents.length > 60;
+    // the street takes a strip of the frame, so a desktop plaza holds ~55
+    const big = world.agents.length > 40;
     const want = big ? ['humanoid', 'dog', 'hsr', 'pair'] : ['hsr', 'pair'];
     let k = 0;
     const next = () => (k < solo.length ? solo[solo.length - 1 - (k++) * 3 % solo.length] : null);
@@ -2171,7 +2477,7 @@ function Plaza(opts) {
         world.groups.push([owner, a]);
         owner.group = gi; a.group = gi;
         a.x = owner.x + 0.7; a.y = owner.y + 0.3; a.px = a.x; a.py = a.y;
-        a.gx = owner.gx; a.gy = owner.gy; a.gate = owner.gate; a.pref = owner.pref;
+        follow(a, owner); a.pref = owner.pref;
         a.vx = owner.vx; a.vy = owner.vy;
       }
     }
@@ -2689,10 +2995,158 @@ function Plaza(opts) {
     ctx.beginPath(); ctx.ellipse(sx, sy - hC - 0.06 * s, rw * 0.8, ry * 0.8, 0, 0, TAU); ctx.fill();
   }
 
+  /* The street: asphalt, the kerbs, lane paint broken at each zebra, and a
+     stop line on either approach. */
+  function road(ctx) {
+    const r = st.world.road, S = st.S, W = st.W, Y = (y) => y * S * SQ;
+    const yT = Y(r.top), yB = Y(r.bot), face = Math.max(1.5, 0.13 * S * KH), kerb = 0.2 * S * SQ;
+    const line = Math.max(1, 0.14 * S * SQ);
+    ctx.fillStyle = STREET.asphalt; ctx.fillRect(0, yT, W, yB - yT);
+    // the far kerb turns its face to the camera; the near one shows only its top
+    ctx.fillStyle = STREET.face; ctx.fillRect(0, yT, W, face);
+    ctx.fillStyle = STREET.kerb; ctx.fillRect(0, yT - kerb, W, kerb); ctx.fillRect(0, yB, W, kerb);
+    ctx.fillStyle = STREET.paint;
+    ctx.fillRect(0, Y(r.top + 0.35) - line / 2, W, line);
+    ctx.fillRect(0, Y(r.bot - 0.3) - line / 2, W, line);
+    for (let x = 0.4; x < st.world.w; x += 6) ctx.fillRect(x * S, Y(r.top + ROAD.lane) - line / 2, 3 * S, line);
+    for (const z of r.zebras) {
+      const reach = ROAD.zebra * 0.5 + ROAD.stopBack + 0.35;
+      ctx.fillStyle = STREET.asphalt;
+      ctx.fillRect((z.x - reach) * S, yT + face, 2 * reach * S, yB - yT - face);
+      ctx.fillStyle = STREET.paint;
+      const n = Math.floor((r.bot - r.top - 0.3) / 0.9), y0 = r.top + (r.bot - r.top - (n * 0.9 - 0.45)) / 2;
+      for (let i = 0; i < n; i++) ctx.fillRect((z.x - ROAD.zebra * 0.5) * S, Y(y0 + i * 0.9), ROAD.zebra * S, 0.45 * S * SQ);
+      for (const L of r.lanes) {
+        const sx = z.x - L.dir * (ROAD.zebra * 0.5 + ROAD.stopBack);
+        ctx.fillRect((sx - 0.15) * S, Y(L.y - ROAD.lane * 0.5 + 0.2), 0.3 * S, (ROAD.lane - 0.4) * S * SQ);
+      }
+    }
+  }
+
+  /* A car, seen from a camera that looks north: its roof and the side toward
+     us are all there is to draw -- the ends face the camera edge-on. */
+  function car(ctx, c) {
+    const S = st.S, K = S * KH, lk = CAR_LOOK[c.kind];
+    const x0 = (c.x - c.len * 0.5) * S, L = c.len * S;
+    // along the car by share of its length from the tail, whichever way it faces
+    const U = (u) => (c.dir > 0 ? x0 + u * L : x0 + (1 - u) * L);
+    const span = (u0, u1) => { const a = U(u0), b = U(u1); return [Math.min(a, b), Math.abs(b - a)]; };
+    const yF = (c.y - c.wid * 0.5) * S * SQ, yN = (c.y + c.wid * 0.5) * S * SQ, z = (m) => m * K;
+    const paint = c.kind === 'av' ? BOT.panel : c.kind === 'bus' ? '#eef0f4' : PAINTS[c.look % PAINTS.length];
+    const side = shade(paint, 0.86), edge = shade(paint, 0.68), rr = Math.min(0.3 * S, (yN - yF) * 0.4);
+    const bus = c.kind === 'bus', top = bus ? lk.roof : lk.belt;
+    const quad = (p) => {
+      ctx.beginPath(); ctx.moveTo(p[0], p[1]);
+      for (let i = 2; i < p.length; i += 2) ctx.lineTo(p[i], p[i + 1]);
+      ctx.closePath(); ctx.fill();
+    };
+    ctx.globalAlpha = 1; ctx.lineWidth = 1; ctx.lineJoin = 'round'; ctx.strokeStyle = edge;
+    // the deck -- for a bus, the roof -- the side toward us, and a darker sill;
+    // a fine edge keeps a white car from dissolving into the pale ground
+    ctx.fillStyle = bus ? '#e2e5eb' : paint;
+    ctx.beginPath(); ctx.roundRect(x0, yF - z(top), L, yN - yF, rr); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = side;
+    ctx.beginPath(); ctx.roundRect(x0, yN - z(top), L, z(top - lk.cl), rr); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = shade(paint, 0.72); ctx.fillRect(x0 + rr * 0.6, yN - z(lk.cl + 0.1), L - rr * 1.2, z(0.1));
+    if (bus) {
+      // an air-conditioning pod on the roof, a livery stripe, a band of
+      // windows, and doors on the kerb side -- the left, in Japan, which faces
+      // us only in the near lane
+      const [ax, aw] = span(0.32, 0.62);
+      ctx.fillStyle = '#eef0f4';
+      ctx.beginPath(); ctx.roundRect(ax, yF - z(top + 0.22) + 0.35 * S * SQ, aw, yN - yF - 0.7 * S * SQ, rr * 0.6); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#2f9a8c'; ctx.fillRect(x0 + 0.02 * L, yN - z(1.22), L * 0.96, z(0.16));
+      const [wx, ww] = span(0.05, 0.95);
+      ctx.fillStyle = GLASS_SIDE; ctx.fillRect(wx, yN - z(2.5), ww, z(1.1));
+      ctx.fillStyle = 'rgba(255,255,255,0.16)'; ctx.fillRect(wx, yN - z(2.5), ww, z(0.34));
+      ctx.fillStyle = side;
+      for (let k = 1; k < 7; k++) {
+        const [px, pw] = span(0.05 + k * 0.9 / 7 - 0.006, 0.05 + k * 0.9 / 7 + 0.006);
+        ctx.fillRect(px, yN - z(2.5), pw, z(1.1));
+      }
+      if (c.dir < 0) {
+        ctx.fillStyle = GLASS;
+        for (const [d0, d1] of [[0.8, 0.88], [0.42, 0.5]]) {
+          const [dx, dw] = span(d0, d1);
+          ctx.fillRect(dx, yN - z(2.45), dw, z(2.45 - lk.cl - 0.12));
+        }
+      }
+    } else {
+      // the glasshouse: rear screen and windscreen seen from above, the side
+      // windows toward us, and the roof over them
+      const g = lk.g, zb = z(lk.belt), zr = z(lk.roof);
+      const b = 0.08 * S * SQ, t = lk.tumble * S * SQ;          // the glass's foot, and the roof, in from the flanks
+      const yFb = yF + b, yNb = yN - b, yFr = yF + t, yNr = yN - t;
+      const screen = (ua, ub) => {
+        // corners: far and near at the roof, then near and far at the deck
+        const A = [U(ua), yFr - zr], B = [U(ua), yNr - zr], C = [U(ub), yNb - zb], D = [U(ub), yFb - zb];
+        ctx.fillStyle = GLASS; quad([...A, ...B, ...C, ...D]);
+        // a streak of sky across it
+        const on = (P, Q, t) => [P[0] + (Q[0] - P[0]) * t, P[1] + (Q[1] - P[1]) * t];
+        ctx.fillStyle = 'rgba(255,255,255,0.2)';
+        quad([...on(A, D, 0.3), ...on(B, C, 0.18), ...on(B, C, 0.42), ...on(A, D, 0.54)]);
+      };
+      screen(g[2], g[3]);
+      screen(g[1], g[0]);
+      ctx.fillStyle = GLASS_SIDE;
+      quad([U(g[0]), yNb - zb, U(g[1]), yNr - zr, U(g[2]), yNr - zr, U(g[3]), yNb - zb]);
+      ctx.beginPath(); ctx.moveTo(U(g[0]), yNb - zb); ctx.lineTo(U(g[3]), yNb - zb); ctx.stroke();
+      ctx.fillStyle = side;
+      const um = (g[1] + g[2]) / 2, [px, pw] = span(um - 0.012, um + 0.012);
+      quad([px, yNr - zr, px + pw, yNr - zr, px + pw, yNb - zb, px, yNb - zb]);
+      // the door seam under the pillar, and a mirror at the windscreen's foot
+      ctx.beginPath(); ctx.moveTo(U(um), yN - zb); ctx.lineTo(U(um), yN - z(lk.cl + 0.12)); ctx.stroke();
+      ctx.fillStyle = edge; ctx.fillRect(U(g[3] - 0.02) - 0.07 * S, yN - z(lk.belt + 0.14), 0.14 * S, z(0.1));
+      const [rx, rw] = span(g[1], g[2]);
+      ctx.fillStyle = paint;
+      ctx.beginPath(); ctx.roundRect(rx, yFr - zr, rw, yNr - yFr, Math.min(2, rw * 0.1)); ctx.fill();
+      // one outline round the whole glasshouse, so the screens and the roof
+      // read as a single cabin rather than panels
+      ctx.beginPath();
+      ctx.moveTo(U(g[0]), yFb - zb); ctx.lineTo(U(g[1]), yFr - zr); ctx.lineTo(U(g[2]), yFr - zr); ctx.lineTo(U(g[3]), yFb - zb);
+      ctx.moveTo(U(g[0]), yNb - zb); ctx.lineTo(U(g[1]), yNr - zr); ctx.lineTo(U(g[2]), yNr - zr); ctx.lineTo(U(g[3]), yNb - zb);
+      ctx.moveTo(U(g[1]), yFr - zr); ctx.lineTo(U(g[1]), yNr - zr);
+      ctx.moveTo(U(g[2]), yFr - zr); ctx.lineTo(U(g[2]), yNr - zr);
+      ctx.stroke();
+      if (c.kind === 'av') {
+        // the machines' cyan along its flank, and the lidar turning on the roof
+        ctx.fillStyle = BOT.lamp; ctx.fillRect(x0 + 0.08 * L, yN - z((lk.cl + lk.belt) / 2) - 1, L * 0.84, 2);
+        const cx = U(um), cy = (yFr + yNr) / 2 - zr, lr = 0.2 * S, lh = z(0.2);
+        ctx.fillStyle = BOT.dark; ctx.fillRect(cx - lr, cy - lh, lr * 2, lh);
+        ctx.fillStyle = BOT.darker; ctx.beginPath(); ctx.ellipse(cx, cy - lh, lr, lr * SQ, 0, 0, TAU); ctx.fill();
+        ctx.fillStyle = BOT.lamp; ctx.globalAlpha = 0.55 + 0.45 * Math.max(0, Math.sin(st.t * 6 + c.look));
+        ctx.fillRect(cx - lr, cy - lh * 0.62, lr * 2, Math.max(1.2, lh * 0.24));
+        ctx.globalAlpha = 1;
+      }
+    }
+    // wheels in their arches
+    for (const u of lk.wheels) {
+      const wx = U(u), wy = yN - z(lk.wr);
+      ctx.fillStyle = shade(paint, 0.42);
+      ctx.beginPath(); ctx.ellipse(wx, wy, (lk.wr + 0.06) * S, z(lk.wr + 0.06), 0, Math.PI, TAU); ctx.fill();
+      ctx.fillStyle = '#1d1f26';
+      ctx.beginPath(); ctx.ellipse(wx, wy, lk.wr * S, z(lk.wr), 0, 0, TAU); ctx.fill();
+      ctx.fillStyle = '#8a8f9c';
+      ctx.beginPath(); ctx.ellipse(wx, wy, lk.wr * 0.42 * S, z(lk.wr * 0.42), 0, 0, TAU); ctx.fill();
+    }
+    // lamps: head at the front, tail at the back, bright on the brakes
+    const [l0, l1] = lk.lamp, lh = z(l1 - l0);
+    const [hx, hw] = span(0.965, 1), [tx, tw] = span(0, 0.035);
+    ctx.fillStyle = '#fff1c2'; ctx.fillRect(hx, yN - z(l1), hw, lh);
+    ctx.fillStyle = '#b8434f'; ctx.fillRect(tx, yN - z(l1), tw, lh);
+    if (c.brake > 0.04) {
+      ctx.globalAlpha = c.brake; ctx.fillStyle = '#ff2f45';
+      ctx.fillRect(tx - 0.5, yN - z(l1) - 1, tw + 1, lh + 2);
+      if (GLOW) ctx.drawImage(GLOW, tx + tw / 2 - 0.45 * S, yN - z((l0 + l1) / 2) - 0.45 * S, 0.9 * S, 0.9 * S);
+      ctx.globalAlpha = 1;
+    }
+  }
+
   st.draw = function (ctx, now) {
     const w = st.world, S = st.S, you = w.accent, walking = st.control.active;
     ctx.setTransform(o.dpr, 0, 0, o.dpr, 0, 0);
     ctx.clearRect(0, 0, st.W, st.H);
+    road(ctx);
 
     // --- the ground: shadows, then the marks that belong on it ----------
     ctx.fillStyle = '#15171f';
@@ -2725,6 +3179,20 @@ function Plaza(opts) {
       const [sx, sy] = st.toScreen(d.x, d.y);
       stamp(sx, sy, 0.5 * S * FIG, 0.5);
     }
+    // cars: a soft shadow under each, and behind one on the brakes the red of
+    // its lamps on the road
+    for (const c of w.cars) {
+      const x0 = (c.x - c.len * 0.5) * S, L = c.len * S;
+      if (x0 > st.W + 40 || x0 + L < -40) continue;
+      const yF = (c.y - c.wid * 0.5) * S * SQ, yN = (c.y + c.wid * 0.5) * S * SQ;
+      if (SHADOW) { ctx.globalAlpha = 0.95; ctx.drawImage(SHADOW, x0 - 0.15 * S, yF - 0.2 * S * SQ, L + 0.55 * S, yN - yF + 0.65 * S * SQ); }
+      else { ctx.globalAlpha = 0.1; ctx.fillRect(x0, yF, L, yN - yF); }
+      if (GLOW && c.brake > 0.04) {
+        const tx = c.dir > 0 ? x0 : x0 + L;
+        ctx.globalAlpha = c.brake;
+        ctx.drawImage(GLOW, tx - c.dir * 1.1 * S - 1.4 * S, yN - 1.1 * S * SQ, 2.8 * S, 2.0 * S * SQ);
+      }
+    }
     ctx.globalAlpha = 1;
 
     // Paths round you, faint: where each person has been (solid) and where
@@ -2746,6 +3214,20 @@ function Plaza(opts) {
       ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, 1, ang - 0.85, ang + 0.85); ctx.closePath(); ctx.fill();
       ctx.restore();
     }
+    // and the car that drives itself, further down the road
+    for (const c of w.cars) {
+      if (c.kind !== 'av') continue;
+      if (!st.wedge || st.wedgeCtx !== ctx) {
+        st.wedge = ctx.createRadialGradient(0, 0, 0.15, 0, 0, 1);
+        st.wedge.addColorStop(0, 'rgba(47,196,218,0.18)'); st.wedge.addColorStop(1, 'rgba(47,196,218,0)');
+        st.wedgeCtx = ctx;
+      }
+      const R = 8 * S, ang = c.dir > 0 ? 0 : Math.PI;
+      ctx.save(); ctx.translate((c.x + c.dir * c.len * 0.5) * S, c.y * S * SQ); ctx.scale(R, R * SQ);
+      ctx.fillStyle = st.wedge;
+      ctx.beginPath(); ctx.moveTo(0, 0); ctx.arc(0, 0, 1, ang - 0.4, ang + 0.4); ctx.closePath(); ctx.fill();
+      ctx.restore();
+    }
 
     // whoever is reacting to someone right now, a thin ring at their feet
     ctx.lineWidth = 1.2;
@@ -2756,6 +3238,14 @@ function Plaza(opts) {
       ctx.globalAlpha = Math.min(0.75, 0.25 + a.hot / 30);
       ellipse(ctx, sx, sy, 0.46 * S * a._hv);
       ctx.stroke();
+    }
+    // whoever the car that drives itself is stopping for, ringed in its cyan
+    ctx.strokeStyle = BOT.lamp; ctx.lineWidth = 1.5;
+    for (const c of w.cars) {
+      if (c.kind !== 'av' || !c.sees || c.sees.life < 0.5 || c.brake < 0.3) continue;
+      const [sx, sy] = st.toScreen(c.sees.x, c.sees.y);
+      ctx.globalAlpha = 0.85 * c.brake;
+      ellipse(ctx, sx, sy, 0.55 * S * FIG); ctx.stroke();
     }
     ctx.globalAlpha = 1;
 
@@ -2796,8 +3286,13 @@ function Plaza(opts) {
     items.length = 0;
     for (const ob of w.obstacles) items.push(ob);
     for (const a of st.onScreen) items.push(a);
+    for (const c of w.cars) {
+      const x0 = (c.x - c.len * 0.5) * S;
+      if (x0 < st.W + 40 && x0 + c.len * S > -40) items.push(c);
+    }
     items.sort((p, q) => p.y - q.y);
     for (const it of items) {
+      if (it.len !== undefined) { car(ctx, it); continue; }
       const [sx, sy] = st.toScreen(it.x, it.y);
       if (it.vx === undefined) { (it._tree ? tree : planter)(ctx, it, sx, sy); continue; }
       ctx.globalAlpha = it.life;
