@@ -2698,7 +2698,7 @@ function shade(hex, f) {
 /* ------------------------------------------------------------------ state */
 function Plaza(opts) {
   const o = Object.assign({ w: 1280, h: 640, dpr: 1, seed: 0x5eed, density: 0.05,
-                            makeCanvas: null }, opts);
+                            makeCanvas: null, keepClear: null }, opts);
   // One soft contact shadow, drawn once and stamped under everyone. On a GPU
   // canvas a stamp costs almost nothing; one path holding every ellipse, tried
   // instead, cost more than all of them.
@@ -2738,18 +2738,23 @@ function Plaza(opts) {
     world.obstacles.forEach((ob, i) => { ob._tree = hash(i * 7 + 5) < 0.55; });
     castRobots(world);
     st.world = world; st.tap = null; st.fanAt = -1;
-    st.drones = [{ x: world.w * 0.72, y: world.h * 0.42, z: 2.5, vx: 0, vy: 0, yaw: 0, tx: 0, ty: 0, hold: 0.8 }];
+    st.drones = [
+      { k: 0, alt: 2.5, x: world.w * 0.72, y: world.h * 0.42, z: 2.5, vx: 0, vy: 0, yaw: 0, tx: 0, ty: 0, hold: 0.8 },
+      { k: 1, alt: 3.3, x: world.w * 0.9, y: world.h * 0.64, z: 3.3, vx: 0, vy: 0, yaw: 0, tx: 0, ty: 0, hold: 2.1 }
+    ];
     if (st.control.active) st.setWalking(true);
   };
 
-  /* A few robots among the crowd. They are walkers too -- their own size,
-     pace and gait -- and they avoid people by the same law people use, and
-     are avoided in turn. One dog is out with its owner. */
+  /* Robots among the crowd, two of each, in place of as many people. They
+     are walkers too -- their own size, pace and gait -- and they avoid people
+     by the same law people use, and are avoided in turn. Two of the dogs are
+     out with their owners. */
   function castRobots(world) {
     const solo = world.agents.filter((a) => a.group < 0 && a !== world.accent);
     // the street takes a strip of the frame, so a desktop plaza holds ~55
     const big = world.agents.length > 40;
-    const want = big ? ['humanoid', 'dog', 'hsr', 'pair'] : ['hsr', 'pair'];
+    const kinds = big ? ['humanoid', 'dog', 'hsr', 'pair'] : ['hsr', 'pair'];
+    const want = kinds.concat(kinds);
     let k = 0;
     const next = () => (k < solo.length ? solo[solo.length - 1 - (k++) * 3 % solo.length] : null);
     for (const kind of want) {
@@ -2865,14 +2870,17 @@ function Plaza(opts) {
   };
 
   /* A drone is not a walker: nobody on the ground has to avoid it. It flies
-     to a point, hangs there a moment, and picks another -- never over the name. */
+     to a point, hangs there a moment, and picks another -- right of the name or
+     below it, so no flight between two crosses it, and never where the other
+     drone is headed. Each draws from its own stream, so two that land in the
+     same frame still part. */
   function fly(d, dt) {
     if (d.hold > 0) {
       d.hold -= dt; d.vx *= 0.92; d.vy *= 0.92;
       if (d.hold <= 0) aimDrone(d);
     } else {
       const ex = d.tx - d.x, ey = d.ty - d.y, dist = Math.hypot(ex, ey);
-      if (dist < 0.3) d.hold = 1.5 + hash(Math.floor(st.t * 3)) * 2.5;
+      if (dist < 0.3) d.hold = 1.5 + hash(Math.floor(st.t * 3) + d.k * 7919) * 2.5;
       else {
         const want = Math.min(2.4, dist * 0.9);
         const ax = (ex / dist) * want - d.vx, ay = (ey / dist) * want - d.vy, am = Math.hypot(ax, ay);
@@ -2886,17 +2894,21 @@ function Plaza(opts) {
       da = Math.atan2(Math.sin(da), Math.cos(da));
       d.yaw += da * Math.min(1, dt * 2.5);
     }
-    d.z = 2.5 + 0.07 * Math.sin(st.t * 2.2 + d.x);
+    d.z = d.alt + 0.07 * Math.sin(st.t * 2.2 + d.x);
   }
   function aimDrone(d) {
+    // the page's copy, in hero pixels; a drone is drawn this far above its ground point
+    const c = o.keepClear ? o.keepClear() : null, lift = d.alt * st.S * KH, m = 40;
     for (let i = 0; i < 16; i++) {
-      const u = hash(Math.floor(st.t * 97) + i * 13), v = hash(Math.floor(st.t * 97) + i * 13 + 7);
+      const n = Math.floor(st.t * 97) + i * 13 + d.k * 5003, u = hash(n), v = hash(n + 7);
       const sx = (0.12 + 0.82 * u) * st.W, sy = (0.3 + 0.6 * v) * st.H;
-      if (sx < 0.46 * st.W && sy < 0.66 * st.H) continue;
-      [d.tx, d.ty] = st.toGround(sx, sy);
+      if (c && sx < c[2] + m && sy - lift < c[3] + m) continue;
+      const [gx, gy] = st.toGround(sx, sy);
+      if (st.drones.some((e) => e !== d && Math.hypot(e.tx - gx, e.ty - gy) < 4)) continue;
+      d.tx = gx; d.ty = gy;
       return;
     }
-    [d.tx, d.ty] = st.toGround(0.75 * st.W, 0.62 * st.H);
+    [d.tx, d.ty] = st.toGround((0.7 + 0.15 * d.k) * st.W, 0.62 * st.H);
   }
 
   /* --------------------------------------------------------------- draw */
@@ -3641,6 +3653,7 @@ function Plaza(opts) {
      ================================================================== */
   const root = document.documentElement;
   const hero = canvas.closest('.hero-block');
+  const copy = hero.querySelector('.hero-copy');
   const ctx = canvas.getContext('2d');
   const RM = window.matchMedia('(prefers-reduced-motion: reduce)');
   const coarse = window.matchMedia('(pointer: coarse)');
@@ -3654,6 +3667,22 @@ function Plaza(opts) {
   const STEP = 1 / 60;
   let pz = null, W = 0, H = 0, DPR = 1;
 
+  /* The copy's text and links as tight as they are drawn, in hero pixels:
+     the drones keep off it. Measured when a drone picks a spot, so a switch
+     of language or a late font is taken as it comes. */
+  function copyBox() {
+    const r = hero.getBoundingClientRect(), rg = document.createRange();
+    let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+    const add = (b) => {
+      if (!b.width) return;                      // a hidden language, or an empty node
+      x0 = Math.min(x0, b.left); y0 = Math.min(y0, b.top); x1 = Math.max(x1, b.right); y1 = Math.max(y1, b.bottom);
+    };
+    const tw = document.createTreeWalker(copy, NodeFilter.SHOW_TEXT);
+    for (let n = tw.nextNode(); n; n = tw.nextNode()) { rg.selectNodeContents(n); add(rg.getBoundingClientRect()); }
+    copy.querySelectorAll('a').forEach((a) => add(a.getBoundingClientRect()));
+    return [x0 - r.left, y0 - r.top, x1 - r.left, y1 - r.top];
+  }
+
   function build() {
     const r = hero.getBoundingClientRect();
     W = Math.round(r.width); H = Math.round(r.height);
@@ -3661,7 +3690,7 @@ function Plaza(opts) {
     DPR = Math.min(window.devicePixelRatio || 1, 2);
     canvas.width = Math.round(W * DPR); canvas.height = Math.round(H * DPR);
     const walking = pz ? pz.control.active : false;
-    pz = Plaza({ w: W, h: H, dpr: DPR, seed: SEED, density: W < 640 ? 0.06 : 0.05, makeCanvas });
+    pz = Plaza({ w: W, h: H, dpr: DPR, seed: SEED, density: W < 640 ? 0.06 : 0.05, makeCanvas, keepClear: copyBox });
     hero.style.setProperty('--gx', (2 * pz.S) + 'px');
     hero.style.setProperty('--gy', (2 * pz.S * SQ) + 'px');
     // Open mid-scene: everyone starts at a gate, so let a few seconds pass.
