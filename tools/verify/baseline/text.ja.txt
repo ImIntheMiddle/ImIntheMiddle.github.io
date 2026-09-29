@@ -13,7 +13,7 @@ H. Taketsugu · 武次 広夢
 EN
 Physical AI・人の動きの推定と予測
 武次 広夢
-Hiromu Taketsugu — 豊田工業大学 博士後期課程
+Hiromu Taketsugu — 豊田工業大学 博士後期課程 · 日本学術振興会 特別研究員 (DC1) · ACCV 2026 Technical Chair
 Email
 Scholar
 GitHub
@@ -24,10 +24,6 @@ X
 自己紹介
 00
 豊田工業大学 博士後期課程（D2）に在籍し、知能情報メディア研究室にて浮田宗伯教授の指導のもと研究を行っています。Physical AI と、人の動きの推定・予測に興味があります。
-フェローシップ
-日本学術振興会 特別研究員 (DC1) 採用率 約14%
-現在
-ACCV 2026 Technical Chair アジアコンピュータビジョン会議 · 大阪 · 2026年12月
 最新情報
 01
 2026 / 09FUNDING豊田工業大学 博士後期課程奨学金の「特別給付」に選出
@@ -38,11 +34,6 @@ ACCV 2026 Technical Chair アジアコンピュータビジョン会議 · 大�
 2026 / 03AWARDHexa-P にて 第245回 情報処理学会 CVIM研究会 奨励賞を受賞
 2025 / 08SERVICEACCV 2026 の Technical Chair に就任
 2025 / 02CVPR'25EmLoco が CVPR 2025 に採択 — arXiv
-代表論文
-CVPR 2025 · poster · 22.1% accept
-Physical Plausibility-aware Trajectory Prediction via Locomotion Embodiment
-H. Taketsugu, T. Oba, T. Maeda, S. Nobuhara, N. Ukita
-arXivProjectCodeVideoWeights
 主要論文
 全業績は Scholar へ →
 02

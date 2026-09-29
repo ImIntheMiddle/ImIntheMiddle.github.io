@@ -501,31 +501,16 @@ const DATA = {
 
   /* The grid below the hero, in reading order: each tile's width in twelfths
      and, for a tall one, how many rows it spans. A section's tile goes when
-     the section does. fellow, now and featured are not sections -- no
-     number, no nav link -- and are defined just below. It is one column at
-     every width, as on a phone; only the two highlights share a row. */
+     the section does. It is one column at every width, as on a phone. */
   layout: [
-    ['about', 12], ['fellow', 6], ['now', 6],
-    ['news', 12], ['featured', 12],
+    ['about', 12],
+    ['news', 12],
     ['work', 12],
     ['domestic', 12],
     ['awards', 12], ['funding', 12], ['service', 12],
     ['timeline', 12], ['talks', 12], ['media', 12],
     ['life', 12]
-  ],
-  highlights: {
-    fellow: { tone: 'dark',
-      label: { en: 'Fellowship', ja: 'フェローシップ' },
-      title: { en: 'JSPS Research Fellow (DC1)', ja: '日本学術振興会 特別研究員 (DC1)' },
-      note: { en: 'Japan Society for the Promotion of Science · ~14% acceptance', ja: '採用率 約14%' } },
-    now: { tone: 'accent',
-      label: { en: 'Now', ja: '現在' },
-      title: { en: 'Technical Chair, ACCV 2026', ja: 'ACCV 2026 Technical Chair' },
-      note: { en: 'Asian Conference on Computer Vision · Osaka, December 2026',
-              ja: 'アジアコンピュータビジョン会議 · 大阪 · 2026年12月' } }
-  },
-  /* The paper set large beside the news: an index into `publications`. */
-  featured: 2
+  ]
 };
 </script>
 <style>
@@ -610,7 +595,9 @@ const DATA = {
      people, so each frame is as cheap as the scene allows. */
   .hero-block {
     position: relative; overflow: hidden;
-    height: clamp(520px, 72vh, 780px);
+    /* Tall enough that the copy clears the street: the name grows with the
+       width until 108px, so the floor does too, up to where it stops. */
+    height: clamp(min(max(520px, 48vw), 672px), 72vh, 780px);
     background-color: var(--stage);
     background-image:
       linear-gradient(to right, var(--grid) 1px, transparent 1px),
@@ -752,6 +739,10 @@ const DATA = {
     color: var(--ink-dim);
     margin-top: 22px;
   }
+  /* A role never splits: a line breaks after a separator, never inside one,
+     and the line under the name keeps its own leading when it wraps. */
+  h1.name small { line-height: 1.45; }
+  h1.name small .role { white-space: nowrap; }
   .chips {
     display: flex; gap: 10px; flex-wrap: wrap;
     margin-top: 6px;
@@ -807,40 +798,13 @@ const DATA = {
     color: var(--ink-faint);
   }
   .sec-head .note + .idx { margin-left: 0; }
-  /* A tile's small caption. About wears one in place of a title: it opens
-     the page rather than being one section among the rest. */
-  .tile-label, #about .sec-head h2 {
+  /* About wears a small caption in place of a title: it opens the page
+     rather than being one section among the rest. */
+  #about .sec-head h2 {
     font: 500 11.5px/1.4 var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase;
     color: var(--ink-faint);
   }
   #about .bio-text p { font-size: 17px; color: var(--ink); }
-
-  /* The two highlights under About: one dark, one in the accent. */
-  .hi { display: flex; flex-direction: column; justify-content: space-between; gap: 18px; }
-  .hi-body { display: flex; flex-direction: column; gap: 8px; }
-  .hi-title { font: 500 clamp(19px, 1.8vw, 24px)/1.18 var(--font-display); letter-spacing: -0.01em; text-wrap: balance; }
-  .hi-note { font-size: 13.5px; line-height: 1.45; }
-  .hi-dark { background: var(--ink); color: #ffffff; }
-  .hi-dark .tile-label, .hi-dark .hi-note { color: #c9ccd8; }
-  .hi-accent { background: var(--accent); color: #ffffff; }
-  .hi-accent .tile-label, .hi-accent .hi-note { color: #e4dcff; }
-
-  /* One paper set large, its links as buttons. */
-  .featured { display: flex; flex-direction: column; gap: 12px; }
-  .featured .venue { font-family: var(--font-mono); font-size: 12.5px; color: var(--accent-text); }
-  .featured .venue .rate { color: var(--ink-faint); }
-  .featured h3 { font: 500 clamp(22px, 2.3vw, 30px)/1.2 var(--font-display); letter-spacing: -0.02em; }
-  .featured .auth { font-size: 14.5px; color: var(--ink-dim); }
-  .featured .auth .me { color: var(--ink); font-weight: 600; }
-  .featured .pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; padding-top: 12px; }
-  .featured .pills a {
-    display: inline-flex; align-items: center; min-height: 44px; padding: 0 18px; border-radius: 999px;
-    background: #efeafe; color: var(--accent-text);
-    font-family: var(--font-mono); font-size: 12.5px; text-decoration: none;
-    transition: background 0.2s, color 0.2s;
-  }
-  .featured .pills a:hover { background: var(--accent); color: #ffffff; }
-  .featured .pills a:focus-visible { border-radius: 999px; }
 
   .verify { color: var(--ink-faint); font-weight: 400; }
 
@@ -1288,11 +1252,9 @@ const DATA = {
      ==================================================================== */
   @media (max-width: 900px) {
     .tile { grid-column: span 12; grid-row: auto; }
-    .hi { grid-column: span 6; }
     .life-grid { gap: 24px 32px; }
   }
   @media (max-width: 640px) {
-    .hi { grid-column: span 12; }
     .nav-inner { padding-left: 0; padding-right: 0; gap: 12px; }
     .hero-block { height: max(560px, 86vh); }
     /* The copy spans a phone's width, so a clearing beside it would sit
@@ -1362,8 +1324,8 @@ const DATA = {
           <span class="en">Hiromu <span class="lower">Taketsugu</span></span>
           <span class="ja">武次 広夢</span>
           <small>
-            <span class="en">武次 広夢 — Ph.D. Student, Toyota Technological Institute</span>
-            <span class="ja">Hiromu Taketsugu — 豊田工業大学 博士後期課程</span>
+            <span class="en">武次 広夢 — Ph.D. Student, Toyota Technological Institute&nbsp;· <span class="role">JSPS Research Fellow (DC1)</span>&nbsp;· <span class="role">Technical Chair, ACCV 2026</span></span>
+            <span class="ja">Hiromu Taketsugu — 豊田工業大学 博士後期課程&nbsp;· <span class="role">日本学術振興会 特別研究員 (DC1)</span>&nbsp;· <span class="role">ACCV 2026 Technical Chair</span></span>
           </small>
         </h1>
         <div class="chips reveal" id="hero-chips" style="transition-delay:.12s"></div>
@@ -1556,31 +1518,11 @@ const HAS = {
 const live = DATA.sections.filter((s) => HAS[s.id] && HAS[s.id]());
 
 /* ---------- the grid below the hero ---------- */
-const hiTile = (x, span) => !x ? '' : h`
-    <div class="tile hi hi-${x.tone} reveal" style="--span:${span}">
-      <h2 class="tile-label">${t(x.label)}</h2>
-      <div class="hi-body"><span class="hi-title">${t(x.title)}</span> <span class="hi-note">${t(x.note)}</span></div>
-    </div>`;
-const featuredTile = (p, span) => !p ? '' : h`
-    <article class="tile featured reveal" style="--span:${span}">
-      <h2 class="tile-label">${t({ en: 'Featured', ja: '代表論文' })}</h2>
-      <span class="venue">${p.venue}${p.rate ? h` <span class="rate">· ${t(p.rate)}</span>` : ''}</span>
-      <h3>${p.title}</h3>
-      <div class="auth">${pubAuthors(p, DATA.me)}</div>${p.links.length ? h`
-      <div class="pills">${p.links.map((l) => ref(l, 'en'))}</div>` : ''}
-    </article>`;
-const TILE = {
-  fellow: (span) => hiTile(DATA.highlights.fellow, span),
-  now: (span) => hiTile(DATA.highlights.now, span),
-  featured: (span) => featuredTile(DATA.publications[DATA.featured], span)
-};
-
 const liveAt = new Map(live.map((s, i) => [s.id, i]));
 const placed = new Set(DATA.layout.map((l) => l[0]));
 // A section left out of the layout still shows, full width at the end.
 const layout = DATA.layout.concat(live.filter((s) => !placed.has(s.id)).map((s) => [s.id, 12]));
 const tile = ([id, span, rows]) => {
-  if (TILE[id]) return TILE[id](span);
   if (!liveAt.has(id)) {
     if (!DATA.sections.some((s) => s.id === id)) console.warn('[tpl] unknown tile in layout', id);
     return '';

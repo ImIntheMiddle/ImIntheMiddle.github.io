@@ -13,7 +13,7 @@ WalkLeave
 日本語
 Physical AI · Human Motion Estimation and Prediction
 Hiromu Taketsugu
-武次 広夢 — Ph.D. Student, Toyota Technological Institute
+武次 広夢 — Ph.D. Student, Toyota Technological Institute · JSPS Research Fellow (DC1) · Technical Chair, ACCV 2026
 Email
 Scholar
 GitHub
@@ -24,10 +24,6 @@ Tap where you want to go
 About
 00
 I am a Ph.D. student (D2) at Toyota Technological Institute, advised by Prof. Norimichi Ukita in the Intelligent Information Media Lab. My research interests are Physical AI and human motion estimation and prediction.
-Fellowship
-JSPS Research Fellow (DC1) Japan Society for the Promotion of Science · ~14% acceptance
-Now
-Technical Chair, ACCV 2026 Asian Conference on Computer Vision · Osaka, December 2026
 What's New
 01
 2026 / 09FUNDINGSelected for the special grant of TTI's Ph.D. Program Scholarship
@@ -38,11 +34,6 @@ What's New
 2026 / 03AWARDReceived the Encouragement Award at the 245th IPSJ CVIM meeting for Hexa-P
 2025 / 08SERVICEAppointed Technical Chair for ACCV 2026
 2025 / 02CVPR'25EmLoco accepted to CVPR 2025 — arXiv
-Featured
-CVPR 2025 · poster · 22.1% accept
-Physical Plausibility-aware Trajectory Prediction via Locomotion Embodiment
-H. Taketsugu, T. Oba, T. Maeda, S. Nobuhara, N. Ukita
-arXivProjectCodeVideoWeights
 Selected Publications
 Full list on Scholar →
 02
