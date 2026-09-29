@@ -86,3 +86,7 @@ console.log(`${OUT}  ${W}x${H}${WALK ? '  walking' : ''}  seed ${SEED}  ${w.agen
 console.log(`  you        ${px(you)}`);
 for (const a of w.agents) if (a._kind) console.log(`  ${a._kind.padEnd(10)} ${px(a)}`);
 for (const d of pz.drones) console.log(`  drone      ${Math.round(d.x * pz.S)},${Math.round(d.y * pz.S * SQ - d.z * pz.S * Math.sqrt(1 - SQ * SQ))}`);
+for (const c of w.cars) {
+  if (c.x < -c.len / 2 || c.x > w.w + c.len / 2) continue;         // on screen only
+  console.log(`  ${c.kind.padEnd(10)} ${px(c)}  lane ${c.lane}  ${c.v < 0.3 ? 'standing' : (c.v * 3.6).toFixed(0) + ' km/h'}${c.brake > 0.5 ? ', braking' : ''}`);
+}
