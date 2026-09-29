@@ -1350,7 +1350,7 @@ const pubAuthors = (p, me) => p.authors.map((a, i) =>
 
 const pub = (p, me) => h`
       <div class="pub reveal${p.image ? '' : ' no-media'}">${p.image ? h`<div class="thumb">${media(p.image)}</div>` : ''}<div class="pub-body">
-        <span class="venue">${p.venue}${p.rate ? h`<span class="rate"><span class="sep"> · </span>${p.rate}</span>` : ''}</span>
+        <span class="venue">${p.venue}${p.rate ? h`<span class="rate"><span class="sep"> · </span>${t(p.rate)}</span>` : ''}</span>
         <h3>${p.title}${p.titleNote ? h` <span class="verify">${p.titleNote}</span>` : ''}</h3>
         <div class="auth">${pubAuthors(p, me)}</div>
         ${p.links.length ? h`<div class="pub-links">${p.links.map((l) => ref(l, 'en'))}</div>` : ''}
@@ -1449,7 +1449,7 @@ const hiTile = (x, span) => !x ? '' : h`
 const featuredTile = (p, span) => !p ? '' : h`
     <article class="tile featured reveal" style="--span:${span}">
       <h2 class="tile-label">${t({ en: 'Featured', ja: '代表論文' })}</h2>
-      <span class="venue">${p.venue}${p.rate ? h` <span class="rate">· ${p.rate}</span>` : ''}</span>
+      <span class="venue">${p.venue}${p.rate ? h` <span class="rate">· ${t(p.rate)}</span>` : ''}</span>
       <h3>${p.title}</h3>
       <div class="auth">${pubAuthors(p, DATA.me)}</div>${p.links.length ? h`
       <div class="pills">${p.links.map((l) => ref(l, 'en'))}</div>` : ''}
