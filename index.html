@@ -71,6 +71,10 @@ const DATA = {
       text: { en: 'Completed a research internship at Woven by Toyota',
               ja: 'Woven by Toyota での研究インターンを修了' } },
 
+    { date: '2026 / 06', tag: 'SNL',
+      text: { en: 'Presented two posters at SNL 2026, TTIC: Hexa-P and Re-EmLoco',
+              ja: 'SNL 2026（TTIC）で Hexa-P と Re-EmLoco の2件をポスター発表' } },
+
     { date: '2026 / 05', tag: 'AWARD',
       text: { en: 'Received the 2026 IEEE Nagoya Section International Conference Research Presentation Award for EmLoco',
               ja: 'EmLoco にて 2026年 IEEE名古屋支部 国際会議研究発表賞を受賞' } },
@@ -92,6 +96,16 @@ const DATA = {
   me: 'H. Taketsugu',
   publications: [
     /* First-author work first, then co-authored, each newest first. */
+    { venue: 'SNL 2026', rate: 'poster',
+      title: 'Hexa-P: Physical Plausibility-aware Pre-training for Pedestrian Path Prediction',
+      authors: ['H. Taketsugu', 'S. Nobuhara', 'N. Ukita'],
+      links: [] },
+
+    { venue: 'SNL 2026', rate: 'poster',
+      title: 'Re-EmLoco: Recovering Embodied Locomotion for Degradation-Robust Pedestrian Path Prediction',
+      authors: ['H. Taketsugu', 'S. Nobuhara', 'N. Ukita'],
+      links: [] },
+
     { venue: 'CVPR 2025', rate: 'poster · 22.1% accept',
       title: 'Physical Plausibility-aware Trajectory Prediction via Locomotion Embodiment',
       authors: ['H. Taketsugu', 'T. Oba', 'T. Maeda', 'S. Nobuhara', 'N. Ukita'],
@@ -156,6 +170,40 @@ const DATA = {
       links: [ { label: 'arXiv', href: 'https://arxiv.org/abs/2505.07301' } ] }
   ],
 
+  /* Talks at meetings in Japan, titles as given there: first-author work
+     first, then co-authored, each newest first. `me` is the name to bold. */
+  domesticMe: '武次 広夢',
+  domestic: [
+    { venue: 'IPSJ CVIM', rate: '2026 / 03',
+      title: '物理シミュレーションに基づく大規模事前学習による物理的妥当性を備えた歩行者軌跡予測',
+      authors: ['武次 広夢', '延原 章平', '浮田 宗伯'], links: [] },
+    { venue: 'IPSJ CVIM', rate: '2024 / 11',
+      title: '身体化歩行動作と整合する歩行軌跡の学習安定化',
+      authors: ['武次 広夢', '延原 章平', '浮田 宗伯'], links: [] },
+    { venue: 'IEICE PRMU', rate: '2024 / 05',
+      title: '物理シミュレータを用いた姿勢整合損失による人軌跡予測',
+      authors: ['武次 広夢', '延原 章平', '浮田 宗伯'], links: [] },
+    { venue: 'IPSJ CVIM', rate: '2023 / 05',
+      title: '効率的な動画別の人体姿勢推定を目的とした能動転移学習の不確実性基準',
+      authors: ['武次 広夢', '浮田 宗伯'], links: [] },
+
+    { venue: '知能メカトロニクスWS', rate: '2026 / 09',
+      title: 'エネルギー予測器によるロボット動作のエネルギー効率向上',
+      authors: ['大谷 知暉', '武次 広夢', '浮田 宗伯'], links: [] },
+    { venue: 'IPSJ CVIM', rate: '2026 / 05',
+      title: '3次元人体構造と局所画像特徴の適応的統合による画像内外に対応した2次元人体姿勢推定',
+      authors: ['森木 勇登', '武次 広夢', '浮田 宗伯'], links: [] },
+    { venue: 'IPSJ CVIM', rate: '2026 / 05',
+      title: '階層的なグループ構造を用いたトークンの統合による効率的な軌跡予測',
+      authors: ['吉田 有輝', '武次 広夢', '浮田 宗伯'], links: [] },
+    { venue: 'IPSJ CVIM', rate: '2025 / 05',
+      title: '最適輸送と領域分割を用いた複数人姿勢推定の評価指標の提案',
+      authors: ['森木 勇登', '前田 孝泰', '武次 広夢', '大羽 剛瑠', '浮田 宗伯'], links: [] },
+    { venue: 'IPSJ CVIM', rate: '2024 / 05',
+      title: '行動ラベルを用いた対照学習におけるアンカーの密度ベース選択による人間軌跡予測',
+      authors: ['浦野 耀太', '武次 広夢', '前田 孝泰', '浮田 宗伯'], links: [] }
+  ],
+
   /* The hero chips, and nothing else. */
   links: [
     { label: 'Email', href: 'mailto:sd25502@toyota-ti.ac.jp', primary: true },
@@ -218,6 +266,11 @@ const DATA = {
       name: { en: 'Technical Chair — ACCV 2026', ja: 'Technical Chair — ACCV 2026' },
       org: { en: 'Asian Conference on Computer Vision · Osaka, December 2026',
              ja: 'アジアコンピュータビジョン会議 · 大阪 · 2026年12月' } },
+    { year: '2026',
+      name: { en: 'Organizer — {w}', ja: 'オーガナイザー — {w}' },
+      org: { en: 'International Workshop on Human Understanding, Future Prediction, and Embodied Intelligence · ACCV 2026',
+             ja: 'International Workshop on Human Understanding, Future Prediction, and Embodied Intelligence · ACCV 2026' },
+      refs: { w: { label: 'HUFPEI Workshop', href: 'https://hufpei-workshop.github.io/accv2026/' } } },
     { year: '2024 –',
       name: { en: 'Reviewer', ja: '査読者' },
       org: { en: 'T-PAMI · CVIU · CVPR 2024, 2025 · WACV 2026',
@@ -325,6 +378,7 @@ const DATA = {
     { id: 'work',     title: { en: 'Selected Publications', ja: '主要論文' }, nav: { en: 'Publications', ja: '論文' },
       note: { href: 'https://scholar.google.co.jp/citations?user=HkFAVbcAAAAJ',
               label: { en: 'Full list on Scholar →', ja: '全業績は Scholar へ →' } } },
+    { id: 'domestic', title: { en: 'Domestic Presentations', ja: '国内発表' } },
     { id: 'awards',   title: { en: 'Awards & Honors', ja: '受賞・助成' },     nav: { en: 'Awards', ja: '受賞' } },
     { id: 'service',  title: { en: 'Service & Teaching', ja: '学会活動・教育' }, nav: { en: 'Service', ja: '活動' } },
     { id: 'timeline', title: { en: 'Experience', ja: '経歴' },                nav: { en: 'Experience', ja: '経歴' } },
@@ -341,6 +395,7 @@ const DATA = {
     ['about', 6], ['fellow', 3], ['now', 3],
     ['news', 5], ['featured', 7],
     ['work', 12],
+    ['domestic', 12],
     ['awards', 7], ['service', 5],
     ['timeline', 7, 2], ['talks', 5], ['media', 5],
     ['life', 12]
@@ -357,7 +412,7 @@ const DATA = {
               ja: 'アジアコンピュータビジョン会議 · 大阪 · 2026年12月' } }
   },
   /* The paper set large beside the news: an index into `publications`. */
-  featured: 0
+  featured: 2
 };
 </script>
 <style>
@@ -1344,6 +1399,7 @@ const BODY = {
       </div>`,
 
   work: () => DATA.publications.map((p) => pub(p, DATA.me)),
+  domestic: () => DATA.domestic.map((p) => pub(p, DATA.domesticMe)),
 
   awards: () => entryList(DATA.awards),
   service: () => entryList(DATA.service),
@@ -1373,6 +1429,7 @@ const HAS = {
   about: () => DATA.about.paras.length,
   news: () => DATA.news.length,
   work: () => DATA.publications.length,
+  domestic: () => DATA.domestic.length,
   awards: () => DATA.awards.length,
   service: () => DATA.service.length,
   timeline: () => DATA.timeline.length,

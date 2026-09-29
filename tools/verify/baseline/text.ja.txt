@@ -30,6 +30,7 @@ ACCV 2026 Technical Chair アジアコンピュータビジョン会議 · 大�
 最新情報
 01
 2026 / 08INTERNWoven by Toyota での研究インターンを修了
+2026 / 06SNLSNL 2026（TTIC）で Hexa-P と Re-EmLoco の2件をポスター発表
 2026 / 05AWARDEmLoco にて 2026年 IEEE名古屋支部 国際会議研究発表賞を受賞
 2025 / 08SERVICEACCV 2026 の Technical Chair に就任
 2025 / 02CVPR'25EmLoco が CVPR 2025 に採択 — arXiv
@@ -41,6 +42,12 @@ arXivProjectCodeVideoWeights
 主要論文
 全業績は Scholar へ →
 02
+SNL 2026 · poster
+Hexa-P: Physical Plausibility-aware Pre-training for Pedestrian Path Prediction
+H. Taketsugu, S. Nobuhara, N. Ukita
+SNL 2026 · poster
+Re-EmLoco: Recovering Embodied Locomotion for Degradation-Robust Pedestrian Path Prediction
+H. Taketsugu, S. Nobuhara, N. Ukita
 CVPR 2025 · poster · 22.1% accept
 Physical Plausibility-aware Trajectory Prediction via Locomotion Embodiment
 H. Taketsugu, T. Oba, T. Maeda, S. Nobuhara, N. Ukita
@@ -80,8 +87,37 @@ arXiv preprint · co-author
 Human Motion Prediction via Test-domain-aware Adaptation with Easily-available Human Motions Estimated from Videos
 K. Shimbo, H. Taketsugu, N. Ukita
 arXiv
-受賞・助成
+国内発表
 03
+IPSJ CVIM · 2026 / 03
+物理シミュレーションに基づく大規模事前学習による物理的妥当性を備えた歩行者軌跡予測
+武次 広夢, 延原 章平, 浮田 宗伯
+IPSJ CVIM · 2024 / 11
+身体化歩行動作と整合する歩行軌跡の学習安定化
+武次 広夢, 延原 章平, 浮田 宗伯
+IEICE PRMU · 2024 / 05
+物理シミュレータを用いた姿勢整合損失による人軌跡予測
+武次 広夢, 延原 章平, 浮田 宗伯
+IPSJ CVIM · 2023 / 05
+効率的な動画別の人体姿勢推定を目的とした能動転移学習の不確実性基準
+武次 広夢, 浮田 宗伯
+知能メカトロニクスWS · 2026 / 09
+エネルギー予測器によるロボット動作のエネルギー効率向上
+大谷 知暉, 武次 広夢, 浮田 宗伯
+IPSJ CVIM · 2026 / 05
+3次元人体構造と局所画像特徴の適応的統合による画像内外に対応した2次元人体姿勢推定
+森木 勇登, 武次 広夢, 浮田 宗伯
+IPSJ CVIM · 2026 / 05
+階層的なグループ構造を用いたトークンの統合による効率的な軌跡予測
+吉田 有輝, 武次 広夢, 浮田 宗伯
+IPSJ CVIM · 2025 / 05
+最適輸送と領域分割を用いた複数人姿勢推定の評価指標の提案
+森木 勇登, 前田 孝泰, 武次 広夢, 大羽 剛瑠, 浮田 宗伯
+IPSJ CVIM · 2024 / 05
+行動ラベルを用いた対照学習におけるアンカーの密度ベース選択による人間軌跡予測
+浦野 耀太, 武次 広夢, 前田 孝泰, 浮田 宗伯
+受賞・助成
+04
 2026
 IEEE名古屋支部 国際会議研究発表賞EmLoco (CVPR 2025) に対して
 2025
@@ -97,9 +133,11 @@ Best Poster Award — MVA 2025共著 · 多人数姿勢推定の新規評価指�
 2022
 優秀修了生 — 修了生の上位1%グローバル消費インテリジェンス寄附講座 (GCI) 2021 Winter · 東京大学
 学会活動・教育
-04
+05
 2026
 Technical Chair — ACCV 2026アジアコンピュータビジョン会議 · 大阪 · 2026年12月
+2026
+オーガナイザー — HUFPEI WorkshopInternational Workshop on Human Understanding, Future Prediction, and Embodied Intelligence · ACCV 2026
 2024 –
 査読者T-PAMI · CVIU · CVPR 2024, 2025 · WACV 2026
 2023 –
@@ -109,7 +147,7 @@ Technical Chair — ACCV 2026アジアコンピュータビジョン会議 · �
 2024
 実験教材 — Experiments in Artificial Intelligence & Deep Learning豊田工業大学 · 2024年度
 経歴
-05
+06
 2025.04 –
 博士後期課程 — 情報援用工学専攻豊田工業大学 · 知能情報メディア研究室
 2025.04 –
@@ -129,7 +167,7 @@ Technical Chair — ACCV 2026アジアコンピュータビジョン会議 · �
 2019.04 – 2023.03
 学士課程 — 先端工学基礎学科 電子情報分野豊田工業大学 · 卒業時成績 83名中1位 · 副専攻 機械システム分野
 講演・発表
-06
+07
 MIRU 2025 · 招待講演Physical Plausibility-aware Trajectory Prediction via Locomotion Embodiment
 第28回 画像の認識・理解シンポジウム · 2025年7月
 Toyota フロンティア研究センター · 招待講演Human Trajectory Prediction for Social Navigation
@@ -137,7 +175,7 @@ Toyota フロンティア研究センター · 招待講演Human Trajectory Pred
 NTT 厚木研究開発センタ · 招待講演Computer Vision for Social Navigation
 日本電信電話株式会社 · 2024年5月
 メディア掲載
-07
+08
 【学生受賞】博士後期課程2年 武次広夢さんが IEEE 名古屋支部「国際会議研究発表賞」を受賞豊田工業大学2026 / 05
 © 2026 Hiromu Taketsugu · 武次 広夢
 背景は歩行者群衆のシミュレーション

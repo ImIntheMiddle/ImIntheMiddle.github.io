@@ -30,6 +30,7 @@ Technical Chair, ACCV 2026 Asian Conference on Computer Vision · Osaka, Decembe
 What's New
 01
 2026 / 08INTERNCompleted a research internship at Woven by Toyota
+2026 / 06SNLPresented two posters at SNL 2026, TTIC: Hexa-P and Re-EmLoco
 2026 / 05AWARDReceived the 2026 IEEE Nagoya Section International Conference Research Presentation Award for EmLoco
 2025 / 08SERVICEAppointed Technical Chair for ACCV 2026
 2025 / 02CVPR'25EmLoco accepted to CVPR 2025 — arXiv
@@ -41,6 +42,12 @@ arXivProjectCodeVideoWeights
 Selected Publications
 Full list on Scholar →
 02
+SNL 2026 · poster
+Hexa-P: Physical Plausibility-aware Pre-training for Pedestrian Path Prediction
+H. Taketsugu, S. Nobuhara, N. Ukita
+SNL 2026 · poster
+Re-EmLoco: Recovering Embodied Locomotion for Degradation-Robust Pedestrian Path Prediction
+H. Taketsugu, S. Nobuhara, N. Ukita
 CVPR 2025 · poster · 22.1% accept
 Physical Plausibility-aware Trajectory Prediction via Locomotion Embodiment
 H. Taketsugu, T. Oba, T. Maeda, S. Nobuhara, N. Ukita
@@ -80,8 +87,37 @@ arXiv preprint · co-author
 Human Motion Prediction via Test-domain-aware Adaptation with Easily-available Human Motions Estimated from Videos
 K. Shimbo, H. Taketsugu, N. Ukita
 arXiv
-Awards & Honors
+Domestic Presentations
 03
+IPSJ CVIM · 2026 / 03
+物理シミュレーションに基づく大規模事前学習による物理的妥当性を備えた歩行者軌跡予測
+武次 広夢, 延原 章平, 浮田 宗伯
+IPSJ CVIM · 2024 / 11
+身体化歩行動作と整合する歩行軌跡の学習安定化
+武次 広夢, 延原 章平, 浮田 宗伯
+IEICE PRMU · 2024 / 05
+物理シミュレータを用いた姿勢整合損失による人軌跡予測
+武次 広夢, 延原 章平, 浮田 宗伯
+IPSJ CVIM · 2023 / 05
+効率的な動画別の人体姿勢推定を目的とした能動転移学習の不確実性基準
+武次 広夢, 浮田 宗伯
+知能メカトロニクスWS · 2026 / 09
+エネルギー予測器によるロボット動作のエネルギー効率向上
+大谷 知暉, 武次 広夢, 浮田 宗伯
+IPSJ CVIM · 2026 / 05
+3次元人体構造と局所画像特徴の適応的統合による画像内外に対応した2次元人体姿勢推定
+森木 勇登, 武次 広夢, 浮田 宗伯
+IPSJ CVIM · 2026 / 05
+階層的なグループ構造を用いたトークンの統合による効率的な軌跡予測
+吉田 有輝, 武次 広夢, 浮田 宗伯
+IPSJ CVIM · 2025 / 05
+最適輸送と領域分割を用いた複数人姿勢推定の評価指標の提案
+森木 勇登, 前田 孝泰, 武次 広夢, 大羽 剛瑠, 浮田 宗伯
+IPSJ CVIM · 2024 / 05
+行動ラベルを用いた対照学習におけるアンカーの密度ベース選択による人間軌跡予測
+浦野 耀太, 武次 広夢, 前田 孝泰, 浮田 宗伯
+Awards & Honors
+04
 2026
 IEEE Nagoya Section International Conference Research Presentation AwardFor EmLoco (CVPR 2025)
 2025
@@ -97,9 +133,11 @@ Outstanding Student AwardThe Society of Instrument and Control Engineers (SICE)
 2022
 Outstanding Graduate — top 1% of the cohortGlobal Consumer Intelligence (GCI) 2021 Winter · The University of Tokyo
 Service & Teaching
-04
+05
 2026
 Technical Chair — ACCV 2026Asian Conference on Computer Vision · Osaka, December 2026
+2026
+Organizer — HUFPEI WorkshopInternational Workshop on Human Understanding, Future Prediction, and Embodied Intelligence · ACCV 2026
 2024 –
 ReviewerT-PAMI · CVIU · CVPR 2024, 2025 · WACV 2026
 2023 –
@@ -109,7 +147,7 @@ Course material — Experiments in Artificial Intelligence & Deep LearningToyota
 2024
 Course material — Experiments in Artificial Intelligence & Deep LearningToyota Technological Institute · 2024 academic year
 Experience
-05
+06
 2025.04 –
 Ph.D. student, Information-Aided TechnologyToyota Technological Institute · Intelligent Information Media Lab
 2025.04 –
@@ -129,7 +167,7 @@ Research InternToyota Central R&D Labs., Inc.
 2019.04 – 2023.03
 B.Eng., Electronics and Information EngineeringToyota Technological Institute · ranked 1st of 83 · minor in Mechanical Engineering
 Talks & Presentations
-06
+07
 MIRU 2025 · Invited TalkPhysical Plausibility-aware Trajectory Prediction via Locomotion Embodiment
 The 28th Meeting on Image Recognition and Understanding · July 2025
 Toyota Frontier Research Center · Invited TalkHuman Trajectory Prediction for Social Navigation
@@ -137,7 +175,7 @@ Tech meetup · May 2024
 NTT Atsugi R&D Center · Invited TalkComputer Vision for Social Navigation
 NTT, Inc. · May 2024
 Media & Coverage
-07
+08
 Doctoral student Hiromu Taketsugu receives the IEEE Nagoya Section International Conference Research Presentation AwardToyota Technological Institute2026 / 05
 © 2026 Hiromu Taketsugu · 武次 広夢
 Background: a simulated pedestrian crowd

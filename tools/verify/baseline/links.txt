@@ -19,6 +19,7 @@ https://github.com/ImIntheMiddle/EmLoco
 https://github.com/ImIntheMiddle/TTI_AI-DL_2024
 https://github.com/ImIntheMiddle/TTI_AI-DL_2025
 https://github.com/ImIntheMiddle/VATL4Pose-WACV2024
+https://hufpei-workshop.github.io/accv2026/
 https://huggingface.co/iminthemiddle/EmLoco
 https://ieeexplore.ieee.org/abstract/document/10215565
 https://iminthemiddle.github.io/EmLoco-Page/
