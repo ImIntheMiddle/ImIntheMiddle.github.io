@@ -27,7 +27,8 @@ I am a Ph.D. student (D2) at Toyota Technological Institute, advised by Prof. No
 What's New
 01
 2026 / 09FUNDINGSelected for the special grant of TTI's Ph.D. Program Scholarship
-2026 / 08INTERNCompleted a research internship at Woven by Toyota
+2026 / 08INTERNCompleted an internship at Woven by Toyota
+2026 / 07WORKSHOPOrganizing the HUFPEI Workshop at ACCV 2026
 2026 / 06SNLPresented two posters at SNL 2026, TTIC: Hexa-P and Re-EmLoco
 2026 / 05AWARDReceived the 2026 IEEE Nagoya Section International Conference Research Presentation Award for EmLoco
 2026 / 04FUNDINGSelected as a Toyoaki Scholarship Foundation scholar
@@ -178,7 +179,7 @@ Ph.D. student, Information-Aided TechnologyToyota Technological Institute · Int
 2025.04 –
 JSPS Research Fellow (DC1)Japan Society for the Promotion of Science
 2026.06 – 2026.08
-Research Intern — Machine Learning Engineer (Perception)Woven by Toyota
+Intern — Machine Learning Engineer (Perception)Woven by Toyota
 2023.10 – 2024.09
 Science WriterAI-SCHOLAR · remote · explaining recent machine-learning papers
 2023.09 – 2023.12
@@ -195,9 +196,9 @@ Talks & Presentations
 08
 MIRU 2025 · Invited TalkPhysical Plausibility-aware Trajectory Prediction via Locomotion Embodiment
 The 28th Meeting on Image Recognition and Understanding · July 2025
-Toyota Frontier Research Center · Invited TalkHuman Trajectory Prediction for Social Navigation
+Toyota Frontier Research Center · TalkHuman Trajectory Prediction for Social Navigation
 Tech meetup · May 2024
-NTT Atsugi R&D Center · Invited TalkComputer Vision for Social Navigation
+NTT Atsugi R&D Center · TalkComputer Vision for Social Navigation
 NTT, Inc. · May 2024
 Media & Coverage
 09

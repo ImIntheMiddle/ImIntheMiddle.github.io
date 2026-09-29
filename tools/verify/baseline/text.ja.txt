@@ -27,7 +27,8 @@ X
 最新情報
 01
 2026 / 09FUNDING豊田工業大学 博士後期課程奨学金の「特別給付」に選出
-2026 / 08INTERNWoven by Toyota での研究インターンを修了
+2026 / 08INTERNWoven by Toyota でのインターンを修了
+2026 / 07WORKSHOPACCV 2026 で HUFPEI Workshop をオーガナイズ
 2026 / 06SNLSNL 2026（TTIC）で Hexa-P と Re-EmLoco の2件をポスター発表
 2026 / 05AWARDEmLoco にて 2026年 IEEE名古屋支部 国際会議研究発表賞を受賞
 2026 / 04FUNDING豊秋奨学会の奨学生に採用
@@ -134,7 +135,7 @@ Best Poster Award — MVA 2025共著 · 多人数姿勢推定の新規評価指�
 2022
 優秀修了生 — 修了生の上位1%グローバル消費インテリジェンス寄附講座 (GCI) 2021 Winter · 東京大学
 2021
-先端技術開発 1位豊田工業大学 · 2021年12月
+技術開発特論 1位豊田工業大学 · 2021年12月
 2021
 自由テーマ部門 優勝 — 英語科学技術プレゼンテーションコンテスト豊田工業大学 · 2021年11月
 奨学金・助成
@@ -178,7 +179,7 @@ Technical Chair — ACCV 2026アジアコンピュータビジョン会議 · �
 2025.04 –
 日本学術振興会 特別研究員 (DC1)日本学術振興会
 2026.06 – 2026.08
-研究インターン — Machine Learning Engineer (Perception)Woven by Toyota
+インターン — Machine Learning Engineer (Perception)Woven by Toyota
 2023.10 – 2024.09
 サイエンスライターAI-SCHOLAR · リモート · 最新の機械学習論文の解説記事を執筆
 2023.09 – 2023.12
@@ -195,9 +196,9 @@ Technical Chair — ACCV 2026アジアコンピュータビジョン会議 · �
 08
 MIRU 2025 · 招待講演Physical Plausibility-aware Trajectory Prediction via Locomotion Embodiment
 第28回 画像の認識・理解シンポジウム · 2025年7月
-Toyota フロンティア研究センター · 招待講演Human Trajectory Prediction for Social Navigation
+トヨタ自動車 未来創生センター · 講演Human Trajectory Prediction for Social Navigation
 技術交流会 · 2024年5月
-NTT 厚木研究開発センタ · 招待講演Computer Vision for Social Navigation
+NTT 厚木研究開発センタ · 講演Computer Vision for Social Navigation
 日本電信電話株式会社 · 2024年5月
 メディア掲載
 09

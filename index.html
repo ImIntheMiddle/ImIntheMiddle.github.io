@@ -72,8 +72,13 @@ const DATA = {
               ja: '豊田工業大学 博士後期課程奨学金の「特別給付」に選出' } },
 
     { date: '2026 / 08', tag: 'INTERN',
-      text: { en: 'Completed a research internship at Woven by Toyota',
-              ja: 'Woven by Toyota での研究インターンを修了' } },
+      text: { en: 'Completed an internship at Woven by Toyota',
+              ja: 'Woven by Toyota でのインターンを修了' } },
+
+    { date: '2026 / 07', tag: 'WORKSHOP',
+      text: { en: 'Organizing the {w} at ACCV 2026',
+              ja: 'ACCV 2026 で {w} をオーガナイズ' },
+      refs: { w: { href: 'https://hufpei-workshop.github.io/accv2026/', label: 'HUFPEI Workshop' } } },
 
     { date: '2026 / 06', tag: 'SNL',
       text: { en: 'Presented two posters at SNL 2026, TTIC: Hexa-P and Re-EmLoco',
@@ -297,7 +302,7 @@ const DATA = {
       org: { en: 'Global Consumer Intelligence (GCI) 2021 Winter · The University of Tokyo',
              ja: 'グローバル消費インテリジェンス寄附講座 (GCI) 2021 Winter · 東京大学' } },
     { year: '2021',
-      name: { en: '1st place — Advanced Technology Development', ja: '先端技術開発 1位' },
+      name: { en: '1st place — Advanced Technology Development', ja: '技術開発特論 1位' },
       org: { en: 'Toyota Technological Institute · December 2021', ja: '豊田工業大学 · 2021年12月' } },
     { year: '2021',
       name: { en: '1st place, free-theme division — English Science and Technology Presentation Contest',
@@ -391,8 +396,8 @@ const DATA = {
       name: { en: 'JSPS Research Fellow (DC1)', ja: '日本学術振興会 特別研究員 (DC1)' },
       org: { en: 'Japan Society for the Promotion of Science', ja: '日本学術振興会' } },
     { year: '2026.06 – 2026.08',
-      name: { en: 'Research Intern — Machine Learning Engineer (Perception)',
-              ja: '研究インターン — Machine Learning Engineer (Perception)' },
+      name: { en: 'Intern — Machine Learning Engineer (Perception)',
+              ja: 'インターン — Machine Learning Engineer (Perception)' },
       org: { en: 'Woven by Toyota', ja: 'Woven by Toyota' } },
     { year: '2023.10 – 2024.09',
       name: { en: 'Science Writer', ja: 'サイエンスライター' },
@@ -430,12 +435,12 @@ const DATA = {
       title: 'Physical Plausibility-aware Trajectory Prediction via Locomotion Embodiment',
       note: { en: 'The 28th Meeting on Image Recognition and Understanding · July 2025',
               ja: '第28回 画像の認識・理解シンポジウム · 2025年7月' } },
-    { venue: { en: 'Toyota Frontier Research Center · Invited Talk',
-               ja: 'Toyota フロンティア研究センター · 招待講演' },
+    { venue: { en: 'Toyota Frontier Research Center · Talk',
+               ja: 'トヨタ自動車 未来創生センター · 講演' },
       title: 'Human Trajectory Prediction for Social Navigation',
       note: { en: 'Tech meetup · May 2024', ja: '技術交流会 · 2024年5月' } },
-    { venue: { en: 'NTT Atsugi R&D Center · Invited Talk',
-               ja: 'NTT 厚木研究開発センタ · 招待講演' },
+    { venue: { en: 'NTT Atsugi R&D Center · Talk',
+               ja: 'NTT 厚木研究開発センタ · 講演' },
       title: 'Computer Vision for Social Navigation',
       note: { en: 'NTT, Inc. · May 2024', ja: '日本電信電話株式会社 · 2024年5月' } }
   ],
@@ -1313,7 +1318,7 @@ const DATA = {
 
   <!-- ========== HERO ========== -->
   <section class="hero-block">
-    <canvas id="field" role="img" aria-label="A small plaza seen from above at an angle: people walking between trees and planters, with a humanoid robot, two robot dogs, a wheeled support robot and a drone among them, and along the bottom a street whose cars stop for people at the zebra crossings"></canvas>
+    <canvas id="field" role="img" aria-label="A small plaza seen from above at an angle: people walking between trees and planters, with humanoid robots, robot dogs, wheeled support robots and two drones among them, and along the bottom a street whose cars stop for people at the zebra crossings"></canvas>
     <div class="plaza-fade" aria-hidden="true"></div>
     <div class="wrap hero-copy">
         <div class="eyebrow reveal">
