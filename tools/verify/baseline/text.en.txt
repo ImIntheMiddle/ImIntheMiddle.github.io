@@ -32,6 +32,8 @@ What's New
 2026 / 08INTERNCompleted a research internship at Woven by Toyota
 2026 / 06SNLPresented two posters at SNL 2026, TTIC: Hexa-P and Re-EmLoco
 2026 / 05AWARDReceived the 2026 IEEE Nagoya Section International Conference Research Presentation Award for EmLoco
+2026 / 04FUNDINGSelected as a Toyoaki Scholarship Foundation scholar
+2026 / 03AWARDReceived the Encouragement Award at the 245th IPSJ CVIM meeting
 2025 / 08SERVICEAppointed Technical Chair for ACCV 2026
 2025 / 02CVPR'25EmLoco accepted to CVPR 2025 — arXiv
 Featured
@@ -89,7 +91,7 @@ K. Shimbo, H. Taketsugu, N. Ukita
 arXiv
 Domestic Presentations
 03
-IPSJ CVIM · 2026 / 03
+IPSJ CVIM · 2026 / 03 · Encouragement Award
 物理シミュレーションに基づく大規模事前学習による物理的妥当性を備えた歩行者軌跡予測
 武次 広夢, 延原 章平, 浮田 宗伯
 IPSJ CVIM · 2024 / 11
@@ -120,6 +122,10 @@ Awards & Honors
 04
 2026
 IEEE Nagoya Section International Conference Research Presentation AwardFor EmLoco (CVPR 2025)
+2026
+Toyoaki ScholarshipToyoaki Scholarship Foundation · grant scholarship from April 2026
+2026
+Encouragement Award — IPSJ CVIM245th meeting, March 2026 · one per meeting, by attendee vote
 2025
 Presentation Award — 15th Exchange Meeting between Companies and Ph.D. TalentNagoya University · August 2025
 2025
@@ -129,9 +135,15 @@ Poster Award (3rd place)JST ASPIRE Kyoto Workshop · 3rd of 48 posters
 2025
 JSPS Research Fellowship for Young Scientists (DC1)Japan Society for the Promotion of Science · ~14% acceptance
 2023
+Toyota Scholarship Fund AwardToyota Technological Institute · sole undergraduate recipient, for grades and character
+2023
 Outstanding Student AwardThe Society of Instrument and Control Engineers (SICE)
+2023
+English Excellence AwardToyota Technological Institute · top English Step-Up points at graduation
 2022
 Outstanding Graduate — top 1% of the cohortGlobal Consumer Intelligence (GCI) 2021 Winter · The University of Tokyo
+2021
+1st place, free-theme division — English Science and Technology Presentation ContestToyota Technological Institute · November 2021
 Service & Teaching
 05
 2026
@@ -177,5 +189,10 @@ NTT, Inc. · May 2024
 Media & Coverage
 08
 Doctoral student Hiromu Taketsugu receives the IEEE Nagoya Section International Conference Research Presentation AwardToyota Technological Institute2026 / 05
+Doctoral student Hiromu Taketsugu receives the Encouragement Award at the 245th IPSJ CVIM meetingToyota Technological Institute2026 / 05
+Off to TTIC: master's students on three months at the Chicago campusToyota Technological Institute · ADVANCE vol.1182024 / 05
+English Excellence Award recipients for the 2022 academic yearToyota Technological Institute2023 / 03
+TTI's athletes: Spartan Race club members finish the courseToyota Technological Institute2022 / 09
+The 13th English Science and Technology Presentation ContestToyota Technological Institute · ADVANCE vol.1112022 / 01
 © 2026 Hiromu Taketsugu · 武次 広夢
 Background: a simulated pedestrian crowd
