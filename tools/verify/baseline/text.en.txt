@@ -29,11 +29,12 @@ Now
 Technical Chair, ACCV 2026 Asian Conference on Computer Vision · Osaka, December 2026
 What's New
 01
+2026 / 09FUNDINGSelected for the special grant of TTI's Ph.D. Program Scholarship
 2026 / 08INTERNCompleted a research internship at Woven by Toyota
 2026 / 06SNLPresented two posters at SNL 2026, TTIC: Hexa-P and Re-EmLoco
 2026 / 05AWARDReceived the 2026 IEEE Nagoya Section International Conference Research Presentation Award for EmLoco
 2026 / 04FUNDINGSelected as a Toyoaki Scholarship Foundation scholar
-2026 / 03AWARDReceived the Encouragement Award at the 245th IPSJ CVIM meeting
+2026 / 03AWARDReceived the Encouragement Award at the 245th IPSJ CVIM meeting for Hexa-P
 2025 / 08SERVICEAppointed Technical Chair for ACCV 2026
 2025 / 02CVPR'25EmLoco accepted to CVPR 2025 — arXiv
 Featured
@@ -121,11 +122,13 @@ IPSJ CVIM · 2024 / 05
 Awards & Honors
 04
 2026
-IEEE Nagoya Section International Conference Research Presentation AwardFor EmLoco (CVPR 2025)
+Ph.D. Program Scholarship — Special GrantToyota Technological Institute · September 2026
 2026
+IEEE Nagoya Section International Conference Research Presentation AwardFor EmLoco (CVPR 2025)
+2026 –
 Toyoaki ScholarshipToyoaki Scholarship Foundation · grant scholarship from April 2026
 2026
-Encouragement Award — IPSJ CVIM245th meeting, March 2026 · one per meeting, by attendee vote
+Encouragement Award — 245th IPSJ CVIM MeetingFor Hexa-P · one per meeting, by attendee vote
 2025
 Presentation Award — 15th Exchange Meeting between Companies and Ph.D. TalentNagoya University · August 2025
 2025
@@ -133,17 +136,33 @@ Best Poster Award — MVA 2025Co-author · Multi-Person Pose Estimation Evaluati
 2025
 Poster Award (3rd place)JST ASPIRE Kyoto Workshop · 3rd of 48 posters
 2025
+Travel Grant — CVPR 2025International Information Science Foundation (IISF)
+2025 –
 JSPS Research Fellowship for Young Scientists (DC1)Japan Society for the Promotion of Science · ~14% acceptance
+2025 –
+Ph.D. Program ScholarshipToyota Technological Institute · full tuition and admission fee
+2024
+Travel Grant — WACV 2024NEC C&C Foundation
 2023
-Toyota Scholarship Fund AwardToyota Technological Institute · sole undergraduate recipient, for grades and character
+Tatsuro Toyoda Foundation ScholarshipToyota Technological Institute · travel and living costs for the TTIC exchange
+2023 –
+Integrated Master's and Doctoral ProgramToyota Technological Institute · a few students a year · stipend through the master's
+2023
+Toyoda Foundation Scholarship AwardToyota Technological Institute · sole undergraduate recipient, for grades and character
 2023
 Outstanding Student AwardThe Society of Instrument and Control Engineers (SICE)
 2023
-English Excellence AwardToyota Technological Institute · top English Step-Up points at graduation
+English Excellence Award (2nd place)Toyota Technological Institute · English Step-Up points at graduation
+2022
+Outstanding Presentation Award — Bachelor's ThesisToyota Technological Institute · June 2022
 2022
 Outstanding Graduate — top 1% of the cohortGlobal Consumer Intelligence (GCI) 2021 Winter · The University of Tokyo
 2021
+1st place — Advanced Technology DevelopmentToyota Technological Institute · December 2021
+2021
 1st place, free-theme division — English Science and Technology Presentation ContestToyota Technological Institute · November 2021
+2019 – 2023
+Toyoda Foundation ScholarshipToyota Technological Institute · tuition exemption through the bachelor's
 Service & Teaching
 05
 2026
