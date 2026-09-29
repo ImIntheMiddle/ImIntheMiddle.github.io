@@ -121,6 +121,8 @@ const DATA = {
     { venue: 'CVPR 2025', rate: 'poster · 22.1% accept',
       title: 'Physical Plausibility-aware Trajectory Prediction via Locomotion Embodiment',
       authors: ['H. Taketsugu', 'T. Oba', 'T. Maeda', 'S. Nobuhara', 'N. Ukita'],
+      image: { src: 'static/img/pub/emloco.webp', src2x: 'static/img/pub/emloco@2x.webp', w: 336, h: 210,
+               alt: { en: 'EmLoco teaser figure', ja: 'EmLoco のティザー図' } },
       links: [
         { label: 'arXiv', href: 'https://arxiv.org/abs/2503.17267' },
         { label: 'Project', href: 'https://iminthemiddle.github.io/EmLoco-Page/' },
@@ -132,6 +134,8 @@ const DATA = {
     { venue: 'WACV 2024', rate: 'poster · 41% accept',
       title: 'Active Transfer Learning for Efficient Video-Specific Human Pose Estimation',
       authors: ['H. Taketsugu', 'N. Ukita'],
+      image: { src: 'static/img/pub/vatl4pose.webp', src2x: 'static/img/pub/vatl4pose@2x.webp', w: 336, h: 210,
+               alt: { en: 'The active transfer learning cycle', ja: '能動転移学習の流れ' } },
       links: [
         { label: 'arXiv', href: 'https://arxiv.org/abs/2311.05041' },
         { label: 'Project', href: 'https://iminthemiddle.github.io/VATL4Pose-Page/' },
@@ -146,16 +150,22 @@ const DATA = {
     { venue: 'ECCV 2026 Workshop', rate: 'Agent in World · co-author',
       title: 'PRISM: Predictive Representation of Interaction Style and Motion for Social Robot Navigation',
       authors: ['B.-H. Chen', 'H. Taketsugu', 'N. Ukita'],
+      image: { src: 'static/img/pub/prism.webp', src2x: 'static/img/pub/prism@2x.webp', w: 336, h: 210,
+               alt: { en: 'PRISM teaser figure', ja: 'PRISM のティザー図' } },
       links: [ { label: 'arXiv', href: 'https://arxiv.org/abs/2609.18125' } ] },
 
     { venue: 'ECCV 2026 Workshop', rate: 'FCAM · co-author',
       title: 'Energy-Regularized Imitation Learning for Force- and Work-Aware Robotic Manipulation',
       authors: ['T. Otani', 'H. Taketsugu', 'N. Ukita'],
+      image: { src: 'static/img/pub/energyil.webp', src2x: 'static/img/pub/energyil@2x.webp', w: 336, h: 210,
+               alt: { en: 'An efficient and a redundant manipulation trajectory', ja: '効率的な軌道と冗長な軌道の比較' } },
       links: [ { label: 'arXiv', href: 'https://arxiv.org/abs/2609.18164' } ] },
 
     { venue: 'WACV 2026', rate: 'co-author',
       title: 'MMCM: Multimodality-aware Metric using Clustering-based Modes for Probabilistic Human Motion Prediction',
       authors: ['K. Tokoro', 'H. Taketsugu', 'N. Ukita'],
+      image: { src: 'static/img/pub/mmcm.webp', src2x: 'static/img/pub/mmcm@2x.webp', w: 336, h: 210,
+               alt: { en: 'MMCM teaser figure', ja: 'MMCM のティザー図' } },
       links: [
         { label: 'arXiv', href: 'https://arxiv.org/abs/2511.15179' },
         { label: 'PDF', href: 'https://openaccess.thecvf.com/content/WACV2026/papers/Tokoro_MMCM_Multimodality-aware_Metric_using_Clustering-based_Modes_for_Probabilistic_Human_Motion_WACV_2026_paper.pdf' }
@@ -169,16 +179,22 @@ const DATA = {
     { venue: 'MVA 2025', rate: 'Best Poster Award · co-author',
       title: 'Multi-Person Pose Estimation Evaluation Using Optimal Transportation and Improved Pose Matching',
       authors: ['T. Moriki', 'H. Taketsugu', 'N. Ukita'],
+      image: { src: 'static/img/pub/mva25.webp', src2x: 'static/img/pub/mva25@2x.webp', w: 336, h: 210,
+               alt: { en: 'Estimated poses of two people, compared', ja: '2人の推定姿勢の比較' } },
       links: [ { label: 'arXiv', href: 'https://arxiv.org/abs/2603.10398' } ] },
 
     { venue: 'MIRU 2025', rate: 'co-author',
       title: 'Selective Social-Interaction via Individual Importance for Fast Human Trajectory Prediction',
       authors: ['Y. Urano', 'H. Taketsugu', 'N. Ukita'],
+      image: { src: 'static/img/pub/miru25.webp', src2x: 'static/img/pub/miru25@2x.webp', w: 336, h: 210,
+               alt: { en: 'Trajectory prediction with and without the importance estimator', ja: '重要度推定の有無による軌跡予測の比較' } },
       links: [ { label: 'arXiv', href: 'https://arxiv.org/abs/2506.18291' } ] },
 
     { venue: 'arXiv preprint', rate: 'co-author',
       title: 'Human Motion Prediction via Test-domain-aware Adaptation with Easily-available Human Motions Estimated from Videos',
       authors: ['K. Shimbo', 'H. Taketsugu', 'N. Ukita'],
+      image: { src: 'static/img/pub/hmpadapt.webp', src2x: 'static/img/pub/hmpadapt@2x.webp', w: 336, h: 210,
+               alt: { en: 'The data used by the proposed and existing methods', ja: '提案手法と既存手法が使うデータ' } },
       links: [ { label: 'arXiv', href: 'https://arxiv.org/abs/2505.07301' } ] }
   ],
 
@@ -231,7 +247,8 @@ const DATA = {
   ],
 
   about: {
-    portrait: null,
+    portrait: { src: 'static/img/avatar.webp', src2x: 'static/img/avatar@2x.webp', w: 280, h: 280,
+                alt: { en: 'Hiromu Taketsugu', ja: '武次 広夢' } },
     paras: [
       { en: 'I am a Ph.D. student (D2) at **Toyota Technological Institute**, advised by Prof. Norimichi Ukita in the Intelligent Information Media Lab. My research interests are **Physical AI** and **human motion estimation and prediction**.',
         ja: '豊田工業大学 博士後期課程（D2）に在籍し、知能情報メディア研究室にて**浮田宗伯**教授の指導のもと研究を行っています。**Physical AI** と、**人の動きの推定・予測**に興味があります。' }
@@ -911,8 +928,8 @@ const DATA = {
   .pub .pub-body { grid-column: 2; }
   .pub.no-media { grid-template-columns: 1fr; }
   .pub.no-media .pub-body { grid-column: 1; }
-  #pub-list:has(.thumb) .pub.no-media { grid-template-columns: 168px 1fr; }
-  #pub-list:has(.thumb) .pub.no-media .pub-body { grid-column: 2; }
+  #work:has(.thumb) .pub.no-media { grid-template-columns: 168px 1fr; }
+  #work:has(.thumb) .pub.no-media .pub-body { grid-column: 2; }
   .pub .thumb {
     width: 168px;
     aspect-ratio: 16 / 10;
@@ -989,6 +1006,12 @@ const DATA = {
     .pub .venue .rate { display: block; margin-top: 4px; }
     .pub .venue .sep { display: none; }
     .pub h3 { text-wrap: wrap; text-wrap: pretty; }
+    /* Beside a thumbnail the column cannot also spare the venue one of its
+       own, so there it stays above the title. */
+    #work:has(.thumb) .pub .pub-body { display: block; }
+    #work:has(.thumb) .pub .venue { margin-bottom: 8px; }
+    #work:has(.thumb) .pub .venue .rate { display: inline; margin-top: 0; }
+    #work:has(.thumb) .pub .venue .sep { display: inline; }
   }
 
   /* ====================================================================

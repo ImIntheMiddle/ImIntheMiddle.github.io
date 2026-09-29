@@ -7,6 +7,15 @@
 #talks
 #timeline
 #work
+IMG:static/img/avatar.webp
+IMG:static/img/pub/emloco.webp
+IMG:static/img/pub/energyil.webp
+IMG:static/img/pub/hmpadapt.webp
+IMG:static/img/pub/miru25.webp
+IMG:static/img/pub/mmcm.webp
+IMG:static/img/pub/mva25.webp
+IMG:static/img/pub/prism.webp
+IMG:static/img/pub/vatl4pose.webp
 https://arxiv.org/abs/2311.05041
 https://arxiv.org/abs/2503.17267
 https://arxiv.org/abs/2505.07301
