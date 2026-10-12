@@ -167,7 +167,7 @@ Technical Chair — ACCV 2026Asian Conference on Computer Vision · Osaka, Decem
 2026
 Organizer — HUFPEI WorkshopInternational Workshop on Human Understanding, Future Prediction, and Embodied Intelligence · ACCV 2026
 2024 –
-ReviewerT-PAMI · CVIU · CVPR 2024, 2025 · WACV 2026
+ReviewerT-PAMI · CVIU · CVPR 2024, 2025 · WACV 2026, 2027 · ECCV 2026 · NeurIPS 2026 · BMVC 2026
 2023 –
 Teaching AssistantToyota Technological Institute · Face Recognition · AI & Deep Learning Experiments · Computer Graphics
 2025

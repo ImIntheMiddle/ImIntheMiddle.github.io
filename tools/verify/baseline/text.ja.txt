@@ -167,7 +167,7 @@ Technical Chair — ACCV 2026アジアコンピュータビジョン会議 · �
 2026
 オーガナイザー — HUFPEI WorkshopInternational Workshop on Human Understanding, Future Prediction, and Embodied Intelligence · ACCV 2026
 2024 –
-査読者T-PAMI · CVIU · CVPR 2024, 2025 · WACV 2026
+査読者T-PAMI · CVIU · CVPR 2024, 2025 · WACV 2026, 2027 · ECCV 2026 · NeurIPS 2026 · BMVC 2026
 2023 –
 ティーチングアシスタント豊田工業大学 · 顔認識 · 人工知能・深層学習実験 · コンピュータグラフィックス
 2025
