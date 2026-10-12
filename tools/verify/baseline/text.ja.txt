@@ -16,6 +16,7 @@ Physical AI・人の動きの推定と予測
 Hiromu Taketsugu — 豊田工業大学 博士後期課程 · 日本学術振興会 特別研究員 (DC1) · ACCV 2026 Technical Chair
 Email
 Scholar
+CV
 GitHub
 LinkedIn
 X
