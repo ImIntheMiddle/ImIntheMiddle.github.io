@@ -17,10 +17,11 @@ tools/verify/.work/
 _roadmap.md
 
 # The CV PDF prints a personal phone number; never commit it to a public repo
-Curriculum_Vitae_Hiromu_Taketsugu.pdf
 
 # CV working files; the original zip still carries the phone number
-MyCV/
+MyCV/*
+!MyCV/main.tex
+!MyCV/template.tex
 MyCV.zip
 
 # The preview tool's one dependency, installed with npm in tools/verify
