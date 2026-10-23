@@ -1,0 +1,1037 @@
+\documentclass[10pt, letterpaper]{article}
+
+% Packages:
+\usepackage[
+    ignoreheadfoot, % set margins without considering header and footer
+    top=2 cm, % seperation between body and page edge from the top
+    bottom=2 cm, % seperation between body and page edge from the bottom
+    left=2 cm, % seperation between body and page edge from the left
+    right=2 cm, % seperation between body and page edge from the right
+    footskip=1.0 cm, % seperation between body and footer
+    % showframe % for debugging 
+]{geometry} % for adjusting page geometry
+\usepackage[explicit]{titlesec} % for customizing section titles
+\usepackage{tabularx} % for making tables with fixed width columns
+\usepackage{array} % tabularx requires this
+\usepackage[dvipsnames]{xcolor} % for coloring text
+\definecolor{primaryColor}{RGB}{0, 79, 144} % define primary color
+\usepackage{enumitem} % for customizing lists
+\usepackage{fontawesome5} % for using icons
+\usepackage{amsmath} % for math
+\usepackage[
+    pdftitle={Hiromu Taketsugu's CV},
+    pdfauthor={Hiromu Taketsugu},
+    pdfcreator={LaTeX with RenderCV},
+    colorlinks=true,
+    urlcolor=primaryColor
+]{hyperref} % for links, metadata and bookmarks
+\usepackage[pscoord]{eso-pic} % for floating text on the page
+\usepackage{calc} % for calculating lengths
+\usepackage{bookmark} % for bookmarks
+\usepackage{lastpage} % for getting the total number of pages
+\usepackage{changepage} % for one column entries (adjustwidth environment)
+\usepackage{paracol} % for two and three column entries
+\usepackage{ifthen} % for conditional statements
+\usepackage{needspace} % for avoiding page brake right after the section title
+\usepackage{iftex} % check if engine is pdflatex, xetex or luatex
+
+% Ensure that generate pdf is machine readable/ATS parsable:
+\ifPDFTeX
+    \input{glyphtounicode}
+    \pdfgentounicode=1
+    \usepackage[T1]{fontenc}
+    \usepackage[utf8]{inputenc}
+    \usepackage{lmodern}
+\fi
+
+\usepackage[default, type1]{sourcesanspro} 
+
+% Some settings:
+\AtBeginEnvironment{adjustwidth}{\partopsep0pt} % remove space before adjustwidth environment
+\pagestyle{empty} % no header or footer
+\setcounter{secnumdepth}{0} % no section numbering
+\setlength{\parindent}{0pt} % no indentation
+\setlength{\topskip}{0pt} % no top skip
+\setlength{\columnsep}{0.15cm} % set column seperation
+\makeatletter
+\let\ps@customFooterStyle\ps@plain % Copy the plain style to customFooterStyle
+\patchcmd{\ps@customFooterStyle}{\thepage}{
+    \color{gray}\textit{\small Hiromu Taketsugu - Page \thepage{} of \pageref*{LastPage}}
+}{}{} % replace number by desired string
+\makeatother
+\pagestyle{customFooterStyle}
+
+\titleformat{\section}{
+    % avoid page braking right after the section title
+    \needspace{4\baselineskip}
+    % make the font size of the section title large and color it with the primary color
+    \Large\color{primaryColor}
+}{
+}{
+}{
+    % print bold title, give 0.15 cm space and draw a line of 0.8 pt thickness
+    % from the end of the title to the end of the body
+    \textbf{#1}\hspace{0.15cm}\titlerule[0.8pt]\hspace{-0.1cm}
+}[] % section title formatting
+
+\titlespacing{\section}{
+    % left space:
+    -1pt
+}{
+    % top space:
+    0.3 cm
+}{
+    % bottom space:
+    0.2 cm
+} % section title spacing
+
+% \renewcommand\labelitemi{$\vcenter{\hbox{\small$\bullet$}}$} % custom bullet points
+\newenvironment{highlights}{
+    \begin{itemize}[
+        topsep=0.10 cm,
+        parsep=0.10 cm,
+        partopsep=0pt,
+        itemsep=0pt,
+        leftmargin=0.4 cm + 10pt
+    ]
+}{
+    \end{itemize}
+} % new environment for highlights
+
+\newenvironment{highlightsforbulletentries}{
+    \begin{itemize}[
+        topsep=0.10 cm,
+        parsep=0.10 cm,
+        partopsep=0pt,
+        itemsep=0pt,
+        leftmargin=10pt
+    ]
+}{
+    \end{itemize}
+} % new environment for highlights for bullet entries
+
+
+\newenvironment{onecolentry}{
+    \begin{adjustwidth}{
+        0.2 cm + 0.00001 cm
+    }{
+        0.2 cm + 0.00001 cm
+    }
+}{
+    \end{adjustwidth}
+} % new environment for one column entries
+
+\newenvironment{twocolentry}[2][]{
+    \onecolentry
+    \def\secondColumn{#2}
+    \setcolumnwidth{\fill, 4.5 cm}
+    \begin{paracol}{2}
+}{
+    \switchcolumn \raggedleft \secondColumn
+    \end{paracol}
+    \endonecolentry
+} % new environment for two column entries
+
+\newenvironment{threecolentry}[3][]{
+    \onecolentry
+    \def\thirdColumn{#3}
+    \setcolumnwidth{1 cm, \fill, 4.5 cm}
+    \begin{paracol}{3}
+    {\raggedright #2} \switchcolumn
+}{
+    \switchcolumn \raggedleft \thirdColumn
+    \end{paracol}
+    \endonecolentry
+} % new environment for three column entries
+
+\newenvironment{header}{
+    \setlength{\topsep}{0pt}\par\kern\topsep\centering\color{primaryColor}\linespread{1.5}
+}{
+    \par\kern\topsep
+} % new environment for the header
+
+\newcommand{\placelastupdatedtext}{% \placetextbox{<horizontal pos>}{<vertical pos>}{<stuff>}
+  \AddToShipoutPictureFG*{% Add <stuff> to current page foreground
+    \put(
+        \LenToUnit{\paperwidth-2 cm-0.2 cm+0.05cm},
+        \LenToUnit{\paperheight-1.0 cm}
+    ){\vtop{{\null}\makebox[0pt][c]{
+        \small\color{gray}\textit{Last updated in October 2026}\hspace{\widthof{Last updated in October 2026}}
+    }}}%
+  }%
+}%
+
+% save the original href command in a new command:
+\let\hrefWithoutArrow\href
+
+% new command for external links:
+\renewcommand{\href}[2]{\hrefWithoutArrow{#1}{\ifthenelse{\equal{#2}{}}{ }{#2 }\raisebox{.15ex}{\footnotesize \faExternalLink*}}}
+
+
+\begin{document}
+    \newcommand{\AND}{\unskip
+        \cleaders\copy\ANDbox\hskip\wd\ANDbox
+        \ignorespaces
+    }
+    \newsavebox\ANDbox
+    \sbox\ANDbox{}
+
+    \placelastupdatedtext
+    \begin{header}
+        \fontsize{30 pt}{30 pt}
+        \textbf{Hiromu Taketsugu}
+
+        \vspace{0.3 cm}
+
+        \normalsize
+        \mbox{{\footnotesize\faMapMarker*}\hspace*{0.13cm}Nagoya, Aichi, Japan}%
+        \kern 0.25 cm%
+        \AND%
+        \kern 0.25 cm%
+        \mbox{\hrefWithoutArrow{mailto:sd25502@toyota-ti.ac.jp}{{\footnotesize\faEnvelope[regular]}\hspace*{0.13cm}sd25502@toyota-ti.ac.jp}}%
+        \kern 0.25 cm%
+        \AND%
+        \kern 0.25 cm%
+        \mbox{\hrefWithoutArrow{https://iminthemiddle.github.io/}{{\footnotesize\faLink}\hspace*{0.13cm}iminthemiddle.github.io}}%
+        \kern 0.25 cm%
+        \AND%
+        \kern 0.25 cm%
+        \mbox{\hrefWithoutArrow{https://linkedin.com/in/iminthemiddle}{{\footnotesize\faLinkedinIn}\hspace*{0.13cm}iminthemiddle}}%
+        \kern 0.25 cm%
+        \AND%
+        \kern 0.25 cm%
+        \mbox{\hrefWithoutArrow{https://github.com/ImIntheMiddle}{{\footnotesize\faGithub}\hspace*{0.13cm}ImIntheMiddle}}%
+        \kern 0.25 cm%
+        \AND%
+        \kern 0.25 cm%
+        \mbox{\hrefWithoutArrow{https://scholar.google.com/citations?user=HkFAVbcAAAAJ}{{\footnotesize\faGraduationCap}\hspace*{0.13cm}Google Scholar}}%
+    \end{header}
+
+    \vspace{0.3 cm - 0.3 cm}
+
+    \section{Research Interests}
+
+        \begin{onecolentry}
+            Physical AI, Human Motion Estimation and Prediction, Computer Vision, Autonomous Driving, Human-Robot Interaction
+        \end{onecolentry}
+
+    \section{Education}
+
+        \begin{threecolentry}{\textbf{Ph.D.}}{
+            Apr. 2025 -- Present
+        }
+            \textbf{Toyota Technological Institute}, Information-Aided Technology
+            \begin{highlights}
+                \item Advisor: Prof. Norimichi Ukita (Intelligent Information Media Lab.)
+            \end{highlights}
+        \end{threecolentry}
+
+        \vspace{0.2 cm}
+
+        \begin{threecolentry}{\textbf{M.Eng.}}{
+            Apr. 2023 -- Mar. 2025
+        }
+            \textbf{Toyota Technological Institute}, Electronics and Information Engineering
+            \begin{highlights}
+                \item GPA: 3.55/4.00 \textbf{(Ranked 2nd out of 50 students)}
+                \item Advisor: Prof. Norimichi Ukita (Intelligent Information Media Lab.)
+            \end{highlights}
+        \end{threecolentry}
+        
+        \vspace{0.2 cm}
+
+        \begin{threecolentry}{\textbf{B.Eng.}}{
+            Apr. 2019 -- Mar. 2023
+        }
+            \textbf{Toyota Technological Institute}, Electronics and Information Engineering
+            \begin{highlights}
+                \item GPA: 3.50/4.00 \textbf{(Ranked 1st out of 83 students)}
+                \item Minor in Mechanical Engineering
+                \item Advisor: Prof. Norimichi Ukita (Intelligent Information Media Lab.)
+            \end{highlights}
+        \end{threecolentry}
+
+    \section{Experience}
+
+        \begin{twocolentry}{
+            Aichi, Japan
+
+        Apr. 2025 -- Present
+        }
+            \textbf{JSPS Research Fellow (DC1)}, Japan Society for the Promotion of Science
+            \begin{highlights}
+                \item Competitive fellowship with 14\% acceptance rate
+                \item Research on human-aware robot navigation
+            \end{highlights}
+        \end{twocolentry}
+        
+        \vspace{0.2 cm}
+
+        \begin{twocolentry}{
+            Aichi, Japan
+
+        Apr. 2023 -- Present
+        }
+            \textbf{Teaching Assistant}, Toyota Technological Institute
+            \begin{highlights}
+                \item Face Recognition (Spring 2023)
+                \item Artificial Intelligence \& Deep Learning Experiments (Spring 2024, Spring 2025)
+                \item Computer Graphics (Fall 2024, Fall 2025, Fall 2026)
+            \end{highlights}
+        \end{twocolentry}
+
+        \vspace{0.2 cm}
+
+        \begin{twocolentry}{
+            Tokyo, Japan
+
+            Jun. 2026 -- Aug. 2026
+        }
+            \textbf{Machine Learning Engineer Intern (Perception)}, Woven by Toyota
+        \end{twocolentry}
+
+        \vspace{0.2 cm}
+
+        \begin{twocolentry}{
+            Aichi, Japan
+
+        Apr. 2024 --  Mar. 2025
+        }
+            \textbf{English Facilitator}, Toyota Technological Institute
+            \begin{highlights}
+                \item Facilitator of the ``Lunchtime Chatting'' sessions
+            \end{highlights}
+        \end{twocolentry}
+        
+        \vspace{0.2 cm}
+
+        \begin{twocolentry}{
+            Remote
+
+        Apr. 2022 -- Mar. 2025
+        }
+            \textbf{Teaching Assistant}, The University of Tokyo
+            \begin{highlights}
+                \item TA for GCI (Global Consumer Intelligence) machine learning course
+                \item Course attended by over 30,000 students per semester
+            \end{highlights}
+        \end{twocolentry}
+
+        \vspace{0.2 cm}
+
+        \begin{twocolentry}{
+            Remote
+
+        Oct. 2023 --  Sep. 2024
+        }
+            \textbf{Science Writer}, AI-SCHOLAR
+            \begin{highlights}
+                \item Writing articles describing the latest machine learning research papers
+            \end{highlights}
+        \end{twocolentry}
+
+        \vspace{0.2 cm}
+
+        \begin{twocolentry}{
+            Chicago, US
+
+            Sep. 2023 -- Dec. 2023
+        }
+            \textbf{Visiting Student}, Toyota Technological Institute at Chicago
+            \begin{highlights}
+                \item Advisor: Prof. Matthew R. Walter (Robot Intelligence through Perception Lab.)
+            \end{highlights}
+        \end{twocolentry}
+
+        \vspace{0.2 cm}
+
+        \begin{twocolentry}{
+            Aichi, Japan
+
+            Jan. 2022 -- Mar. 2022
+        }
+            \textbf{Research Internship}, Toyota Central R\&D Labs., Inc.
+            \begin{highlights}
+                \item Advisor: Dr. Yoshihiro Ohama
+            \end{highlights}
+        \end{twocolentry}
+
+        \vspace{0.2 cm}
+
+        \needspace{5\baselineskip}
+        \begin{twocolentry}{
+            Shizuoka, Japan
+
+            Jan. 2020 -- Feb. 2020
+        }
+            \textbf{Engineer Internship}, FUJI OOZX, Inc.
+            \begin{highlights}
+                \item Inspection of engine valves
+            \end{highlights}
+        \end{twocolentry}
+
+
+    \section{Publications}
+        \begin{samepage}
+            \begin{twocolentry}{
+                Sep. 2026
+            }
+                \textbf{PRISM: Predictive Representation of Interaction Style and Motion for Social Robot Navigation}
+
+                \vspace{0.10 cm}
+
+                \mbox{Bo-Han Chen}, \mbox{\textbf{\textit{Hiromu Taketsugu}}}, \mbox{Norimichi Ukita}
+                \vspace{0.10 cm}
+
+                \textit{European Conference on Computer Vision (ECCV) 2026 Workshop on Agent in World}
+            \end{twocolentry}
+        \end{samepage}
+
+        \vspace{0.2 cm}
+
+        \begin{samepage}
+            \begin{twocolentry}{
+                Sep. 2026
+            }
+                \textbf{Energy-Regularized Imitation Learning for Force- and Work-Aware Robotic Manipulation}
+
+                \vspace{0.10 cm}
+
+                \mbox{Toshiki Otani}, \mbox{\textbf{\textit{Hiromu Taketsugu}}}, \mbox{Norimichi Ukita}
+                \vspace{0.10 cm}
+
+                \textit{European Conference on Computer Vision (ECCV) 2026\\ Workshop on Force-Grounded, Cross-View Articulated Manipulation}
+            \end{twocolentry}
+        \end{samepage}
+
+        \vspace{0.2 cm}
+
+        \begin{samepage}
+            \begin{twocolentry}{
+                Jun. 2026
+            }
+                \textbf{Hexa-P: Physical Plausibility-aware Pre-training for Pedestrian Path Prediction}
+
+                \vspace{0.10 cm}
+
+                \mbox{\textbf{\textit{Hiromu Taketsugu}}}, \mbox{Shohei Nobuhara}, \mbox{Norimichi Ukita}
+                \vspace{0.10 cm}
+
+                \textit{10th International Workshop on Symbolic-Neural Learning (SNL), Poster}
+            \end{twocolentry}
+        \end{samepage}
+
+        \vspace{0.2 cm}
+
+        \begin{samepage}
+            \begin{twocolentry}{
+                Jun. 2026
+            }
+                \textbf{Re-EmLoco: Recovering Embodied Locomotion for Degradation-Robust Pedestrian Path Prediction}
+
+                \vspace{0.10 cm}
+
+                \mbox{\textbf{\textit{Hiromu Taketsugu}}}, \mbox{Shohei Nobuhara}, \mbox{Norimichi Ukita}
+                \vspace{0.10 cm}
+
+                \textit{10th International Workshop on Symbolic-Neural Learning (SNL), Poster}
+            \end{twocolentry}
+        \end{samepage}
+
+        \vspace{0.2 cm}
+
+        \begin{samepage}
+            \begin{twocolentry}{
+                Mar. 2026
+            }
+                \textbf{MMCM: Multimodality-aware Metric using Clustering-based Modes for Probabilistic Human Motion Prediction}
+
+                \vspace{0.10 cm}
+
+                \mbox{Kyotaro Tokoro}, \mbox{\textbf{\textit{Hiromu Taketsugu}}}, \mbox{Norimichi Ukita}
+                \vspace{0.10 cm}
+
+                \textit{IEEE/CVF Winter Conference on Applications of Computer Vision (\textbf{WACV})}
+            \end{twocolentry}
+        \end{samepage}
+        
+        \vspace{0.2 cm}
+        
+        \begin{samepage}
+            \begin{twocolentry}{
+                Oct. 2025
+            }
+                \textbf{Hierarchical Group-aware Token Merging for Efficient Trajectory Prediction}
+
+                \vspace{0.10 cm}
+
+                \mbox{Yuki Yoshida}, \mbox{Norimichi Ukita}, \mbox{\textbf{\textit{Hiromu Taketsugu}}}
+                \vspace{0.10 cm}
+
+                \textit{9th International Workshop on Symbolic-Neural Learning (SNL)}
+            \end{twocolentry}
+        \end{samepage}
+        
+        \vspace{0.2 cm}
+
+        \begin{samepage}
+            \begin{twocolentry}{
+                Jul. 2025
+            }
+                \textbf{Multi-Person Pose Estimation Evaluation Using Optimal Transportation and Improved Pose Matching}
+
+                \vspace{0.10 cm}
+
+                \mbox{Takato Moriki}, \mbox{\textbf{\textit{Hiromu Taketsugu}}}, \mbox{Norimichi Ukita}
+                \vspace{0.10 cm}
+
+                \textit{19th International Conference on Machine Vision and Applications (MVA), \textbf{Best Poster Award}}
+            \end{twocolentry}
+        \end{samepage}
+        
+        \vspace{0.2 cm}
+
+        \begin{samepage}
+            \begin{twocolentry}{
+                Jul. 2025
+            }
+                \textbf{Selective Social-Interaction via Individual Importance for Fast Human Trajectory Prediction}
+
+                \vspace{0.10 cm}
+
+                \mbox{Yota Urano}, \mbox{\textbf{\textit{Hiromu Taketsugu}}}, \mbox{Norimichi Ukita}
+                \vspace{0.10 cm}
+
+                \textit{The 28th Meeting on Image Recognition and Understanding (MIRU)}
+            \end{twocolentry}
+        \end{samepage}
+
+        \vspace{0.2 cm}
+        
+        \begin{samepage}
+            \begin{twocolentry}{
+                Jun. 2025
+            }
+                \textbf{Physical Plausibility-aware Trajectory Prediction via Locomotion Embodiment}
+
+                \vspace{0.10 cm}
+
+                \mbox{\textbf{\textit{Hiromu Taketsugu}}}, \mbox{Takeru Oba}, \mbox{Takahiro Maeda}, \mbox{Shohei Nobuhara}, \mbox{Norimichi Ukita}
+                \vspace{0.10 cm}
+
+                \textit{IEEE/CVF Conference on Computer Vision and Pattern Recognition (\textbf{CVPR})}
+            \end{twocolentry}
+        \end{samepage}
+
+        \vspace{0.2 cm}
+
+        \begin{samepage}
+            \begin{twocolentry}{
+                Apr. 2025
+            }
+                \textbf{Human Motion Prediction via Test-domain-aware Adaptation with Easily-available Human Motions Estimated from Videos}
+
+                \vspace{0.10 cm}
+
+                \mbox{Katsuki Shimbo}, \mbox{\textbf{\textit{Hiromu Taketsugu}}}, \mbox{Norimichi Ukita}
+                \vspace{0.10 cm}
+
+                \textit{arXiv preprint arXiv:2505.07301}
+            \end{twocolentry}
+        \end{samepage}
+
+        \vspace{0.2 cm}
+
+        \needspace{6\baselineskip}
+        \begin{samepage}
+            \begin{twocolentry}{
+                Jan. 2024
+            }
+                \textbf{Active Transfer Learning for Efficient Video-Specific Human Pose Estimation}
+
+                \vspace{0.10 cm}
+
+                \mbox{\textbf{\textit{Hiromu Taketsugu}}}, \mbox{Norimichi Ukita}
+                \vspace{0.10 cm}
+
+                \textit{IEEE/CVF Winter Conference on Applications of Computer Vision (\textbf{WACV})}
+            \end{twocolentry}
+        \end{samepage}
+
+        \vspace{0.2 cm}
+
+        \begin{samepage}
+            \begin{twocolentry}{
+                Aug. 2023
+            }
+                \textbf{Uncertainty Criteria in Active Transfer Learning for Efficient Video-Specific Human Pose Estimation}
+
+                \vspace{0.10 cm}
+
+                \mbox{\textbf{\textit{Hiromu Taketsugu}}}, \mbox{Norimichi Ukita}
+                \vspace{0.10 cm}
+
+                \textit{18th International Conference on Machine Vision Applications (MVA), \textbf{Oral}}
+            \end{twocolentry}
+        \end{samepage}
+
+    \section{Domestic Presentations}
+        \begin{onecolentry}
+            \textit{Titles are English translations of the original Japanese titles.}
+        \end{onecolentry}
+
+        \vspace{0.2 cm}
+
+        \begin{samepage}
+            \begin{twocolentry}{
+                Sep. 2026
+            }
+                \textbf{Improving the Energy Efficiency of Robot Motion with an Energy Predictor}
+
+                \vspace{0.10 cm}
+
+                \mbox{Toshiki Otani}, \mbox{\textbf{\textit{Hiromu Taketsugu}}}, \mbox{Norimichi Ukita}
+                \vspace{0.10 cm}
+
+                \textit{Intelligent Mechatronics Workshop}
+            \end{twocolentry}
+        \end{samepage}
+
+        \vspace{0.2 cm}
+
+        \begin{samepage}
+            \begin{twocolentry}{
+                May 2026
+            }
+                \textbf{2D Human Pose Estimation Handling Joints Inside and Outside the Image by Adaptively Integrating 3D Human Body Structure and Local Image Features}
+
+                \vspace{0.10 cm}
+
+                \mbox{Takato Moriki}, \mbox{\textbf{\textit{Hiromu Taketsugu}}}, \mbox{Norimichi Ukita}
+                \vspace{0.10 cm}
+
+                \textit{IPSJ SIG on Computer Vision and Image Media (CVIM)}
+            \end{twocolentry}
+        \end{samepage}
+
+        \vspace{0.2 cm}
+
+        \begin{samepage}
+            \begin{twocolentry}{
+                May 2026
+            }
+                \textbf{Efficient Trajectory Prediction by Token Merging with Hierarchical Group Structures}
+
+                \vspace{0.10 cm}
+
+                \mbox{Yuki Yoshida}, \mbox{\textbf{\textit{Hiromu Taketsugu}}}, \mbox{Norimichi Ukita}
+                \vspace{0.10 cm}
+
+                \textit{IPSJ SIG on Computer Vision and Image Media (CVIM)}
+            \end{twocolentry}
+        \end{samepage}
+
+        \vspace{0.2 cm}
+
+        \begin{samepage}
+            \begin{twocolentry}{
+                Mar. 2026
+            }
+                \textbf{Physically Plausible Pedestrian Trajectory Prediction via Large-scale Pre-training Based on Physics Simulation}
+
+                \vspace{0.10 cm}
+
+                \mbox{\textbf{\textit{Hiromu Taketsugu}}}, \mbox{Shohei Nobuhara}, \mbox{Norimichi Ukita}
+                \vspace{0.10 cm}
+
+                \textit{245th IPSJ SIG on Computer Vision and Image Media (CVIM) Meeting, \textbf{Encouragement Award}}
+            \end{twocolentry}
+        \end{samepage}
+
+        \vspace{0.2 cm}
+
+        \begin{samepage}
+            \begin{twocolentry}{
+                May 2025
+            }
+                \textbf{Evaluation Metric for Multi-Person Pose Estimation Using Optimal Transport and Region Partitioning}
+
+                \vspace{0.10 cm}
+
+                \mbox{Takato Moriki}, \mbox{Takahiro Maeda}, \mbox{\textbf{\textit{Hiromu Taketsugu}}}, \mbox{Takeru Oba}, \mbox{Norimichi Ukita}
+                \vspace{0.10 cm}
+
+                \textit{IPSJ SIG on Computer Vision and Image Media (CVIM)}
+            \end{twocolentry}
+        \end{samepage}
+
+        \vspace{0.2 cm}
+
+        \begin{samepage}
+            \begin{twocolentry}{
+                Nov. 2024
+            }
+                \textbf{Stabilizing the Training of Walking Trajectory Prediction Consistent with Embodied Locomotion}
+
+                \vspace{0.10 cm}
+
+                \mbox{\textbf{\textit{Hiromu Taketsugu}}}, \mbox{Shohei Nobuhara}, \mbox{Norimichi Ukita}
+                \vspace{0.10 cm}
+
+                \textit{IPSJ SIG on Computer Vision and Image Media (CVIM)}
+            \end{twocolentry}
+        \end{samepage}
+
+        \vspace{0.2 cm}
+
+        \begin{samepage}
+            \begin{twocolentry}{
+                May 2024
+            }
+                \textbf{Human Trajectory Prediction with a Pose-consistency Loss Using a Physics Simulator}
+
+                \vspace{0.10 cm}
+
+                \mbox{\textbf{\textit{Hiromu Taketsugu}}}, \mbox{Shohei Nobuhara}, \mbox{Norimichi Ukita}
+                \vspace{0.10 cm}
+
+                \textit{IEICE Technical Committee on Pattern Recognition and Media Understanding (PRMU)}
+            \end{twocolentry}
+        \end{samepage}
+
+        \vspace{0.2 cm}
+
+        \begin{samepage}
+            \begin{twocolentry}{
+                May 2024
+            }
+                \textbf{Human Trajectory Prediction via Density-based Anchor Selection in Contrastive Learning with Action Labels}
+
+                \vspace{0.10 cm}
+
+                \mbox{Yota Urano}, \mbox{\textbf{\textit{Hiromu Taketsugu}}}, \mbox{Takahiro Maeda}, \mbox{Norimichi Ukita}
+                \vspace{0.10 cm}
+
+                \textit{IPSJ SIG on Computer Vision and Image Media (CVIM)}
+            \end{twocolentry}
+        \end{samepage}
+
+        \vspace{0.2 cm}
+
+        \begin{samepage}
+            \begin{twocolentry}{
+                May 2023
+            }
+                \textbf{Uncertainty Criteria in Active Transfer Learning for Efficient Video-Specific Human Pose Estimation}
+
+                \vspace{0.10 cm}
+
+                \mbox{\textbf{\textit{Hiromu Taketsugu}}}, \mbox{Norimichi Ukita}
+                \vspace{0.10 cm}
+
+                \textit{IPSJ SIG on Computer Vision and Image Media (CVIM)}
+            \end{twocolentry}
+        \end{samepage}
+
+    \section{Awards}
+        \begin{twocolentry}{
+            Apr. 2026}
+            {
+            \textbf{International Conference Research Presentation Award}, IEEE Nagoya Section, for the presentation at CVPR 2025}
+        \end{twocolentry}
+
+        \vspace{0.2 cm}
+
+        \begin{twocolentry}{
+            Mar. 2026}
+            {
+            \textbf{Encouragement Award} at the 245th IPSJ SIG on Computer Vision and Image Media (CVIM) Meeting}
+        \end{twocolentry}
+
+        \vspace{0.2 cm}
+
+        \begin{twocolentry}{
+            Aug. 2025}
+            {
+            \textbf{Presentation Award} at the 15th Interaction between companies and PhDs in Nagoya University}
+        \end{twocolentry}
+
+        \vspace{0.2 cm}
+        
+        \begin{twocolentry}{
+            Jul. 2025}
+            {
+            \textbf{Best Poster Award} at the 19th International Conference on Machine Vision Applications (MVA)}
+        \end{twocolentry}
+
+        \vspace{0.2 cm}
+        
+        \begin{twocolentry}{
+            Jul. 2025}
+            {
+            \textbf{Poster Award (3rd place)} at Japan Science and Technology Agency (JST) Adopting Sustainable Partnerships for Innovative Research Ecosystem (ASPIRE) Kyoto Workshop}
+        \end{twocolentry}
+
+        \vspace{0.2 cm}
+        
+        \begin{twocolentry}{
+            Mar. 2023}
+            {
+            \textbf{Outstanding Student Award}, the Society of Instrument and Control Engineers (SICE)}
+        \end{twocolentry}
+
+        \vspace{0.2 cm}
+        
+        \begin{twocolentry}{
+            Mar. 2023}
+            {
+            \textbf{Toyoda Foundation Scholarship Award}, Toyota Technological Institute}
+        \end{twocolentry}
+
+        \vspace{0.2 cm}
+        
+        \begin{twocolentry}{
+            Mar. 2023}
+            {
+            \textbf{English Excellence Award (2nd place)}, Toyota Technological Institute}
+        \end{twocolentry}
+
+        \vspace{0.2 cm}
+        
+        \begin{twocolentry}{
+            Jun. 2022}
+            {
+            \textbf{Outstanding Presentation Award} for Bachelor's Thesis, Toyota Technological Institute}
+        \end{twocolentry}
+
+        \vspace{0.2 cm}
+        
+        \begin{twocolentry}{
+            Mar. 2022}
+            {
+            \textbf{Outstanding Graduates (top 1\%)} of the Global Consumer Intelligence (GCI) 2021 Winter, The University of Tokyo}
+        \end{twocolentry}
+
+        \vspace{0.2 cm}
+        
+        \begin{twocolentry}{
+            Dec. 2021}
+            {
+            \textbf{1st place} in Advanced Technology Development, Toyota Technological Institute}
+        \end{twocolentry}
+
+        \vspace{0.2 cm}
+
+        \begin{twocolentry}{
+            Nov. 2021}
+            {
+            \textbf{1st place} in the free-theme division of the English Science and Technology Presentation Contest, Toyota Technological Institute}
+        \end{twocolentry}
+
+    \section{Fellowships/Scholarships}
+        \begin{twocolentry}{
+            Sep. 2026}
+            {
+            \textbf{Toyota Technological Institute Ph.D Program Scholarship -- Special Grant}
+            \begin{highlights}
+                \item \textbf{JPY 1,200,000/year} financial support
+                \end{highlights}}
+        \end{twocolentry}
+
+        \vspace{0.2 cm}
+
+        \begin{twocolentry}{
+            2026 -- Present}
+            {
+            \textbf{Toyoaki Scholarship}
+            \begin{highlights}
+                \item \textbf{JPY 720,000/year} grant scholarship from the Toyoaki Scholarship Foundation
+                \end{highlights}}
+        \end{twocolentry}
+
+        \vspace{0.2 cm}
+
+        \begin{twocolentry}{
+            Apr. 2025 -- Mar. 2028}
+            {
+            \textbf{JSPS Research Fellowship for Young Scientists (DC1)}
+            \begin{highlights}
+                \item \textbf{JPY 200,000/month} financial support + \textbf{JPY 600,000} annual research grant
+                \end{highlights}}
+        \end{twocolentry}
+
+        \vspace{0.2 cm}
+
+        \begin{twocolentry}{
+            Apr. 2025 -- Mar. 2028}
+            {
+            \textbf{Toyota Technological Institute Ph.D Program Scholarship}
+            \begin{highlights}
+                \item Exemption from \textbf{JPY 700,000/year} tuition + \textbf{JPY 260,000} admission fee
+                \end{highlights}}
+        \end{twocolentry}
+
+        \vspace{0.2 cm}
+        
+        \begin{twocolentry}{
+            Apr. 2023 -- Mar. 2028}
+            {
+            \textbf{Integrated Master’s and Doctoral Program}
+            \begin{highlights}
+                \item \textbf{JPY 80,000/month} financial support during the Master’s program + Exemption from \textbf{JPY 260,000} admission fee
+                \end{highlights}}
+        \end{twocolentry}
+
+        \vspace{0.2 cm}
+
+        \begin{twocolentry}{
+            Jun. 2025}
+            {
+            \textbf{IISF Grants for Researchers Attending International Conferences}
+            \begin{highlights}
+                \item \textbf{JPY 240,000} travel grant upon attendance at CVPR 2025
+                \end{highlights}}
+        \end{twocolentry}
+
+        \vspace{0.2 cm}
+
+        \begin{twocolentry}{
+            Jan. 2024}
+            {
+            \textbf{NEC C\&C Foundation Grants for Researchers Attending International Conferences}
+            \begin{highlights}
+                \item \textbf{JPY 200,000} travel grant upon attendance at WACV 2024
+                \end{highlights}}
+        \end{twocolentry}
+
+        \vspace{0.2 cm}
+
+        \begin{twocolentry}{
+            Sep. 2023 -- Dec. 2023}
+            {
+            \textbf{Tatsuro Toyoda Foundation Scholarship}
+            \begin{highlights}
+                \item \textbf{JPY 1,000,000+} financial support for TTIC exchange program
+                \end{highlights}}
+        \end{twocolentry}
+
+        \vspace{0.2 cm}
+        
+        \begin{twocolentry}{
+            Apr. 2019 -- Mar. 2023}
+            {
+            \textbf{Toyoda Foundation Scholarship}
+            \begin{highlights}
+                \item \textbf{JPY 75,000 -- 300,000/semester} tuition exemption
+                \end{highlights}}
+        \end{twocolentry}
+
+    \section{Projects}
+        \begin{twocolentry}{
+            Jun. 2023 -- Aug. 2023}
+            {
+            \textbf{ICCV 2023, 4th Workshop on Visual Perception for Navigation in Human Environments: The JackRabbot Human Motion Forecasting Challenge}
+            \begin{highlights}
+                \item Participated in a competition on end-to-end Human Trajectory Forecasting as a mentor to two intern students and achieved 4th place. 
+                \end{highlights}}
+        \end{twocolentry}
+
+        \vspace{0.2 cm}
+        
+        \begin{twocolentry}{
+            Apr. 2025 -- Jul. 2025}
+            {
+            \textbf{Survey on Online Prediction}
+            \begin{highlights}
+                \item Conducted a survey on Online Prediction as a group leader in the MIRU2025 Young Researchers' Program. The survey results have been opened as GitHub repository (\href{https://github.com/ImIntheMiddle/awesome-online-prediction}{Awesome-Online-Prediction}). 
+                \end{highlights}}
+        \end{twocolentry}
+
+    \section{Academic Service}
+        \begin{onecolentry}
+            \textbf{Invited Talks:}
+            \begin{highlights}
+                \item ``Physical Plausibility-aware Trajectory Prediction via Locomotion Embodiment'', at The 28th Meeting on Image Recognition and Understanding (MIRU), Jul., 2025
+                \item ``Human Trajectory Prediction for Social Navigation'', at the tech meetup with Toyota Frontier Research Center, May, 2024
+                \item ``Computer Vision for Social Navigation'', at NTT, Inc. Atsugi R\&D Center, May, 2024
+            \end{highlights}
+        \end{onecolentry}
+
+        \begin{onecolentry}
+            \textbf{Reviewer:} Computer Vision and Image Understanding (CVIU), IEEE Transactions on Pattern Analysis and Machine Intelligence (T-PAMI), The IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR) 2024, 2025, The IEEE/CVF Winter Conference on Applications of Computer Vision (WACV) 2026, 2027, European Conference on Computer Vision (ECCV) 2026, Conference on Neural Information Processing Systems (NeurIPS) 2026, British Machine Vision Conference (BMVC) 2026
+        \end{onecolentry}
+        
+        \begin{onecolentry}
+            \textbf{Technical Chair:} Asian Conference on Computer Vision (ACCV) 2026
+        \end{onecolentry}
+
+        \begin{onecolentry}
+            \textbf{Workshop Organizer:} \href{https://hufpei-workshop.github.io/accv2026/}{HUFPEI Workshop} (International Workshop on Human Understanding, Future Prediction, and Embodied Intelligence), ACCV 2026
+        \end{onecolentry}
+
+        \begin{onecolentry}
+            \textbf{Course Material:} Experiments in Artificial Intelligence \& Deep Learning, Toyota Technological Institute \mbox{(\href{https://github.com/ImIntheMiddle/TTI_AI-DL_2024}{2024}, \href{https://github.com/ImIntheMiddle/TTI_AI-DL_2025}{2025})}
+        \end{onecolentry}
+
+    \section{Skills}
+
+        \begin{onecolentry}
+            \textbf{Programming Languages:} Python, C, HTML, CSS, MATLAB, GAS, JavaScript, Bash, SQL
+        \end{onecolentry}
+
+        \vspace{0.2 cm}
+
+        \begin{onecolentry}
+            \textbf{Frameworks \& Libraries:} PyTorch, Numpy, Pandas, OpenCV, Hydra, Weights \& Biases, Scikit-learn, and more
+        \end{onecolentry}
+
+        \vspace{0.2 cm}
+
+        \begin{onecolentry}
+            \textbf{Tools:} Linux (Ubuntu/WSL), Git, IsaacGym, LaTeX, VSCode, Docker, ROS, Vim, Unity, Conda, uv, and more
+        \end{onecolentry}
+
+        \vspace{0.2 cm}
+
+        \begin{onecolentry}
+            \textbf{Languages:} Japanese (Native), English (TOEFL iBT 82), Vietnamese (Intermediate, Duolingo 700+ day streak)
+        \end{onecolentry}
+
+        \vspace{0.2 cm}
+
+        \begin{onecolentry}
+            \textbf{Certification:}
+            \begin{highlights}
+                \item Fundamental Information Technology Engineer, Information-technology Promotion Agency (IPA), Japan
+                \item Deep Learning for GENERAL, Japan Deep Learning Association (JDLA)
+                \item Driver's license, Japan
+            \end{highlights}
+        \end{onecolentry}
+
+    \section{Leadership \& Activities}
+
+        \begin{twocolentry}{
+            Toyota Technological Institute
+
+            Apr. 2022 -- Sep. 2023
+        }
+            \textbf{Captain, Spartan Race Club Ares}
+            \begin{highlights}
+                \item Led the biggest Spartan Race team in Japan.
+            \end{highlights}
+        \end{twocolentry}
+
+        \vspace{0.2 cm}
+
+        \begin{twocolentry}{
+            Remote
+            
+            Sep. 2020 -- Present
+        }
+            \textbf{Organizer, vista}
+            \begin{highlights}
+                \item Discord community for goal setting and mutual progress tracking.
+            \end{highlights}
+        \end{twocolentry}
+
+\end{document}
