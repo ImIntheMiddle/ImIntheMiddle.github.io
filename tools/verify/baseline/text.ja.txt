@@ -27,6 +27,7 @@ X
 こんにちは！👋 豊田工業大学 博士後期課程（D2）に在籍し、知能情報メディア研究室にて浮田宗伯教授の指導のもと研究を行っています。Physical AI と、人の動きの推定・予測に興味があります。
 最新情報
 01
+2026 / 10JOURNALHexa-PがPattern Analysis and Applicationsに採択されました。
 2026 / 09FUNDING豊田工業大学 博士後期課程奨学金の「特別給付」に選出 🎓
 2026 / 08INTERNWoven by Toyota でのインターンを修了 🚗
 2026 / 07WORKSHOPワークショップ提案 HUFPEI Workshop が ACCV 2026 に採択 🎉
@@ -40,6 +41,9 @@ X
 主要論文
 全業績は Scholar へ →
 02
+Pattern Analysis and Applications 2026 · accepted
+Hexa-P: Physical Plausibility-aware Pre-training for Pedestrian Path Prediction
+H. Taketsugu, S. Nobuhara, N. Ukita
 SNL 2026 · poster
 Hexa-P: Physical Plausibility-aware Pre-training for Pedestrian Path Prediction
 H. Taketsugu, S. Nobuhara, N. Ukita

@@ -27,6 +27,7 @@ About
 Hi! 👋 I am a Ph.D. student (D2) at Toyota Technological Institute, advised by Prof. Norimichi Ukita in the Intelligent Information Media Lab. My research interests are Physical AI and human motion estimation and prediction.
 What's New
 01
+2026 / 10JOURNALOur paper, "Hexa-P: Physical Plausibility-aware Pre-training for Pedestrian Path Prediction", has been accepted for publication in Pattern Analysis and Applications.
 2026 / 09FUNDINGSelected for the special grant of TTI's Ph.D. Program Scholarship 🎓
 2026 / 08INTERNCompleted an internship at Woven by Toyota 🚗
 2026 / 07WORKSHOPOur workshop proposal, HUFPEI Workshop, was accepted at ACCV 2026 🎉
@@ -40,6 +41,9 @@ What's New
 Selected Publications
 Full list on Scholar →
 02
+Pattern Analysis and Applications 2026 · accepted
+Hexa-P: Physical Plausibility-aware Pre-training for Pedestrian Path Prediction
+H. Taketsugu, S. Nobuhara, N. Ukita
 SNL 2026 · poster
 Hexa-P: Physical Plausibility-aware Pre-training for Pedestrian Path Prediction
 H. Taketsugu, S. Nobuhara, N. Ukita
