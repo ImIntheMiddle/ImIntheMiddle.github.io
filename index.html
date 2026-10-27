@@ -115,15 +115,17 @@ const DATA = {
 
   /* Titles, authors, venues and URLs are the same in both languages, so a
      publication carries no translated fields at all. `me` is matched against
-     `authors` to bold the right name. `rate`, `titleNote`, `thumbFile` and
-     `image` are all optional — leave one out and its markup is not emitted. */
+     `authors` to bold the right name. `rate`, `titleNote`, `thumbFile`,
+     `image` and `note` are all optional — leave one out and its markup is not
+     emitted. */
   me: 'H. Taketsugu',
   publications: [
     /* First-author work first, then co-authored, each newest first. */
     { venue: '**Pattern Analysis and Applications** 2026', rate: 'accepted',
       title: 'Hexa-P: Physical Plausibility-aware Pre-training for Pedestrian Path Prediction',
       authors: ['H. Taketsugu', 'S. Nobuhara', 'N. Ukita'],
-      links: [] },
+      links: [ { label: 'PDF', href: 'static/uploads/Hexa-P_PAA_2026_accepted_manuscript.pdf', newTab: true } ],
+      note: "This version of the article has been accepted for publication, after peer review and is subject to Springer Nature's AM terms of use, but is not the Version of Record and does not reflect post-acceptance improvements, or any corrections. The Version of Record will be linked here once it is available online." },
 
     { venue: 'SNL 2026', rate: 'poster',
       title: 'Hexa-P: Physical Plausibility-aware Pre-training for Pedestrian Path Prediction',
@@ -980,6 +982,12 @@ const DATA = {
     transition: transform 0.18s cubic-bezier(0.2,0.7,0.2,1);
   }
   .pub .pub-links a:hover::after { transform: translate(1px, -1px); }
+  .pub .pub-note {
+    font-size: 12px;
+    line-height: 1.5;
+    color: var(--ink-faint);
+    margin-top: 10px;
+  }
   /* In the wide tile the venue gets a column of its own, the way a CV sets
      it: the eye runs down the venues, and each row loses a line. */
   @media (min-width: 901px) {
@@ -1449,6 +1457,7 @@ const pub = (p, me) => h`
         <h3>${p.title}${p.titleNote ? h` <span class="verify">${p.titleNote}</span>` : ''}</h3>
         <div class="auth">${pubAuthors(p, me)}</div>
         ${p.links.length ? h`<div class="pub-links">${p.links.map((l) => ref(l, 'en'))}</div>` : ''}
+        ${p.note ? h`<p class="pub-note">${p.note}</p>` : ''}
       </div></div>`;
 
 /* An image is always optional. Where one is absent the layout closes up
