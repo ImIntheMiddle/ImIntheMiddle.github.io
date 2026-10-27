@@ -8,6 +8,8 @@ Published the accepted manuscript of "Hexa-P: Physical Plausibility-aware Pre-tr
 - Added an optional `note` field to publication entries and used it for the accepted-manuscript notice that Springer Nature's self-archiving policy asks for. Springer journals allow the accepted manuscript on a personal website immediately on acceptance.
 - Updated the content baselines; the only differences were the new PDF link and the notice.
 - Merged the SNL 2026 poster entry for Hexa-P into the journal entry, which now reads "accepted · also a poster at SNL 2026". The news item for the SNL 2026 posters is unchanged.
+- Replaced the WACV 2024 (VATL4Pose) thumbnail with a looping clip from the VATL4Pose project page: the adapted half of `static/results/pt21_018903/side.mp4` there (PoseTrack21 018903, the first clip of the page's before/after slider), cropped to 16:10 and scaled to 336x210 as `static/img/pub/vatl4pose.mp4`. Its first frame is the poster `static/img/pub/vatl4pose@2x.webp`; the 1x image is removed. `media()` now renders an `image` with a `video` field as a muted looping `<video>`.
+- Added an optional `project` field to publication entries, which makes the title a link to the project page, and moved the EmLoco and VATL4Pose project pages from the "Project" link under the title to the title itself.
 
 Next: when the DOI is issued, add the publisher link and change the last sentence of the notice to "The Version of Record is available online at: https://doi.org/<DOI>".
 

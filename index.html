@@ -116,8 +116,10 @@ const DATA = {
   /* Titles, authors, venues and URLs are the same in both languages, so a
      publication carries no translated fields at all. `me` is matched against
      `authors` to bold the right name. `rate`, `titleNote`, `thumbFile`,
-     `image` and `note` are all optional — leave one out and its markup is not
-     emitted. */
+     `image`, `project` and `note` are all optional — leave one out and its
+     markup is not emitted. `project` turns the title into a link to the
+     project page. An `image` with `video` plays that clip on a loop and shows
+     `src` until it starts. */
   me: 'H. Taketsugu',
   publications: [
     /* First-author work first, then co-authored, each newest first. */
@@ -134,12 +136,12 @@ const DATA = {
 
     { venue: '**CVPR 2025**', rate: 'poster · 22.1% accept',
       title: 'Physical Plausibility-aware Trajectory Prediction via Locomotion Embodiment',
+      project: 'https://iminthemiddle.github.io/EmLoco-Page/',
       authors: ['H. Taketsugu', 'T. Oba', 'T. Maeda', 'S. Nobuhara', 'N. Ukita'],
       image: { src: 'static/img/pub/emloco.webp', src2x: 'static/img/pub/emloco@2x.webp', w: 336, h: 210,
                alt: { en: 'EmLoco teaser figure', ja: 'EmLoco のティザー図' } },
       links: [
         { label: 'arXiv', href: 'https://arxiv.org/abs/2503.17267' },
-        { label: 'Project', href: 'https://iminthemiddle.github.io/EmLoco-Page/' },
         { label: 'Code', href: 'https://github.com/ImIntheMiddle/EmLoco' },
         { label: 'Video', href: 'https://youtu.be/OYLDYinc9DU' },
         { label: 'Weights', href: 'https://huggingface.co/iminthemiddle/EmLoco' }
@@ -147,12 +149,12 @@ const DATA = {
 
     { venue: '**WACV 2024**', rate: 'poster · 41% accept',
       title: 'Active Transfer Learning for Efficient Video-Specific Human Pose Estimation',
+      project: 'https://iminthemiddle.github.io/VATL4Pose-Page/',
       authors: ['H. Taketsugu', 'N. Ukita'],
-      image: { src: 'static/img/pub/vatl4pose.webp', src2x: 'static/img/pub/vatl4pose@2x.webp', w: 336, h: 210,
-               alt: { en: 'The active transfer learning cycle', ja: '能動転移学習の流れ' } },
+      image: { video: 'static/img/pub/vatl4pose.mp4', src: 'static/img/pub/vatl4pose@2x.webp', w: 336, h: 210,
+               alt: { en: 'Poses estimated in a video after adaptation with VATL4Pose', ja: 'VATL4Poseで適応した後の動画の姿勢推定' } },
       links: [
         { label: 'arXiv', href: 'https://arxiv.org/abs/2311.05041' },
-        { label: 'Project', href: 'https://iminthemiddle.github.io/VATL4Pose-Page/' },
         { label: 'Code', href: 'https://github.com/ImIntheMiddle/VATL4Pose-WACV2024' }
       ] },
 
@@ -913,7 +915,7 @@ const DATA = {
     display: flex; align-items: center; justify-content: center;
     overflow: hidden;
   }
-  .pub .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .pub .thumb img, .pub .thumb video { width: 100%; height: 100%; object-fit: cover; display: block; }
   .pub .thumb-dead {
     font-family: var(--font-mono);
     font-size: 10.5px;
@@ -947,6 +949,8 @@ const DATA = {
     line-height: 1.32;
     color: var(--ink);
   }
+  .pub h3 a { color: inherit; text-decoration: none; transition: color 0.2s; }
+  .pub h3 a:hover { color: var(--accent-text); }
   .pub .auth {
     font-size: 13.5px;
     color: var(--ink-dim);
@@ -1449,7 +1453,7 @@ const pubAuthors = (p, me) => p.authors.map((a, i) =>
 const pub = (p, me) => h`
       <div class="pub reveal${p.image ? '' : ' no-media'}">${p.image ? h`<div class="thumb">${media(p.image)}</div>` : ''}<div class="pub-body">
         <span class="venue">${t(p.venue)}${p.rate ? h`<span class="rate"><span class="sep"> · </span>${t(p.rate)}</span>` : ''}</span>
-        <h3>${p.title}${p.titleNote ? h` <span class="verify">${p.titleNote}</span>` : ''}</h3>
+        <h3>${p.project ? h`<a href="${p.project}"${newTabAttr(p.project)}>${p.title}</a>` : p.title}${p.titleNote ? h` <span class="verify">${p.titleNote}</span>` : ''}</h3>
         <div class="auth">${pubAuthors(p, me)}</div>
         ${p.links.length ? h`<div class="pub-links">${p.links.map((l) => ref(l, 'en'))}</div>` : ''}
         ${p.note ? h`<p class="pub-note">${p.note}</p>` : ''}
@@ -1463,7 +1467,8 @@ const pub = (p, me) => h`
               src2x: 'static/img/pub/emloco@2x.webp',   // optional
               w: 1200, h: 750,                          // optional, stops reflow
               alt: { en: 'EmLoco teaser', ja: 'EmLoco の概要図' } }  */
-const media = (im) => !im ? '' : h`<img src="${im.src}"${im.src2x
+const media = (im) => !im ? '' : im.video ? h`<video src="${im.video}" poster="${im.src}" aria-label="${pickLang(im.alt, 'en')}"${
+  im.w ? h` width="${im.w}" height="${im.h}"` : ''} autoplay muted loop playsinline preload="metadata"></video>` : h`<img src="${im.src}"${im.src2x
   ? h` srcset="${im.src} 1x, ${im.src2x} 2x"` : ''} alt="${pickLang(im.alt, 'en')}"${
   im.alt && typeof im.alt === 'object' ? h` data-alt-en="${im.alt.en}" data-alt-ja="${im.alt.ja || im.alt.en}"` : ''}${
   im.w ? h` width="${im.w}" height="${im.h}"` : ''} loading="lazy" decoding="async">`;

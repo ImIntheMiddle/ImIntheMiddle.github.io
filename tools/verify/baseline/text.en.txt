@@ -52,11 +52,11 @@ H. Taketsugu, S. Nobuhara, N. Ukita
 CVPR 2025 · poster · 22.1% accept
 Physical Plausibility-aware Trajectory Prediction via Locomotion Embodiment
 H. Taketsugu, T. Oba, T. Maeda, S. Nobuhara, N. Ukita
-arXivProjectCodeVideoWeights
+arXivCodeVideoWeights
 WACV 2024 · poster · 41% accept
 Active Transfer Learning for Efficient Video-Specific Human Pose Estimation
 H. Taketsugu, N. Ukita
-arXivProjectCode
+arXivCode
 MVA 2023 · Oral
 Uncertainty Criteria in Active Transfer Learning for Efficient Video-Specific Human Pose Estimation
 H. Taketsugu, N. Ukita
