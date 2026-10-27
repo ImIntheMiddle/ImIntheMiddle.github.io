@@ -41,14 +41,11 @@ X
 主要論文
 全業績は Scholar へ →
 02
-Pattern Analysis and Applications 2026 · accepted
+Pattern Analysis and Applications 2026 · accepted · also a poster at SNL 2026
 Hexa-P: Physical Plausibility-aware Pre-training for Pedestrian Path Prediction
 H. Taketsugu, S. Nobuhara, N. Ukita
 PDF
 This version of the article has been accepted for publication, after peer review and is subject to Springer Nature's AM terms of use, but is not the Version of Record and does not reflect post-acceptance improvements, or any corrections. The Version of Record will be linked here once it is available online.
-SNL 2026 · poster
-Hexa-P: Physical Plausibility-aware Pre-training for Pedestrian Path Prediction
-H. Taketsugu, S. Nobuhara, N. Ukita
 SNL 2026 · poster
 Re-EmLoco: Recovering Embodied Locomotion for Degradation-Robust Pedestrian Path Prediction
 H. Taketsugu, S. Nobuhara, N. Ukita

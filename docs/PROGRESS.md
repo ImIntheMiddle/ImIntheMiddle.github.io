@@ -7,6 +7,7 @@ Published the accepted manuscript of "Hexa-P: Physical Plausibility-aware Pre-tr
 - Added the unmodified accepted manuscript as `static/uploads/Hexa-P_PAA_2026_accepted_manuscript.pdf` and linked it from the journal publication entry.
 - Added an optional `note` field to publication entries and used it for the accepted-manuscript notice that Springer Nature's self-archiving policy asks for. Springer journals allow the accepted manuscript on a personal website immediately on acceptance.
 - Updated the content baselines; the only differences were the new PDF link and the notice.
+- Merged the SNL 2026 poster entry for Hexa-P into the journal entry, which now reads "accepted · also a poster at SNL 2026". The news item for the SNL 2026 posters is unchanged.
 
 Next: when the DOI is issued, add the publisher link and change the last sentence of the notice to "The Version of Record is available online at: https://doi.org/<DOI>".
 
