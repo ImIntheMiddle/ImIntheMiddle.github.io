@@ -68,46 +68,62 @@
 const DATA = {
   news: [
     { date: '2026 / 10', tag: 'JOURNAL',
-      text: { en: 'Our paper, "Hexa-P: Physical Plausibility-aware Pre-training for Pedestrian Path Prediction", has been accepted for publication in Pattern Analysis and Applications.',
-              ja: 'Hexa-PがPattern Analysis and Applicationsに採択されました。' } },
+      text: { en: 'Our paper, "{paper}", has been accepted for publication in {journal}.',
+              ja: '{paper}が{journal}に採択されました。' },
+      refs: { paper: { href: 'static/uploads/Hexa-P_PAA_2026_accepted_manuscript.pdf', newTab: true,
+                       label: { en: 'Hexa-P: Physical Plausibility-aware Pre-training for Pedestrian Path Prediction', ja: 'Hexa-P' } },
+              journal: { href: 'https://link.springer.com/journal/10044', label: 'Pattern Analysis and Applications' } } },
 
     { date: '2026 / 09', tag: 'FUNDING',
       text: { en: "Selected for the special grant of TTI's Ph.D. Program Scholarship 🎓",
               ja: '豊田工業大学 博士後期課程奨学金の「特別給付」に選出 🎓' } },
 
     { date: '2026 / 08', tag: 'INTERN',
-      text: { en: 'Completed an internship at Woven by Toyota 🚗',
-              ja: 'Woven by Toyota でのインターンを修了 🚗' } },
+      text: { en: 'Completed an internship at {woven} 🚗',
+              ja: '{woven} でのインターンを修了 🚗' },
+      refs: { woven: { href: 'https://woven.toyota/', label: 'Woven by Toyota' } } },
 
     { date: '2026 / 07', tag: 'WORKSHOP',
-      text: { en: 'Our workshop proposal, {w}, was accepted at ACCV 2026 🎉',
-              ja: 'ワークショップ提案 {w} が ACCV 2026 に採択 🎉' },
-      refs: { w: { href: 'https://hufpei-workshop.github.io/accv2026/', label: 'HUFPEI Workshop' } } },
+      text: { en: 'Our workshop proposal, {w}, was accepted at {accv} 🎉',
+              ja: 'ワークショップ提案 {w} が {accv} に採択 🎉' },
+      refs: { w: { href: 'https://hufpei-workshop.github.io/accv2026/', label: 'HUFPEI Workshop' },
+              accv: { href: 'https://accv2026.org/', label: 'ACCV 2026' } } },
 
     { date: '2026 / 06', tag: 'SNL',
-      text: { en: 'Presented two posters at SNL 2026, TTIC: Hexa-P and Re-EmLoco 🪧',
-              ja: 'SNL 2026（TTIC）で Hexa-P と Re-EmLoco の2件をポスター発表 🪧' } },
+      text: { en: 'Presented two posters at {snl}, TTIC: Hexa-P and Re-EmLoco 🪧',
+              ja: '{snl}（TTIC）で Hexa-P と Re-EmLoco の2件をポスター発表 🪧' },
+      refs: { snl: { href: 'https://snl2026.ttic.edu/', label: 'SNL 2026' } } },
 
     { date: '2026 / 05', tag: 'AWARD',
-      text: { en: 'Received the 2026 IEEE Nagoya Section International Conference Research Presentation Award for EmLoco 🏆',
-              ja: 'EmLoco にて 2026年 IEEE名古屋支部 国際会議研究発表賞を受賞 🏆' } },
+      text: { en: 'Received the {award} for {emloco} 🏆',
+              ja: '{emloco} にて {award}を受賞 🏆' },
+      refs: { award: { href: 'https://www.toyota-ti.ac.jp/news/checktti/002900.html',
+                       label: { en: '2026 IEEE Nagoya Section International Conference Research Presentation Award',
+                                ja: '2026年 IEEE名古屋支部 国際会議研究発表賞' } },
+              emloco: { href: 'https://iminthemiddle.github.io/EmLoco-Page/', label: 'EmLoco' } } },
 
     { date: '2026 / 04', tag: 'FUNDING',
-      text: { en: 'Selected as a Toyoaki Scholarship Foundation scholar 🎓',
-              ja: '豊秋奨学会の奨学生に採用 🎓' } },
+      text: { en: 'Selected as a {toyoaki} scholar 🎓',
+              ja: '{toyoaki}の奨学生に採用 🎓' },
+      refs: { toyoaki: { href: 'https://toyoaki.jp/', label: { en: 'Toyoaki Scholarship Foundation', ja: '豊秋奨学会' } } } },
 
     { date: '2026 / 03', tag: 'AWARD',
-      text: { en: 'Received the Encouragement Award at the 245th IPSJ CVIM meeting for Hexa-P 🏆',
-              ja: 'Hexa-P にて 第245回 情報処理学会 CVIM研究会 奨励賞を受賞 🏆' } },
+      text: { en: 'Received the {award} for Hexa-P 🏆',
+              ja: 'Hexa-P にて {award}を受賞 🏆' },
+      refs: { award: { href: 'https://www.toyota-ti.ac.jp/news/checktti/002899.html',
+                       label: { en: 'Encouragement Award at the 245th IPSJ CVIM meeting',
+                                ja: '第245回 情報処理学会 CVIM研究会 奨励賞' } } } },
 
     { date: '2025 / 08', tag: 'SERVICE',
-      text: { en: 'Appointed Technical Chair for ACCV 2026 🛠️',
-              ja: 'ACCV 2026 の Technical Chair に就任 🛠️' } },
+      text: { en: 'Appointed Technical Chair for {accv} 🛠️',
+              ja: '{accv} の Technical Chair に就任 🛠️' },
+      refs: { accv: { href: 'https://accv2026.org/', label: 'ACCV 2026' } } },
 
     { date: "2025 / 02", tag: "CVPR'25",
-      text: { en: 'EmLoco accepted to CVPR 2025 🎉 — {arxiv}',
-              ja: 'EmLoco が CVPR 2025 に採択 🎉 — {arxiv}' },
-      refs: { arxiv: { href: 'https://arxiv.org/abs/2503.17267', label: 'arXiv' } } },
+      text: { en: '{emloco} accepted to CVPR 2025 🎉 — {arxiv}',
+              ja: '{emloco} が CVPR 2025 に採択 🎉 — {arxiv}' },
+      refs: { emloco: { href: 'https://iminthemiddle.github.io/EmLoco-Page/', label: 'EmLoco' },
+              arxiv: { href: 'https://arxiv.org/abs/2503.17267', label: 'arXiv' } } },
 
     { date: '2025 / 01', tag: 'LIFE',
       text: { en: 'Became a father 👶', ja: '父になりました 👶' } }
@@ -179,6 +195,7 @@ const DATA = {
 
     { venue: '**WACV 2026**', rate: 'co-author',
       title: 'MMCM: Multimodality-aware Metric using Clustering-based Modes for Probabilistic Human Motion Prediction',
+      project: 'https://www.toyota-ti.ac.jp/Lab/Denshi/iim/ukita/selection/WACV2026.html',
       authors: ['K. Tokoro', 'H. Taketsugu', 'N. Ukita'],
       image: { src: 'static/img/pub/mmcm.webp', src2x: 'static/img/pub/mmcm@2x.webp', w: 336, h: 210,
                alt: { en: 'MMCM teaser figure', ja: 'MMCM のティザー図' } },
@@ -949,7 +966,14 @@ const DATA = {
     line-height: 1.32;
     color: var(--ink);
   }
-  .pub h3 a { color: inherit; text-decoration: none; transition: color 0.2s; }
+  .pub h3 a {
+    color: inherit;
+    text-decoration: underline;
+    text-decoration-color: var(--accent-text);
+    text-decoration-thickness: 1.5px;
+    text-underline-offset: 0.18em;
+    transition: color 0.2s;
+  }
   .pub h3 a:hover { color: var(--accent-text); }
   .pub .auth {
     font-size: 13.5px;

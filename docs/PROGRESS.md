@@ -10,6 +10,8 @@ Published the accepted manuscript of "Hexa-P: Physical Plausibility-aware Pre-tr
 - Merged the SNL 2026 poster entry for Hexa-P into the journal entry, which now reads "accepted · also a poster at SNL 2026". The news item for the SNL 2026 posters is unchanged.
 - Replaced the WACV 2024 (VATL4Pose) thumbnail with a looping clip from the VATL4Pose project page: the adapted half of `static/results/pt21_018903/side.mp4` there (PoseTrack21 018903, the first clip of the page's before/after slider), cropped to 16:10 and scaled to 336x210 as `static/img/pub/vatl4pose.mp4`. Its first frame is the poster `static/img/pub/vatl4pose@2x.webp`; the 1x image is removed. `media()` now renders an `image` with a `video` field as a muted looping `<video>`.
 - Added an optional `project` field to publication entries, which makes the title a link to the project page, and moved the EmLoco and VATL4Pose project pages from the "Project" link under the title to the title itself.
+- Linked the MMCM title to its project page on the Ukita lab site. Titles that link to a project page now carry an accent-coloured underline.
+- Linked the news items to related pages: the Hexa-P accepted manuscript and the journal home page, Woven by Toyota, ACCV 2026, SNL 2026, the TTI news posts on the two awards, the EmLoco project page and the Toyoaki Scholarship Foundation. The TTI Ph.D. scholarship and the personal news item have no link. The rendered text is unchanged.
 
 Next: when the DOI is issued, add the publisher link and change the last sentence of the notice to "The Version of Record is available online at: https://doi.org/<DOI>".
 
