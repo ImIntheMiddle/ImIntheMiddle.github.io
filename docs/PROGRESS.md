@@ -1,5 +1,13 @@
 # Progress
 
+## 2026-10-28
+
+Linked the Hexa-P entry to its project page and weights, and gave it a looping thumbnail.
+
+- The Hexa-P title now links to the project page https://iminthemiddle.github.io/Hexa-P-Page/ (`project` field), and a "Weights" link points to https://huggingface.co/ImIntheMiddle/Hexa-P.
+- The thumbnail `static/img/pub/hexap.mp4` is the first 4 s of the overview clip of the project page (`static/results/pretraining/overview.mp4`, simulated humanoids walking random paths in IsaacGym), cropped to the 640x400 region at (640, 520), scaled to 336x210 and played at 15 fps. Its first frame at 672x420 is the poster `static/img/pub/hexap@2x.webp`.
+- Updated the content baselines; the only differences were the two new links.
+
 ## 2026-10-27
 
 Published the accepted manuscript of "Hexa-P: Physical Plausibility-aware Pre-training for Pedestrian Path Prediction" (Pattern Analysis and Applications) on the homepage.

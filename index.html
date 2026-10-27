@@ -141,8 +141,14 @@ const DATA = {
     /* First-author work first, then co-authored, each newest first. */
     { venue: '**Pattern Analysis and Applications** 2026', rate: 'accepted · also a poster at SNL 2026',
       title: 'Hexa-P: Physical Plausibility-aware Pre-training for Pedestrian Path Prediction',
+      project: 'https://iminthemiddle.github.io/Hexa-P-Page/',
       authors: ['H. Taketsugu', 'S. Nobuhara', 'N. Ukita'],
-      links: [ { label: 'PDF', href: 'static/uploads/Hexa-P_PAA_2026_accepted_manuscript.pdf', newTab: true } ],
+      image: { video: 'static/img/pub/hexap.mp4', src: 'static/img/pub/hexap@2x.webp', w: 336, h: 210,
+               alt: { en: 'Simulated humanoids walking random paths in the physics pre-training of Hexa-P', ja: 'Hexa-Pの物理シミュレーションでの事前学習で、ランダムな経路を歩く人型' } },
+      links: [
+        { label: 'PDF', href: 'static/uploads/Hexa-P_PAA_2026_accepted_manuscript.pdf', newTab: true },
+        { label: 'Weights', href: 'https://huggingface.co/ImIntheMiddle/Hexa-P' }
+      ],
       note: "This version of the article has been accepted for publication, after peer review and is subject to Springer Nature's AM terms of use, but is not the Version of Record and does not reflect post-acceptance improvements, or any corrections. The Version of Record will be linked here once it is available online." },
 
     { venue: 'SNL 2026', rate: 'poster',
