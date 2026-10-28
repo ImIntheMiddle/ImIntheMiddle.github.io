@@ -1,5 +1,9 @@
 # Progress
 
+## 2026-10-28 (internship mentors)
+
+- Added the internship mentors to the Experience entries, in the style of the TTIC entry: Igor Vasiljevic (https://ivasiljevic.github.io/, a Toyota Research Institute scientist on secondment to Woven by Toyota) for the Woven by Toyota internship, and Yoshihiro Ohama / 大濱 吉紘 (researchmap https://researchmap.jp/read0199462) for the Toyota Central R&D Labs. internship. The Japanese page reads "メンター: … 氏". `tools/verify/verify.sh` was not run, because no host had `node`; the content baselines are not updated. Not pushed, since it sits on top of the unpushed Hexa-P code link.
+
 ## 2026-10-28 (Hexa-P code link)
 
 - Added a "Code" link to https://github.com/ImIntheMiddle/Hexa-P to the Hexa-P entry, between PDF and Weights, as in the EmLoco entry. The repository is still private, so this commit is not pushed until the repository is public. `tools/verify/verify.sh` was not run, because no host had `node`.
