@@ -1,5 +1,9 @@
 # Progress
 
+## 2026-10-28 (Hexa-P code link)
+
+- Added a "Code" link to https://github.com/ImIntheMiddle/Hexa-P to the Hexa-P entry, between PDF and Weights, as in the EmLoco entry. The repository is still private, so this commit is not pushed until the repository is public. `tools/verify/verify.sh` was not run, because no host had `node`.
+
 ## 2026-10-28 (icon, notice, bio)
 
 - Added the X profile image of @ImlntheMiddle (fetched through unavatar.io, 400x400) as the site icon: `favicon.ico` at the root (48, 32, 16 px), `static/img/icon/icon-192.png` and `static/img/icon/apple-touch-icon.png` (180 px), linked from the head of both pages. Google shows a favicon in search results only after it recrawls the site.

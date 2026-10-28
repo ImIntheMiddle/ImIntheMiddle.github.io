@@ -93,6 +93,7 @@ const DATA = {
                alt: { en: 'Simulated humanoids walking random paths in the physics pre-training of Hexa-P', ja: 'Hexa-P の事前学習で、物理シミュレーションの中をランダムな経路で歩く人体モデル' } },
       links: [
         { label: 'PDF', href: 'static/uploads/Hexa-P_PAA_2026_accepted_manuscript.pdf', newTab: true },
+        { label: 'Code', href: 'https://github.com/ImIntheMiddle/Hexa-P' },
         { label: 'Weights', href: 'https://huggingface.co/ImIntheMiddle/Hexa-P' }
       ],
       note: "This version of the article has been accepted for publication, after peer review and is subject to Springer Nature's AM terms of use, but is not the Version of Record and does not reflect post-acceptance improvements, or any corrections." },
