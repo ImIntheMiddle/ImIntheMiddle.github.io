@@ -1,5 +1,15 @@
 # Progress
 
+## 2026-10-28 (icon, notice, bio)
+
+- Added the X profile image of @ImlntheMiddle (fetched through unavatar.io, 400x400) as the site icon: `favicon.ico` at the root (48, 32, 16 px), `static/img/icon/icon-192.png` and `static/img/icon/apple-touch-icon.png` (180 px), linked from the head of both pages. Google shows a favicon in search results only after it recrawls the site.
+- Shortened the Hexa-P accepted-manuscript notice to its first sentence, the wording Springer Nature asks for, and dropped the sentence that promised a link to the Version of Record.
+- Dropped 「こんにちは！👋」 from the Japanese bio, which now opens with the programme and the lab (yomiyasu check run 20261028T011222Z-eb360ccd). The English bio still opens with "Hi! 👋".
+
+These changes are verified (`tools/verify/verify.sh` passes) and pushed to main with the owner's approval.
+
+Next: when the DOI is issued, add the publisher link and append "The Version of Record is available online at: https://doi.org/<DOI>" to the notice.
+
 ## 2026-10-28 (publications page)
 
 Split the publication lists into selected papers on the home page and a full list on a new page, and pointed the Hexa-P news link at its project page.

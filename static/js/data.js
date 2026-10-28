@@ -95,7 +95,7 @@ const DATA = {
         { label: 'PDF', href: 'static/uploads/Hexa-P_PAA_2026_accepted_manuscript.pdf', newTab: true },
         { label: 'Weights', href: 'https://huggingface.co/ImIntheMiddle/Hexa-P' }
       ],
-      note: "This version of the article has been accepted for publication, after peer review and is subject to Springer Nature's AM terms of use, but is not the Version of Record and does not reflect post-acceptance improvements, or any corrections. The Version of Record will be linked here once it is available online." },
+      note: "This version of the article has been accepted for publication, after peer review and is subject to Springer Nature's AM terms of use, but is not the Version of Record and does not reflect post-acceptance improvements, or any corrections." },
 
     { date: '2026 / 06',
       venue: 'SNL 2026', rate: 'poster',
@@ -247,7 +247,7 @@ const DATA = {
                 alt: { en: 'Hiromu Taketsugu', ja: '武次 広夢' } },
     paras: [
       { en: 'Hi! 👋 I am a Ph.D. student (D2) at **Toyota Technological Institute**, advised by Prof. Norimichi Ukita in the Intelligent Information Media Lab. My research interests are **Physical AI** and **human motion estimation and prediction**.',
-        ja: 'こんにちは！👋 豊田工業大学の博士後期課程（D2）に在籍し、知能情報メディア研究室で**浮田宗伯**教授の指導のもと研究しています。**Physical AI** と**人の動きの推定・予測**に興味があります。' }
+        ja: '豊田工業大学の博士後期課程（D2）に在籍し、知能情報メディア研究室で**浮田宗伯**教授の指導のもと研究しています。**Physical AI** と**人の動きの推定・予測**に興味があります。' }
     ]
   },
 

@@ -10,7 +10,7 @@ Pattern Analysis and Applications 2026 · accepted · also a poster at SNL 2026
 Hexa-P: Physical Plausibility-aware Pre-training for Pedestrian Path Prediction
 H. Taketsugu, S. Nobuhara, N. Ukita
 PDFWeights
-This version of the article has been accepted for publication, after peer review and is subject to Springer Nature's AM terms of use, but is not the Version of Record and does not reflect post-acceptance improvements, or any corrections. The Version of Record will be linked here once it is available online.
+This version of the article has been accepted for publication, after peer review and is subject to Springer Nature's AM terms of use, but is not the Version of Record and does not reflect post-acceptance improvements, or any corrections.
 ECCV 2026 Workshop · Agent in World · co-author
 PRISM: Predictive Representation of Interaction Style and Motion for Social Robot Navigation
 B.-H. Chen, H. Taketsugu, N. Ukita
