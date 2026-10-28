@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="static/js/boot.js"></script>
+<title>Publications — Hiromu Taketsugu</title>
+<meta name="description" content="All publications and domestic presentations of Hiromu Taketsugu (武次 広夢), Ph.D. student at Toyota Technological Institute.">
+<link rel="canonical" href="https://iminthemiddle.github.io/publications.html">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#f4f5f9">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://iminthemiddle.github.io/publications.html">
+<meta property="og:title" content="Publications — Hiromu Taketsugu">
+<meta property="og:description" content="All publications and domestic presentations of Hiromu Taketsugu.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:creator" content="@ImlntheMiddle">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Manrope:wght@400;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="static/css/site.css">
+<script src="static/js/data.js"></script>
+</head>
+<body>
+<a class="skip" href="#main"><span class="en" lang="en">Skip to content</span><span class="ja" lang="ja">本文へスキップ</span></a>
+
+<header>
+  <div class="nav-inner">
+    <a class="mark" href="./">H. Taketsugu <b>·</b> 武次 広夢</a>
+    <div class="toggles">
+      <a class="pill" href="./"><span class="en" lang="en">← Home</span><span class="ja" lang="ja">← トップへ</span></a>
+      <button class="pill" id="langBtn"><span class="lang-to-ja" lang="ja">日本語</span><span class="lang-to-en">EN</span></button>
+    </div>
+  </div>
+</header>
+
+<main id="main" tabindex="-1">
+
+  <div id="sections"></div>
+
+  <footer class="page-foot">
+    <div class="wrap">
+      <div class="foot-row reveal">
+        <span>© 2026 Hiromu Taketsugu · 武次 広夢</span>
+      </div>
+    </div>
+  </footer>
+
+</main>
+
+<script src="static/js/tpl.js"></script>
+<script>
+/* ====================================================================
+   @@PAGE@@ — every publication and every domestic talk, newest first and
+   grouped by year, from the same DATA as the home page.
+   ==================================================================== */
+const SCHOLAR = DATA.links.find((l) => l.label === 'Scholar');
+
+const LISTS = [
+  { id: 'papers', title: { en: 'Publications', ja: '国際論文' }, kind: 'papers',
+    items: DATA.publications, me: DATA.me, showDate: false,
+    note: SCHOLAR && { href: SCHOLAR.href, label: { en: 'Google Scholar →', ja: 'Google Scholar →' } } },
+  { id: 'domestic', title: { en: 'Domestic Presentations', ja: '国内発表' }, kind: 'talks',
+    items: DATA.domestic, me: DATA.domesticMe, showDate: true }
+];
+
+const byYear = (list) => {
+  const years = new Map();
+  for (const p of newestFirst(list)) {
+    const y = p.date.slice(0, 4);
+    if (!years.has(y)) years.set(y, []);
+    years.get(y).push(p);
+  }
+  return [...years];
+};
+
+mount('#sections', h`
+  <div class="tiles">${LISTS.filter((l) => l.items.length).map((l) => h`
+    <section class="tile" id="${l.id}">${secHead(l.title, l.note)}${tally(l.kind, l.items, l.me)}${byYear(l.items).map(([y, ps]) => h`
+      <h3 class="pub-year reveal">${y}</h3>${ps.map((p) => pub(p, l.me, l.showDate))}`)}
+    </section>`)}
+  </div>`);
+
+// The lists are built by script, so a link such as #domestic is followed here.
+if (location.hash) document.getElementById(location.hash.slice(1))?.scrollIntoView({ behavior: 'instant' });
+</script>
+<script src="static/js/ui.js"></script>
+</body>
+</html>

@@ -1,0 +1,808 @@
+/* ====================================================================
+   Studio Minimal × Depth Sim — design tokens
+   ==================================================================== */
+/* One palette. The page is dark, full stop -- the simulation is a drawing
+   in light on a dark ground and it is the reason the page looks the way it
+   does; a second, paler version of it was never as good. */
+/* The ground went from a warm brown-black to a near-neutral one, because
+   the crowd is now coloured and a warm ground tints every hue in it. The
+   side effect is more headroom everywhere: the faintest text on the page
+   is 5.2:1 against the lightest surface, where before it was 4.5:1.
+   Ratios in the comments are against --paper. */
+:root {
+  /* Light. The crowd used to be light drawn in the dark; it is ink on
+     paper now, and every ratio below is measured against --paper. */
+  --stage: #f4f5f9;              /* the ground the crowd walks on */
+  --stage-rgb: 244, 245, 249;
+  --paper: #ffffff;              /* content, lifted off the ground */
+  --paper-rgb: 255, 255, 255;
+  --paper-2: #eceef6;            /* image slots */
+  --ink: #15171f;                /* 17.9:1 */
+  --ink-rgb: 21, 23, 31;
+  --ink-dim: #565b69;            /* 6.78:1 */
+  --ink-faint: #656b7a;          /* 5.31:1 */
+  --ink-soft-rgb: 86, 91, 105;
+  --accent: #5b2cf0;             /* 6.86:1 -- legible as text too */
+  --accent-rgb: 91, 44, 240;
+  --accent-text: #4c1fd6;        /* 8.49:1 */
+  --hairline: rgba(24, 28, 48, 0.13);
+  --hairline-soft: rgba(24, 28, 48, 0.07);
+  --radius: 24px;
+  --grid: #e8eaf1;                /* the plaza's floor tiles */
+
+  /* Families, motion and measure, named once instead of 38 times. */
+  /* Japanese comes from the system. Noto Sans JP over the wire was 2.7 MB
+     across 140 requests, and the stylesheet declaring it was 462 KB of
+     render-blocking CSS -- 496 @font-face rules. Worse, both languages sit
+     in the DOM at once so the toggle is instant, which means every one of
+     those files downloaded for a reader who never switched. Every platform
+     this page runs on already ships a good Japanese sans.
+     Latin comes from the two faces below: the browser picks per character,
+     so Latin first and a Japanese face after gives each script its own. */
+  --font-ja: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic Medium",
+             "Yu Gothic", "Noto Sans JP", sans-serif;
+  --font-display: "Space Grotesk", var(--font-ja);
+  --font-sans: "Manrope", var(--font-ja);
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+  --frame: 860px;                /* header, hero copy, tiles and footer */
+  --gutter: clamp(14px, 3vw, 40px);  /* window edge to the tiles */
+  --pad: clamp(20px, 2.6vw, 34px);   /* inside a tile, and inside the header,
+                                        hero and footer, so all text shares
+                                        one left edge */
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--stage);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  transition: background 0.4s ease, color 0.4s ease;
+}
+a { color: inherit; }
+
+/* language visibility */
+[data-lang="en"] .ja { display: none !important; }
+[data-lang="ja"] .en { display: none !important; }
+
+/* ====================================================================
+   The plaza -- the hero, and only the hero
+   ==================================================================== */
+/* The ground's tile grid and the fade at its edges are CSS: static, drawn
+   once by the compositor. The canvas over them only clears and draws the
+   people, so each frame is as cheap as the scene allows. */
+.hero-block {
+  position: relative; overflow: hidden;
+  /* Tall enough that the copy clears the street: the name grows with the
+     width until 108px, so the floor does too, up to where it stops. */
+  height: clamp(min(max(520px, 48vw), 672px), 72vh, 780px);
+  background-color: var(--stage);
+  background-image:
+    linear-gradient(to right, var(--grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid) 1px, transparent 1px);
+  background-size: var(--gx, 64px) var(--gy, 36px);
+}
+#field { position: absolute; inset: 0; width: 100%; height: 100%; display: block;
+         touch-action: manipulation; }
+.plaza-fade { position: absolute; inset: 0; pointer-events: none; z-index: 1;
+  background:
+    linear-gradient(to bottom, var(--stage), rgba(var(--stage-rgb), 0) 9%, rgba(var(--stage-rgb), 0) 88%, var(--stage)),
+    linear-gradient(to right, var(--stage), rgba(var(--stage-rgb), 0) 5%, rgba(var(--stage-rgb), 0) 95%, var(--stage)); }
+
+/* ====================================================================
+   Wrap — page container
+   ==================================================================== */
+.wrap, .tiles {
+  position: relative;
+  width: min(var(--frame), calc(100% - 2 * var(--gutter)));
+  margin-left: auto; margin-right: auto;
+}
+.wrap { padding-left: var(--pad); padding-right: var(--pad); }
+
+/* Hero: no paper card. Rather than haloing every glyph -- which fringes
+   badly at 108px and still leaves accent text short of contrast -- light a
+   soft clearing in the scene and set the type on that. */
+.hero-block::before {
+  content: ""; position: absolute; inset: 0; z-index: 1;
+  pointer-events: none;
+  /* It lights the name, and stops above the street, which it only washed out. */
+  -webkit-mask-image: linear-gradient(to bottom, #000 60%, transparent 69%);
+          mask-image: linear-gradient(to bottom, #000 60%, transparent 69%);
+  background: radial-gradient(40% 60% at calc((100% - min(var(--frame), 100% - 2 * var(--gutter))) / 2 + var(--pad) + 90px) 32%,
+    rgba(var(--stage-rgb), 0.95) 0%,
+    rgba(var(--stage-rgb), 0.86) 48%,
+    rgba(var(--stage-rgb), 0) 100%);
+}
+/* The copy floats over the plaza and lets taps through to it; only its
+   links take the pointer. */
+.hero-copy {
+  position: absolute; left: 0; right: 0; top: clamp(36px, 8%, 84px); z-index: 2;
+  display: flex; flex-direction: column; align-items: flex-start; gap: clamp(14px, 2.4vh, 22px);
+  pointer-events: none;
+}
+.hero-copy .chips { pointer-events: auto; }
+.hero-block .eyebrow,
+.hero-block h1.name,
+.hero-block h1.name small {
+  /* One tight shadow as insurance where the clearing thins out. */
+  text-shadow: 0 0 2px rgba(var(--paper-rgb), 0.9);
+}
+
+/* ====================================================================
+   Header
+   ==================================================================== */
+header {
+  position: sticky; top: 0; z-index: 30;
+  background: rgba(var(--paper-rgb), 0.96);
+  border-bottom: 1px solid var(--hairline);
+}
+.nav-inner {
+  width: min(var(--frame), calc(100% - 2 * var(--gutter)));
+  margin: 0 auto;
+  padding: 14px var(--pad);
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.nav-inner .mark {
+  font-family: var(--font-sans);
+  font-size: 14.5px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.nav-inner .mark b { color: var(--accent-text); font-weight: 600; }
+/* On publications.html the name and the way back are links. */
+a.mark, a.pill { color: inherit; text-decoration: none; }
+a.pill { color: var(--ink-dim); }
+/* The column is too narrow for the section links beside the name and the
+   two buttons, so they stay out and the buttons take the right edge. */
+nav.links {
+  display: none; gap: 22px; margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+nav.links a {
+  color: var(--ink-dim);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+nav.links a:hover { color: var(--accent-text); }
+.toggles { display: flex; gap: 8px; margin-left: auto; }
+.gamebtn, .pill { white-space: nowrap; }
+.pill {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--ink-dim);
+  background: transparent;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  padding: 6px 12px;
+  cursor: pointer;
+  display: inline-flex; align-items: center; gap: 6px;
+  transition: color 0.2s, background 0.2s, border-color 0.2s;
+}
+.pill:hover { border-color: var(--accent); color: var(--accent-text); }
+.pill .ico { width: 12px; height: 12px; }
+
+/* ====================================================================
+   Hero — 12-col grid, asymmetric
+   ==================================================================== */
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  display: flex; align-items: center; gap: 12px;
+}
+.eyebrow::before {
+  content: ""; width: 40px; height: 1px; background: var(--accent);
+}
+h1.name {
+  font-family: var(--font-display);
+  font-size: clamp(48px, 7.4vw, 108px);
+  font-weight: 700;
+  letter-spacing: -0.045em;
+  line-height: 0.96;
+  margin-top: 8px;
+}
+h1.name .lower {
+  display: block;
+}
+h1.name small {
+  display: block;
+  word-break: keep-all;
+  font-family: var(--font-sans);
+  font-size: clamp(15px, 1.4vw, 19px);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--ink-dim);
+  margin-top: 22px;
+}
+/* A role never splits: a line breaks after a separator, never inside one,
+   and the line under the name keeps its own leading when it wraps. */
+h1.name small { line-height: 1.45; }
+h1.name small .role { white-space: nowrap; }
+.chips {
+  display: flex; gap: 10px; flex-wrap: wrap;
+  margin-top: 6px;
+}
+.chips a {
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  color: var(--ink);
+  text-decoration: none;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  padding: 9px 18px;
+  background: var(--paper);
+  transition: color 0.2s, background 0.2s, border-color 0.2s;
+}
+.chips a:hover { border-color: var(--accent); color: var(--accent-text); }
+.chips a.primary { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.chips a.primary:hover { background: var(--accent-text); border-color: var(--accent-text); color: var(--stage); }
+
+/* ====================================================================
+   Tiles -- the grid below the hero
+   ==================================================================== */
+/* White tiles on the plaza's ground. Widths, in twelfths, and row spans
+   come from DATA.layout; a tall tile lets the two beside it stack. */
+.tiles {
+  display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 16px;
+  margin-top: clamp(16px, 3vh, 40px);
+}
+.tile {
+  grid-column: span var(--span, 12); grid-row: span var(--rows, 1);
+  min-width: 0;
+  background: var(--paper); border-radius: var(--radius);
+  padding: var(--pad);
+}
+.sec-head {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px;
+  padding-bottom: 14px;
+}
+.sec-head h2 {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: clamp(21px, 2vw, 24px);
+  letter-spacing: -0.02em;
+  line-height: 1.15;
+}
+/* The index sits at the far right, with the note, if any, just before it. */
+.sec-head .note { margin-left: auto; font-family: var(--font-mono); font-size: 12px; }
+.sec-head .note a { color: var(--accent-text); text-decoration: none; }
+.sec-head .note a:hover { text-decoration: underline; }
+.sec-head .idx {
+  margin-left: auto;
+  font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.08em;
+  color: var(--ink-faint);
+}
+.sec-head .note + .idx { margin-left: 0; }
+/* About wears a small caption in place of a title: it opens the page
+   rather than being one section among the rest. */
+#about .sec-head h2 {
+  font: 500 11.5px/1.4 var(--font-mono); letter-spacing: 0.12em; text-transform: uppercase;
+  color: var(--ink-faint);
+}
+#about .bio-text p { font-size: 17px; color: var(--ink); }
+
+.verify { color: var(--ink-faint); font-weight: 400; }
+
+/* ====================================================================
+   Bio
+   ==================================================================== */
+.bio.no-media { grid-template-columns: 1fr; }
+.bio {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 36px;
+  align-items: start;
+}
+.bio .portrait {
+  width: 140px; height: 140px;
+  border: 1px solid var(--hairline);
+  background: var(--paper-2);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--ink-faint);
+  text-align: center;
+}
+.bio .portrait img { width: 100%; height: 100%; object-fit: cover; }
+.bio .bio-text p {
+  font-size: 15.5px;
+  color: var(--ink-dim);
+  line-height: 1.72;
+  max-width: 62ch;
+}
+.bio .bio-text p + p { margin-top: 14px; }
+.bio .bio-text strong { color: var(--ink); font-weight: 600; }
+
+/* ====================================================================
+   News
+   ==================================================================== */
+.news ul { list-style: none; }
+.news li {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 4px;
+  padding: 12px 0;
+  border-top: 1px solid var(--hairline-soft);
+  font-size: 14.5px;
+  align-items: baseline;
+}
+.news li .d {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-faint);
+  letter-spacing: 0.04em;
+}
+.news li .t { color: var(--ink-dim); line-height: 1.55; }
+.news li .t a { color: var(--accent-text); text-decoration: none; }
+.news li .t a:hover { text-decoration: underline; }
+.news li .tag {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  color: var(--accent-text);
+  border: 1px solid var(--accent);
+  border-radius: 3px;
+  padding: 1px 7px;
+  margin-right: 10px;
+  vertical-align: 1px;
+  opacity: 0.9;
+}
+
+/* ====================================================================
+   Publications
+   ==================================================================== */
+.pub {
+  display: grid;
+  grid-template-columns: 168px 1fr;
+  gap: 28px;
+  padding: 26px 0;
+  border-top: 1px solid var(--hairline);
+  align-items: start;
+}
+/* A row without artwork spans the full width. But as soon as any row in
+   the list does have artwork, every row keeps the thumbnail gutter so the
+   titles share one left edge -- an indent is only worth paying for when
+   something sits in it. */
+.pub .pub-body { grid-column: 2; }
+.pub.no-media { grid-template-columns: 1fr; }
+.pub.no-media .pub-body { grid-column: 1; }
+.tile:has(.thumb) .pub.no-media { grid-template-columns: 168px 1fr; }
+.tile:has(.thumb) .pub.no-media .pub-body { grid-column: 2; }
+/* The counts above a list, and the year rows of the full list on
+   publications.html. */
+.tally { font-size: 14px; color: var(--ink-dim); padding-bottom: 14px; }
+.pub-year {
+  font-family: var(--font-mono); font-size: 12px; font-weight: 500;
+  letter-spacing: 0.08em; color: var(--ink-faint);
+  padding: 30px 0 10px;
+}
+.tally + .pub-year { padding-top: 6px; }
+.pub .thumb {
+  width: 168px;
+  aspect-ratio: 16 / 10;
+  border: 1px solid var(--hairline);
+  background: var(--paper-2);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden;
+}
+.pub .thumb img, .pub .thumb video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pub .thumb-dead {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--ink-faint);
+  text-align: center;
+  padding: 8px;
+  line-height: 1.5;
+}
+.pub .venue {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+  display: inline-block;
+  margin-bottom: 8px;
+}
+.pub .venue .rate { color: var(--ink-faint); text-transform: none; letter-spacing: 0.04em; white-space: nowrap; }
+/* What a reader should not miss -- CVPR and WACV, an oral, a best-poster
+   award -- is marked **so** in the data and set as a badge. */
+.pub .venue strong {
+  font-weight: 600; color: #ffffff; background: var(--accent);
+  padding: 1px 6px; border-radius: 3px;
+}
+.pub .venue .sep { white-space: normal; }
+.pub h3 {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: clamp(17px, 1.7vw, 20px);
+  letter-spacing: -0.015em;
+  line-height: 1.32;
+  color: var(--ink);
+}
+.pub h3 a {
+  color: inherit;
+  text-decoration: underline;
+  text-decoration-color: var(--accent-text);
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.18em;
+  transition: color 0.2s;
+}
+.pub h3 a:hover { color: var(--accent-text); }
+.pub .auth {
+  font-size: 13.5px;
+  color: var(--ink-dim);
+  margin-top: 8px;
+}
+.pub .auth .me { color: var(--ink); font-weight: 600; }
+.pub .pub-links {
+  margin-top: 14px;
+  display: flex; gap: 16px; flex-wrap: wrap;
+}
+.pub .pub-links a {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-dim);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.pub .pub-links a:hover { color: var(--accent-text); }
+/* Drawn, not typed. A text glyph joins the accessible name ("arXiv north
+   east arrow") and its advance width differs between Inter and Noto Sans
+   JP, which shifted these rows in Japanese. */
+.pub .pub-links a::after {
+  content: ""; display: inline-block;
+  width: 0.62em; height: 0.62em; margin-left: 0.32em;
+  background: currentColor; opacity: 0.55;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3.2 8.8 8.8 3.2M4.4 3.2H8.8v4.4' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+          mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M3.2 8.8 8.8 3.2M4.4 3.2H8.8v4.4' fill='none' stroke='%23000' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+  transition: transform 0.18s cubic-bezier(0.2,0.7,0.2,1);
+}
+.pub .pub-links a:hover::after { transform: translate(1px, -1px); }
+.pub .pub-note {
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--ink-faint);
+  margin-top: 10px;
+}
+/* In the wide tile the venue gets a column of its own, the way a CV sets
+   it: the eye runs down the venues, and each row loses a line. */
+@media (min-width: 901px) {
+  .pub { padding: 20px 0; }
+  .pub .pub-body { display: grid; grid-template-columns: 220px minmax(0, 1fr); column-gap: 28px; align-items: start; }
+  .pub .pub-body > * { grid-column: 2; }
+  .pub .venue { grid-column: 1; grid-row: 1 / span 3; margin-bottom: 0; }
+  .pub .venue .rate { display: block; margin-top: 4px; }
+  .pub .venue .sep { display: none; }
+  .pub h3 { text-wrap: wrap; text-wrap: pretty; }
+  /* Beside a thumbnail the column cannot also spare the venue one of its
+     own, so there it stays above the title. */
+  #work:has(.thumb) .pub .pub-body { display: block; }
+  #work:has(.thumb) .pub .venue { margin-bottom: 8px; }
+  #work:has(.thumb) .pub .venue .rate { display: inline; margin-top: 0; }
+  #work:has(.thumb) .pub .venue .sep { display: inline; }
+}
+
+/* ====================================================================
+   Awards
+   ==================================================================== */
+.awards {}
+.award {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 22px;
+  padding: 18px 0;
+  border-top: 1px solid var(--hairline-soft);
+  align-items: baseline;
+}
+.award .yr {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--accent-text);
+  letter-spacing: 0.02em;
+}
+.award .name { font-size: 15px; color: var(--ink); line-height: 1.4; }
+.award .name .org {
+  display: block;
+  font-size: 12.5px;
+  color: var(--ink-faint);
+  margin-top: 4px;
+}
+.award.placeholder .name { color: var(--ink-faint); }
+
+/* ====================================================================
+   Talks
+   ==================================================================== */
+/* Rows, like every other list: the tile is the card now. */
+.talks-grid { display: grid; grid-template-columns: 1fr; }
+.talk { border-top: 1px solid var(--hairline-soft); }
+.talk .pic {
+  aspect-ratio: 4 / 3;
+  background: var(--paper-2);
+  display: flex; align-items: center; justify-content: center;
+  border-bottom: 1px solid var(--hairline);
+}
+.talk .pic img { width: 100%; height: 100%; object-fit: cover; }
+.talk .cap { padding: 14px 0; }
+.talk .cap .v {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent-text);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.talk .cap h3 {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 15.5px;
+  letter-spacing: -0.01em;
+  line-height: 1.35;
+  margin-top: 8px;
+}
+.talk .cap p { font-size: 12.5px; color: var(--ink-faint); margin-top: 8px; line-height: 1.5; }
+
+/* ====================================================================
+   Media
+   ==================================================================== */
+.media-list {}
+.media-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 20px;
+  align-items: baseline;
+  padding: 16px 0;
+  border-top: 1px solid var(--hairline-soft);
+}
+.media-item .m-title { font-size: 15px; color: var(--ink); line-height: 1.4; }
+.media-item .m-title a { color: var(--accent-text); text-decoration: none; }
+.media-item .m-title a:hover { text-decoration: underline; }
+.media-item .m-title .src {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--ink-faint);
+  margin-top: 5px;
+}
+.media-item.placeholder .m-title { color: var(--ink-faint); }
+.media-item .m-date {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-faint);
+  white-space: nowrap;
+}
+
+/* ====================================================================
+   Blog — kept in markup, hidden per design decision
+   ==================================================================== */
+
+/* ====================================================================
+   Life
+   ==================================================================== */
+.life-intro {
+  font-family: var(--font-sans);
+  font-size: clamp(17px, 1.8vw, 20px);
+  color: var(--ink-dim);
+  line-height: 1.6;
+  max-width: 58ch;
+  margin-bottom: 40px;
+}
+.life-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px 44px; }
+.life-item h3 {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 15.5px;
+  letter-spacing: -0.005em;
+  color: var(--ink);
+  margin-bottom: 8px;
+  display: flex; align-items: center; gap: 10px;
+}
+.life-item h3 .dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--accent); flex: none;
+}
+.life-item p {
+  font-size: 14.5px;
+  color: var(--ink-dim);
+  line-height: 1.65;
+  max-width: 44ch;
+}
+.life-item p strong { color: var(--ink); font-weight: 600; }
+.life-photos {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+  margin-top: 44px;
+}
+.life-photos .ph-box {
+  aspect-ratio: 1;
+  border: 1px solid var(--hairline);
+  background: var(--paper-2);
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  color: var(--ink-faint);
+}
+.life-photos .ph-box img { width: 100%; height: 100%; object-fit: cover; }
+
+/* ====================================================================
+   Contact (footer)
+   ==================================================================== */
+footer.page-foot { padding: clamp(28px, 4vh, 40px) 0 48px; }
+.foot-row {
+  display: flex; justify-content: space-between; flex-wrap: wrap; gap: 14px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--ink-faint);
+}
+
+/* ====================================================================
+   Game button
+   ==================================================================== */
+/* The one thing on the page you can actually play with, so it sits in the
+   header wearing the accent rather than hiding in a corner. */
+.gamebtn {
+  display: inline-flex; align-items: center; gap: 9px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  letter-spacing: 0.02em;
+  color: var(--accent-text);
+  background: rgba(var(--accent-rgb), 0.10);
+  border: 1px solid rgba(var(--accent-rgb), 0.55);
+  border-radius: 999px;
+  padding: 8px 16px;
+  cursor: pointer;
+  transition: color 0.2s, background 0.2s, border-color 0.2s;
+}
+.gamebtn .dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--accent); flex: none;
+  box-shadow: 0 0 0 0 rgba(var(--accent-rgb), 0.55);
+  animation: walkPulse 2.4s var(--ease) infinite;
+}
+@keyframes walkPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(var(--accent-rgb), 0.5); }
+  70%  { box-shadow: 0 0 0 7px rgba(var(--accent-rgb), 0); }
+  100% { box-shadow: 0 0 0 0 rgba(var(--accent-rgb), 0); }
+}
+.gamebtn:hover { background: rgba(var(--accent-rgb), 0.18); border-color: var(--accent); }
+.gamebtn.on { background: var(--accent); color: var(--stage); border-color: var(--accent); }
+.gamebtn.on .dot { background: var(--stage); animation: none; }
+@media (prefers-reduced-motion: reduce) { .gamebtn .dot { animation: none; } }
+
+/* Walking: the name steps aside and a hint takes its place, so the plaza
+   you are standing in is all the hero shows. */
+.hero-copy, .hero-block::before { transition: opacity 0.45s var(--ease), transform 0.45s var(--ease); }
+html.walking .hero-copy { opacity: 0; transform: translateY(-6px); }
+html.walking .hero-copy .chips { pointer-events: none; }
+html.walking .hero-block::before { opacity: 0; }
+.walk-hint {
+  position: absolute; left: 50%; bottom: 22px; z-index: 3; transform: translate(-50%, 8px);
+  padding: 9px 16px; border-radius: 999px; background: var(--paper); border: 1px solid var(--hairline);
+  font: 400 12px/1.3 var(--font-mono); color: var(--ink-dim); white-space: nowrap;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.3s;
+}
+html.walking .walk-hint { opacity: 1; transform: translate(-50%, 0); }
+.walk-hint .touch, .coarse .walk-hint .keys { display: none; }
+.coarse .walk-hint .touch { display: inline; }
+/* Both states ship in markup so the language toggle keeps owning translation. */
+/* Each control names its destination, not its current state. */
+[data-lang="en"] .lang-to-en, [data-lang="ja"] .lang-to-ja { display: none; }
+.gamebtn .lbl-on, .gamebtn .lbl-short-off, .gamebtn .lbl-short-on { display: none; }
+.gamebtn.on .lbl-off { display: none; }
+.gamebtn.on .lbl-on { display: inline; }
+
+
+/* ====================================================================
+   Focus
+   A two-part ring: a paper halo at 0-2px and the accent outline at 2-4px,
+   so one half always contrasts whether the control sits on paper, on an
+   ink-filled chip, or straight over the canvas.
+   ==================================================================== */
+:where(a, button, [tabindex]):focus-visible {
+  outline: 2px solid var(--accent-text);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px var(--paper);
+  border-radius: 3px;
+}
+.pill:focus-visible, .chips a:focus-visible,
+.gamebtn:focus-visible { border-radius: 999px; }
+@supports not selector(:focus-visible) {
+  :where(a, button):focus { outline: 2px solid var(--accent-text); outline-offset: 2px; }
+}
+@media (forced-colors: active) {
+  :where(a, button, [tabindex]):focus-visible { outline: 2px solid Highlight; }
+}
+
+/* Skip link: off-screen until focused. */
+.skip {
+  position: fixed; top: 8px; left: 8px; z-index: 100;
+  padding: 10px 16px;
+  font-family: var(--font-mono); font-size: 12.5px;
+  color: var(--ink); background: var(--paper);
+  border: 1px solid var(--hairline); border-radius: 999px;
+  text-decoration: none;
+  transform: translateY(-160%);
+  transition: transform 0.18s cubic-bezier(0.2,0.7,0.2,1);
+}
+.skip:focus-visible { transform: none; }
+
+/* A sticky header otherwise parks every anchor target under itself. */
+:where(section[id], main[id], [id]) { scroll-margin-top: calc(var(--header-h, 56px) + 24px); }
+
+/* ====================================================================
+   Reveal animation
+   ==================================================================== */
+/* Content is visible by default; only a live script opts into the animation,
+   so a JS failure can never leave the page blank. */
+/* Mono is used for dates, years, indices and rates -- all of which want to
+   line up in a column. */
+.idx, .yr, .d, .m-date, .venue, .rate, .k, .v, .tag, .note,
+.foot-row, .pill, .chips a, .gamebtn {
+  font-variant-numeric: tabular-nums;
+}
+h1, h2, h3 { text-wrap: balance; }
+p, .bio-text p, .life-item p { text-wrap: pretty; }
+
+/* The display settings are tuned for Latin; both are wrong for Japanese. */
+[data-lang="ja"] h1.name { letter-spacing: 0.01em; line-height: 1.16; }
+[data-lang="ja"] { font-feature-settings: "palt" 1; }
+[data-lang="ja"] .bio-text p,
+[data-lang="ja"] .life-item p { line-height: 1.85; }
+
+.reveal { opacity: 1; transform: none; }
+html.js .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.7s cubic-bezier(0.2,0.7,0.2,1), transform 0.7s cubic-bezier(0.2,0.7,0.2,1); }
+html.js .reveal.in { opacity: 1; transform: none; }
+
+/* ====================================================================
+   Responsive — ≤900px (tablet) and ≤640px (phone)
+   ==================================================================== */
+@media (max-width: 900px) {
+  .tile { grid-column: span 12; grid-row: auto; }
+  .life-grid { gap: 24px 32px; }
+}
+@media (max-width: 640px) {
+  .nav-inner { padding-left: 0; padding-right: 0; gap: 12px; }
+  .hero-block { height: max(560px, 86vh); }
+  /* The copy spans a phone's width, so a clearing beside it would sit
+     under it. Veil the plaza behind the copy instead, down to just past
+     the links, and let it run in full below. */
+  .hero-block::before { display: none; }
+  .hero-copy::before {
+    content: ""; position: absolute; z-index: -1;
+    left: -40px; right: -40px; top: -120px; bottom: -72px;
+    background: linear-gradient(to bottom, rgba(var(--stage-rgb), 0.9) calc(100% - 72px), rgba(var(--stage-rgb), 0));
+  }
+  h1.name { font-size: clamp(40px, 12vw, 66px); }
+  h1.name .lower { display: inline; }
+  h1.name small { font-size: 15px; margin-top: 16px; }
+  .bio { grid-template-columns: 1fr; gap: 22px; }
+  .bio .portrait { width: 120px; height: 120px; }
+  .news li .d { font-size: 11.5px; }
+  .pub { grid-template-columns: 1fr; gap: 16px; }
+  .pub .pub-body { grid-column: auto; }
+  .pub .thumb { width: 100%; max-width: 280px; }
+  .award { grid-template-columns: 1fr; gap: 4px; }
+  .life-grid { grid-template-columns: 1fr; gap: 22px; }
+  .life-photos { grid-template-columns: repeat(2, 1fr); }
+  .foot-row { flex-direction: column; }
+  .gamebtn .lbl-off, .gamebtn.on .lbl-on { display: none; }
+  [data-lang="en"] .gamebtn .lbl-short-off.en, [data-lang="ja"] .gamebtn .lbl-short-off.ja { display: inline; }
+  [data-lang="en"] .gamebtn.on .lbl-short-off, [data-lang="ja"] .gamebtn.on .lbl-short-off { display: none; }
+  [data-lang="en"] .gamebtn.on .lbl-short-on.en, [data-lang="ja"] .gamebtn.on .lbl-short-on.ja { display: inline; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html.js .reveal, .reveal { opacity: 1; transform: none; transition: none; }
+  html { scroll-behavior: auto; }
+}

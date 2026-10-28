@@ -1,5 +1,24 @@
 # Progress
 
+## 2026-10-28 (publications page)
+
+Split the publication lists into selected papers on the home page and a full list on a new page, and pointed the Hexa-P news link at its project page.
+
+- The data, the stylesheet and the shared templates moved out of `index.html` into `static/js/data.js`, `static/css/site.css`, `static/js/tpl.js`, `static/js/boot.js` and `static/js/ui.js`, so both pages read one copy. The split alone left the rendered text, links and sections identical to the baseline.
+- Every publication and domestic talk has a `date` (year / month from `MyCV/main.tex`), and every list is shown newest first.
+- The home page shows the entries marked `selected`: Hexa-P (PAA 2026), PRISM and Energy-Regularized Imitation Learning (ECCV 2026 workshops), MMCM (WACV 2026), the MVA 2025 multi-person pose evaluation paper, EmLoco (CVPR 2025) and VATL4Pose (WACV 2024). Of the domestic talks it shows only the 2026 / 03 IPSJ CVIM talk, with "Encouragement Award / 奨励賞" as a badge. Each tile shows its counts (12 papers, 5 as first author; 9 talks in Japan, 4 as first author) and links to the full list.
+- `publications.html` lists all 12 papers and all 9 domestic talks by year, links to Google Scholar and back to the home page, and has no plaza simulation.
+- The October 2026 news item now links the Hexa-P title to https://iminthemiddle.github.io/Hexa-P-Page/ instead of the accepted-manuscript PDF.
+- `tools/verify/verify.sh` now checks both pages; baselines for `publications.html` are prefixed `publications.`. Checked both pages in headless Chromium at 1280 px (English) and 390 px (Japanese).
+
+- `publications.html` scrolls to the fragment (`#domestic`) itself after building the lists. Headless Chromium paints a blank frame once the page is scrolled, so the jump is not yet checked in a real browser.
+- Started two local servers for the screenshots, `python3 -m http.server` on ports 8765 (PID 2669387) and 8766 (PID 3424770); both were stopped after the owner approved.
+
+- Owner's decisions: the home domestic tile shows only the counts (the Encouragement Award badge is on publications.html), and the paper count stays at 12, SNL posters and the arXiv preprint included.
+- Revised the Japanese text of the page with the yomiyasu skill (check run 20261028T005658Z-6046681f, records in the git-excluded `.yomiyasu/`): news items now end in full sentences (「〜されました」「〜しました」) instead of noun endings and drop 「にて」; the bio reads 「研究しています」; the award and funding notes, the Hexa-P and VATL4Pose image descriptions and the footer were reworded. Proper names, award names, paper and talk titles, media titles and the emoji, which the English text shares, were kept. English text and links are unchanged.
+
+Committed and pushed to main with the owner's approval.
+
 ## 2026-10-28
 
 Linked the Hexa-P entry to its project page and weights, and gave it a looping thumbnail.

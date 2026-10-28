@@ -24,43 +24,29 @@ X
 行きたい場所をタップ
 自己紹介
 00
-こんにちは！👋 豊田工業大学 博士後期課程（D2）に在籍し、知能情報メディア研究室にて浮田宗伯教授の指導のもと研究を行っています。Physical AI と、人の動きの推定・予測に興味があります。
+こんにちは！👋 豊田工業大学の博士後期課程（D2）に在籍し、知能情報メディア研究室で浮田宗伯教授の指導のもと研究しています。Physical AI と人の動きの推定・予測に興味があります。
 最新情報
 01
-2026 / 10JOURNALHexa-PがPattern Analysis and Applicationsに採択されました。
-2026 / 09FUNDING豊田工業大学 博士後期課程奨学金の「特別給付」に選出 🎓
-2026 / 08INTERNWoven by Toyota でのインターンを修了 🚗
-2026 / 07WORKSHOPワークショップ提案 HUFPEI Workshop が ACCV 2026 に採択 🎉
-2026 / 06SNLSNL 2026（TTIC）で Hexa-P と Re-EmLoco の2件をポスター発表 🪧
-2026 / 05AWARDEmLoco にて 2026年 IEEE名古屋支部 国際会議研究発表賞を受賞 🏆
-2026 / 04FUNDING豊秋奨学会の奨学生に採用 🎓
-2026 / 03AWARDHexa-P にて 第245回 情報処理学会 CVIM研究会 奨励賞を受賞 🏆
-2025 / 08SERVICEACCV 2026 の Technical Chair に就任 🛠️
-2025 / 02CVPR'25EmLoco が CVPR 2025 に採択 🎉 — arXiv
+2026 / 10JOURNALHexa-PがPattern Analysis and Applicationsに採択されました
+2026 / 09FUNDING豊田工業大学 博士後期課程奨学金の「特別給付」に選ばれました 🎓
+2026 / 08INTERNWoven by Toyota でのインターンを終えました 🚗
+2026 / 07WORKSHOP提案したワークショップ HUFPEI Workshop が ACCV 2026 に採択されました 🎉
+2026 / 06SNLSNL 2026（TTIC）で Hexa-P と Re-EmLoco の2件をポスター発表しました 🪧
+2026 / 05AWARDEmLoco で 2026年 IEEE名古屋支部 国際会議研究発表賞を受賞しました 🏆
+2026 / 04FUNDING豊秋奨学会の奨学生に採用されました 🎓
+2026 / 03AWARDHexa-P で 第245回 情報処理学会 CVIM研究会 奨励賞を受賞しました 🏆
+2025 / 08SERVICEACCV 2026 の Technical Chair に就任しました 🛠️
+2025 / 02CVPR'25EmLoco が CVPR 2025 に採択されました 🎉（arXiv）
 2025 / 01LIFE父になりました 👶
 主要論文
-全業績は Scholar へ →
+全業績 →
 02
+国際論文 12本（うち筆頭著者 5本）
 Pattern Analysis and Applications 2026 · accepted · also a poster at SNL 2026
 Hexa-P: Physical Plausibility-aware Pre-training for Pedestrian Path Prediction
 H. Taketsugu, S. Nobuhara, N. Ukita
 PDFWeights
 This version of the article has been accepted for publication, after peer review and is subject to Springer Nature's AM terms of use, but is not the Version of Record and does not reflect post-acceptance improvements, or any corrections. The Version of Record will be linked here once it is available online.
-SNL 2026 · poster
-Re-EmLoco: Recovering Embodied Locomotion for Degradation-Robust Pedestrian Path Prediction
-H. Taketsugu, S. Nobuhara, N. Ukita
-CVPR 2025 · poster · 22.1% accept
-Physical Plausibility-aware Trajectory Prediction via Locomotion Embodiment
-H. Taketsugu, T. Oba, T. Maeda, S. Nobuhara, N. Ukita
-arXivCodeVideoWeights
-WACV 2024 · poster · 41% accept
-Active Transfer Learning for Efficient Video-Specific Human Pose Estimation
-H. Taketsugu, N. Ukita
-arXivCode
-MVA 2023 · Oral
-Uncertainty Criteria in Active Transfer Learning for Efficient Video-Specific Human Pose Estimation
-H. Taketsugu, N. Ukita
-IEEE
 ECCV 2026 Workshop · Agent in World · co-author
 PRISM: Predictive Representation of Interaction Style and Motion for Social Robot Navigation
 B.-H. Chen, H. Taketsugu, N. Ukita
@@ -73,64 +59,36 @@ WACV 2026 · co-author
 MMCM: Multimodality-aware Metric using Clustering-based Modes for Probabilistic Human Motion Prediction
 K. Tokoro, H. Taketsugu, N. Ukita
 arXivPDF
-SNL 2025 · co-author
-Hierarchical Group-aware Token Merging for Efficient Trajectory Prediction
-Y. Yoshida, N. Ukita, H. Taketsugu
 MVA 2025 · Best Poster Award · co-author
 Multi-Person Pose Estimation Evaluation Using Optimal Transportation and Improved Pose Matching
 T. Moriki, H. Taketsugu, N. Ukita
 arXiv
-MIRU 2025 · co-author
-Selective Social-Interaction via Individual Importance for Fast Human Trajectory Prediction
-Y. Urano, H. Taketsugu, N. Ukita
-arXiv
-arXiv preprint · co-author
-Human Motion Prediction via Test-domain-aware Adaptation with Easily-available Human Motions Estimated from Videos
-K. Shimbo, H. Taketsugu, N. Ukita
-arXiv
+CVPR 2025 · poster · 22.1% accept
+Physical Plausibility-aware Trajectory Prediction via Locomotion Embodiment
+H. Taketsugu, T. Oba, T. Maeda, S. Nobuhara, N. Ukita
+arXivCodeVideoWeights
+WACV 2024 · poster · 41% accept
+Active Transfer Learning for Efficient Video-Specific Human Pose Estimation
+H. Taketsugu, N. Ukita
+arXivCode
 国内発表
+すべての国内発表 →
 03
-IPSJ CVIM · 2026 / 03 · 奨励賞
-物理シミュレーションに基づく大規模事前学習による物理的妥当性を備えた歩行者軌跡予測
-武次 広夢, 延原 章平, 浮田 宗伯
-IPSJ CVIM · 2024 / 11
-身体化歩行動作と整合する歩行軌跡の学習安定化
-武次 広夢, 延原 章平, 浮田 宗伯
-IEICE PRMU · 2024 / 05
-物理シミュレータを用いた姿勢整合損失による人軌跡予測
-武次 広夢, 延原 章平, 浮田 宗伯
-IPSJ CVIM · 2023 / 05
-効率的な動画別の人体姿勢推定を目的とした能動転移学習の不確実性基準
-武次 広夢, 浮田 宗伯
-知能メカトロニクスWS · 2026 / 09
-エネルギー予測器によるロボット動作のエネルギー効率向上
-大谷 知暉, 武次 広夢, 浮田 宗伯
-IPSJ CVIM · 2026 / 05
-3次元人体構造と局所画像特徴の適応的統合による画像内外に対応した2次元人体姿勢推定
-森木 勇登, 武次 広夢, 浮田 宗伯
-IPSJ CVIM · 2026 / 05
-階層的なグループ構造を用いたトークンの統合による効率的な軌跡予測
-吉田 有輝, 武次 広夢, 浮田 宗伯
-IPSJ CVIM · 2025 / 05
-最適輸送と領域分割を用いた複数人姿勢推定の評価指標の提案
-森木 勇登, 前田 孝泰, 武次 広夢, 大羽 剛瑠, 浮田 宗伯
-IPSJ CVIM · 2024 / 05
-行動ラベルを用いた対照学習におけるアンカーの密度ベース選択による人間軌跡予測
-浦野 耀太, 武次 広夢, 前田 孝泰, 浮田 宗伯
+国内発表 9件（うち筆頭著者 4件）
 受賞
 04
 2026
-IEEE名古屋支部 国際会議研究発表賞EmLoco (CVPR 2025) に対して
+IEEE名古屋支部 国際会議研究発表賞EmLoco（CVPR 2025）の発表に対して
 2026
-奨励賞 — 第245回 情報処理学会 CVIM研究会Hexa-P に対して · 各回1件、参加者の投票で選出
+奨励賞 — 第245回 情報処理学会 CVIM研究会Hexa-P の発表に対して · 参加者の投票で各回1件を選出
 2025
 プレゼン賞 — 第15回 企業と博士人材の交流会名古屋大学 · 2025年8月
 2025
-Best Poster Award — MVA 2025共著 · 多人数姿勢推定の新規評価指標
+Best Poster Award — MVA 2025共著 · 多人数の姿勢推定の新しい評価指標
 2025
 ポスター賞（第3位）JST ASPIRE 京都ワークショップ · 48件中3位
 2023
-豊田奨学基金賞豊田工業大学 · 学業成績・人物ともに特に優秀な学生（学部1名）
+豊田奨学基金賞豊田工業大学 · 学業成績・人物ともに特に優秀な学生として学部から1名
 2023
 優秀学生賞計測自動制御学会 (SICE)
 2023
@@ -160,7 +118,7 @@ Best Poster Award — MVA 2025共著 · 多人数姿勢推定の新規評価指�
 2023
 豊田達郎奨学基金 奨学金豊田工業大学 · TTIC 協定留学の渡航費・滞在費
 2023 –
-修士・博士一貫教育プログラム豊田工業大学 · 各学年若干名 · 修士課程中の給付
+修士・博士一貫教育プログラム豊田工業大学 · 各学年若干名 · 修士課程の間に給付
 2019 – 2023
 豊田奨学基金 奨学金豊田工業大学 · 学部4年間の授業料減免
 学会活動・教育
@@ -214,4 +172,4 @@ TTIC協定留学へ行こう！豊田工業大学 広報誌 ADVANCE vol.1182024 
 豊田工大の肉体派！スパルタンレースサークルのメンバーが大会で完走豊田工業大学2022 / 09
 「英語科学技術プレゼンテーションコンテスト」開催豊田工業大学 広報誌 ADVANCE vol.1112022 / 01
 © 2026 Hiromu Taketsugu · 武次 広夢
-背景は歩行者群衆のシミュレーション
+背景は歩行者の群衆のシミュレーションです

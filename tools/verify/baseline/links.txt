@@ -10,16 +10,12 @@
 IMG:static/img/avatar.webp
 IMG:static/img/pub/emloco.webp
 IMG:static/img/pub/energyil.webp
-IMG:static/img/pub/hmpadapt.webp
-IMG:static/img/pub/miru25.webp
 IMG:static/img/pub/mmcm.webp
 IMG:static/img/pub/mva25.webp
 IMG:static/img/pub/prism.webp
 https://accv2026.org/
 https://arxiv.org/abs/2311.05041
 https://arxiv.org/abs/2503.17267
-https://arxiv.org/abs/2505.07301
-https://arxiv.org/abs/2506.18291
 https://arxiv.org/abs/2511.15179
 https://arxiv.org/abs/2603.10398
 https://arxiv.org/abs/2609.18125
@@ -32,7 +28,6 @@ https://github.com/ImIntheMiddle/VATL4Pose-WACV2024
 https://hufpei-workshop.github.io/accv2026/
 https://huggingface.co/ImIntheMiddle/Hexa-P
 https://huggingface.co/iminthemiddle/EmLoco
-https://ieeexplore.ieee.org/abstract/document/10215565
 https://iminthemiddle.github.io/EmLoco-Page/
 https://iminthemiddle.github.io/Hexa-P-Page/
 https://iminthemiddle.github.io/VATL4Pose-Page/
@@ -53,5 +48,7 @@ https://www.toyota-ti.ac.jp/news/checktti/002899.html
 https://www.toyota-ti.ac.jp/news/checktti/002900.html
 https://youtu.be/OYLDYinc9DU
 mailto:sd25502@toyota-ti.ac.jp
+publications.html
+publications.html#domestic
 static/uploads/CV_Hiromu_Taketsugu.pdf
 static/uploads/Hexa-P_PAA_2026_accepted_manuscript.pdf

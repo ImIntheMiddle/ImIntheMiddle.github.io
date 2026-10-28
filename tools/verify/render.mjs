@@ -3,26 +3,28 @@
    verified end to end without a browser. */
 import { readFileSync, writeFileSync } from 'node:fs';
 import vm from 'node:vm';
+import { dirname, join } from 'node:path';
 
 const file = process.argv[2];
 const outJson = process.argv[3];
 const src = readFileSync(file, 'utf8');
 
-// 1. the DATA block
-const dataMatch = src.match(/@@DATA@@[\s\S]*?\*\/\s*(const DATA = \{[\s\S]*?\n\};)/);
+// 1. the DATA block, shared by every page
+const dataSrc = readFileSync(join(dirname(file), 'static/js/data.js'), 'utf8');
+const dataMatch = dataSrc.match(/@@DATA@@[\s\S]*?\*\/\s*(const DATA = \{[\s\S]*?\n\};)/);
 if (!dataMatch) throw new Error('DATA block not found');
 
-// 2. the template layer: from the @@TEMPLATES@@ banner up to the next banner
-const tplStart = src.indexOf('const RAW = Symbol(');
-if (tplStart < 0) throw new Error('template layer not found');
-const tplEnd = src.indexOf('/* ====================================================================\n   LANGUAGE toggle', tplStart);
-if (tplEnd < 0) throw new Error('end of template layer not found');
-const tpl = src.slice(tplStart, tplEnd);
+// 2. the shared templates, then the page's own layout script
+const tplShared = readFileSync(join(dirname(file), 'static/js/tpl.js'), 'utf8');
+const pageMatch = src.match(/<script>\s*(\/\* =+\s*\n\s*@@PAGE@@[\s\S]*?)<\/script>/);
+if (!pageMatch) throw new Error('@@PAGE@@ script not found');
+const tpl = tplShared + '\n' + pageMatch[1];
 
 const mounted = {};
 const warnings = [];
 const sandbox = {
   console: { warn: (...a) => warnings.push(a.join(' ')), log: () => {} },
+  location: { hash: '' },
   document: {
     querySelector(sel) {
       return { set innerHTML(v) { mounted[sel] = v; } };

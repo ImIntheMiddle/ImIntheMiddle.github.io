@@ -1,0 +1,92 @@
+Skip to content
+H. Taketsugu · 武次 広夢
+← Home
+日本語
+Publications
+Google Scholar →
+12 papers · 5 as first author
+2026
+Pattern Analysis and Applications 2026 · accepted · also a poster at SNL 2026
+Hexa-P: Physical Plausibility-aware Pre-training for Pedestrian Path Prediction
+H. Taketsugu, S. Nobuhara, N. Ukita
+PDFWeights
+This version of the article has been accepted for publication, after peer review and is subject to Springer Nature's AM terms of use, but is not the Version of Record and does not reflect post-acceptance improvements, or any corrections. The Version of Record will be linked here once it is available online.
+ECCV 2026 Workshop · Agent in World · co-author
+PRISM: Predictive Representation of Interaction Style and Motion for Social Robot Navigation
+B.-H. Chen, H. Taketsugu, N. Ukita
+arXiv
+ECCV 2026 Workshop · FCAM · co-author
+Energy-Regularized Imitation Learning for Force- and Work-Aware Robotic Manipulation
+T. Otani, H. Taketsugu, N. Ukita
+arXiv
+SNL 2026 · poster
+Re-EmLoco: Recovering Embodied Locomotion for Degradation-Robust Pedestrian Path Prediction
+H. Taketsugu, S. Nobuhara, N. Ukita
+WACV 2026 · co-author
+MMCM: Multimodality-aware Metric using Clustering-based Modes for Probabilistic Human Motion Prediction
+K. Tokoro, H. Taketsugu, N. Ukita
+arXivPDF
+2025
+SNL 2025 · co-author
+Hierarchical Group-aware Token Merging for Efficient Trajectory Prediction
+Y. Yoshida, N. Ukita, H. Taketsugu
+MVA 2025 · Best Poster Award · co-author
+Multi-Person Pose Estimation Evaluation Using Optimal Transportation and Improved Pose Matching
+T. Moriki, H. Taketsugu, N. Ukita
+arXiv
+MIRU 2025 · co-author
+Selective Social-Interaction via Individual Importance for Fast Human Trajectory Prediction
+Y. Urano, H. Taketsugu, N. Ukita
+arXiv
+CVPR 2025 · poster · 22.1% accept
+Physical Plausibility-aware Trajectory Prediction via Locomotion Embodiment
+H. Taketsugu, T. Oba, T. Maeda, S. Nobuhara, N. Ukita
+arXivCodeVideoWeights
+arXiv preprint · co-author
+Human Motion Prediction via Test-domain-aware Adaptation with Easily-available Human Motions Estimated from Videos
+K. Shimbo, H. Taketsugu, N. Ukita
+arXiv
+2024
+WACV 2024 · poster · 41% accept
+Active Transfer Learning for Efficient Video-Specific Human Pose Estimation
+H. Taketsugu, N. Ukita
+arXivCode
+2023
+MVA 2023 · Oral
+Uncertainty Criteria in Active Transfer Learning for Efficient Video-Specific Human Pose Estimation
+H. Taketsugu, N. Ukita
+IEEE
+Domestic Presentations
+9 presentations in Japan · 4 as first author
+2026
+知能メカトロニクスWS · 2026 / 09
+エネルギー予測器によるロボット動作のエネルギー効率向上
+大谷 知暉, 武次 広夢, 浮田 宗伯
+IPSJ CVIM · 2026 / 05
+3次元人体構造と局所画像特徴の適応的統合による画像内外に対応した2次元人体姿勢推定
+森木 勇登, 武次 広夢, 浮田 宗伯
+IPSJ CVIM · 2026 / 05
+階層的なグループ構造を用いたトークンの統合による効率的な軌跡予測
+吉田 有輝, 武次 広夢, 浮田 宗伯
+IPSJ CVIM · 2026 / 03 · Encouragement Award
+物理シミュレーションに基づく大規模事前学習による物理的妥当性を備えた歩行者軌跡予測
+武次 広夢, 延原 章平, 浮田 宗伯
+2025
+IPSJ CVIM · 2025 / 05
+最適輸送と領域分割を用いた複数人姿勢推定の評価指標の提案
+森木 勇登, 前田 孝泰, 武次 広夢, 大羽 剛瑠, 浮田 宗伯
+2024
+IPSJ CVIM · 2024 / 11
+身体化歩行動作と整合する歩行軌跡の学習安定化
+武次 広夢, 延原 章平, 浮田 宗伯
+IEICE PRMU · 2024 / 05
+物理シミュレータを用いた姿勢整合損失による人軌跡予測
+武次 広夢, 延原 章平, 浮田 宗伯
+IPSJ CVIM · 2024 / 05
+行動ラベルを用いた対照学習におけるアンカーの密度ベース選択による人間軌跡予測
+浦野 耀太, 武次 広夢, 前田 孝泰, 浮田 宗伯
+2023
+IPSJ CVIM · 2023 / 05
+効率的な動画別の人体姿勢推定を目的とした能動転移学習の不確実性基準
+武次 広夢, 浮田 宗伯
+© 2026 Hiromu Taketsugu · 武次 広夢

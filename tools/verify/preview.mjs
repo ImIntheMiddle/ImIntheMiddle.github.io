@@ -37,7 +37,8 @@ const block = (name) => {
   return src.slice(src.indexOf('*/', b) + 2, src.lastIndexOf('/*', e));
 };
 const { Plaza, SQ } = new Function(block('PHYSICS') + block('PLAZA') + '\nreturn { Plaza, SQ };')();
-const css = (name, d) => (src.match(new RegExp(`--${name}:\\s*(#[0-9a-fA-F]{6})`)) || [, d])[1];
+const cssSrc = readFileSync(join(HERE, '..', '..', 'static', 'css', 'site.css'), 'utf8');
+const css = (name, d) => (cssSrc.match(new RegExp(`--${name}:\\s*(#[0-9a-fA-F]{6})`)) || [, d])[1];
 const STAGE = css('stage', '#f4f5f9'), GRID = css('grid', '#e8eaf1');
 
 /* ---------- run ---------- */
