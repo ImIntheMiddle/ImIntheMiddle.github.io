@@ -24,13 +24,15 @@ const isExternal = (href) => /^(https?:)?\/\//.test(href);
 const pickLang = (f, lang) => (f && typeof f === 'object' && !(RAW in f))
   ? (lang === 'ja' && f.ja != null ? f.ja : f.en) : f;
 
-/* A ref is a link, or a plain styled span when it has no href. */
+/* A ref is a link, or a plain styled span when it has no href. Both the
+   label and the href may differ per language. */
 const newTabAttr = (href, newTab) => (newTab == null ? isExternal(href) : newTab)
   ? raw(' target="_blank" rel="noopener"') : raw('');
 
 function ref(r, lang) {
   const label = pickLang(r.label, lang);
-  if (r.href) return h`<a href="${r.href}"${newTabAttr(r.href, r.newTab)}>${label}</a>`;
+  const href = pickLang(r.href, lang);
+  if (href) return h`<a href="${href}"${newTabAttr(href, r.newTab)}>${label}</a>`;
   return r.cls ? h`<span class="${r.cls}">${label}</span>` : h`${label}`;
 }
 

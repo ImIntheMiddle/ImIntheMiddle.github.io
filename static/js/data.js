@@ -247,8 +247,17 @@ const DATA = {
     portrait: { src: 'static/img/avatar.webp', src2x: 'static/img/avatar@2x.webp', w: 280, h: 280,
                 alt: { en: 'Hiromu Taketsugu', ja: '武次 広夢' } },
     paras: [
-      { en: 'Hi! 👋 I am a Ph.D. student (D2) at **Toyota Technological Institute**, advised by Prof. Norimichi Ukita in the Intelligent Information Media Lab. My research interests are **Physical AI** and **human motion estimation and prediction**.',
-        ja: '豊田工業大学の博士後期課程（D2）に在籍し、知能情報メディア研究室で**浮田宗伯**教授の指導のもと研究しています。**Physical AI** と**人の動きの推定・予測**に興味があります。' }
+      { en: 'Hi! 👋 I am a Ph.D. student (D2) at **{tti}**, advised by Prof. {ukita} in the {iim}. My research interests are **Physical AI** and **human motion estimation and prediction**.',
+        ja: '{tti}の博士後期課程（D2）に在籍し、{iim}で**{ukita}**教授の指導のもと研究しています。**Physical AI** と**人の動きの推定・予測**に興味があります。',
+        refs: {
+          tti: { href: { en: 'https://www.toyota-ti.ac.jp/english/', ja: 'https://www.toyota-ti.ac.jp/' },
+                 label: { en: 'Toyota Technological Institute', ja: '豊田工業大学' } },
+          iim: { href: { en: 'https://www.toyota-ti.ac.jp/Lab/Denshi/iim/',
+                         ja: 'https://www.toyota-ti.ac.jp/Lab/Denshi/iim/index-j.html' },
+                 label: { en: 'Intelligent Information Media Lab', ja: '知能情報メディア研究室' } },
+          ukita: { href: { en: 'https://www.toyota-ti.ac.jp/Lab/Denshi/iim/ukita/',
+                           ja: 'https://www.toyota-ti.ac.jp/Lab/Denshi/iim/ukita/index-j.html' },
+                   label: { en: 'Norimichi Ukita', ja: '浮田宗伯' } } } }
     ]
   },
 
@@ -399,8 +408,9 @@ const DATA = {
              ja: 'AI-SCHOLAR · リモート · 最新の機械学習論文の解説記事を執筆' } },
     { year: '2023.09 – 2023.12',
       name: { en: 'Visiting Student', ja: '客員学生' },
-      org: { en: 'Toyota Technological Institute at Chicago · with Prof. Matthew R. Walter',
-             ja: '豊田工業大学シカゴ校 (TTIC) · Matthew R. Walter 教授' } },
+      org: { en: 'Toyota Technological Institute at Chicago · with Prof. {walter}',
+             ja: '豊田工業大学シカゴ校 (TTIC) · {walter} 教授' },
+      refs: { walter: { href: 'https://ttic.edu/ripl/', label: 'Matthew R. Walter' } } },
     { year: '2023.04 – 2025.03',
       name: { en: 'M.Eng., Electronics and Information Engineering',
               ja: '修士課程 — 先端工学専攻 電子情報分野' },

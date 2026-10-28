@@ -1,5 +1,12 @@
 # Progress
 
+## 2026-10-28 (bio and TTIC links)
+
+- `ref()` in `static/js/tpl.js` now takes a per-language `href` ({en, ja}), as it already did for `label`.
+- Linked the bio to Toyota Technological Institute (en https://www.toyota-ti.ac.jp/english/, ja https://www.toyota-ti.ac.jp/), the Intelligent Information Media Lab (en https://www.toyota-ti.ac.jp/Lab/Denshi/iim/, ja .../iim/index-j.html) and Prof. Norimichi Ukita (en .../iim/ukita/, ja .../iim/ukita/index-j.html). On the lab and Ukita pages the bare URL is the English page and `index-j.html` the Japanese one. The TTI English URL is the one the official top page's "EN" button points to; from this cluster it answered with a 302 to the Japanese top page.
+- Linked Prof. Matthew R. Walter in the TTIC Experience entry to RIPL (https://ttic.edu/ripl/).
+- `tools/verify/verify.sh` was not run, because no host had `node`.
+
 ## 2026-10-28 (internship mentors)
 
 - Added the internship mentors to the Experience entries, in the style of the TTIC entry: Igor Vasiljevic (https://ivasiljevic.github.io/, a Toyota Research Institute scientist on secondment to Woven by Toyota) for the Woven by Toyota internship, and Yoshihiro Ohama / 大濱 吉紘 (researchmap https://researchmap.jp/read0199462) for the Toyota Central R&D Labs. internship. The Japanese page reads "メンター: … 氏". `tools/verify/verify.sh` was not run, because no host had `node`; the content baselines are not updated.
