@@ -133,7 +133,6 @@ const BODY = {
   /* The home page shows the selected entries; publications.html has them all. */
   work: () => [tally('papers', DATA.publications, DATA.me),
                newestFirst(DATA.publications.filter((p) => p.selected)).map((p) => pub(p, DATA.me))],
-  domestic: () => tally('talks', DATA.domestic, DATA.domesticMe),
 
   awards: () => entryList(DATA.awards),
   funding: () => entryList(DATA.funding),
@@ -164,7 +163,6 @@ const HAS = {
   about: () => DATA.about.paras.length,
   news: () => DATA.news.length,
   work: () => DATA.publications.length,
-  domestic: () => DATA.domestic.length,
   awards: () => DATA.awards.length,
   funding: () => DATA.funding.length,
   service: () => DATA.service.length,

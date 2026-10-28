@@ -500,12 +500,10 @@ const DATA = {
     { id: 'news',     title: { en: "What's New", ja: '最新情報' },            nav: { en: 'News', ja: '最新情報' } },
     { id: 'work',     title: { en: 'Selected Publications', ja: '主要論文' }, nav: { en: 'Publications', ja: '論文' },
       note: { href: 'publications.html', label: { en: 'All publications →', ja: '全業績 →' } } },
-    { id: 'domestic', title: { en: 'Domestic Presentations', ja: '国内発表' },
-      note: { href: 'publications.html#domestic', label: { en: 'All presentations →', ja: 'すべての国内発表 →' } } },
+    { id: 'timeline', title: { en: 'Experience', ja: '経歴' },                nav: { en: 'Experience', ja: '経歴' } },
     { id: 'awards',   title: { en: 'Awards & Honors', ja: '受賞' },           nav: { en: 'Awards', ja: '受賞' } },
     { id: 'funding',  title: { en: 'Fellowships & Grants', ja: '奨学金・助成' }, nav: { en: 'Funding', ja: '助成' } },
     { id: 'service',  title: { en: 'Service & Teaching', ja: '学会活動・教育' }, nav: { en: 'Service', ja: '活動' } },
-    { id: 'timeline', title: { en: 'Experience', ja: '経歴' },                nav: { en: 'Experience', ja: '経歴' } },
     { id: 'talks',    title: { en: 'Talks & Presentations', ja: '講演・発表' }, nav: { en: 'Talks', ja: '発表' } },
     { id: 'media',    title: { en: 'Media & Coverage', ja: 'メディア掲載' },  nav: { en: 'Media', ja: 'メディア' } },
     { id: 'life',     title: { en: 'Outside the Lab', ja: '研究室の外で' },   nav: { en: 'Life', ja: '日常' } }
@@ -518,9 +516,9 @@ const DATA = {
     ['about', 12],
     ['news', 12],
     ['work', 12],
-    ['domestic', 12],
+    ['timeline', 12],
     ['awards', 12], ['funding', 12], ['service', 12],
-    ['timeline', 12], ['talks', 12], ['media', 12],
+    ['talks', 12], ['media', 12],
     ['life', 12]
   ]
 };
