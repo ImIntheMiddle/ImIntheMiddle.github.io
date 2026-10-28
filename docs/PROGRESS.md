@@ -2,7 +2,9 @@
 
 ## 2026-10-28 (internship mentors)
 
-- Added the internship mentors to the Experience entries, in the style of the TTIC entry: Igor Vasiljevic (https://ivasiljevic.github.io/, a Toyota Research Institute scientist on secondment to Woven by Toyota) for the Woven by Toyota internship, and Yoshihiro Ohama / 大濱 吉紘 (researchmap https://researchmap.jp/read0199462) for the Toyota Central R&D Labs. internship. The Japanese page reads "メンター: … 氏". `tools/verify/verify.sh` was not run, because no host had `node`; the content baselines are not updated. Not pushed, since it sits on top of the unpushed Hexa-P code link.
+- Added the internship mentors to the Experience entries, in the style of the TTIC entry: Igor Vasiljevic (https://ivasiljevic.github.io/, a Toyota Research Institute scientist on secondment to Woven by Toyota) for the Woven by Toyota internship, and Yoshihiro Ohama / 大濱 吉紘 (researchmap https://researchmap.jp/read0199462) for the Toyota Central R&D Labs. internship. The Japanese page reads "メンター: … 氏". `tools/verify/verify.sh` was not run, because no host had `node`; the content baselines are not updated.
+- Added "Advisor: Dr. Igor Vasiljevic" to the Woven by Toyota entry of the CV source, as the Toyota Central R&D entry already names Dr. Yoshihiro Ohama. Rebuilt the CV with pdflatex (five pages, no errors), checked page 1 by eye and copied it to both public paths.
+- Pushed together with the Hexa-P code link at the user's request.
 
 ## 2026-10-28 (Hexa-P code link)
 
