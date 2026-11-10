@@ -2,10 +2,10 @@
 H. Taketsugu · 武次 広夢
 最新情報
 論文
+経歴
 受賞
 助成
 活動
-経歴
 発表
 メディア
 群衆の中を歩く
@@ -45,7 +45,7 @@ X
 Pattern Analysis and Applications 2026 · accepted · also a poster at SNL 2026
 Hexa-P: Physical Plausibility-aware Pre-training for Pedestrian Path Prediction
 H. Taketsugu, S. Nobuhara, N. Ukita
-PDFWeights
+PDFCodeWeights
 This version of the article has been accepted for publication, after peer review and is subject to Springer Nature's AM terms of use, but is not the Version of Record and does not reflect post-acceptance improvements, or any corrections.
 ECCV 2026 Workshop · Agent in World · co-author
 PRISM: Predictive Representation of Interaction Style and Motion for Social Robot Navigation
@@ -71,10 +71,26 @@ WACV 2024 · poster · 41% accept
 Active Transfer Learning for Efficient Video-Specific Human Pose Estimation
 H. Taketsugu, N. Ukita
 arXivCode
-国内発表
-すべての国内発表 →
+経歴
 03
-国内発表 9件（うち筆頭著者 4件）
+2025.04 –
+博士後期課程 — 情報援用工学専攻豊田工業大学 · 知能情報メディア研究室
+2025.04 –
+日本学術振興会 特別研究員 (DC1)日本学術振興会
+2026.06 – 2026.08
+インターン — Machine Learning Engineer (Perception)Woven by Toyota · メンター: Igor Vasiljevic 氏
+2023.10 – 2024.09
+サイエンスライターAI-SCHOLAR · リモート · 最新の機械学習論文の解説記事を執筆
+2023.09 – 2023.12
+客員学生豊田工業大学シカゴ校 (TTIC) · Matthew R. Walter 教授
+2023.04 – 2025.03
+修士課程 — 先端工学専攻 電子情報分野豊田工業大学 · 修了時成績 50名中2位
+2022.04 – 2025.03
+ティーチングアシスタント — グローバル消費インテリジェンス (GCI)東京大学 · リモート · 1学期あたり3万人超が受講
+2022.01 – 2022.03
+研究インターン株式会社 豊田中央研究所 · メンター: 大濱 吉紘 氏
+2019.04 – 2023.03
+学士課程 — 先端工学基礎学科 電子情報分野豊田工業大学 · 卒業時成績 83名中1位 · 副専攻 機械システム分野
 受賞
 04
 2026
@@ -135,28 +151,8 @@ Technical Chair — ACCV 2026アジアコンピュータビジョン会議 · �
 実験教材 — Experiments in Artificial Intelligence & Deep Learning豊田工業大学 · 2025年度
 2024
 実験教材 — Experiments in Artificial Intelligence & Deep Learning豊田工業大学 · 2024年度
-経歴
-07
-2025.04 –
-博士後期課程 — 情報援用工学専攻豊田工業大学 · 知能情報メディア研究室
-2025.04 –
-日本学術振興会 特別研究員 (DC1)日本学術振興会
-2026.06 – 2026.08
-インターン — Machine Learning Engineer (Perception)Woven by Toyota
-2023.10 – 2024.09
-サイエンスライターAI-SCHOLAR · リモート · 最新の機械学習論文の解説記事を執筆
-2023.09 – 2023.12
-客員学生豊田工業大学シカゴ校 (TTIC) · Matthew R. Walter 教授
-2023.04 – 2025.03
-修士課程 — 先端工学専攻 電子情報分野豊田工業大学 · 修了時成績 50名中2位
-2022.04 – 2025.03
-ティーチングアシスタント — グローバル消費インテリジェンス (GCI)東京大学 · リモート · 1学期あたり3万人超が受講
-2022.01 – 2022.03
-研究インターン株式会社 豊田中央研究所
-2019.04 – 2023.03
-学士課程 — 先端工学基礎学科 電子情報分野豊田工業大学 · 卒業時成績 83名中1位 · 副専攻 機械システム分野
 講演・発表
-08
+07
 MIRU 2025 · 招待講演Physical Plausibility-aware Trajectory Prediction via Locomotion Embodiment
 第28回 画像の認識・理解シンポジウム · 2025年7月
 トヨタ自動車 未来創生センター · 講演Human Trajectory Prediction for Social Navigation
@@ -164,7 +160,7 @@ MIRU 2025 · 招待講演Physical Plausibility-aware Trajectory Prediction via L
 NTT 厚木研究開発センタ · 講演Computer Vision for Social Navigation
 日本電信電話株式会社 · 2024年5月
 メディア掲載
-09
+08
 【学生受賞】博士後期課程2年 武次広夢さんが IEEE 名古屋支部「国際会議研究発表賞」を受賞豊田工業大学2026 / 05
 【学生受賞】博士後期課程2年 武次広夢さんが「第245回 情報処理学会 コンピュータビジョンとイメージメディア研究会」において奨励賞を受賞豊田工業大学2026 / 05
 TTIC協定留学へ行こう！豊田工業大学 広報誌 ADVANCE vol.1182024 / 05

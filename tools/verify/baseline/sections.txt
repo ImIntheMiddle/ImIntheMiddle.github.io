@@ -1,10 +1,9 @@
 about	00
 news	01
 work	02
-domestic	03
+timeline	03
 awards	04
 funding	05
 service	06
-timeline	07
-talks	08
-media	09
+talks	07
+media	08

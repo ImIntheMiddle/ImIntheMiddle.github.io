@@ -1,5 +1,12 @@
 # Progress
 
+## 2026-10-28 (baselines re-captured)
+
+- `node` is at `/usr/bin/node` on dl41 and dl50 (not on dl40 or dl60). Ran `tools/verify/verify.sh` on dl41 over NFS.
+- Before re-capturing, JavaScript syntax, JSON-LD, tag balance and local assets passed on both pages. The content diffs against the old baselines were exactly the four unverified changes above: the Hexa-P "Code" link, the two internship mentors with their links, the bio and RIPL links, and the removal of the home domestic-presentations tile with Experience moved before Awards (sections renumbered, the `publications.html#domestic` link gone from the home page).
+- Checked the home page by eye in Playwright's headless Chromium (`~/.cache/ms-playwright/chromium_headless_shell-1243`) at 1280 px in English and Japanese. The language is set through `localStorage` `ht.lang` by a redirect page; `--lang=ja-JP` does not switch it. A 390 px capture with a 14000 px tall window stretched the hero to the window height, so the phone width was not checked.
+- Re-captured the baselines with `verify.sh --accept`; the next run printed ALL OK.
+
 ## 2026-10-28 (bio and TTIC links)
 
 - `ref()` in `static/js/tpl.js` now takes a per-language `href` ({en, ja}), as it already did for `label`.
