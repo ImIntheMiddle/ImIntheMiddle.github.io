@@ -27,6 +27,7 @@ X
 豊田工業大学の博士後期課程（D2）に在籍し、知能情報メディア研究室で浮田宗伯教授の指導のもと研究しています。Physical AI と人の動きの推定・予測に興味があります。
 最新情報
 01
+2026 / 11JOURNALHexa-PがPattern Analysis and Applicationsに掲載されました 📄
 2026 / 10JOURNALHexa-PがPattern Analysis and Applicationsに採択されました
 2026 / 09FUNDING豊田工業大学 博士後期課程奨学金の「特別給付」に選ばれました 🎓
 2026 / 08INTERNWoven by Toyota でのインターンを終えました 🚗
@@ -42,11 +43,11 @@ X
 全業績 →
 02
 国際論文 12本（うち筆頭著者 5本）
-Pattern Analysis and Applications 2026 · accepted · also a poster at SNL 2026
+Pattern Analysis and Applications 2026 · vol. 29, art. 221 · also a poster at SNL 2026
 Hexa-P: Physical Plausibility-aware Pre-training for Pedestrian Path Prediction
 H. Taketsugu, S. Nobuhara, N. Ukita
-PDFCodeWeights
-This version of the article has been accepted for publication, after peer review and is subject to Springer Nature's AM terms of use, but is not the Version of Record and does not reflect post-acceptance improvements, or any corrections.
+SpringerPDFCodeWeights
+This version of the article has been accepted for publication, after peer review and is subject to Springer Nature's AM terms of use, but is not the Version of Record and does not reflect post-acceptance improvements, or any corrections. The Version of Record is available online at: https://doi.org/10.1007/s10044-026-01804-x
 ECCV 2026 Workshop · Agent in World · co-author
 PRISM: Predictive Representation of Interaction Style and Motion for Social Robot Navigation
 B.-H. Chen, H. Taketsugu, N. Ukita

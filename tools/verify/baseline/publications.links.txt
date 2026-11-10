@@ -15,6 +15,7 @@ https://arxiv.org/abs/2511.15179
 https://arxiv.org/abs/2603.10398
 https://arxiv.org/abs/2609.18125
 https://arxiv.org/abs/2609.18164
+https://doi.org/10.1007/s10044-026-01804-x
 https://github.com/ImIntheMiddle/EmLoco
 https://github.com/ImIntheMiddle/Hexa-P
 https://github.com/ImIntheMiddle/VATL4Pose-WACV2024

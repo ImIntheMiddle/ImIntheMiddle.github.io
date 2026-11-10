@@ -8,6 +8,12 @@
    ==================================================================== */
 const DATA = {
   news: [
+    { date: '2026 / 11', tag: 'JOURNAL',
+      text: { en: '{paper} is now published in {journal} 📄',
+              ja: '{paper}が{journal}に掲載されました 📄' },
+      refs: { paper: { href: 'https://iminthemiddle.github.io/Hexa-P-Page/', label: 'Hexa-P' },
+              journal: { href: 'https://doi.org/10.1007/s10044-026-01804-x', label: 'Pattern Analysis and Applications' } } },
+
     { date: '2026 / 10', tag: 'JOURNAL',
       text: { en: 'Our paper, "{paper}", has been accepted for publication in {journal}.',
               ja: '{paper}が{journal}に採択されました' },
@@ -84,19 +90,20 @@ const DATA = {
   me: 'H. Taketsugu',
   publications: [
     /* First-author work first, then co-authored. */
-    { date: '2026 / 10', selected: true,
-      venue: '**Pattern Analysis and Applications** 2026', rate: 'accepted · also a poster at SNL 2026',
+    { date: '2026 / 11', selected: true,
+      venue: '**Pattern Analysis and Applications** 2026', rate: 'vol. 29, art. 221 · also a poster at SNL 2026',
       title: 'Hexa-P: Physical Plausibility-aware Pre-training for Pedestrian Path Prediction',
       project: 'https://iminthemiddle.github.io/Hexa-P-Page/',
       authors: ['H. Taketsugu', 'S. Nobuhara', 'N. Ukita'],
       image: { video: 'static/img/pub/hexap.mp4', src: 'static/img/pub/hexap@2x.webp', w: 336, h: 210,
                alt: { en: 'Simulated humanoids walking random paths in the physics pre-training of Hexa-P', ja: 'Hexa-P の事前学習で、物理シミュレーションの中をランダムな経路で歩く人体モデル' } },
       links: [
+        { label: 'Springer', href: 'https://doi.org/10.1007/s10044-026-01804-x' },
         { label: 'PDF', href: 'static/uploads/Hexa-P_PAA_2026_accepted_manuscript.pdf', newTab: true },
         { label: 'Code', href: 'https://github.com/ImIntheMiddle/Hexa-P' },
         { label: 'Weights', href: 'https://huggingface.co/ImIntheMiddle/Hexa-P' }
       ],
-      note: "This version of the article has been accepted for publication, after peer review and is subject to Springer Nature's AM terms of use, but is not the Version of Record and does not reflect post-acceptance improvements, or any corrections." },
+      note: "This version of the article has been accepted for publication, after peer review and is subject to Springer Nature's AM terms of use, but is not the Version of Record and does not reflect post-acceptance improvements, or any corrections. The Version of Record is available online at: https://doi.org/10.1007/s10044-026-01804-x" },
 
     { date: '2026 / 06',
       venue: 'SNL 2026', rate: 'poster',

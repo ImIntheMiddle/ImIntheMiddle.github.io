@@ -27,6 +27,7 @@ About
 Hi! 👋 I am a Ph.D. student (D2) at Toyota Technological Institute, advised by Prof. Norimichi Ukita in the Intelligent Information Media Lab. My research interests are Physical AI and human motion estimation and prediction.
 What's New
 01
+2026 / 11JOURNALHexa-P is now published in Pattern Analysis and Applications 📄
 2026 / 10JOURNALOur paper, "Hexa-P: Physical Plausibility-aware Pre-training for Pedestrian Path Prediction", has been accepted for publication in Pattern Analysis and Applications.
 2026 / 09FUNDINGSelected for the special grant of TTI's Ph.D. Program Scholarship 🎓
 2026 / 08INTERNCompleted an internship at Woven by Toyota 🚗
@@ -42,11 +43,11 @@ Selected Publications
 All publications →
 02
 12 papers · 5 as first author
-Pattern Analysis and Applications 2026 · accepted · also a poster at SNL 2026
+Pattern Analysis and Applications 2026 · vol. 29, art. 221 · also a poster at SNL 2026
 Hexa-P: Physical Plausibility-aware Pre-training for Pedestrian Path Prediction
 H. Taketsugu, S. Nobuhara, N. Ukita
-PDFCodeWeights
-This version of the article has been accepted for publication, after peer review and is subject to Springer Nature's AM terms of use, but is not the Version of Record and does not reflect post-acceptance improvements, or any corrections.
+SpringerPDFCodeWeights
+This version of the article has been accepted for publication, after peer review and is subject to Springer Nature's AM terms of use, but is not the Version of Record and does not reflect post-acceptance improvements, or any corrections. The Version of Record is available online at: https://doi.org/10.1007/s10044-026-01804-x
 ECCV 2026 Workshop · Agent in World · co-author
 PRISM: Predictive Representation of Interaction Style and Motion for Social Robot Navigation
 B.-H. Chen, H. Taketsugu, N. Ukita

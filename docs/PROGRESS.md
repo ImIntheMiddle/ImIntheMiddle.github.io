@@ -1,5 +1,14 @@
 # Progress
 
+## 2026-11-10 (Hexa-P published)
+
+- Hexa-P was published online on 2026-11-09: Pattern Analysis and Applications 29(4), article 221, DOI 10.1007/s10044-026-01804-x (Crossref; https://doi.org/10.1007/s10044-026-01804-x redirects to the Springer article). The article is not open access, so the accepted-manuscript PDF stays.
+- The Hexa-P entry is dated 2026 / 11, reads "vol. 29, art. 221" instead of "accepted", links "Springer" to the DOI before "PDF", and its notice ends with Springer's sentence "The Version of Record is available online at: <DOI URL>".
+- Added a 2026 / 11 news item that Hexa-P is published in Pattern Analysis and Applications; the October acceptance item is kept.
+- CV: the journal entry is dated Nov. 2026 and reads "Pattern Analysis and Applications, 29(4), 221". Rebuilt with pdflatex (five pages, no errors), checked page 2 by eye and copied it to both public paths.
+- `tools/verify/verify.sh` on dl41 showed exactly these content diffs; re-captured with `--accept`, then ALL OK.
+- The project page (`/misc/dl00/halo/Hexa-P/Hexa-P-Page`) got the same DOI, volume and article number, a Springer button, the accepted-manuscript notice and a full BibTeX.
+
 ## 2026-10-28 (baselines re-captured)
 
 - `node` is at `/usr/bin/node` on dl41 and dl50 (not on dl40 or dl60). Ran `tools/verify/verify.sh` on dl41 over NFS.
@@ -31,8 +40,6 @@
 - Dropped 「こんにちは！👋」 from the Japanese bio, which now opens with the programme and the lab (yomiyasu check run 20261028T011222Z-eb360ccd). The English bio still opens with "Hi! 👋".
 
 These changes are verified (`tools/verify/verify.sh` passes) and pushed to main with the owner's approval.
-
-Next: when the DOI is issued, add the publisher link and append "The Version of Record is available online at: https://doi.org/<DOI>" to the notice.
 
 ## 2026-10-28 (publications page)
 
