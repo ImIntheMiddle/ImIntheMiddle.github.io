@@ -91,7 +91,7 @@ const DATA = {
   publications: [
     /* First-author work first, then co-authored. */
     { date: '2026 / 11', selected: true,
-      venue: '**Pattern Analysis and Applications** 2026', rate: 'vol. 29, art. 221 · also a poster at SNL 2026',
+      venue: '**Pattern Analysis and Applications** 2026', rate: 'also a poster at SNL 2026 · **first author**',
       title: 'Hexa-P: Physical Plausibility-aware Pre-training for Pedestrian Path Prediction',
       project: 'https://iminthemiddle.github.io/Hexa-P-Page/',
       authors: ['H. Taketsugu', 'S. Nobuhara', 'N. Ukita'],
@@ -106,13 +106,13 @@ const DATA = {
       note: "This version of the article has been accepted for publication, after peer review and is subject to Springer Nature's AM terms of use, but is not the Version of Record and does not reflect post-acceptance improvements, or any corrections. The Version of Record is available online at: https://doi.org/10.1007/s10044-026-01804-x" },
 
     { date: '2026 / 06',
-      venue: 'SNL 2026', rate: 'poster',
+      venue: 'SNL 2026', rate: 'poster · **first author**',
       title: 'Re-EmLoco: Recovering Embodied Locomotion for Degradation-Robust Pedestrian Path Prediction',
       authors: ['H. Taketsugu', 'S. Nobuhara', 'N. Ukita'],
       links: [] },
 
     { date: '2025 / 06', selected: true,
-      venue: '**CVPR 2025**', rate: 'poster · 22.1% accept',
+      venue: '**CVPR 2025**', rate: 'poster · 22.1% accept · **first author**',
       title: 'Physical Plausibility-aware Trajectory Prediction via Locomotion Embodiment',
       project: 'https://iminthemiddle.github.io/EmLoco-Page/',
       authors: ['H. Taketsugu', 'T. Oba', 'T. Maeda', 'S. Nobuhara', 'N. Ukita'],
@@ -126,7 +126,7 @@ const DATA = {
       ] },
 
     { date: '2024 / 01', selected: true,
-      venue: '**WACV 2024**', rate: 'poster · 41% accept',
+      venue: '**WACV 2024**', rate: 'poster · 41% accept · **first author**',
       title: 'Active Transfer Learning for Efficient Video-Specific Human Pose Estimation',
       project: 'https://iminthemiddle.github.io/VATL4Pose-Page/',
       authors: ['H. Taketsugu', 'N. Ukita'],
@@ -138,7 +138,7 @@ const DATA = {
       ] },
 
     { date: '2023 / 08',
-      venue: 'MVA 2023', rate: '**Oral**',
+      venue: 'MVA 2023', rate: '**Oral** · **first author**',
       title: 'Uncertainty Criteria in Active Transfer Learning for Efficient Video-Specific Human Pose Estimation',
       authors: ['H. Taketsugu', 'N. Ukita'],
       links: [ { label: 'IEEE', href: 'https://ieeexplore.ieee.org/abstract/document/10215565' } ] },

@@ -43,7 +43,7 @@ Selected Publications
 All publications →
 02
 12 papers · 5 as first author
-Pattern Analysis and Applications 2026 · vol. 29, art. 221 · also a poster at SNL 2026
+Pattern Analysis and Applications 2026 · also a poster at SNL 2026 · first author
 Hexa-P: Physical Plausibility-aware Pre-training for Pedestrian Path Prediction
 H. Taketsugu, S. Nobuhara, N. Ukita
 SpringerPDFCodeWeights
@@ -64,11 +64,11 @@ MVA 2025 · Best Poster Award · co-author
 Multi-Person Pose Estimation Evaluation Using Optimal Transportation and Improved Pose Matching
 T. Moriki, H. Taketsugu, N. Ukita
 arXiv
-CVPR 2025 · poster · 22.1% accept
+CVPR 2025 · poster · 22.1% accept · first author
 Physical Plausibility-aware Trajectory Prediction via Locomotion Embodiment
 H. Taketsugu, T. Oba, T. Maeda, S. Nobuhara, N. Ukita
 arXivCodeVideoWeights
-WACV 2024 · poster · 41% accept
+WACV 2024 · poster · 41% accept · first author
 Active Transfer Learning for Efficient Video-Specific Human Pose Estimation
 H. Taketsugu, N. Ukita
 arXivCode

@@ -3,7 +3,8 @@
 ## 2026-11-10 (Hexa-P published)
 
 - Hexa-P was published online on 2026-11-09: Pattern Analysis and Applications 29(4), article 221, DOI 10.1007/s10044-026-01804-x (Crossref; https://doi.org/10.1007/s10044-026-01804-x redirects to the Springer article). The article is not open access, so the accepted-manuscript PDF stays.
-- The Hexa-P entry is dated 2026 / 11, reads "vol. 29, art. 221" instead of "accepted", links "Springer" to the DOI before "PDF", and its notice ends with Springer's sentence "The Version of Record is available online at: <DOI URL>".
+- The Hexa-P entry is dated 2026 / 11, no longer says "accepted", links "Springer" to the DOI before "PDF", and its notice ends with Springer's sentence "The Version of Record is available online at: <DOI URL>".
+- Every first-author paper (Hexa-P, Re-EmLoco, EmLoco, VATL4Pose, MVA 2023) now ends its `rate` with "**first author**" in bold, as the co-authored papers end with "co-author" (owner's request).
 - Added a 2026 / 11 news item that Hexa-P is published in Pattern Analysis and Applications; the October acceptance item is kept.
 - CV: the journal entry is dated Nov. 2026 and reads "Pattern Analysis and Applications, 29(4), 221". Rebuilt with pdflatex (five pages, no errors), checked page 2 by eye and copied it to both public paths.
 - `tools/verify/verify.sh` on dl41 showed exactly these content diffs; re-captured with `--accept`, then ALL OK.
