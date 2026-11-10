@@ -6,9 +6,9 @@
 - The Hexa-P entry is dated 2026 / 11, no longer says "accepted", links "Springer" to the DOI before "PDF", and its notice ends with Springer's sentence "The Version of Record is available online at: <DOI URL>".
 - Every first-author paper (Hexa-P, Re-EmLoco, EmLoco, VATL4Pose, MVA 2023) now ends its `rate` with "**first author**" in bold, as the co-authored papers end with "co-author" (owner's request).
 - Added a 2026 / 11 news item that Hexa-P is published in Pattern Analysis and Applications; the October acceptance item is kept.
-- CV: the journal entry is dated Nov. 2026 and reads "Pattern Analysis and Applications, 29(4), 221". Rebuilt with pdflatex (five pages, no errors), checked page 2 by eye and copied it to both public paths.
+- CV: the journal entry is dated Nov. 2026 and drops "(accepted)". Volume, issue, article number and DOI belong in the BibTeX only, not in headings or citation lines (owner, 2026-11-10). Rebuilt with pdflatex (five pages, no errors), checked page 2 by eye and copied it to both public paths.
 - `tools/verify/verify.sh` on dl41 showed exactly these content diffs; re-captured with `--accept`, then ALL OK.
-- The project page (`/misc/dl00/halo/Hexa-P/Hexa-P-Page`) got the same DOI, volume and article number, a Springer button, the accepted-manuscript notice and a full BibTeX.
+- The project page (`/misc/dl00/halo/Hexa-P/Hexa-P-Page`) got a Springer button (DOI), the accepted-manuscript notice and volume, issue, article number and DOI in its BibTeX; its heading and citation line still read "Pattern Analysis and Applications, 2026".
 
 ## 2026-10-28 (baselines re-captured)
 
