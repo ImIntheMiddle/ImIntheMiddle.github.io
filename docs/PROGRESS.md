@@ -1,6 +1,6 @@
 # Progress
 
-## 2026-11-27 (layout and plaza revision, in progress, not committed)
+## 2026-11-28 (layout and plaza revision, pushed as 7f27232; checks in a real browser remain)
 
 Owner approved every item of a design review on 2026-11-27, with three conditions: news emoji stay, the crowd reacts more strongly and from further off, and publication videos always play.
 
@@ -26,7 +26,7 @@ Remaining:
 - Pointer avoidance, the walk result, the table of contents and the frame rate with the added figures and shadows are not yet checked in a real browser (headless Chromium cannot hover and draws on the CPU).
 - The owner declined a research-theme section (2026-11-27).
 - Wording review of all visible text, English and Japanese, applied on 2026-11-28 with the owner's decisions: the greeting "Hi! 👋" and the acceptance rates stay, "English Step-Up points" stays (official name), the undergraduate scholarship reads "tuition reduction", and the two Hexa-P news items (acceptance, publication) are one item. Declined: dropping DC1 from the hero, new date formats, translated news tags and link labels, a Japanese summary of the Springer notice. The Japanese page now has Japanese venue notes (`rate` and `venue` as `{en, ja}` pairs) and video descriptions.
-- `tools/verify/verify.sh --accept` re-captured the baselines after the wording changes; ALL OK. Commit and push on the owner's request.
+- `tools/verify/verify.sh --accept` re-captured the baselines after the wording changes; ALL OK.
 
 ## 2026-11-10 (Hexa-P published)
 
