@@ -10,4 +10,6 @@
   d.setAttribute('data-lang', lg);
   d.setAttribute('lang', lg);
   d.classList.add('js');
+  // ?card shows the hero alone, for capturing the image used in link previews.
+  if (/[?&]card\b/.test(location.search)) d.classList.add('card');
 })();

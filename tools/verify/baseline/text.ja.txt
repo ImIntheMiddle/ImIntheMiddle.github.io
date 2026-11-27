@@ -1,21 +1,21 @@
 本文へスキップ
 H. Taketsugu · 武次 広夢
+群衆の中を歩く
+歩く終了
+English
 最新情報
 論文
 経歴
 受賞
-助成
-活動
-発表
+奨学金・助成
+学会・教育
+講演
 メディア
-群衆の中を歩く
-歩くやめる
-EN
 Physical AI・人の動きの推定と予測
 武次 広夢
 Hiromu Taketsugu — 豊田工業大学 博士後期課程 · 日本学術振興会 特別研究員 (DC1) · ACCV 2026 Technical Chair
 Email
-Scholar
+Google Scholar
 CV
 GitHub
 LinkedIn
@@ -23,77 +23,74 @@ X
 矢印キーか WASD で歩く · Esc で終了
 行きたい場所をタップ
 自己紹介
-00
 豊田工業大学の博士後期課程（D2）に在籍し、知能情報メディア研究室で浮田宗伯教授の指導のもと研究しています。Physical AI と人の動きの推定・予測に興味があります。
 最新情報
-01
-2026 / 11JOURNALHexa-PがPattern Analysis and Applicationsに掲載されました 📄
-2026 / 10JOURNALHexa-PがPattern Analysis and Applicationsに採択されました
+2026 / 11JOURNALHexa-P が Pattern Analysis and Applications に採録され、掲載されました 🎉
 2026 / 09FUNDING豊田工業大学 博士後期課程奨学金の「特別給付」に選ばれました 🎓
-2026 / 08INTERNWoven by Toyota でのインターンを終えました 🚗
+2026 / 08INTERNWoven by Toyota でのインターンシップを終えました 🚗
 2026 / 07WORKSHOP提案したワークショップ HUFPEI Workshop が ACCV 2026 に採択されました 🎉
 2026 / 06SNLSNL 2026（TTIC）で Hexa-P と Re-EmLoco の2件をポスター発表しました 🪧
-2026 / 05AWARDEmLoco で 2026年 IEEE名古屋支部 国際会議研究発表賞を受賞しました 🏆
+2026 / 05AWARDEmLoco の発表で 2026年 IEEE名古屋支部 国際会議研究発表賞を受賞しました 🏆
 2026 / 04FUNDING豊秋奨学会の奨学生に採用されました 🎓
-2026 / 03AWARDHexa-P で 第245回 情報処理学会 CVIM研究会 奨励賞を受賞しました 🏆
+2026 / 03AWARDHexa-P の発表で 第245回 情報処理学会 CVIM研究会 奨励賞を受賞しました 🏆
 2025 / 08SERVICEACCV 2026 の Technical Chair に就任しました 🛠️
-2025 / 02CVPR'25EmLoco が CVPR 2025 に採択されました 🎉（arXiv）
+2025 / 02CVPR 2025EmLoco が CVPR 2025 に採択されました 🎉（arXiv）
 2025 / 01LIFE父になりました 👶
+すべて表示（11件）折りたたむ
 主要論文
-全業績 →
-02
-国際論文 12本（うち筆頭著者 5本）
-Pattern Analysis and Applications 2026 · also a poster at SNL 2026 · first author
+論文・発表の一覧 →
+全12件（うち筆頭著者5件）
+Pattern Analysis and Applications 2026 · SNL 2026 でもポスター発表 · 筆頭著者
 Hexa-P: Physical Plausibility-aware Pre-training for Pedestrian Path Prediction
 H. Taketsugu, S. Nobuhara, N. Ukita
-SpringerPDFCodeWeights
+SpringerAccepted manuscript (PDF)CodeWeights
+受理原稿についての注意
 This version of the article has been accepted for publication, after peer review and is subject to Springer Nature's AM terms of use, but is not the Version of Record and does not reflect post-acceptance improvements, or any corrections. The Version of Record is available online at: https://doi.org/10.1007/s10044-026-01804-x
-ECCV 2026 Workshop · Agent in World · co-author
+ECCV 2026 ワークショップ · Agent in World · 共著
 PRISM: Predictive Representation of Interaction Style and Motion for Social Robot Navigation
 B.-H. Chen, H. Taketsugu, N. Ukita
 arXiv
-ECCV 2026 Workshop · FCAM · co-author
+ECCV 2026 ワークショップ · FCAM · 共著
 Energy-Regularized Imitation Learning for Force- and Work-Aware Robotic Manipulation
 T. Otani, H. Taketsugu, N. Ukita
 arXiv
-WACV 2026 · co-author
+WACV 2026 · 共著
 MMCM: Multimodality-aware Metric using Clustering-based Modes for Probabilistic Human Motion Prediction
 K. Tokoro, H. Taketsugu, N. Ukita
 arXivPDF
-MVA 2025 · Best Poster Award · co-author
+MVA 2025 · Best Poster Award · 共著
 Multi-Person Pose Estimation Evaluation Using Optimal Transportation and Improved Pose Matching
 T. Moriki, H. Taketsugu, N. Ukita
 arXiv
-CVPR 2025 · poster · 22.1% accept · first author
+CVPR 2025 · ポスター · 採択率 22.1% · 筆頭著者
 Physical Plausibility-aware Trajectory Prediction via Locomotion Embodiment
 H. Taketsugu, T. Oba, T. Maeda, S. Nobuhara, N. Ukita
 arXivCodeVideoWeights
-WACV 2024 · poster · 41% accept · first author
+WACV 2024 · ポスター · 採択率 41% · 筆頭著者
 Active Transfer Learning for Efficient Video-Specific Human Pose Estimation
 H. Taketsugu, N. Ukita
 arXivCode
-経歴
-03
+学歴・職歴
 2025.04 –
 博士後期課程 — 情報援用工学専攻豊田工業大学 · 知能情報メディア研究室
 2025.04 –
 日本学術振興会 特別研究員 (DC1)日本学術振興会
 2026.06 – 2026.08
-インターン — Machine Learning Engineer (Perception)Woven by Toyota · メンター: Igor Vasiljevic 氏
+インターン — Machine Learning Engineer (Perception)Woven by Toyota · メンター：Igor Vasiljevic氏
 2023.10 – 2024.09
 サイエンスライターAI-SCHOLAR · リモート · 最新の機械学習論文の解説記事を執筆
 2023.09 – 2023.12
 客員学生豊田工業大学シカゴ校 (TTIC) · Matthew R. Walter 教授
 2023.04 – 2025.03
-修士課程 — 先端工学専攻 電子情報分野豊田工業大学 · 修了時成績 50名中2位
+修士（工学）— 先端工学専攻 電子情報分野豊田工業大学 · 修了時成績 50名中2位
 2022.04 – 2025.03
 ティーチングアシスタント — グローバル消費インテリジェンス (GCI)東京大学 · リモート · 1学期あたり3万人超が受講
 2022.01 – 2022.03
-研究インターン株式会社 豊田中央研究所 · メンター: 大濱 吉紘 氏
+研究インターン株式会社 豊田中央研究所 · メンター：大濱 吉紘氏
 2019.04 – 2023.03
-学士課程 — 先端工学基礎学科 電子情報分野豊田工業大学 · 卒業時成績 83名中1位 · 副専攻 機械システム分野
+学士（工学）— 先端工学基礎学科 電子情報分野豊田工業大学 · 卒業時成績 83名中1位 · 副専攻 機械システム分野
+すべて表示（9件）折りたたむ
 受賞
-04
 2026
 IEEE名古屋支部 国際会議研究発表賞EmLoco（CVPR 2025）の発表に対して
 2026
@@ -101,9 +98,9 @@ IEEE名古屋支部 国際会議研究発表賞EmLoco（CVPR 2025）の発表に
 2025
 プレゼン賞 — 第15回 企業と博士人材の交流会名古屋大学 · 2025年8月
 2025
-Best Poster Award — MVA 2025共著 · 多人数の姿勢推定の新しい評価指標
+Best Poster Award — MVA 2025受賞論文の共著者
 2025
-ポスター賞（第3位）JST ASPIRE 京都ワークショップ · 48件中3位
+ポスター賞（第3位）JST ASPIRE 京都ワークショップ · ポスター48件
 2023
 豊田奨学基金賞豊田工業大学 · 学業成績・人物ともに特に優秀な学生として学部から1名
 2023
@@ -118,8 +115,8 @@ Best Poster Award — MVA 2025共著 · 多人数の姿勢推定の新しい評�
 技術開発特論 1位豊田工業大学 · 2021年12月
 2021
 自由テーマ部門 優勝 — 英語科学技術プレゼンテーションコンテスト豊田工業大学 · 2021年11月
+すべて表示（12件）折りたたむ
 奨学金・助成
-05
 2026
 博士後期課程奨学金「特別給付」豊田工業大学 · 2026年9月
 2026 –
@@ -138,8 +135,8 @@ Best Poster Award — MVA 2025共著 · 多人数の姿勢推定の新しい評�
 修士・博士一貫教育プログラム豊田工業大学 · 各学年若干名 · 修士課程の間に給付
 2019 – 2023
 豊田奨学基金 奨学金豊田工業大学 · 学部4年間の授業料減免
+すべて表示（9件）折りたたむ
 学会活動・教育
-06
 2026
 Technical Chair — ACCV 2026アジアコンピュータビジョン会議 · 大阪 · 2026年12月
 2026
@@ -149,11 +146,11 @@ Technical Chair — ACCV 2026アジアコンピュータビジョン会議 · �
 2023 –
 ティーチングアシスタント豊田工業大学 · 顔認識 · 人工知能・深層学習実験 · コンピュータグラフィックス
 2025
-実験教材 — Experiments in Artificial Intelligence & Deep Learning豊田工業大学 · 2025年度
+実験教材 — 人工知能・深層学習実験豊田工業大学 · 2025年度
 2024
-実験教材 — Experiments in Artificial Intelligence & Deep Learning豊田工業大学 · 2024年度
-講演・発表
-07
+実験教材 — 人工知能・深層学習実験豊田工業大学 · 2024年度
+すべて表示（6件）折りたたむ
+講演
 MIRU 2025 · 招待講演Physical Plausibility-aware Trajectory Prediction via Locomotion Embodiment
 第28回 画像の認識・理解シンポジウム · 2025年7月
 トヨタ自動車 未来創生センター · 講演Human Trajectory Prediction for Social Navigation
@@ -161,7 +158,6 @@ MIRU 2025 · 招待講演Physical Plausibility-aware Trajectory Prediction via L
 NTT 厚木研究開発センタ · 講演Computer Vision for Social Navigation
 日本電信電話株式会社 · 2024年5月
 メディア掲載
-08
 【学生受賞】博士後期課程2年 武次広夢さんが IEEE 名古屋支部「国際会議研究発表賞」を受賞豊田工業大学2026 / 05
 【学生受賞】博士後期課程2年 武次広夢さんが「第245回 情報処理学会 コンピュータビジョンとイメージメディア研究会」において奨励賞を受賞豊田工業大学2026 / 05
 TTIC協定留学へ行こう！豊田工業大学 広報誌 ADVANCE vol.1182024 / 05
@@ -169,4 +165,4 @@ TTIC協定留学へ行こう！豊田工業大学 広報誌 ADVANCE vol.1182024 
 豊田工大の肉体派！スパルタンレースサークルのメンバーが大会で完走豊田工業大学2022 / 09
 「英語科学技術プレゼンテーションコンテスト」開催豊田工業大学 広報誌 ADVANCE vol.1112022 / 01
 © 2026 Hiromu Taketsugu · 武次 広夢
-背景は歩行者の群衆のシミュレーションです
+背景：歩行者の群衆シミュレーション

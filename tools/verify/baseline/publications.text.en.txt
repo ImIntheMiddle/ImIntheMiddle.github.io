@@ -4,12 +4,13 @@ H. Taketsugu · 武次 広夢
 日本語
 Publications
 Google Scholar →
-12 papers · 5 as first author
+12 in total · 5 as first author
 2026
 Pattern Analysis and Applications 2026 · also a poster at SNL 2026 · first author
 Hexa-P: Physical Plausibility-aware Pre-training for Pedestrian Path Prediction
 H. Taketsugu, S. Nobuhara, N. Ukita
-SpringerPDFCodeWeights
+SpringerAccepted manuscript (PDF)CodeWeights
+Accepted-manuscript notice
 This version of the article has been accepted for publication, after peer review and is subject to Springer Nature's AM terms of use, but is not the Version of Record and does not reflect post-acceptance improvements, or any corrections. The Version of Record is available online at: https://doi.org/10.1007/s10044-026-01804-x
 ECCV 2026 Workshop · Agent in World · co-author
 PRISM: Predictive Representation of Interaction Style and Motion for Social Robot Navigation
@@ -38,7 +39,7 @@ MIRU 2025 · co-author
 Selective Social-Interaction via Individual Importance for Fast Human Trajectory Prediction
 Y. Urano, H. Taketsugu, N. Ukita
 arXiv
-CVPR 2025 · poster · 22.1% accept · first author
+CVPR 2025 · poster · 22.1% acceptance rate · first author
 Physical Plausibility-aware Trajectory Prediction via Locomotion Embodiment
 H. Taketsugu, T. Oba, T. Maeda, S. Nobuhara, N. Ukita
 arXivCodeVideoWeights
@@ -47,7 +48,7 @@ Human Motion Prediction via Test-domain-aware Adaptation with Easily-available H
 K. Shimbo, H. Taketsugu, N. Ukita
 arXiv
 2024
-WACV 2024 · poster · 41% accept · first author
+WACV 2024 · poster · 41% acceptance rate · first author
 Active Transfer Learning for Efficient Video-Specific Human Pose Estimation
 H. Taketsugu, N. Ukita
 arXivCode
@@ -56,7 +57,7 @@ MVA 2023 · Oral · first author
 Uncertainty Criteria in Active Transfer Learning for Efficient Video-Specific Human Pose Estimation
 H. Taketsugu, N. Ukita
 IEEE
-Domestic Presentations
+Presentations in Japan
 9 presentations in Japan · 4 as first author
 2026
 知能メカトロニクスWS · 2026 / 09

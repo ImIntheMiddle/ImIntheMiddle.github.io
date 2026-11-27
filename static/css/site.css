@@ -95,6 +95,9 @@ a { color: inherit; }
     linear-gradient(to bottom, var(--stage), rgba(var(--stage-rgb), 0) 9%, rgba(var(--stage-rgb), 0) 88%, var(--stage)),
     linear-gradient(to right, var(--stage), rgba(var(--stage-rgb), 0) 5%, rgba(var(--stage-rgb), 0) 95%, var(--stage)); }
 
+/* The hero alone, as captured for the link-preview image (?card). */
+html.card header, html.card .chips, html.card .toc { display: none; }
+
 /* ====================================================================
    Wrap — page container
    ==================================================================== */
@@ -160,20 +163,27 @@ header {
 /* On publications.html the name and the way back are links. */
 a.mark, a.pill { color: inherit; text-decoration: none; }
 a.pill { color: var(--ink-dim); }
-/* The column is too narrow for the section links beside the name and the
-   two buttons, so they stay out and the buttons take the right edge. */
-nav.links {
-  display: none; gap: 22px; margin-left: auto;
-  font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.04em;
+/* The section links stand beside the column, where the window is wide
+   enough to have a margin for them, and appear once the hero is passed. */
+.toc { display: none; }
+@media (min-width: 1240px) {
+  .toc {
+    position: fixed; z-index: 20; top: 50%;
+    right: calc(50% + var(--frame) / 2 + 28px);
+    display: flex; flex-direction: column; align-items: flex-end; gap: 2px;
+    transform: translateY(-50%);
+    font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.04em;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s;
+  }
+  html.past-hero .toc { opacity: 1; pointer-events: auto; }
+  .toc a {
+    padding: 5px 12px 5px 0; border-right: 2px solid transparent;
+    color: var(--ink-faint); text-decoration: none;
+    transition: color 0.2s, border-color 0.2s;
+  }
+  .toc a:hover { color: var(--accent-text); }
+  .toc a.here { color: var(--accent-text); border-right-color: var(--accent); }
 }
-nav.links a {
-  color: var(--ink-dim);
-  text-decoration: none;
-  transition: color 0.2s;
-}
-nav.links a:hover { color: var(--accent-text); }
 .toggles { display: flex; gap: 8px; margin-left: auto; }
 .gamebtn, .pill { white-space: nowrap; }
 .pill {
@@ -275,16 +285,9 @@ h1.name small .role { white-space: nowrap; }
   letter-spacing: -0.02em;
   line-height: 1.15;
 }
-/* The index sits at the far right, with the note, if any, just before it. */
 .sec-head .note { margin-left: auto; font-family: var(--font-mono); font-size: 12px; }
 .sec-head .note a { color: var(--accent-text); text-decoration: none; }
 .sec-head .note a:hover { text-decoration: underline; }
-.sec-head .idx {
-  margin-left: auto;
-  font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.08em;
-  color: var(--ink-faint);
-}
-.sec-head .note + .idx { margin-left: 0; }
 /* About wears a small caption in place of a title: it opens the page
    rather than being one section among the rest. */
 #about .sec-head h2 {
@@ -294,6 +297,23 @@ h1.name small .role { white-space: nowrap; }
 #about .bio-text p { font-size: 17px; color: var(--ink); }
 
 .verify { color: var(--ink-faint); font-weight: 400; }
+
+/* Links in running text: the accent, underlined on hover. */
+.tile :where(p, li, .name, .m-title, .cap) a { color: var(--accent-text); text-decoration: none; }
+.tile :where(p, li, .name, .m-title, .cap) a:hover { text-decoration: underline; }
+
+/* A list that opens with its leading entries. */
+html.js .foldable:not(.open) .extra { display: none; }
+.more-btn {
+  display: none; width: 100%; margin-top: 4px; padding: 14px 0 0;
+  border: 0; border-top: 1px solid var(--hairline-soft); background: none;
+  font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.04em;
+  color: var(--accent-text); text-align: left; cursor: pointer;
+}
+html.js .more-btn { display: block; }
+.more-btn:hover { text-decoration: underline; }
+.more-btn .when-open, .foldable.open .more-btn .when-closed { display: none; }
+.foldable.open .more-btn .when-open { display: inline; }
 
 /* ====================================================================
    Bio
@@ -307,7 +327,7 @@ h1.name small .role { white-space: nowrap; }
 }
 .bio .portrait {
   width: 140px; height: 140px;
-  border: 1px solid var(--hairline);
+  border-radius: 12px; overflow: hidden;
   background: var(--paper-2);
   display: flex; align-items: center; justify-content: center;
   font-family: var(--font-mono);
@@ -345,8 +365,6 @@ h1.name small .role { white-space: nowrap; }
   letter-spacing: 0.04em;
 }
 .news li .t { color: var(--ink-dim); line-height: 1.55; }
-.news li .t a { color: var(--accent-text); text-decoration: none; }
-.news li .t a:hover { text-decoration: underline; }
 .news li .tag {
   display: inline-block;
   font-family: var(--font-mono);
@@ -416,13 +434,16 @@ h1.name small .role { white-space: nowrap; }
   display: inline-block;
   margin-bottom: 8px;
 }
-.pub .venue .rate { color: var(--ink-faint); text-transform: none; letter-spacing: 0.04em; white-space: nowrap; }
-/* What a reader should not miss -- CVPR and WACV, an oral, a best-poster
-   award -- is marked **so** in the data and set as a badge. */
+.pub .venue .rate { color: var(--ink-faint); text-transform: none; letter-spacing: 0.04em; }
+/* What a reader should not miss -- a top venue or an award -- is marked
+   **so** in the data and set as a badge; the author's role and the kind of
+   presentation are marked *so* and set in ink. */
 .pub .venue strong {
   font-weight: 600; color: #ffffff; background: var(--accent);
   padding: 1px 6px; border-radius: 3px;
+  -webkit-box-decoration-break: clone; box-decoration-break: clone;
 }
+.pub .venue em { font-style: normal; font-weight: 500; color: var(--ink); white-space: nowrap; }
 .pub .venue .sep { white-space: normal; }
 .pub h3 {
   font-family: var(--font-sans);
@@ -471,12 +492,13 @@ h1.name small .role { white-space: nowrap; }
   transition: transform 0.18s cubic-bezier(0.2,0.7,0.2,1);
 }
 .pub .pub-links a:hover::after { transform: translate(1px, -1px); }
-.pub .pub-note {
-  font-size: 12px;
-  line-height: 1.5;
-  color: var(--ink-faint);
-  margin-top: 10px;
+.pub .pub-note { margin-top: 10px; font-size: 12px; line-height: 1.5; color: var(--ink-faint); }
+.pub .pub-note summary {
+  width: fit-content; cursor: pointer;
+  font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.02em;
 }
+.pub .pub-note summary:hover { color: var(--accent-text); }
+.pub .pub-note p { margin-top: 6px; overflow-wrap: anywhere; }
 /* In the wide tile the venue gets a column of its own, the way a CV sets
    it: the eye runs down the venues, and each row loses a line. */
 @media (min-width: 901px) {
@@ -567,8 +589,6 @@ h1.name small .role { white-space: nowrap; }
   border-top: 1px solid var(--hairline-soft);
 }
 .media-item .m-title { font-size: 15px; color: var(--ink); line-height: 1.4; }
-.media-item .m-title a { color: var(--accent-text); text-decoration: none; }
-.media-item .m-title a:hover { text-decoration: underline; }
 .media-item .m-title .src {
   display: block;
   font-family: var(--font-mono);
@@ -693,6 +713,15 @@ html.walking .hero-block::before { opacity: 0; }
   opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.3s;
 }
 html.walking .walk-hint { opacity: 1; transform: translate(-50%, 0); }
+/* What a walk came to, shown for a few seconds after leaving it. */
+.walk-result {
+  position: absolute; left: 50%; bottom: 22px; z-index: 3; transform: translate(-50%, 8px);
+  width: max-content; max-width: min(560px, calc(100% - 32px));
+  padding: 12px 18px; border-radius: 16px; background: var(--paper); border: 1px solid var(--hairline);
+  font: 400 13px/1.55 var(--font-sans); color: var(--ink-dim); text-align: center;
+  opacity: 0; pointer-events: none; transition: opacity 0.3s, transform 0.3s;
+}
+.walk-result.show { opacity: 1; transform: translate(-50%, 0); }
 .walk-hint .touch, .coarse .walk-hint .keys { display: none; }
 .coarse .walk-hint .touch { display: inline; }
 /* Both states ship in markup so the language toggle keeps owning translation. */
@@ -747,7 +776,7 @@ html.walking .walk-hint { opacity: 1; transform: translate(-50%, 0); }
    so a JS failure can never leave the page blank. */
 /* Mono is used for dates, years, indices and rates -- all of which want to
    line up in a column. */
-.idx, .yr, .d, .m-date, .venue, .rate, .k, .v, .tag, .note,
+.yr, .d, .m-date, .venue, .rate, .k, .v, .tag, .note,
 .foot-row, .pill, .chips a, .gamebtn {
   font-variant-numeric: tabular-nums;
 }
@@ -761,7 +790,7 @@ p, .bio-text p, .life-item p { text-wrap: pretty; }
 [data-lang="ja"] .life-item p { line-height: 1.85; }
 
 .reveal { opacity: 1; transform: none; }
-html.js .reveal { opacity: 0; transform: translateY(16px); transition: opacity 0.7s cubic-bezier(0.2,0.7,0.2,1), transform 0.7s cubic-bezier(0.2,0.7,0.2,1); }
+html.js .reveal { opacity: 0; transform: translateY(8px); transition: opacity 0.35s var(--ease), transform 0.35s var(--ease); }
 html.js .reveal.in { opacity: 1; transform: none; }
 
 /* ====================================================================
@@ -773,7 +802,7 @@ html.js .reveal.in { opacity: 1; transform: none; }
 }
 @media (max-width: 640px) {
   .nav-inner { padding-left: 0; padding-right: 0; gap: 12px; }
-  .hero-block { height: max(560px, 86vh); }
+  .hero-block { height: max(540px, 68vh); }
   /* The copy spans a phone's width, so a clearing beside it would sit
      under it. Veil the plaza behind the copy instead, down to just past
      the links, and let it run in full below. */
@@ -800,6 +829,13 @@ html.js .reveal.in { opacity: 1; transform: none; }
   [data-lang="en"] .gamebtn .lbl-short-off.en, [data-lang="ja"] .gamebtn .lbl-short-off.ja { display: inline; }
   [data-lang="en"] .gamebtn.on .lbl-short-off, [data-lang="ja"] .gamebtn.on .lbl-short-off { display: none; }
   [data-lang="en"] .gamebtn.on .lbl-short-on.en, [data-lang="ja"] .gamebtn.on .lbl-short-on.ja { display: inline; }
+}
+
+/* Between the home page and publications.html the header stays in place
+   and the content cross-fades. */
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition { navigation: auto; }
+  header { view-transition-name: site-header; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,9 +1,9 @@
-about	00
-news	01
-work	02
-timeline	03
-awards	04
-funding	05
-service	06
-talks	07
-media	08
+about
+news
+work
+timeline
+awards
+funding
+service
+talks
+media

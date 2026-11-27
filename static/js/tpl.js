@@ -65,7 +65,13 @@ function mount(sel, tpl) {
 }
 
 /* ---------- section templates ---------- */
-const newsItem = (n) => h`<li><span class="d">${n.date}</span><span class="t${n.cls ? ' ' + n.cls : ''}">${n.tag ? h`<span class="tag">${n.tag}</span>` : ''}${t(n.text, n.refs)}</span></li>`;
+/* A list opens with its leading entries: children marked `extra` stay hidden
+   until the button under the list is pressed. */
+const NEWS_SHOWN = 5;
+const moreBtn = (n) => h`
+      <button class="more-btn" type="button" aria-expanded="false"><span class="when-closed">${t({ en: `Show all ${n}`, ja: `すべて表示（${n}件）` })}</span><span class="when-open">${t({ en: 'Show fewer', ja: '折りたたむ' })}</span></button>`;
+
+const newsItem = (n, i) => h`<li${i >= NEWS_SHOWN ? raw(' class="extra"') : ''}><span class="d">${n.date}</span><span class="t${n.cls ? ' ' + n.cls : ''}">${n.tag ? h`<span class="tag">${n.tag}</span>` : ''}${t(n.text, n.refs)}</span></li>`;
 
 const pubAuthors = (p, me) => p.authors.map((a, i) =>
   h`${i ? ', ' : ''}${a === me ? h`<span class="me">${a}</span>` : a}`);
@@ -78,7 +84,7 @@ const pub = (p, me, showDate) => h`
         <h3>${p.project ? h`<a href="${p.project}"${newTabAttr(p.project)}>${p.title}</a>` : p.title}${p.titleNote ? h` <span class="verify">${p.titleNote}</span>` : ''}</h3>
         <div class="auth">${pubAuthors(p, me)}</div>
         ${p.links.length ? h`<div class="pub-links">${p.links.map((l) => ref(l, 'en'))}</div>` : ''}
-        ${p.note ? h`<p class="pub-note">${p.note}</p>` : ''}
+        ${p.note ? h`<details class="pub-note"><summary>${t({ en: 'Accepted-manuscript notice', ja: '受理原稿についての注意' })}</summary><p>${p.note}</p></details>` : ''}
       </div></div>`;
 
 /* An image is always optional. Where one is absent the layout closes up
@@ -90,6 +96,7 @@ const pub = (p, me, showDate) => h`
               w: 1200, h: 750,                          // optional, stops reflow
               alt: { en: 'EmLoco teaser', ja: 'EmLoco の概要図' } }  */
 const media = (im) => !im ? '' : im.video ? h`<video src="${im.video}" poster="${im.src}" aria-label="${pickLang(im.alt, 'en')}"${
+  im.alt && typeof im.alt === 'object' ? h` data-alt-en="${im.alt.en}" data-alt-ja="${im.alt.ja || im.alt.en}"` : ''}${
   im.w ? h` width="${im.w}" height="${im.h}"` : ''} autoplay muted loop playsinline preload="metadata"></video>` : h`<img src="${im.src}"${im.src2x
   ? h` srcset="${im.src} 1x, ${im.src2x} 2x"` : ''} alt="${pickLang(im.alt, 'en')}"${
   im.alt && typeof im.alt === 'object' ? h` data-alt-en="${im.alt.en}" data-alt-ja="${im.alt.ja || im.alt.en}"` : ''}${
@@ -101,13 +108,17 @@ const awardName = (a) => h`<span class="en" lang="en">${rich(pickLang(a.name, 'e
 
 /* Awards, service and experience are all the same shape -- a period, a
    title and a subtitle -- so they share one renderer and one set of rules. */
-const entryList = (items) => h`
-      <div class="awards reveal">${items.map((a) => h`
-        <div class="award">
+const entryList = (items) => {
+  // Entries marked `key` lead; the list folds only when it has both kinds.
+  const fold = items.some((a) => a.key) && items.some((a) => !a.key);
+  return h`
+      <div class="awards reveal${fold ? ' foldable' : ''}">${items.map((a) => h`
+        <div class="award${fold && !a.key ? ' extra' : ''}">
           <span class="yr">${a.year}</span>
           <span class="name">${awardName(a)}</span>
-        </div>`)}
+        </div>`)}${fold ? moreBtn(items.length) : ''}
       </div>`;
+};
 
 /* Newest first; Array.prototype.sort is stable, so entries of the same
    month keep their order in DATA. */
@@ -116,17 +127,15 @@ const firstAuthored = (list, me) => list.filter((p) => p.authors[0] === me).leng
 
 /* The counts above a list of papers or of talks. */
 const TALLY = {
-  papers: (n, k) => ({ en: `${n} papers · ${k} as first author`, ja: `国際論文 ${n}本（うち筆頭著者 ${k}本）` }),
+  papers: (n, k) => ({ en: `${n} in total · ${k} as first author`, ja: `全${n}件（うち筆頭著者${k}件）` }),
   talks: (n, k) => ({ en: `${n} presentations in Japan · ${k} as first author`, ja: `国内発表 ${n}件（うち筆頭著者 ${k}件）` })
 };
 const tally = (kind, list, me) => h`
       <p class="tally reveal">${t(TALLY[kind](list.length, firstAuthored(list, me)))}</p>`;
 
-/* A section's heading row: the title, an optional link at the right and,
-   on the home page, the section's number. */
-const secHead = (title, note, idx) => h`
+/* A section's heading row: the title and an optional link at the right. */
+const secHead = (title, note) => h`
       <div class="sec-head reveal">
         <h2>${t(title)}</h2>${note ? h`
-        <span class="note"><a href="${note.href}"${newTabAttr(note.href)}>${t(note.label)}</a></span>` : ''}${idx == null ? '' : h`
-        <span class="idx">${idx}</span>`}
+        <span class="note"><a href="${note.href}"${newTabAttr(note.href)}>${t(note.label)}</a></span>` : ''}
       </div>`;

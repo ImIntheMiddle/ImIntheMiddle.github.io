@@ -18,17 +18,18 @@
 <meta property="og:description" content="Ph.D. student at Toyota Technological Institute. Research interests: Physical AI, human motion estimation and prediction.">
 <meta property="og:locale" content="en_US">
 <meta property="og:locale:alternate" content="ja_JP">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://iminthemiddle.github.io/static/img/og-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@ImlntheMiddle">
-<!-- TODO(og-card): add og:image (1200x630 static/img/og-card.png) and switch
-     twitter:card to summary_large_image once the card artwork exists. -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Person",
   "name": "Hiromu Taketsugu",
   "alternateName": "武次 広夢",
-  "jobTitle": "Ph.D. Student",
+  "jobTitle": "Ph.D. student",
   "url": "https://iminthemiddle.github.io/",
   "affiliation": {
     "@type": "CollegeOrUniversity",
@@ -54,17 +55,18 @@
 <header>
   <div class="nav-inner">
     <div class="mark">H. Taketsugu <b>·</b> 武次 広夢</div>
-    <nav class="links" id="nav-links"></nav>
     <div class="toggles">
       <button class="gamebtn" id="gameBtn" aria-pressed="false">
         <span class="dot" aria-hidden="true"></span>
-        <span class="en lbl-off" lang="en">Walk into the crowd</span><span class="en lbl-on" lang="en">Walking &middot; Esc to leave</span><span class="ja lbl-off" lang="ja">群衆の中を歩く</span><span class="ja lbl-on" lang="ja">操作中 &middot; Esc で終了</span>
-        <span class="en lbl-short-off" lang="en">Walk</span><span class="en lbl-short-on" lang="en">Leave</span><span class="ja lbl-short-off" lang="ja">歩く</span><span class="ja lbl-short-on" lang="ja">やめる</span>
+        <span class="en lbl-off" lang="en">Walk into the crowd</span><span class="en lbl-on" lang="en">Walking &middot; Esc to stop</span><span class="ja lbl-off" lang="ja">群衆の中を歩く</span><span class="ja lbl-on" lang="ja">操作中 &middot; Esc で終了</span>
+        <span class="en lbl-short-off" lang="en">Walk</span><span class="en lbl-short-on" lang="en">Stop</span><span class="ja lbl-short-off" lang="ja">歩く</span><span class="ja lbl-short-on" lang="ja">終了</span>
       </button>
-      <button class="pill" id="langBtn"><span class="lang-to-ja" lang="ja">日本語</span><span class="lang-to-en">EN</span></button>
+      <button class="pill" id="langBtn"><span class="lang-to-ja" lang="ja">日本語</span><span class="lang-to-en">English</span></button>
     </div>
   </div>
 </header>
+
+<nav class="toc" id="toc" aria-label="Sections"></nav>
 
 <main id="main" tabindex="-1">
 
@@ -81,16 +83,17 @@
           <span class="en">Hiromu <span class="lower">Taketsugu</span></span>
           <span class="ja">武次 広夢</span>
           <small>
-            <span class="en">武次 広夢 — Ph.D. Student, Toyota Technological Institute&nbsp;· <span class="role">JSPS Research Fellow (DC1)</span>&nbsp;· <span class="role">Technical Chair, ACCV 2026</span></span>
+            <span class="en">武次 広夢 — Ph.D. student, Toyota Technological Institute&nbsp;· <span class="role">JSPS Research Fellow (DC1)</span>&nbsp;· <span class="role">Technical Chair, ACCV 2026</span></span>
             <span class="ja">Hiromu Taketsugu — 豊田工業大学 博士後期課程&nbsp;· <span class="role">日本学術振興会 特別研究員 (DC1)</span>&nbsp;· <span class="role">ACCV 2026 Technical Chair</span></span>
           </small>
         </h1>
         <div class="chips reveal" id="hero-chips" style="transition-delay:.12s"></div>
     </div>
     <div class="walk-hint" aria-live="polite">
-      <span class="keys"><span class="en" lang="en">Arrow keys or WASD to walk · Esc to leave</span><span class="ja" lang="ja">矢印キーか WASD で歩く · Esc で終了</span></span>
+      <span class="keys"><span class="en" lang="en">Arrow keys or WASD to walk · Esc to stop</span><span class="ja" lang="ja">矢印キーか WASD で歩く · Esc で終了</span></span>
       <span class="touch"><span class="en" lang="en">Tap where you want to go</span><span class="ja" lang="ja">行きたい場所をタップ</span></span>
     </div>
+    <div class="walk-result" role="status"><span class="en" lang="en"></span><span class="ja" lang="ja"></span></div>
   </section>
 
   <!-- ========== BIO ========== -->
@@ -102,7 +105,7 @@
       <div class="foot-row reveal">
         <span>© 2026 Hiromu Taketsugu · 武次 広夢</span>
         <span class="en">Background: a simulated pedestrian crowd</span>
-        <span class="ja">背景は歩行者の群衆のシミュレーションです</span>
+        <span class="ja">背景：歩行者の群衆シミュレーション</span>
       </div>
     </div>
   </footer>
@@ -126,8 +129,8 @@ const BODY = {
       </div>`,
 
   news: () => h`
-      <div class="news reveal">
-        <ul>${DATA.news.map(newsItem)}</ul>
+      <div class="news reveal${DATA.news.length > NEWS_SHOWN ? ' foldable' : ''}">
+        <ul>${DATA.news.map(newsItem)}</ul>${DATA.news.length > NEWS_SHOWN ? moreBtn(DATA.news.length) : ''}
       </div>`,
 
   /* The home page shows the selected entries; publications.html has them all. */
@@ -157,8 +160,8 @@ const BODY = {
       <div class="life-photos reveal">${DATA.life.photos.map((p) => h`<div class="ph-box">${media(p)}</div>`)}</div>` : ''}`
 };
 
-/* A section with no content disappears together with its nav link, and the
-   remaining indices renumber themselves. */
+/* A section with no content disappears together with its link in the
+   table of contents. */
 const HAS = {
   about: () => DATA.about.paras.length,
   news: () => DATA.news.length,
@@ -186,14 +189,14 @@ const tile = ([id, span, rows]) => {
   }
   const i = liveAt.get(id), s = live[i];
   return h`
-    <section class="tile" id="${id}" style="--span:${span}${rows ? h`;--rows:${rows}` : ''}">${secHead(s.title, s.note, String(i).padStart(2, '0'))}${BODY[id]()}
+    <section class="tile" id="${id}" style="--span:${span}${rows ? h`;--rows:${rows}` : ''}">${secHead(s.title, s.note)}${BODY[id]()}
     </section>`;
 };
 mount('#sections', h`
   <div class="tiles">${layout.map(tile)}
   </div>`);
 
-mount('#nav-links', live.filter((s) => s.nav).map((s) => h`
+mount('#toc', live.filter((s) => s.nav).map((s) => h`
       <a href="#${s.id}">${t(s.nav)}</a>`));
 
 mount('#hero-chips', DATA.links.map((l) => h`
@@ -250,6 +253,8 @@ const P = {
   groupPull: 1.5,            // cohesion toward the group centroid
   groupSpace: 0.78,          // preferred abreast spacing
   groupMax: 2.6,             // beyond this the group has effectively split
+  chat: 0.012,               // chance per second that a party stops to talk
+  chatFor: [6, 14],          // and for how long, seconds
 
   // People go around far more readily than they slow down, so the
   // interaction force is split and the sideways half is favoured. Without
@@ -261,6 +266,16 @@ const P = {
   brakeGain: 0.55,
   sideGain: 1.05,
   headOn: 0.18,              // below this share of lateral force, pick a side
+
+  // The walker you steer and the pointer over the plaza are noticed from
+  // further off and given a wider berth than one more person in the crowd:
+  // at the pace you walk, the crowd's own horizon leaves under a second.
+  youK: 12,                  // interaction strength
+  youTau0: 6.0,              // interaction horizon
+  youSpace: 1.0,             // personal space added on top of `comfort`
+  youRange: 16,              // noticed from this far, metres
+  youNear: 3.6,              // within this, room is made even if the paths miss
+  youPush: 9.0,              // by this much at no distance, m/s^2
 
   // Target for the walker you steer. Set from the speed actually achieved,
   // not the speed asked for: pushing through a crowd costs about a third of
@@ -525,6 +540,8 @@ function makeAgent(world, rnd) {
     r: P.radius[0] + rnd() * (P.radius[1] - P.radius[0]),
     pref: P.speedPref[0] + rnd() * (P.speedPref[1] - P.speedPref[0]),
     group: -1, side: 1, flow: 0, phase: 0, age: 0, life: 0,
+    pause: 0, rest: 8,           // standing to talk, and the wait before the next time
+    ex: 0, ey: 0,                // where the one they are making way for is
     hue: (rnd() * 4) | 0,
     hot: 0,
     px: 0, py: 0, alpha: 0, accent: false, driven: false
@@ -543,6 +560,11 @@ function createWorld(wMetres, hMetres, seed) {
   const world = {
     w: wMetres, h: hMetres, rnd, t: 0,
     agents: [], obstacles: [], gates: [], groups: [], cars: [],
+    // What the crowd makes way for: the walker being steered, or else the
+    // pointer. `presences` lists whichever of the two is there this step.
+    presences: [],
+    pointer: { on: false, x: 0, y: 0, vx: 0, vy: 0, r: 0.3, agent: null, solid: false },
+    lead: { x: 0, y: 0, vx: 0, vy: 0, r: 0.25, agent: null, solid: true },
     grid: makeGrid(wMetres, hMetres, 3.2),
     // Traffic draws from a stream of its own, so a car arriving never
     // changes where anybody walks.
@@ -608,7 +630,37 @@ function adoptCentral(world) {
 }
 
 /* ---------- one physics step ---------- */
-const _f = { x: 0, y: 0 }, _g = { x: 0, y: 0 }, _c = { x: 0, y: 0 };
+const _f = { x: 0, y: 0 }, _g = { x: 0, y: 0 }, _c = { x: 0, y: 0 }, _r = { x: 0, y: 0 };
+
+/* How a walker answers an interaction force: mostly by steering round, a
+   little by slowing, and by stepping to its own side when the approach is
+   too symmetric for the force to have a sideways part. Returns the size of
+   the force answered. */
+function respond(a, fx, fy, out) {
+  const fm = Math.sqrt(fx * fx + fy * fy);
+  const hl = Math.sqrt(a.vx * a.vx + a.vy * a.vy) || 1;
+  const ux = a.vx / hl, uy = a.vy / hl;
+  const along = fx * ux + fy * uy;
+  let sx = fx - along * ux, sy = fy - along * uy;
+  if (Math.sqrt(sx * sx + sy * sy) < fm * P.headOn) {
+    sx = -uy * a.side * fm * P.sideGain; sy = ux * a.side * fm * P.sideGain;
+  } else { sx *= P.steerGain; sy *= P.steerGain; }
+  out.x = sx + along * ux * P.brakeGain;
+  out.y = sy + along * uy * P.brakeGain;
+  return fm;
+}
+
+/* The walker being steered, or else the pointer, as the crowd meets it. */
+function gatherPresences(world, control) {
+  const list = world.presences, you = control && control.active ? world.accent : null;
+  list.length = 0;
+  if (you) {
+    const p = world.lead;
+    p.agent = you; p.x = you.x; p.y = you.y; p.vx = you.vx; p.vy = you.vy; p.r = you.r;
+    list.push(p);
+  } else if (world.pointer.on) list.push(world.pointer);
+  return you;
+}
 
 /* Walking together is walking the same route: the gate, and the zebra. */
 function follow(m, lead) {
@@ -778,6 +830,7 @@ function stepCars(world, dt) {
   const unsafe = world.unsafe;
   for (const u of unsafe) u[0] = u[1] = false;
   for (const c of cars) {
+    c.px = c.x;
     const front = c.x + c.dir * c.len * 0.5, v = c.v;
     const lineAt = (k) => r.zebras[k].x - c.dir * (ROAD.zebra * 0.5 + ROAD.stopBack);
     // a turn taken at a zebra lasts until the car is clear of it
@@ -895,6 +948,7 @@ function step(world, dt, control) {
   gridBuild(g, A);
   world.t += dt;
   stepCars(world, dt);
+  const lead = gatherPresences(world, control);
 
   for (let i = 0; i < A.length; i++) {
     const a = A[i];
@@ -928,6 +982,18 @@ function step(world, dt, control) {
     const driving = a.driven && control && control.active;
     const want = driving ? a.pref * P.driveSpeed : a.pref;
     let vxd = dgx * want, vyd = dgy * want;
+    // Now and then a party stops where it is, out on the plaza, to talk.
+    if (a.group >= 0 && a.pause <= 0 && world.groups[a.group][0] === a) {
+      a.rest -= dt;
+      if (a.rest <= 0 && a.zebra < 0 && a.age > 4 && a.age < 180 &&
+          a.x > world.w * 0.12 && a.x < world.w * 0.88 && a.y > 2.5 && a.y < world.road.top - 4 &&
+          rnd() < dt * P.chat && !world.groups[a.group].some((m) => m.accent)) {
+        const t = P.chatFor[0] + rnd() * (P.chatFor[1] - P.chatFor[0]);
+        for (const m of world.groups[a.group]) m.pause = t;
+        a.rest = 25;
+      }
+    }
+    if (a.pause > 0) { a.pause -= dt; if (!driving) { vxd = 0; vyd = 0; } }
     // The street's rules hold for everyone, you included. At a zebra, waiting
     // is where you want to be -- a spot short of the edge, walked up to and
     // stood on. Pushed back from the edge instead, people fought their own
@@ -965,32 +1031,19 @@ function step(world, dt, control) {
         for (let j = g.heads[yy * g.nx + xx]; j !== -1; j = g.next[j]) {
           if (j === i) continue;
           const b = A[j];
+          if (b === lead) continue;                      // met below, from further off
           const R = a.r + b.r + P.comfort;
           if (!((onStreet || a.held) && b.held) && anticipate(a.x, a.y, a.vx, a.vy, b.x, b.y, b.vx, b.vy, R, P.k, P.tau0, _f)) {
-            const fm = Math.sqrt(_f.x * _f.x + _f.y * _f.y);
+            const fm = respond(a, _f.x, _f.y, _r);
             // The social force is invisible by definition. Both parties are
             // now paying attention to each other, and the renderer marks them,
             // which is the most legible way to show the moment two people
             // notice each other -- the part of this the page is about.
             if (fm > P.linkShow) {
-              if (fm > a.hot) a.hot = fm;
-              if (fm > b.hot) b.hot = fm;
+              if (fm > a.hot) { a.hot = fm; a.ex = b.x; a.ey = b.y; }
+              if (fm > b.hot) { b.hot = fm; b.ex = a.x; b.ey = a.y; }
             }
-            const hl = Math.sqrt(a.vx * a.vx + a.vy * a.vy) || 1;
-            const ux = a.vx / hl, uy = a.vy / hl;
-            const along = _f.x * ux + _f.y * uy;
-            let sx = _f.x - along * ux, sy = _f.y - along * uy;
-            let sl = Math.sqrt(sx * sx + sy * sy);
-            if (sl < fm * P.headOn) {
-              // Too symmetric to resolve itself: step to this walker's side.
-              sx = -uy * a.side; sy = ux * a.side;
-              sl = 1;
-              ax += sx * fm * P.sideGain; ay += sy * fm * P.sideGain;
-            } else {
-              ax += sx * P.steerGain; ay += sy * P.steerGain;
-            }
-            ax += along * ux * P.brakeGain;
-            ay += along * uy * P.brakeGain;
+            ax += _r.x; ay += _r.y;
           }
           // hard separation, only when actually overlapping
           const ddx = b.x - a.x, ddy = b.y - a.y;
@@ -1002,6 +1055,33 @@ function step(world, dt, control) {
             ax -= (ddx / d) * s; ay -= (ddy / d) * s;
           }
         }
+      }
+    }
+
+    // --- you: the walker being steered, or the pointer ------------------
+    // On the street and waiting at its kerb the traffic's rules come first.
+    for (let k = 0; k < world.presences.length; k++) {
+      const p = world.presences[k];
+      if (p.agent === a) continue;
+      const ddx = p.x - a.x, ddy = p.y - a.y, d2 = ddx * ddx + ddy * ddy;
+      if (d2 > P.youRange * P.youRange) continue;
+      const d = Math.sqrt(d2) || 1e-3, Rp = a.r + p.r;
+      if (!(onStreet || a.held)) {
+        if (anticipate(a.x, a.y, a.vx, a.vy, p.x, p.y, p.vx, p.vy, Rp + P.comfort + P.youSpace,
+                       P.youK, P.youTau0, _f)) {
+          const fm = respond(a, _f.x, _f.y, _r);
+          if (fm > a.hot) { a.hot = fm; a.ex = p.x; a.ey = p.y; }
+          ax += _r.x; ay += _r.y;
+        }
+        if (d < P.youNear) {
+          const near = 1 - d / P.youNear, s = P.youPush * near;
+          ax -= (ddx / d) * s; ay -= (ddy / d) * s;
+          if (2 * P.flareShow * near > a.hot) { a.hot = 2 * P.flareShow * near; a.ex = p.x; a.ey = p.y; }
+        }
+      }
+      if (p.solid && d < Rp) {
+        const s = (Rp - d) * 9;
+        ax -= (ddx / d) * s; ay -= (ddy / d) * s;
       }
     }
 
@@ -1136,6 +1216,7 @@ function forecast(world, agent, out, opts) {
   const spread = (opts && opts.spread) || 0.30;
   const fCap = P.fMax * 0.30;      // coarse steps need a tighter clamp
   const A = world.agents, obs = world.obstacles;
+  const pace = (opts && opts.speed) || agent.pref;
 
   for (let br = 0; br < 3; br++) {
     const ang = (br - 1) * spread;
@@ -1160,8 +1241,8 @@ function forecast(world, agent, out, opts) {
         const qx = _g.x - x, qy = _g.y - y, ql = Math.sqrt(qx * qx + qy * qy) || 1;
         ex = (qx * ca - qy * sa) / ql; ey = (qx * sa + qy * ca) / ql;
       }
-      let ax = (ex * agent.pref - vx) / P.relax;
-      let ay = (ey * agent.pref - vy) / P.relax;
+      let ax = (ex * pace - vx) / P.relax;
+      let ay = (ey * pace - vy) / P.relax;
       for (let j = 0; j < A.length; j++) {
         const b = A[j];
         if (b === agent) continue;
@@ -1170,6 +1251,12 @@ function forecast(world, agent, out, opts) {
         const R = agent.r + b.r + P.comfort;
         if (anticipate(x, y, vx, vy, b.x + b.vx * s * dt, b.y + b.vy * s * dt,
                        b.vx, b.vy, R, P.k, P.tau0, _f)) { ax += _f.x; ay += _f.y; }
+      }
+      for (let k = 0; k < world.presences.length; k++) {
+        const p = world.presences[k];
+        if (p.agent === agent) continue;
+        if (anticipate(x, y, vx, vy, p.x + p.vx * s * dt, p.y + p.vy * s * dt, p.vx, p.vy,
+                       agent.r + p.r + P.comfort + P.youSpace, P.youK, P.youTau0, _f)) { ax += _f.x; ay += _f.y; }
       }
       for (let o = 0; o < obs.length; o++) {
         const ob = obs[o];
@@ -1186,7 +1273,7 @@ function forecast(world, agent, out, opts) {
       if (am > fCap) { const sc = fCap / am; ax *= sc; ay *= sc; }
       vx += ax * dt; vy += ay * dt;
       const sp = Math.sqrt(vx * vx + vy * vy);
-      const cap = agent.pref * 1.35;
+      const cap = pace * 1.35;
       if (sp > cap) { const sc = cap / sp; vx *= sc; vy *= sc; }
       x += vx * dt; y += vy * dt;
       path.push(x, y);
@@ -1218,15 +1305,20 @@ const HAIR = ['#1f1a17', '#1f1a17', '#2f241d', '#3b2a20', '#5a3d27', '#7a5a3a', 
 const PACKS = ['#3a3f4c', '#6b4f3a', '#2f5d57', '#7b8397'];
 const SHOE = '#26272c';
 const YOU = '#5b2cf0', YOU_BOTTOM = '#23283a';
-const FIG = 1.1;                        // figures a touch larger than their footprint
+const FIG = 1.18;                       // figures a touch larger than their footprint
+const SUN = 0.32;                       // the way shadows fall across the ground, radians from +x
 const HIST = 28, HIST_DT = 0.1;         // the past: 2.8 s, sampled at 10 Hz
 const FUT = 14, FUT_DT = 0.2;           // the future: 2.8 s of the model's own forecast
 const FOCUS = 7.5;                      // how far round you the paths show, metres
+const AHEAD = 2.0;                      // a walk is scored on forecasts this far ahead, seconds
 /* Robots: pale shells, dark joints, one cyan lamp -- a colour nothing else
    on the plaza uses, so a machine is always a machine at a glance. */
 const BOT = { panel: '#e7e9ef', shade: '#c5c9d3', dark: '#2f323b', darker: '#1b1d24', lamp: '#2fc4da',
               yellow: '#e2b33f', yellowShade: '#c2952a', base: '#3a3f4c', baseTop: '#585e6e' };
-const TREE = { canopy: '#c9dbbb', canopyDark: '#b7cda6', trunk: '#a39a91' };
+const TREE = { canopy: '#c9dbbb', canopyDark: '#b7cda6', canopyLight: '#d8e6cc', trunk: '#a39a91' };
+const PRAMS = ['#4a5270', '#2f5d57', '#7b8397', '#a8434b'];
+const BIKES = ['#3d5a80', '#cf6a43', '#2f323b', '#2f9a8c'];
+const METAL = '#8f95a3';
 const PLANTER = { side: '#dfe2ea', top: '#eef0f5', plants: '#c3d8b4' };
 /* The street: pale asphalt between two kerbs, white paint. Cars keep to the
    page's calm -- mostly white, silver and dark, a few colours from the
@@ -1289,7 +1381,7 @@ function Plaza(opts) {
   const st = { o, S: 30, W: 0, H: 0, world: null, t: 0, fanAt: -1, fan: [[], [], []],
                control: { active: false, ix: 0, iy: 0 }, keys: { ix: 0, iy: 0 }, tap: null,
                items: [], onScreen: [], fanTmp: [[], [], []], wedge: null, wedgeCtx: null,
-               legPts: new Float32Array(12) };
+               legPts: new Float32Array(12), walk: null, lastWalk: null, aim: null };
 
   st.resize = function (w, h, dpr) {
     st.W = w; st.H = h; o.dpr = dpr || o.dpr;
@@ -1302,10 +1394,20 @@ function Plaza(opts) {
       a._id = i; a._hv = 0.9 + hash(i * 3 + 1) * 0.2; a._gait = hash(i * 3 + 2); a._swing = 0;
       a._ph = new Float32Array(HIST * 2); a._pn = 0; a._pi = 0; a._pt = 0;
       a._fut = new Float32Array((FUT + 1) * 2); a._fn = 0; a._fAt = -1e9;
+      a._lean = 0; a._roll = 0; a._sp = 0; a._pvx = a.vx; a._pvy = a.vy;
     });
-    world.obstacles.forEach((ob, i) => { ob._tree = hash(i * 7 + 5) < 0.55; });
+    world.obstacles.forEach((ob, i) => {
+      ob._tree = hash(i * 7 + 5) < 0.55;
+      // people sitting on a planter's rim, on the side toward the camera
+      ob._sit = [];
+      if (!ob._tree && ob.r >= 0.9) {
+        if (hash(i * 7 + 1) < 0.8) ob._sit.push({ _id: 700 + i * 5, th: Math.PI * (0.16 + 0.2 * hash(i * 7 + 2)) });
+        if (hash(i * 7 + 3) < 0.5) ob._sit.push({ _id: 701 + i * 5, th: Math.PI * (0.6 + 0.22 * hash(i * 7 + 4)) });
+      }
+    });
     castRobots(world);
-    st.world = world; st.tap = null; st.fanAt = -1;
+    castProps(world);
+    st.world = world; st.tap = null; st.fanAt = -1; st.aim = null;
     st.drones = [
       { k: 0, alt: 2.5, x: world.w * 0.72, y: world.h * 0.42, z: 2.5, vx: 0, vy: 0, yaw: 0, tx: 0, ty: 0, hold: 0.8 },
       { k: 1, alt: 3.3, x: world.w * 0.9, y: world.h * 0.64, z: 3.3, vx: 0, vy: 0, yaw: 0, tx: 0, ty: 0, hold: 2.1 }
@@ -1344,12 +1446,26 @@ function Plaza(opts) {
       }
     }
   }
-  /* The walker the page follows is always a person. */
+  /* What some of the people on their own have with them: a pram or a bicycle
+     to push, or a phone that slows them down. */
+  function castProps(world) {
+    const solo = world.agents.filter((a) => a.group < 0 && !a._kind && a !== world.accent);
+    const want = world.agents.length > 40 ? ['pram', 'bike', 'pram', 'bike'] : ['pram'];
+    want.forEach((kind, i) => {
+      const a = solo[(i * 5 + 2) % (solo.length || 1)];
+      if (!a || a._push) return;
+      a._push = kind; a.r = kind === 'pram' ? 0.5 : 0.45; a.pref = kind === 'pram' ? 1.05 : 1.15;
+    });
+    for (const a of solo) {
+      if (!a._push && hash(a._id * 3 + 11) < 0.12) { a._phone = true; a.pref *= 0.72; }
+    }
+  }
+  /* The walker the page follows is always a person with their hands free. */
   function adoptHuman(w, driven) {
     const cx = w.w * 0.5, cy = w.h * 0.5;
     let best = null, bd = Infinity;
     for (const a of w.agents) {
-      if (a._kind) continue;
+      if (a._kind || a._push) continue;
       const d = (a.x - cx) * (a.x - cx) + (a.y - cy) * (a.y - cy);
       if (d < bd) { bd = d; best = a; }
     }
@@ -1368,8 +1484,52 @@ function Plaza(opts) {
     // Take over whoever is nearest the middle, so you start where you can see.
     if (on) adoptHuman(w, true);
     if (w.accent) w.accent.driven = on;
-    if (!on) { st.tap = null; st.keys.ix = st.keys.iy = 0; }
+    if (on) st.walk = { dist: 0, time: 0, err: 0, n: 0, next: 0, due: [] };
+    else {
+      st.tap = null; st.keys.ix = st.keys.iy = 0;
+      const k = st.walk;
+      st.lastWalk = k && { dist: k.dist, time: k.time, err: k.n ? k.err / k.n : null };
+      st.walk = null;
+    }
   };
+  /* The pointer, in hero pixels, or null once it has left. The crowd makes
+     way for it as for a walker, at the pace it is moved. */
+  st.setPointer = function (sx, sy) {
+    const p = st.world.pointer;
+    if (sx == null) { p.on = false; st.aim = null; return; }
+    const [x, y] = st.toGround(sx, sy);
+    if (!p.on) { p.x = x; p.y = y; p.vx = p.vy = 0; p.on = true; }
+    st.aim = [x, y];
+  };
+  function movePointer(p, dt) {
+    if (!p.on || !st.aim) return;
+    let vx = (st.aim[0] - p.x) / dt, vy = (st.aim[1] - p.y) / dt;
+    const sp = Math.hypot(vx, vy);
+    if (sp > 8) { vx *= 8 / sp; vy *= 8 / sp; }
+    const k = Math.min(1, dt * 10);
+    p.vx += (vx - p.vx) * k; p.vy += (vy - p.vy) * k;
+    p.x = st.aim[0]; p.y = st.aim[1];
+  }
+  /* A walk is scored the way a trajectory forecast is: twice a second the
+     model says where you will be AHEAD seconds on, given the way you are
+     heading, and the miss is measured when that moment comes. */
+  function scoreWalk(w, dt) {
+    const k = st.walk, u = w.accent;
+    if (!k || !u) return;
+    const d = Math.hypot(u.x - u.px, u.y - u.py);
+    if (d < 0.5) k.dist += d;
+    k.time += dt;
+    while (k.due.length && k.due[0].t <= k.time) {
+      const f = k.due.shift();
+      if (f.who === u) { k.err += Math.hypot(u.x - f.x, u.y - f.y); k.n++; }
+    }
+    const sp = Math.hypot(u.vx, u.vy);
+    if (k.time < k.next || sp < 0.5) return;
+    k.next = k.time + 0.5;
+    forecast(w, u, st.fanTmp, { steps: 12, dt: AHEAD / 12, heading: { x: u.vx, y: u.vy }, speed: sp });
+    const f = st.fanTmp[1];
+    k.due.push({ t: k.time + AHEAD, x: f[f.length - 2], y: f[f.length - 1], who: u });
+  }
   st.setKeys = function (ix, iy) {
     st.keys.ix = ix; st.keys.iy = iy;
     if (ix || iy) st.tap = null;         // the keyboard wins over a pending tap
@@ -1416,10 +1576,31 @@ function Plaza(opts) {
       if (d < 0.4 && wx === st.tap.x && wy === st.tap.y) { st.tap = null; c.ix = 0; c.iy = 0; }
       else { c.ix = dx / (d || 1); c.iy = dy / (d || 1); }
     } else { c.ix = st.keys.ix; c.iy = st.keys.iy; }
+    movePointer(w.pointer, dt);
     step(w, dt, c);
-    if (w.accent && w.accent._kind) adoptHuman(w, c.active);
+    if (c.active) scoreWalk(w, dt);
+    if (w.accent && (w.accent._kind || w.accent._push)) adoptHuman(w, c.active);
     for (const a of w.agents) {
       const sp = Math.hypot(a.vx, a.vy);
+      // The trunk leans forward as the pace picks up and into a turn: both
+      // follow the acceleration, along the heading and across it.
+      const along = (sp - a._sp) / dt;
+      const across = sp > 0.2 ? (a.vx * (a.vy - a._pvy) - a.vy * (a.vx - a._pvx)) / (sp * dt) : 0;
+      const ease = Math.min(1, dt * 5);
+      a._lean += (clamp(along * 0.035, -0.07, 0.1) - a._lean) * ease;
+      a._roll += (clamp(across * 0.03, -0.08, 0.08) - a._roll) * ease;
+      a._sp = sp; a._pvx = a.vx; a._pvy = a.vy;
+      // standing to talk, a party turns to face one another
+      if (a.pause > 0 && a.group >= 0 && a._hx !== undefined) {
+        let mx = 0, my = 0, n = 0;
+        for (const m of w.groups[a.group]) if (m !== a) { mx += m.x; my += m.y; n++; }
+        const ex = mx / n - a.x, ey = my / n - a.y, el = Math.hypot(ex, ey);
+        if (n && el > 0.05) {
+          const hx = a._hx + (ex / el - a._hx) * Math.min(1, dt * 4), hy = a._hy + (ey / el - a._hy) * Math.min(1, dt * 4);
+          const hl = Math.hypot(hx, hy) || 1;
+          a._hx = hx / hl; a._hy = hy / hl;
+        }
+      }
       // metres to a full gait cycle: people ~1.3, a stiffer humanoid, a trotting dog
       const cyc = a._kind === 'dog' ? 0.62 : a._kind === 'humanoid' ? 1.1 : 1.3;
       a._gait = (a._gait + sp * dt / cyc) % 1;
@@ -1443,6 +1624,7 @@ function Plaza(opts) {
      drone is headed. Each draws from its own stream, so two that land in the
      same frame still part. */
   function fly(d, dt) {
+    d.px = d.x; d.py = d.y; d.pz = d.z;
     if (d.hold > 0) {
       d.hold -= dt; d.vx *= 0.92; d.vy *= 0.92;
       if (d.hold <= 0) aimDrone(d);
@@ -1530,16 +1712,67 @@ function Plaza(opts) {
     a._hx = hx / hl; a._hy = hy / hl;
   }
 
+  /* Where a figure looks: the way it faces, turned part of the way toward
+     whoever it is making way for, and never over its shoulder. */
+  function gaze(a) {
+    let tx = a._hx, ty = a._hy;
+    if (a.hot > 1.5 && !a._phone) {
+      const ex = a.ex - a.x, ey = a.ey - a.y, el = Math.hypot(ex, ey);
+      if (el > 0.2 && (ex * a._hx + ey * a._hy) / el > -0.2) { tx += 0.9 * ex / el; ty += 0.9 * ey / el; }
+    }
+    const tl = Math.hypot(tx, ty) || 1;
+    if (a._gx === undefined) { a._gx = a._hx; a._gy = a._hy; }
+    const gx = a._gx + (tx / tl - a._gx) * 0.14, gy = a._gy + (ty / tl - a._gy) * 0.14, gl = Math.hypot(gx, gy) || 1;
+    a._gx = gx / gl; a._gy = gy / gl;
+  }
+
+  /* A head at (cx, cy): skin, then hair as a cap tilted to the back of it;
+     looking away from the camera, the back of the head is all there is. */
+  function head(ctx, L, cx, cy, r, gx, gy, fine) {
+    ctx.fillStyle = L.hair;
+    if (fine && L.long) {
+      ctx.beginPath(); ctx.ellipse(cx - gx * r * 0.3, cy + r * 0.55, r * 0.9, r * 0.8, 0, 0, TAU); ctx.fill();
+    }
+    ctx.fillStyle = L.skin;
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, TAU); ctx.fill();
+    ctx.fillStyle = L.hair;
+    if (gy < -0.35) {
+      ctx.beginPath(); ctx.arc(cx, cy, r * 1.03, 0, TAU); ctx.fill();
+    } else {
+      const bx = -gx * 0.85, by = -1 - gy * SQ * 0.5;          // up, and toward the back
+      const c = Math.atan2(by, bx), span = Math.PI / 2 + 0.32 - 0.25 * Math.max(0, gy);
+      ctx.beginPath(); ctx.arc(cx, cy, r * 1.05, c - span, c + span); ctx.closePath(); ctx.fill();
+    }
+  }
+
+  /* A trunk from hips to shoulders, shaded on the side away from the light. */
+  function trunk(ctx, colour, hx, hy, tx, ty, w) {
+    const k = (w * 0.5) / (Math.hypot(tx - hx, ty - hy) || 1);
+    const ax = hx + (tx - hx) * k, ay = hy + (ty - hy) * k, bx = tx - (tx - hx) * k, by = ty - (ty - hy) * k;
+    ctx.lineCap = 'round';
+    ctx.strokeStyle = shade(colour, 0.86); ctx.lineWidth = w;
+    ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke();
+    ctx.strokeStyle = colour; ctx.lineWidth = w * 0.72;
+    ctx.beginPath(); ctx.moveTo(ax - w * 0.13, ay); ctx.lineTo(bx - w * 0.13, by); ctx.stroke();
+  }
+
   function person(ctx, a, sx, sy) {
     const L = lookOf(a), m = st.S * a._hv * FIG, fine = st.S >= 22;
-    face(a);
+    face(a); gaze(a);
     const dx = a._hx, dy = a._hy;
     const px = -dy, py = dx;                              // across the heading
+    // Someone pushing a pram walks behind it: the two share the walker's spot.
+    if (a._push === 'pram') { sx -= dx * 0.36 * m; sy -= dy * 0.36 * m * SQ; }
     const P2 = (u, v, lat) => [sx + (dx * u + px * lat) * m,
                                sy + (dy * u + py * lat) * m * SQ - v * m * KH];
-    const sw = a._swing, ph = a._gait;
+    const sw = a._swing, ph = a._gait, phone = !!a._phone;
+    const talking = a.pause > 0 && hash(a._id * 3 + 31) < 0.7;
     const bob = 0.018 * sw * Math.cos(ph * TAU * 2);
+    // standing, the weight shifts from one foot to the other
+    const sway = 0.016 * (1 - sw) * Math.sin(st.t * 1.1 + a._id * 2.4);
     const hipV = 0.8 + bob, shV = hipV + 0.5, headV = shV + 0.06 + 0.12;
+    // the shoulders lead the hips into a stride and into a turn
+    const leanU = 0.035 * sw + a._lean + (phone ? 0.03 : 0), leanL = a._roll + sway;
     // Seen from the side a torso is its depth; from the front, its width.
     const torW = (0.25 + 0.13 * Math.abs(dy)) * m;
     // which side is nearer the camera: the one pointing down the screen
@@ -1553,7 +1786,7 @@ function Plaza(opts) {
       const side = q === 0 ? -near : near;
       const t = TAU * ((ph + (side > 0 ? 0.5 : 0)) % 1);
       joint(0, hipV, 0.27 * sw * Math.sin(t), 0.1 * sw * Math.max(0, Math.cos(t)), 0.42, 0.4, true, J);
-      const [hx, hy] = P2(0, hipV, side * 0.08), [kx, ky] = P2(J[0], J[1], side * 0.08);
+      const [hx, hy] = P2(0, hipV, side * 0.08 + sway * 0.5), [kx, ky] = P2(J[0], J[1], side * 0.08);
       const [fx, fy] = P2(J[2], J[3], side * 0.08);
       LEG[q * 6] = hx; LEG[q * 6 + 1] = hy; LEG[q * 6 + 2] = kx; LEG[q * 6 + 3] = ky;
       LEG[q * 6 + 4] = fx; LEG[q * 6 + 5] = fy;
@@ -1578,10 +1811,20 @@ function Plaza(opts) {
     };
     const arm = (side) => {
       const t = TAU * ((ph + (side > 0 ? 0.5 : 0)) % 1);
-      const hu = -0.2 * sw * Math.sin(t), hv = shV - 0.5;
-      joint(0.02 * sw, shV - 0.05, hu, hv, 0.28, 0.26, false, J);
-      const lat = side * 0.19;
-      const [ax, ay] = P2(0.02 * sw, shV - 0.05, lat), [ex, ey] = P2(J[0], J[1], lat);
+      let hu = leanU * 0.5 - 0.2 * sw * Math.sin(t), hv = shV - 0.5, lat = side * 0.19 + leanL;
+      // A hand with something to do leaves the swing for it: a handle to hold,
+      // a phone to look at, a point to make.
+      let gu = 0, gv = 0, k = 0;
+      if (a._push === 'pram') { gu = 0.3; gv = 0.97; k = 1; }
+      else if (a._push === 'bike' && side > 0) { gu = 0.34; gv = 1.0; k = 1; lat = 0.27; }
+      else if (side === near && phone) { gu = 0.2 + leanU; gv = shV - 0.1; k = 1; }
+      else if (side === near && talking) {
+        gu = 0.24; gv = shV - 0.24; k = (1 - sw) * Math.max(0, Math.sin(st.t * 2.1 + a._id));
+      }
+      hu += (gu - hu) * k; hv += (gv - hv) * k;
+      const ru = 0.02 * sw + leanU, rv = shV - 0.05;
+      joint(ru, rv, hu, hv, 0.28, 0.26, false, J);
+      const [ax, ay] = P2(ru, rv, lat), [ex, ey] = P2(J[0], J[1], lat);
       const [hx, hy] = P2(J[2], J[3], lat);
       ctx.lineWidth = Math.max(1.2, 0.078 * m);
       ctx.strokeStyle = shade(L.top, 0.86);
@@ -1594,48 +1837,110 @@ function Plaza(opts) {
       }
     };
     const pack = () => {
-      const [bx, by] = P2(-0.17, shV - 0.2, 0);
+      const [bx, by] = P2(-0.17 + leanU * 0.6, shV - 0.2, leanL);
       ctx.fillStyle = L.pack;
       ctx.beginPath(); ctx.roundRect(bx - 0.13 * m, by - 0.2 * m * KH, 0.26 * m, 0.36 * m * KH, 0.06 * m); ctx.fill();
     };
+    const line = (p, q) => { ctx.moveTo(p[0], p[1]); ctx.lineTo(q[0], q[1]); };
+    const pram = () => {
+      const c = PRAMS[a._id % PRAMS.length];
+      ctx.fillStyle = BOT.darker;
+      for (const u of [0.5, 0.98]) for (const l of [-0.2, 0.2]) {
+        const [wx, wy] = P2(u, 0.09, l);
+        ctx.beginPath(); ctx.arc(wx, wy, 0.085 * m, 0, TAU); ctx.fill();
+      }
+      ctx.strokeStyle = METAL; ctx.lineWidth = Math.max(1, 0.04 * m);
+      ctx.beginPath();
+      for (const l of [-0.19, 0.19]) {
+        line(P2(0.28, 0.98, l), P2(0.62, 0.42, l)); line(P2(0.62, 0.42, l), P2(0.5, 0.09, l));
+        line(P2(0.62, 0.42, l), P2(0.98, 0.09, l));
+      }
+      line(P2(0.28, 0.98, -0.19), P2(0.28, 0.98, 0.19));
+      ctx.stroke();
+      ctx.strokeStyle = shade(c, 0.86); ctx.lineWidth = 0.4 * m;
+      ctx.beginPath(); line(P2(0.62, 0.62, 0), P2(0.95, 0.62, 0)); ctx.stroke();
+      ctx.strokeStyle = c; ctx.lineWidth = 0.3 * m;
+      ctx.beginPath(); line(P2(0.62, 0.68, 0), P2(0.93, 0.68, 0)); ctx.stroke();
+      const [hx, hy] = P2(0.6, 0.8, 0);
+      ctx.fillStyle = shade(c, 0.74);
+      ctx.beginPath(); ctx.arc(hx, hy, 0.21 * m, Math.PI, TAU); ctx.closePath(); ctx.fill();
+    };
+    /* A bicycle walked along at the right hand: its wheels are circles in a
+       plane that stands on the heading, drawn as the ellipses they project to. */
+    const bike = () => {
+      const c = BIKES[a._id % BIKES.length], B = (u, v) => P2(u, v, 0.36), R = 0.33;
+      ctx.strokeStyle = BOT.dark; ctx.lineWidth = Math.max(1.2, 0.045 * m);
+      ctx.beginPath();
+      for (const hub of [-0.42, 0.64]) {
+        for (let i = 0; i <= 18; i++) {
+          const t = (i / 18) * TAU, q = B(hub + R * Math.cos(t), R + R * Math.sin(t));
+          if (i) ctx.lineTo(q[0], q[1]); else ctx.moveTo(q[0], q[1]);
+        }
+      }
+      ctx.stroke();
+      ctx.strokeStyle = c; ctx.lineWidth = Math.max(1.4, 0.055 * m);
+      ctx.beginPath();
+      line(B(-0.42, R), B(-0.12, 0.84)); line(B(-0.12, 0.84), B(0.42, 0.9)); line(B(0.42, 0.9), B(0.64, R));
+      line(B(-0.12, 0.84), B(0.06, R)); line(B(0.06, R), B(-0.42, R)); line(B(0.06, R), B(0.4, 0.82));
+      ctx.stroke();
+      ctx.strokeStyle = BOT.darker; ctx.lineWidth = Math.max(1.6, 0.07 * m);
+      ctx.beginPath(); line(B(-0.22, 0.9), B(-0.04, 0.9)); line(B(0.42, 0.9), B(0.36, 1.03)); ctx.stroke();
+    };
+    // whichever of the two is nearer the camera is drawn second
+    const prop = a._push === 'pram' ? pram : a._push === 'bike' ? bike : null;
+    const propBehind = a._push === 'pram' ? dy < 0 : py < 0;
+    if (prop && propBehind) prop();
 
     if (fine && L.bag && dy >= 0) pack();                  // walking toward us: it is behind
     arm(-near);
     legs();
-    // torso, shaded on the side away from the light
-    const [tx, ty] = P2(0, shV, 0), [, by] = P2(0, hipV - 0.04, 0);
-    ctx.fillStyle = shade(L.top, 0.86);
-    ctx.beginPath(); ctx.roundRect(tx - torW / 2, ty, torW, by - ty, torW * 0.42); ctx.fill();
-    ctx.fillStyle = L.top;
-    ctx.beginPath(); ctx.roundRect(tx - torW / 2, ty, torW * 0.74, by - ty, torW * 0.4); ctx.fill();
+    const [tx, ty] = P2(leanU, shV, leanL), [bx, by] = P2(0, hipV - 0.04, sway * 0.5);
+    trunk(ctx, L.top, bx, by, tx, ty, torW);
     if (L.skirt) {
       const [, sy0] = P2(0, hipV + 0.03, 0), [, sy1] = P2(0, hipV - 0.36, 0);
       const w0 = torW * 0.52, w1 = torW * 0.72;
       ctx.fillStyle = L.bottom;
       ctx.beginPath();
-      ctx.moveTo(tx - w0, sy0); ctx.lineTo(tx + w0, sy0); ctx.lineTo(tx + w1, sy1); ctx.lineTo(tx - w1, sy1);
+      ctx.moveTo(bx - w0, sy0); ctx.lineTo(bx + w0, sy0); ctx.lineTo(bx + w1, sy1); ctx.lineTo(bx - w1, sy1);
       ctx.closePath(); ctx.fill();
     }
     if (fine && L.bag && dy < 0) pack();                   // walking away: it is on show
-    // head: hair to the back and top, the face turned the way they walk
-    const [cx, cy] = P2(0, headV, 0), r = 0.12 * m;
-    ctx.fillStyle = L.hair;
-    if (fine && L.long) {
-      ctx.beginPath(); ctx.ellipse(cx - dx * r * 0.3, cy + r * 0.55, r * 0.9, r * 0.8, 0, 0, TAU); ctx.fill();
-    }
-    // skin first, then hair as a cap tilted to the back of the head; walking
-    // away, the back of the head is all you see
-    ctx.fillStyle = L.skin;
-    ctx.beginPath(); ctx.arc(cx, cy, r, 0, TAU); ctx.fill();
-    ctx.fillStyle = L.hair;
-    if (dy < -0.35) {
-      ctx.beginPath(); ctx.arc(cx, cy, r * 1.03, 0, TAU); ctx.fill();
-    } else {
-      const bx = -dx * 0.85, by = -1 - dy * SQ * 0.5;          // up, and toward the back
-      const c = Math.atan2(by, bx), span = Math.PI / 2 + 0.32 - 0.25 * Math.max(0, dy);
-      ctx.beginPath(); ctx.arc(cx, cy, r * 1.05, c - span, c + span); ctx.closePath(); ctx.fill();
-    }
+    // the head rides on the shoulders, bowed over a phone, turned where they look
+    const r = 0.12 * m, [cx, cy] = P2(leanU * 1.2 + (phone ? 0.04 : 0), headV - (phone ? 0.025 : 0), leanL * 1.2);
+    head(ctx, L, cx + (a._gx - dx) * r * 0.3, cy, r, a._gx, a._gy, fine);
     arm(near);
+    if (prop && !propBehind) prop();
+  }
+
+  /* Someone sitting on a planter's rim, facing out from it. */
+  function sitter(ctx, ob, who) {
+    const L = lookOf(who), id = who._id, m = st.S * FIG * (0.9 + 0.16 * hash(id * 3 + 1)), fine = st.S >= 22;
+    const dx = Math.cos(who.th), dy = Math.sin(who.th), px = -dy, py = dx;
+    const [sx, sy] = st.toScreen(ob.x + dx * ob.r * 0.88, ob.y + dy * ob.r * 0.88);
+    const P2 = (u, v, lat) => [sx + (dx * u + px * lat) * m, sy + (dy * u + py * lat) * m * SQ - v * m * KH];
+    const phone = hash(id * 3 + 2) < 0.5, near = py >= 0 ? 1 : -1;
+    const hipV = 0.42 * st.S / m + 0.07, shV = hipV + 0.5, nod = 0.012 * Math.sin(st.t * 0.8 + id);
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    const limb = (pts, colour, w) => {
+      ctx.strokeStyle = colour; ctx.lineWidth = w;
+      ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]);
+      for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i][0], pts[i][1]);
+      ctx.stroke();
+    };
+    const [hx, hy] = P2(0, hipV, 0), [tx, ty] = P2(phone ? 0.03 : -0.03, shV, 0);
+    trunk(ctx, L.top, hx, hy, tx, ty, (0.25 + 0.13 * Math.abs(dy)) * m);
+    for (const side of [-near, near]) {
+      const l = side * 0.09, foot = P2(0.46, 0.04, l);
+      limb([P2(0.02, hipV, l), P2(0.42, hipV + 0.03, l), foot], L.skirt ? L.skin : L.bottom, Math.max(1.5, 0.12 * m));
+      if (fine) limb([P2(0.45, 0.12, l), foot], SHOE, Math.max(1.7, 0.13 * m));
+    }
+    for (const side of [-near, near]) {
+      const l = side * 0.19, up = phone && side === near;
+      limb([P2(0, shV - 0.05, l), P2(up ? 0.1 : 0.04, shV - 0.3, l), P2(up ? 0.26 : 0.28, up ? shV - 0.16 : hipV + 0.08, l * 0.7)],
+           shade(L.top, 0.86), Math.max(1.2, 0.078 * m));
+    }
+    const [cx, cy] = P2(phone ? 0.07 : -0.02, shV + 0.18 - (phone ? 0.02 : 0) + nod, 0);
+    head(ctx, L, cx, cy, 0.12 * m, dx, dy, fine);
   }
 
   function pathTo(ctx, pts, i0, i1) {
@@ -1646,11 +1951,13 @@ function Plaza(opts) {
   function trails(ctx, now) {
     const w = st.world, you = w.accent;
     if (!you) return;
+    // round the pointer while it is over the plaza, round you otherwise
+    const at = w.pointer.on && !st.control.active ? w.pointer : you;
     let budget = 2;                                  // forecasts refreshed per frame, round-robin
     ctx.lineWidth = 1.4; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
     for (const a of st.onScreen) {
-      const d = Math.hypot(a.x - you.x, a.y - you.y);
-      if (d > FOCUS || a.life < 0.5) continue;
+      const d = Math.hypot(a.x - at.x, a.y - at.y);
+      if ((d > FOCUS && a !== you) || a.life < 0.5) continue;
       const q = d / FOCUS, wgt = a === you ? 1 : 1 - q * q;
       if (wgt < 0.03) continue;
       ctx.strokeStyle = a === you ? YOU : a._kind ? BOT.lamp : lookOf(a).top;
@@ -1883,12 +2190,16 @@ function Plaza(opts) {
 
   function tree(ctx, ob, sx, sy) {
     const s = st.S, r = (ob.r * 0.95 + 0.3) * s, top = sy - 2.55 * s * KH;
+    // a light wind: the crown drifts a little, its sunlit side a little more
+    const t = st.t * 0.7 + ob.x, wind = (Math.sin(t) * 0.04 + Math.sin(t * 2.3 + 1) * 0.015) * s;
     ctx.strokeStyle = TREE.trunk; ctx.lineWidth = Math.max(2, 0.15 * s); ctx.lineCap = 'round';
-    ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(sx, top + r * 0.5); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(sx + wind * 0.4, top + r * 0.5); ctx.stroke();
     ctx.fillStyle = TREE.canopyDark;
-    ctx.beginPath(); ctx.arc(sx + r * 0.1, top + r * 0.08, r, 0, TAU); ctx.fill();
+    ctx.beginPath(); ctx.arc(sx + r * 0.1 + wind, top + r * 0.08, r, 0, TAU); ctx.fill();
     ctx.fillStyle = TREE.canopy;
-    ctx.beginPath(); ctx.arc(sx - r * 0.05, top - r * 0.04, r * 0.93, 0, TAU); ctx.fill();
+    ctx.beginPath(); ctx.arc(sx - r * 0.05 + wind * 1.2, top - r * 0.04, r * 0.93, 0, TAU); ctx.fill();
+    ctx.fillStyle = TREE.canopyLight;
+    ctx.beginPath(); ctx.arc(sx - r * 0.28 + wind * 1.6, top - r * 0.3, r * 0.5, 0, TAU); ctx.fill();
   }
 
   function planter(ctx, ob, sx, sy) {
@@ -1900,6 +2211,7 @@ function Plaza(opts) {
     ctx.beginPath(); ctx.ellipse(sx, sy - hC, rw, ry, 0, 0, TAU); ctx.fill();
     ctx.fillStyle = PLANTER.plants;
     ctx.beginPath(); ctx.ellipse(sx, sy - hC - 0.06 * s, rw * 0.8, ry * 0.8, 0, 0, TAU); ctx.fill();
+    for (const who of ob._sit) sitter(ctx, ob, who);
   }
 
   /* The street: asphalt, the kerbs, lane paint broken at each zebra, and a
@@ -2049,7 +2361,32 @@ function Plaza(opts) {
     }
   }
 
-  st.draw = function (ctx, now) {
+  /* `alpha` is how far the frame lies between the last two physics steps.
+     Everything that moves is drawn that far from where it was to where it
+     is, so motion stays even when frames and steps do not line up. */
+  const mix = (o, k, ...keys) => {
+    for (const key of keys) {
+      const was = o['p' + key];
+      o['_' + key] = o[key];
+      if (was !== undefined) o[key] = was + (o[key] - was) * k;
+    }
+  };
+  const unmix = (o, ...keys) => { for (const key of keys) o[key] = o['_' + key]; };
+  st.draw = function (ctx, now, alpha) {
+    const w = st.world, k = alpha == null ? 1 : alpha;
+    if (k < 1) {
+      for (const a of w.agents) mix(a, k, 'x', 'y');
+      for (const c of w.cars) mix(c, k, 'x');
+      for (const d of st.drones) mix(d, k, 'x', 'y', 'z');
+    }
+    paint(ctx, now);
+    if (k < 1) {
+      for (const a of w.agents) unmix(a, 'x', 'y');
+      for (const c of w.cars) unmix(c, 'x');
+      for (const d of st.drones) unmix(d, 'x', 'y', 'z');
+    }
+  };
+  function paint(ctx, now) {
     const w = st.world, S = st.S, you = w.accent, walking = st.control.active;
     ctx.setTransform(o.dpr, 0, 0, o.dpr, 0, 0);
     ctx.clearRect(0, 0, st.W, st.H);
@@ -2078,9 +2415,21 @@ function Plaza(opts) {
       if (SHADOW) { ctx.globalAlpha = al; ctx.drawImage(SHADOW, x - rr, y - rr * SQ, rr * 2, rr * 2 * SQ); }
       else { ctx.globalAlpha = 0.11 * al; ellipse(ctx, x, y, rr * 0.85); ctx.fill(); }
     };
+    // under each figure a soft pool at the feet, and the shadow it throws
+    // along the ground away from the light
     for (const a of on) {
       const rr = (a._kind === 'dog' ? 0.46 : a._kind === 'hsr' ? 0.4 : a._kind ? 0.38 : 0.36 * a._hv) * S * FIG;
-      stamp(a._sx + 0.08 * S, a._sy + 0.02 * S, rr, a.life);
+      stamp(a._sx + 0.04 * S, a._sy + 0.01 * S, rr * 0.85, a.life);
+    }
+    if (SHADOW) {
+      const d = o.dpr, cs = Math.cos(SUN) * d, sn = Math.sin(SUN) * d;
+      for (const a of on) {
+        const len = (a._kind === 'dog' ? 0.6 : a._kind === 'hsr' ? 0.8 : a._push ? 1.5 : a._hv) * S * FIG;
+        ctx.setTransform(cs, sn, -sn, cs, d * a._sx, d * a._sy);
+        ctx.globalAlpha = 0.6 * a.life;
+        ctx.drawImage(SHADOW, -0.14 * S, -0.15 * S, len + 0.24 * S, 0.3 * S);
+      }
+      ctx.setTransform(d, 0, 0, d, 0, 0);
     }
     for (const d of st.drones) {
       const [sx, sy] = st.toScreen(d.x, d.y);
@@ -2180,6 +2529,13 @@ function Plaza(opts) {
       ctx.stroke();
       ctx.globalAlpha = 1;
     }
+    if (w.pointer.on && !walking) {
+      const [px, py] = st.toScreen(w.pointer.x, w.pointer.y);
+      ctx.strokeStyle = YOU; ctx.lineWidth = 1.5;
+      ctx.globalAlpha = 0.5; ellipse(ctx, px, py, 0.45 * S); ctx.stroke();
+      ctx.globalAlpha = 0.12; ellipse(ctx, px, py, P.youNear * S); ctx.stroke();
+      ctx.globalAlpha = 1;
+    }
     if (st.tap) {
       const [tx, ty] = st.toScreen(st.tap.x, st.tap.y), k = Math.min(1, st.tap.t * 4);
       ctx.strokeStyle = YOU; ctx.fillStyle = YOU; ctx.lineWidth = 1.5; ctx.globalAlpha = 0.85;
@@ -2210,7 +2566,7 @@ function Plaza(opts) {
     }
     ctx.globalAlpha = 1;
     for (const d of st.drones) drone(ctx, d);           // above everything
-  };
+  }
 
   st.resize(o.w, o.h, o.dpr);
   return st;
@@ -2285,7 +2641,7 @@ function Plaza(opts) {
     let n = 0;
     while (acc >= STEP && n < 4) { pz.tick(STEP); acc -= STEP; n++; }
     if (n === 4) acc = 0;
-    pz.draw(ctx, ts);
+    pz.draw(ctx, ts, acc / STEP);
     schedule();
   }
   function schedule() { if (!raf && animating()) raf = requestAnimationFrame(frame); }
@@ -2317,11 +2673,28 @@ function Plaza(opts) {
   }
   function clearKeys() { keys.l = keys.r = keys.u = keys.d = false; updateInput(); }
 
+  /* After a walk: how far it went, and how far off the model's forecasts of
+     it were. Too short a walk has nothing to report. */
+  const walkResult = hero.querySelector('.walk-result');
+  let resultTimer = 0;
+  function showWalk(k) {
+    if (!k || k.dist < 3 || k.err == null) return;
+    const d = k.dist.toFixed(0), t = k.time.toFixed(0), e = k.err.toFixed(1);
+    walkResult.querySelector('.en').textContent =
+      `You walked ${d} m in ${t} s. The model's forecast of where you would be 2 s later was off by ${e} m on average.`;
+    walkResult.querySelector('.ja').textContent =
+      `${d} m を ${t} 秒で歩きました。モデルが予測した2秒後の位置と実際の位置の差は、平均 ${e} m でした。`;
+    walkResult.classList.add('show');
+    clearTimeout(resultTimer);
+    resultTimer = setTimeout(() => walkResult.classList.remove('show'), 9000);
+  }
+
   const gameBtn = document.getElementById('gameBtn');
   function setGame(on) {
     if (!pz) return;
     pz.setWalking(on);
-    if (!on) clearKeys();
+    if (!on) { clearKeys(); showWalk(pz.lastWalk); }
+    else walkResult.classList.remove('show');
     // The name steps out of the way while you are in there.
     root.classList.toggle('walking', on);
     if (gameBtn) {
@@ -2370,6 +2743,15 @@ function Plaza(opts) {
     pz.tapAt(e.clientX - r.left, e.clientY - r.top);
     schedule();
   });
+
+  // A mouse over the plaza: the crowd makes way for it. Touch has no hover;
+  // there a tap walks instead.
+  hero.addEventListener('pointermove', (e) => {
+    if (!pz || e.pointerType !== 'mouse') return;
+    const r = canvas.getBoundingClientRect();
+    pz.setPointer(e.clientX - r.left, e.clientY - r.top);
+  });
+  hero.addEventListener('pointerleave', () => { if (pz) pz.setPointer(null); });
 
   if (QS.has('debug')) window.__plaza = { get pz() { return pz; }, seed: SEED };
 

@@ -1,5 +1,33 @@
 # Progress
 
+## 2026-11-27 (layout and plaza revision, in progress, not committed)
+
+Owner approved every item of a design review on 2026-11-27, with three conditions: news emoji stay, the crowd reacts more strongly and from further off, and publication videos always play.
+
+Done in the working tree (dl50, `node` at `/usr/bin/node`):
+
+- `publications.html`: the venue column no longer overlaps the title; the supplementary text wraps (`static/css/site.css`, `.pub .venue .rate`).
+- Filled badges are for venues and awards (`**…**` in the data); the author role and "Oral" are `*…*` and set in ink.
+- Links in running text share one style (accent, underline on hover). Portrait has a 12 px radius and no border. Reveal is 0.35 s over 8 px. Cross-page view transition keeps the header. Phone hero is `max(540px, 68vh)`.
+- News shows five items and the award, funding, service and experience lists show the entries marked `key: true` in `static/js/data.js`; a button under each list shows the rest (`moreBtn`, `.foldable`, `.extra`; handler in `static/js/ui.js`). The `key` choice is Claude's proposal and awaits the owner's review.
+- The Springer notice sits in a `<details>` under the links.
+- Section numbers are gone; a table of contents (`#toc`) stands left of the column from 1240 px, shown past the hero, marking the section being read.
+- Plaza (`index.html`): the steered walker and the mouse pointer are "presences" (`world.presences`, constants `P.you*`): noticed from 16 m, wider berth. A mouse over the hero moves the crowd without walk mode, and paths and forecasts are drawn round the pointer. After a walk the hero shows the distance and the mean miss of 2-second-ahead forecasts (`scoreWalk`, `.walk-result`). Drawing interpolates between physics steps (`st.draw(ctx, now, alpha)`).
+- Headless physics check (three seeds, 20 s straight walk): people within 3 m of the steered walker fell from 2.1–2.8 to 0.7–1.7 on average; people within 1.5 m of a resting pointer fell from 1.1–1.9 to 0.
+- `tools/verify/extract.py` records section ids in page order instead of the removed numbers.
+- Animation quality (owner asked for all three directions):
+  - Figures: the trunk leans with acceleration and into turns (`_lean`, `_roll` in `st.tick`), the head turns toward whoever the walker is making way for (`gaze`, `a.ex`/`a.ey` set in `step`), a standing figure shifts its weight.
+  - Behaviour: parties stop to talk (`P.chat`, `P.chatFor`, `a.pause`), about one in eight solo walkers is slowed by a phone (`_phone`), two prams and two bicycles are pushed on a desktop plaza (`castProps`, `_push`), people sit on planter rims (`ob._sit`, `sitter`).
+  - Rendering: figures throw a shadow along `SUN`, tree crowns drift, `FIG` is 1.18.
+- Link-preview image `static/img/og-card.png` (1200x630): captured from `index.html?card&seed=5` (the `?card` class hides the header and the hero links) in headless Chromium with `--force-prefers-reduced-motion --window-size=1200,875`, cropped to the top 630 px. Both pages carry `og:image` and `twitter:card` `summary_large_image`.
+
+Remaining:
+
+- Pointer avoidance, the walk result, the table of contents and the frame rate with the added figures and shadows are not yet checked in a real browser (headless Chromium cannot hover and draws on the CPU).
+- The owner declined a research-theme section (2026-11-27).
+- Wording review of all visible text, English and Japanese, applied on 2026-11-28 with the owner's decisions: the greeting "Hi! 👋" and the acceptance rates stay, "English Step-Up points" stays (official name), the undergraduate scholarship reads "tuition reduction", and the two Hexa-P news items (acceptance, publication) are one item. Declined: dropping DC1 from the hero, new date formats, translated news tags and link labels, a Japanese summary of the Springer notice. The Japanese page now has Japanese venue notes (`rate` and `venue` as `{en, ja}` pairs) and video descriptions.
+- `tools/verify/verify.sh --accept` re-captured the baselines after the wording changes; ALL OK. Commit and push on the owner's request.
+
 ## 2026-11-10 (Hexa-P published)
 
 - Hexa-P was published online on 2026-11-09: Pattern Analysis and Applications 29(4), article 221, DOI 10.1007/s10044-026-01804-x (Crossref; https://doi.org/10.1007/s10044-026-01804-x redirects to the Springer article). The article is not open access, so the accepted-manuscript PDF stays.

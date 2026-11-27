@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="static/js/boot.js"></script>
 <title>Publications — Hiromu Taketsugu</title>
-<meta name="description" content="All publications and domestic presentations of Hiromu Taketsugu (武次 広夢), Ph.D. student at Toyota Technological Institute.">
+<meta name="description" content="All publications and presentations in Japan of Hiromu Taketsugu (武次 広夢), Ph.D. student at Toyota Technological Institute.">
 <link rel="canonical" href="https://iminthemiddle.github.io/publications.html">
 <link rel="icon" href="favicon.ico" sizes="48x48">
 <link rel="icon" href="static/img/icon/icon-192.png" type="image/png" sizes="192x192">
@@ -15,8 +15,11 @@
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://iminthemiddle.github.io/publications.html">
 <meta property="og:title" content="Publications — Hiromu Taketsugu">
-<meta property="og:description" content="All publications and domestic presentations of Hiromu Taketsugu.">
-<meta name="twitter:card" content="summary">
+<meta property="og:description" content="All publications and presentations in Japan of Hiromu Taketsugu.">
+<meta property="og:image" content="https://iminthemiddle.github.io/static/img/og-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:creator" content="@ImlntheMiddle">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -32,7 +35,7 @@
     <a class="mark" href="./">H. Taketsugu <b>·</b> 武次 広夢</a>
     <div class="toggles">
       <a class="pill" href="./"><span class="en" lang="en">← Home</span><span class="ja" lang="ja">← トップへ</span></a>
-      <button class="pill" id="langBtn"><span class="lang-to-ja" lang="ja">日本語</span><span class="lang-to-en">EN</span></button>
+      <button class="pill" id="langBtn"><span class="lang-to-ja" lang="ja">日本語</span><span class="lang-to-en">English</span></button>
     </div>
   </div>
 </header>
@@ -57,13 +60,13 @@
    @@PAGE@@ — every publication and every domestic talk, newest first and
    grouped by year, from the same DATA as the home page.
    ==================================================================== */
-const SCHOLAR = DATA.links.find((l) => l.label === 'Scholar');
+const SCHOLAR = DATA.links.find((l) => l.label === 'Google Scholar');
 
 const LISTS = [
-  { id: 'papers', title: { en: 'Publications', ja: '国際論文' }, kind: 'papers',
+  { id: 'papers', title: { en: 'Publications', ja: '論文・発表' }, kind: 'papers',
     items: DATA.publications, me: DATA.me, showDate: false,
     note: SCHOLAR && { href: SCHOLAR.href, label: { en: 'Google Scholar →', ja: 'Google Scholar →' } } },
-  { id: 'domestic', title: { en: 'Domestic Presentations', ja: '国内発表' }, kind: 'talks',
+  { id: 'domestic', title: { en: 'Presentations in Japan', ja: '国内発表' }, kind: 'talks',
     items: DATA.domestic, me: DATA.domesticMe, showDate: true }
 ];
 

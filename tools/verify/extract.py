@@ -41,9 +41,7 @@ class Extractor(HTMLParser):
         self.skip_depth = 0  # >0 while inside style/script
         self.out = []
         self.links = []
-        self.sections = []  # (section_id, idx_text)
-        self._cur_section = None
-        self._idx_capture = None
+        self.sections = []  # section ids, in page order
 
     def _hidden(self, tag, attrs):
         d = dict(attrs)
@@ -74,10 +72,7 @@ class Extractor(HTMLParser):
         hid = self.hidden_depth > 0 or self._hidden(tag, attrs)
         if not hid and self.hidden_depth == 0:
             if tag == "section" and d.get("id"):
-                self._cur_section = d["id"]
-            cls = (d.get("class") or "").split()
-            if "idx" in cls:
-                self._idx_capture = []
+                self.sections.append(d["id"])
             if tag == "a" and d.get("href"):
                 self.links.append(d["href"])
             if tag == "img" and d.get("src"):
@@ -104,11 +99,6 @@ class Extractor(HTMLParser):
     def handle_data(self, data):
         if self.skip_depth or self.hidden_depth:
             return
-        if self._idx_capture is not None:
-            self._idx_capture.append(data)
-            if data.strip():
-                self.sections.append((self._cur_section or "-", data.strip()))
-                self._idx_capture = None
         self.out.append(data)
 
     def text(self):
@@ -136,5 +126,5 @@ if __name__ == "__main__":
     elif mode == "links":
         print("\n".join(sorted(set(p.links))))
     elif mode == "sections":
-        for sid, idx in p.sections:
-            print(f"{sid}\t{idx}")
+        for sid in p.sections:
+            print(sid)
