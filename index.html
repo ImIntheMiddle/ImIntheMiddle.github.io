@@ -58,7 +58,7 @@
     <div class="toggles">
       <button class="gamebtn" id="gameBtn" aria-pressed="false">
         <span class="dot" aria-hidden="true"></span>
-        <span class="en lbl-off" lang="en">Walk into the crowd</span><span class="en lbl-on" lang="en">Walking &middot; Esc to stop</span><span class="ja lbl-off" lang="ja">群衆の中を歩く</span><span class="ja lbl-on" lang="ja">操作中 &middot; Esc で終了</span>
+        <span class="en lbl-off" lang="en">Control a pedestrian</span><span class="en lbl-on" lang="en">Walking &middot; Esc to stop</span><span class="ja lbl-off" lang="ja">歩行者を操作する</span><span class="ja lbl-on" lang="ja">操作中 &middot; Esc で終了</span>
         <span class="en lbl-short-off" lang="en">Walk</span><span class="en lbl-short-on" lang="en">Stop</span><span class="ja lbl-short-off" lang="ja">歩く</span><span class="ja lbl-short-on" lang="ja">終了</span>
       </button>
       <button class="pill" id="langBtn"><span class="lang-to-ja" lang="ja">日本語</span><span class="lang-to-en">English</span></button>
@@ -270,12 +270,12 @@ const P = {
   // The walker you steer and the pointer over the plaza are noticed from
   // further off and given a wider berth than one more person in the crowd:
   // at the pace you walk, the crowd's own horizon leaves under a second.
-  youK: 12,                  // interaction strength
-  youTau0: 6.0,              // interaction horizon
-  youSpace: 1.0,             // personal space added on top of `comfort`
-  youRange: 16,              // noticed from this far, metres
-  youNear: 3.6,              // within this, room is made even if the paths miss
-  youPush: 9.0,              // by this much at no distance, m/s^2
+  youK: 7,                   // interaction strength
+  youTau0: 4.5,              // interaction horizon
+  youSpace: 0.6,             // personal space added on top of `comfort`
+  youRange: 12,              // noticed from this far, metres
+  youNear: 2.4,              // within this, room is made even if the paths miss
+  youPush: 5.0,              // by this much at no distance, m/s^2
 
   // Target for the walker you steer. Set from the speed actually achieved,
   // not the speed asked for: pushing through a crowd costs about a third of
@@ -329,7 +329,7 @@ const CAR = {
   calm: 0.9,                 // seconds before pulling away from a stop for someone on foot
   patience: 3.5,             // and after this long standing for new arrivals, its turn
   look: 34,                  // how far ahead a driver reacts, metres
-  headway: [4.0, 10.5]       // seconds between arrivals at each end of a lane
+  headway: [8.0, 20.0]       // seconds between arrivals at each end of a lane
 };
 const CAR_KINDS = [          // share of arrivals; sizes in metres
   { kind: 'sedan', p: 0.62, len: 4.5, wid: 1.76 },
