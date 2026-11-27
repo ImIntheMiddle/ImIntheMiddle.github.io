@@ -276,6 +276,7 @@ const P = {
   youRange: 12,              // noticed from this far, metres
   youNear: 2.4,              // within this, room is made even if the paths miss
   youPush: 5.0,              // by this much at no distance, m/s^2
+  youBehind: 0.15,           // share of the response left when you are directly behind
 
   // Target for the walker you steer. Set from the speed actually achieved,
   // not the speed asked for: pushing through a crowd costs about a third of
@@ -1067,16 +1068,24 @@ function step(world, dt, control) {
       if (d2 > P.youRange * P.youRange) continue;
       const d = Math.sqrt(d2) || 1e-3, Rp = a.r + p.r;
       if (!(onStreet || a.held)) {
+        // People respond to what is in front of them: full weight straight
+        // ahead, falling to `youBehind` directly behind. Someone standing
+        // has no heading and takes the middle.
+        const sp = Math.hypot(a.vx, a.vy);
+        const cos = sp > 0.15 ? (a.vx * ddx + a.vy * ddy) / (sp * d) : 0;
+        const fwd = 0.5 * (1 + cos);
+        const seen = P.youBehind + (1 - P.youBehind) * fwd * fwd;
         if (anticipate(a.x, a.y, a.vx, a.vy, p.x, p.y, p.vx, p.vy, Rp + P.comfort + P.youSpace,
                        P.youK, P.youTau0, _f)) {
-          const fm = respond(a, _f.x, _f.y, _r);
+          const fm = respond(a, _f.x * seen, _f.y * seen, _r);
           if (fm > a.hot) { a.hot = fm; a.ex = p.x; a.ey = p.y; }
           ax += _r.x; ay += _r.y;
         }
         if (d < P.youNear) {
-          const near = 1 - d / P.youNear, s = P.youPush * near;
+          const near = 1 - d / P.youNear, s = P.youPush * near * seen;
           ax -= (ddx / d) * s; ay -= (ddy / d) * s;
-          if (2 * P.flareShow * near > a.hot) { a.hot = 2 * P.flareShow * near; a.ex = p.x; a.ey = p.y; }
+          const hot = 2 * P.flareShow * near * seen;
+          if (hot > a.hot) { a.hot = hot; a.ex = p.x; a.ey = p.y; }
         }
       }
       if (p.solid && d < Rp) {
